@@ -100,7 +100,7 @@ const open = ref(false)
               </template>
               <template #content>
                 <div v-if="userId" @click="logout">выйти</div>
-                <div v-else @click="$router.push({ name: 'Home' })">войти</div>
+                <router-link v-else :to="{ name: 'Auth' }">войти</router-link>
                 <router-link :to="{ name: 'Home' }" @click="checkAuth">
                   профиль
                 </router-link>

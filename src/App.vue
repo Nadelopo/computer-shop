@@ -12,21 +12,20 @@ onBeforeMount(async () => {
   const token = JSON.parse(localStorage.getItem('supabase.auth.token') || '{}')
     ?.currentSession?.access_token
   if (token) {
-    try {
-      const { data: resp } = await supabase.auth.getUser()
-      if (resp.user) {
-        userId.value = resp.user.id
-        user.value = await getUserData(resp.user.id)
-      }
-    } catch (err) {
-      console.log(err)
+    const { data, error } = await supabase.auth.getUser()
+    if (data.user) {
+      userId.value = data.user.id
+      user.value = await getUserData(data.user.id)
+    }
+    if (error) {
+      console.log(error)
     }
   }
 })
 </script>
 
 <template>
-  <Navbar />
+  <Navbar v-if="!$route.fullPath.includes('admin') && $route.name != 'Auth'" />
   <main><router-view /></main>
 </template>
 
