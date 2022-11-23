@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import Swal from 'sweetalert2'
 import { supabase } from '@/supabase'
 import type { Iuser } from '@/stores/userStore'
-import Swal from 'sweetalert2'
 
 const router = useRouter()
 

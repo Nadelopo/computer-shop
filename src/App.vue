@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import { computed, onBeforeMount } from 'vue'
 import { useRoute } from 'vue-router'
-import Navbar from './components/Navbar.vue'
+import { storeToRefs } from 'pinia'
 import { useUserStore } from './stores/userStore'
 import { supabase } from './supabase'
+import Navbar from './components/Navbar.vue'
 
 const { userId, user } = storeToRefs(useUserStore())
 const { getUserData } = useUserStore()

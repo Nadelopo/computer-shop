@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import Swal from 'sweetalert2'
+import { useUserStore } from '../stores/userStore'
+import Popup from './UI/Popup.vue'
+import Sidebar from './Sidebar.vue'
 import UserSvg from '@/assets/icons/user.svg?component'
 import FavouritesSVG from '@/assets/icons/favourites.svg?component'
-import Popup from './UI/Popup.vue'
-import { useUserStore } from '../stores/userStore'
-import { storeToRefs } from 'pinia'
-import { useRouter } from 'vue-router'
-import Swal from 'sweetalert2'
-import { ref } from 'vue'
-// import Sidebar from './Sidebar.vue'
 
 const { user, userId } = storeToRefs(useUserStore())
 
@@ -98,14 +98,13 @@ const open = ref(false)
                 <UserSvg width="25" class="user__svg" />
               </template>
               <template #content>
+                <router-link v-if="user?.role == 0" :to="{ name: 'Home' }">
+                  admin
+                </router-link>
                 <div v-if="userId" @click="logout">выйти</div>
                 <router-link v-else :to="{ name: 'Auth' }">войти</router-link>
                 <router-link :to="{ name: 'Home' }" @click="checkAuth">
                   профиль
-                </router-link>
-
-                <router-link v-if="user?.role == 0" :to="{ name: 'Home' }">
-                  admin
                 </router-link>
               </template>
             </Popup>
@@ -122,7 +121,7 @@ const open = ref(false)
       </div>
     </div>
   </header>
-  <!-- <Sidebar v-if="open" v-model:is-open="open" /> -->
+  <Sidebar v-if="open" v-model:is-open="open" />
 </template>
 
 <style scoped lang="sass">
