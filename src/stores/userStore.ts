@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { supabase } from '@/supabase'
 
-interface Iuser {
+export interface Iuser {
   id: string
   created_at: Date
   email: string
@@ -21,13 +21,14 @@ export const useUserStore = defineStore('user', {
   actions: {
     async getUserData(userId: string) {
       const { data, error } = await supabase
-        .from('Users')
+        .from<Iuser>('users')
         .select()
         .eq('id', userId)
         .single()
       if (error) {
         console.log(error)
       }
+      console.log(data)
       return data
     },
   },

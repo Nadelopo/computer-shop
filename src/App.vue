@@ -12,14 +12,12 @@ onBeforeMount(async () => {
   const token = JSON.parse(localStorage.getItem('supabase.auth.token') || '{}')
     ?.currentSession?.access_token
   if (token) {
-    const { data, error } = await supabase.auth.getUser()
-    if (data.user) {
-      userId.value = data.user.id
-      user.value = await getUserData(data.user.id)
+    const { user: User, error } = await supabase.auth.api.getUser(token)
+    if (User) {
+      userId.value = User.id
+      user.value = await getUserData(User.id)
     }
-    if (error) {
-      console.log(error)
-    }
+    if (error) console.log(error)
   }
 })
 </script>

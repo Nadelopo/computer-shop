@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-// import Swal from 'sweetalert2'
 import { supabase } from '@/supabase'
+import type { Iuser } from '@/stores/userStore'
+// import Swal from 'sweetalert2'
 
 const router = useRouter()
 
@@ -29,8 +30,8 @@ const signUp = async () => {
   if (error) console.log(error)
   if (user) {
     const { error, data: insertData } = await supabase
-      .from('Users')
-      .insert({ name: name.value, email: email.value })
+      .from<Iuser>('users')
+      .insert({ name: name.value, email: email.value, id: user.id })
     if (error) console.log(error)
     if (insertData) router.push({ name: 'Home' })
   }
