@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/supabase'
 import type { Iuser } from '@/stores/userStore'
-// import Swal from 'sweetalert2'
+import Swal from 'sweetalert2'
 
 const router = useRouter()
 
@@ -13,40 +13,48 @@ const password = ref('')
 const name = ref('')
 
 const signIn = async () => {
-  const { user, error } = await supabase.auth.signIn({
-    email: email.value,
-    password: password.value,
-  })
-  console.log(user)
-  if (error) console.log(error)
-  if (user) router.push({ name: 'Home' })
-}
-
-const signUp = async () => {
-  const { user, error } = await supabase.auth.signUp({
-    email: email.value,
-    password: password.value,
-  })
-  if (error) console.log(error)
-  if (user) {
-    const { error, data: insertData } = await supabase
-      .from<Iuser>('users')
-      .insert({ name: name.value, email: email.value, id: user.id })
+  console.log('in')
+  if (email.value && password.value) {
+    const { user, error } = await supabase.auth.signIn({
+      email: email.value,
+      password: password.value,
+    })
+    console.log(user)
     if (error) console.log(error)
-    if (insertData) router.push({ name: 'Home' })
+    if (user) router.push({ name: 'Home' })
+  } else {
+    Swal.fire('Заполните данные', '', 'warning')
   }
 }
 
-const auth = () => (active.value ? signIn() : signUp())
+const signUp = async () => {
+  console.log('up')
+  if (email.value && password.value && name.value) {
+    const { user, error } = await supabase.auth.signUp({
+      email: email.value,
+      password: password.value,
+    })
+    if (error) console.log(error)
+    if (user) {
+      const { error, data: insertData } = await supabase
+        .from<Iuser>('users')
+        .insert({ name: name.value, email: email.value, id: user.id })
+      if (error) console.log(error)
+      if (insertData) router.push({ name: 'Home' })
+    }
+  } else {
+    Swal.fire('Заполните данные', '', 'warning')
+  }
+}
 </script>
 
 <template>
   <div class="back">
-    <form class="main" @submit.prevent="auth">
+    <form class="main" @submit.prevent="active ? signIn() : signUp()">
       <div class="head">
         <div
           class="cursor-pointer uppercase text"
-          :class="{ active: active }"
+          :class="{ active }"
           @click="active = true"
         >
           войти
@@ -99,7 +107,11 @@ const auth = () => (active.value ? signIn() : signUp())
   display: flex
   align-items: center
   justify-content: center
+
 .main
+  display: flex
+  flex-direction: column
+  min-height: 520px
   max-width: 400px
   width: 100%
   background:  linear-gradient( rgba(38, 166, 154, .8), rgb(32, 95, 109, .8))
@@ -118,7 +130,7 @@ const auth = () => (active.value ? signIn() : signUp())
 .head
   display: grid
   grid-template-columns: 60px auto
-  margin-bottom: 48px
+  margin-bottom: auto
 
 .text
   padding-left: 16px

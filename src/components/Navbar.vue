@@ -10,11 +10,10 @@ import { ref } from 'vue'
 // import Sidebar from './Sidebar.vue'
 
 const { user, userId } = storeToRefs(useUserStore())
-const router = useRouter()
 
-const logout = () => {}
+const logout = (): void => {}
 
-const checkAuth = () => {
+const checkAuth = (): void => {
   if (!userId.value) {
     Swal.fire({
       icon: 'error',
@@ -25,7 +24,7 @@ const checkAuth = () => {
       denyButtonText: `Ок`,
     }).then((result) => {
       if (result.isConfirmed) {
-        router.push({ name: 'Auth' })
+        useRouter().push({ name: 'Auth' })
       }
     })
   }

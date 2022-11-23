@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { onBeforeMount } from 'vue'
+import { computed, onBeforeMount } from 'vue'
+import { useRoute } from 'vue-router'
 import Navbar from './components/Navbar.vue'
 import { useUserStore } from './stores/userStore'
 import { supabase } from './supabase'
@@ -20,10 +21,15 @@ onBeforeMount(async () => {
     if (error) console.log(error)
   }
 })
+
+const isNeed = computed(() => {
+  const href = useRoute().fullPath
+  return !href.includes('admin') && !href.includes('auth')
+})
 </script>
 
 <template>
-  <Navbar v-if="!$route.fullPath.includes('admin') && $route.name != 'Auth'" />
+  <Navbar v-if="isNeed" />
   <main><router-view /></main>
 </template>
 

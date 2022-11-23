@@ -2,15 +2,15 @@
 import { ref, watch } from 'vue'
 
 const isOpen = ref(false)
-const activeRef = ref(false)
-const test = (event: any) => {
+const activeRef = ref()
+const clickOutside = (event: MouseEvent): void => {
   if (activeRef.value && !event.composedPath().includes(activeRef.value)) {
     isOpen.value = false
   }
 }
 watch(isOpen, () => {
-  if (isOpen.value) addEventListener('click', test)
-  else removeEventListener('click', test)
+  if (isOpen.value) addEventListener('click', clickOutside)
+  else removeEventListener('click', clickOutside)
 })
 </script>
 
