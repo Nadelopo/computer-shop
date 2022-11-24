@@ -90,8 +90,6 @@ const categories = ref([
   cursor: pointer
   user-select: none
 
-
-
 .li
   padding: 0 10px
   user-select: none

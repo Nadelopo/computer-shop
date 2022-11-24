@@ -14,6 +14,6 @@ import Sidebar from '@/components/Admin/Sidebar.vue'
 <style scoped lang="sass">
 .roottt
   display: grid
-  grid-template-columns: 12% auto
+  grid-template-columns: 300px auto
   background: #fff
 </style>

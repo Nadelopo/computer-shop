@@ -13,7 +13,6 @@ const password = ref('')
 const name = ref('')
 
 const signIn = async () => {
-  console.log('in')
   if (email.value && password.value) {
     const { user, error } = await supabase.auth.signIn({
       email: email.value,
@@ -28,7 +27,6 @@ const signIn = async () => {
 }
 
 const signUp = async () => {
-  console.log('up')
   if (email.value && password.value && name.value) {
     const { user, error } = await supabase.auth.signUp({
       email: email.value,

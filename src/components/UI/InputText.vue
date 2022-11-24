@@ -2,6 +2,10 @@
 import { ref } from 'vue'
 
 defineProps({
+  type: {
+    type: String,
+    default: 'text',
+  },
   placeholder: {
     type: String,
     default: '',
@@ -18,7 +22,7 @@ const value = ref('')
     <span class="wrapper">
       <input
         v-model="value"
-        type="text"
+        :type="type"
         class="input"
         :placeholder="placeholder"
         @input="$emit('update:modelValue', value)"
@@ -27,7 +31,7 @@ const value = ref('')
   </div>
 </template>
 
-<style scoepd lang="sass">
+<style scoped lang="sass">
 
 .wrapper
   position: relative
