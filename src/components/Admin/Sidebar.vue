@@ -44,7 +44,6 @@ const categories = ref([
                 <router-link
                   :to="{
                     name: 'AdminHome',
-                    params: { category: categoryq.enTitle },
                   }"
                 >
                   {{ categoryq.title }}
@@ -54,7 +53,7 @@ const categories = ref([
             <div class="li">
               <router-link
                 :to="{
-                  name: 'AdminHome',
+                  name: 'AdminCategory',
                 }"
               >
                 создать категорию

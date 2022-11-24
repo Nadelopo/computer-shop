@@ -20,6 +20,11 @@ const router = createRouter({
       name: 'AdminHome',
       component: () => import('@/pages/Admin/AdminHome.vue'),
     },
+    {
+      path: '/admin/category',
+      name: 'AdminCategory',
+      component: () => import('@/pages/Admin/AdminCategory.vue'),
+    },
   ],
 })
 

@@ -113,17 +113,6 @@ body::-webkit-scrollbar-thumb
   @media (min-width: 1536px)
     padding: 0 50px
 
-.minput
-  all: unset
-  width: 100%
-  height: 30px
-  border-bottom: 1px solid #9e9e9e
-  transition: 0.3s
-  &:focus
-    border-bottom:1px solid var(--color-main)
-    -webkit-box-shadow:0 1px 0 0 var(--color-main)
-    box-shadow:0 1px 0 0 var(--color-main)
-    transition: 0.3s
 
 progress::-webkit-progress-bar
   border-radius: 20px
