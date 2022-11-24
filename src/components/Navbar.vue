@@ -135,6 +135,7 @@ header
   display: grid
   grid-template-columns:  180px 1fr 180px
   align-items: center
+  height: 60px
   @media (max-width: 1023px)
     display: none
 
@@ -204,11 +205,11 @@ header
   display: grid
   grid-template-columns: repeat(2, 1fr)
   align-items: center
+  height: 58px
   @media (min-width: 1023px)
     display: none
   .dots
     width: 40px
-    // height: 30px
     display: flex
     flex-direction: column
     gap: 6px

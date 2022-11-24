@@ -11,7 +11,6 @@ const emit = defineEmits(['update:isOpen'])
 
 const translateSidebar = ref('-320px')
 const brightness = ref('1')
-// const close = ref(false)
 
 const sidebarRef = ref()
 const isMounted = ref(false)
@@ -20,7 +19,6 @@ const closeSidebar = () => {
   removeEventListener('click', checkClick)
   translateSidebar.value = '-320px'
   brightness.value = '1'
-  // close.value = true
   setTimeout(() => emit('update:isOpen', false), 100)
 }
 

@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
-defineProps({
+const props = defineProps({
+  modelValue: {
+    type: String,
+    required: true,
+  },
   type: {
     type: String,
     default: 'text',
@@ -15,6 +19,15 @@ defineProps({
 defineEmits(['update:modelValue'])
 
 const value = ref('')
+
+watch(
+  () => props.modelValue,
+  (cur) => {
+    if (!cur) {
+      value.value = ''
+    }
+  }
+)
 </script>
 
 <template>
@@ -25,6 +38,7 @@ const value = ref('')
         :type="type"
         class="input"
         :placeholder="placeholder"
+        required
         @input="$emit('update:modelValue', value)"
       />
     </span>

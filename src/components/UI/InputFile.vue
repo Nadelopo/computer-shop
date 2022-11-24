@@ -1,16 +1,24 @@
 <script setup lang="ts">
 import { insertInStorage } from '@/utils/insertInStorage'
 import { removeFromStorage } from '@/utils/removeFromStorage'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
-const img = ref('')
+const props = defineProps({
+  modelValue: {
+    type: String,
+    required: true,
+  },
+})
+
+const emit = defineEmits(['update:modelValue'])
+
 const imageData = ref<File | null>(null)
 const onInput = async (event: Event) => {
   const target = event.target as HTMLInputElement
   if (target?.files) {
     imageData.value = target.files[0]
     const url = await insertInStorage('categories', imageData.value)
-    if (url) img.value = url
+    if (url) emit('update:modelValue', url)
   }
 }
 
@@ -21,21 +29,33 @@ const remove = async () => {
       imageData.value.name
     )
     if (isSuccess) {
-      img.value = ''
+      emit('update:modelValue', '')
       imageData.value = null
     }
   }
 }
+
+const input = ref<HTMLInputElement | null>(null)
+
+watch(
+  () => props.modelValue,
+  (cur) => {
+    if (!cur && input.value) {
+      imageData.value = null
+      input.value.value = ''
+    }
+  }
+)
 </script>
 
 <template>
   <div>
     <span class="wrapper">
-      <input type="file" class="input" @input="onInput" />
+      <input ref="input" type="file" class="input" required @input="onInput" />
     </span>
-    <div v-if="img">
-      <img :src="img" class="my-2" alt="картинка" width="300" />
-      <button class="remove__btn" @click="remove">
+    <div v-if="modelValue">
+      <img :src="modelValue" class="my-2" alt="картинка" width="300" />
+      <button class="remove__btn" type="button" @click="remove">
         <div class="line line-1"></div>
         <div class="line line-2"></div>
       </button>
