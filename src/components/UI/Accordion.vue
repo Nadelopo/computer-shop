@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { onUpdated, ref, watch } from 'vue'
 
 interface Ichildrens {
   element: HTMLElement
@@ -28,12 +28,17 @@ const props = defineProps({
 const parent = ref()
 const childrenns = ref<Ichildrens[]>([])
 
-onMounted(() => {
-  const childs: HTMLElement[] = [...parent.value.children]
+const isUpdate = ref(true)
 
-  childrenns.value = childs.map((el) => {
-    return { element: el, height: el.scrollHeight }
-  })
+onUpdated(() => {
+  if (isUpdate.value) {
+    const childs: HTMLElement[] = [...parent.value.children]
+
+    childrenns.value = childs.map((el) => {
+      return { element: el, height: el.scrollHeight }
+    })
+  }
+  isUpdate.value = false
 })
 
 watch(

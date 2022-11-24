@@ -1,27 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import Accordion from '@/components/UI/Accordion.vue'
-
-// import { categoriesStore } from '@/stores/categoriesStore'
-// import { storeToRefs } from 'pinia'
+import { useCategoriesStore } from '@/stores/categoriesStore'
+import { storeToRefs } from 'pinia'
 
 const isVisible = ref(false)
 
-// const { categories } = storeToRefs(categoriesStore())
-const categories = ref([
-  {
-    id: 0,
-    title: 'Видеокарты',
-    enTitle: '',
-    src: '',
-  },
-  {
-    id: 1,
-    title: 'Процессоры',
-    enTitle: '',
-    src: '',
-  },
-])
+const { setCategories } = useCategoriesStore()
+const { categories } = storeToRefs(useCategoriesStore())
+
+setCategories()
 </script>
 
 <template>
@@ -36,8 +24,8 @@ const categories = ref([
           <Accordion :visible="isVisible">
             <template v-if="categories">
               <div
-                v-for="categoryq in categories"
-                :key="categoryq.title"
+                v-for="category in categories"
+                :key="category.title"
                 ref="listRef"
                 class="li"
               >
@@ -46,7 +34,7 @@ const categories = ref([
                     name: 'AdminHome',
                   }"
                 >
-                  {{ categoryq.title }}
+                  {{ category.title }}
                 </router-link>
               </div>
             </template>

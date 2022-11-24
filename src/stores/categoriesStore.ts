@@ -29,5 +29,12 @@ export const useCategoriesStore = defineStore('categories', {
       if (error) console.log(error)
       if (data) this.categories.push(data)
     },
+    async setCategories() {
+      const { data, error } = await supabase
+        .from<Icategories>('categories')
+        .select()
+      if (error) console.log(error)
+      if (data) this.categories = data
+    },
   },
 })
