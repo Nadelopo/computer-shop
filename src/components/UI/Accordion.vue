@@ -30,12 +30,16 @@ const childrenns = ref<Ichildrens[]>([])
 
 const isUpdate = ref(true)
 
-onUpdated(() => {
+onUpdated(async () => {
   if (isUpdate.value) {
     const childs: HTMLElement[] = [...parent.value.children]
 
-    childrenns.value = childs.map((el) => {
-      return { element: el, height: el.scrollHeight }
+    childs.forEach(async (el) => {
+      el.style.paddingTop = '0'
+      el.style.paddingBottom = '0'
+      setTimeout(() => {
+        childrenns.value.push({ element: el, height: el.scrollHeight })
+      }, 300)
     })
   }
   isUpdate.value = false
@@ -54,7 +58,10 @@ watch(
           height:  ${height}px;
         `
       } else {
-        el.style.cssText = ``
+        el.style.cssText = `
+        padding-bottom: 0;
+        padding-top: 0;
+        `
       }
     })
   }
