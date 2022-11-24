@@ -15,6 +15,11 @@ const router = createRouter({
       name: 'Auth',
       component: Auth,
     },
+    {
+      path: '/admin',
+      name: 'AdminHome',
+      component: () => import('@/pages/Admin/AdminHome.vue'),
+    },
   ],
 })
 

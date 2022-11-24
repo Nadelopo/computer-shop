@@ -22,7 +22,7 @@ onBeforeMount(async () => {
   }
 })
 
-const isNeed = computed(() => {
+const isNeed = computed((): boolean => {
   const href = useRoute().fullPath
   return !href.includes('admin') && !href.includes('auth')
 })

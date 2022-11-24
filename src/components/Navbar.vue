@@ -98,7 +98,7 @@ const open = ref(false)
                 <UserSvg width="25" class="user__svg" />
               </template>
               <template #content>
-                <router-link v-if="user?.role == 0" :to="{ name: 'Home' }">
+                <router-link v-if="user?.role == 0" :to="{ name: 'AdminHome' }">
                   admin
                 </router-link>
                 <div v-if="userId" @click="logout">выйти</div>
