@@ -39,7 +39,7 @@ onUpdated(async () => {
       el.style.paddingBottom = '0'
       setTimeout(() => {
         childrenns.value.push({ element: el, height: el.scrollHeight })
-      }, 300)
+      }, 250)
     })
   }
   isUpdate.value = false
