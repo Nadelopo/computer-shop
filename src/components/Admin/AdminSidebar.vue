@@ -6,10 +6,7 @@ import { storeToRefs } from 'pinia'
 
 const isVisible = ref(false)
 
-const { setCategories } = useCategoriesStore()
 const { categories } = storeToRefs(useCategoriesStore())
-
-setCategories()
 </script>
 
 <template>
@@ -39,41 +36,40 @@ setCategories()
                 </router-link>
               </div>
             </template>
-            <div class="li">
-              <router-link
-                :to="{
-                  name: 'Admin',
-                  params: { link: 'categories' },
-                }"
-              >
-                создать категорию
-              </router-link>
-            </div>
-            <div class="li">
-              <router-link
-                :to="{
-                  name: 'Admin',
-                  params: { link: 'specifications' },
-                }"
-              >
-                добавление характеристик категориям
-              </router-link>
-            </div>
-
-            <div class="li">
-              <router-link
-                :to="{
-                  name: 'Admin',
-                  params: { link: 'categories' },
-                }"
-              >
-                создать фильтр
-              </router-link>
-            </div>
           </Accordion>
+          <div class="head">
+            <router-link
+              :to="{
+                name: 'Admin',
+                params: { link: 'categories' },
+              }"
+            >
+              Создать категорию
+            </router-link>
+          </div>
+          <div class="head">
+            <router-link
+              :to="{
+                name: 'Admin',
+                params: { link: 'specifications' },
+              }"
+            >
+              Добавление характеристик категории
+            </router-link>
+          </div>
+
+          <div class="head">
+            <router-link
+              :to="{
+                name: 'Admin',
+                params: { link: 'categories' },
+              }"
+            >
+              Создать фильтр
+            </router-link>
+          </div>
         </div>
       </div>
-      <div></div>
     </div>
   </div>
 </template>
@@ -91,9 +87,14 @@ setCategories()
   padding: 6px 0
   cursor: pointer
   user-select: none
+  a
+    display: block
+
 
 .li
   padding: 0 10px
   user-select: none
   cursor: pointer
+  a
+    display: block
 </style>

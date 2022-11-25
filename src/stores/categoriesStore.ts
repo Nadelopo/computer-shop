@@ -9,15 +9,24 @@ export interface IcategoriesValues {
 }
 
 export interface Icategories extends IcategoriesValues {
-  id: string
+  id: number
   created_at: Date
+}
+
+export interface IcategoryFields {
+  categoryId: number
+  title: string | number
+  type: boolean
+  visible: boolean
+  units: string
 }
 
 export const useCategoriesStore = defineStore('categories', {
   state: () => {
     const categories = ref<Icategories[]>([])
+    const categoryFields = ref<IcategoryFields[]>([])
 
-    return { categories }
+    return { categories, categoryFields }
   },
   actions: {
     async createCategory(params: IcategoriesValues) {
@@ -35,6 +44,14 @@ export const useCategoriesStore = defineStore('categories', {
         .select()
       if (error) console.log(error)
       if (data) this.categories = data
+    },
+    async createCategoryFields(form: IcategoryFields) {
+      const { data, error } = await supabase
+        .from<IcategoryFields>('categoryfields')
+        .insert(form)
+        .single()
+      if (error) console.log(error)
+      if (data) return true
     },
   },
 })

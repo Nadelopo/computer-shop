@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia'
 import { useUserStore } from './stores/userStore'
 import { supabase } from './supabase'
 import Navbar from './components/Navbar.vue'
+import { useCategoriesStore } from './stores/categoriesStore'
 
 const { userId, user } = storeToRefs(useUserStore())
 const { getUserData } = useUserStore()
@@ -26,6 +27,9 @@ const isNeed = computed((): boolean => {
   const href = useRoute().fullPath
   return !href.includes('admin') && !href.includes('auth')
 })
+
+const { setCategories } = useCategoriesStore()
+setCategories()
 </script>
 
 <template>

@@ -7,7 +7,6 @@ import categories from './AdminCategory.vue'
 import { computed } from 'vue'
 
 const route = useRoute()
-console.log(route.params.link)
 const currentComponent = computed(() => {
   const link = route.params.link
   if (route.path === '/admin') return Home
