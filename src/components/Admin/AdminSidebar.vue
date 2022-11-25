@@ -15,7 +15,7 @@ setCategories()
 <template>
   <div class="sidebar">
     <div class="mb-6">
-      <h1><router-link :to="{ name: 'Home' }">Главная</router-link></h1>
+      <h1><router-link :to="{ name: 'AdminHome' }">Главная</router-link></h1>
     </div>
     <div class="wrapper">
       <div class="head" @click="isVisible = !isVisible">Категории</div>
@@ -31,7 +31,8 @@ setCategories()
               >
                 <router-link
                   :to="{
-                    name: 'AdminHome',
+                    name: 'Admin',
+                    params: { link: 'categories' },
                   }"
                 >
                   {{ category.title }}
@@ -41,7 +42,8 @@ setCategories()
             <div class="li">
               <router-link
                 :to="{
-                  name: 'AdminCategory',
+                  name: 'Admin',
+                  params: { link: 'categories' },
                 }"
               >
                 создать категорию
@@ -50,7 +52,19 @@ setCategories()
             <div class="li">
               <router-link
                 :to="{
-                  name: 'AdminHome',
+                  name: 'Admin',
+                  params: { link: 'specifications' },
+                }"
+              >
+                добавление характеристик категориям
+              </router-link>
+            </div>
+
+            <div class="li">
+              <router-link
+                :to="{
+                  name: 'Admin',
+                  params: { link: 'categories' },
                 }"
               >
                 создать фильтр

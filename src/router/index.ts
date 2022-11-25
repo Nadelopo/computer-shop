@@ -18,12 +18,12 @@ const router = createRouter({
     {
       path: '/admin',
       name: 'AdminHome',
-      component: () => import('@/pages/Admin/AdminHome.vue'),
+      component: () => import('@/pages/Admin/AdminWrapper.vue'),
     },
     {
-      path: '/admin/category',
-      name: 'AdminCategory',
-      component: () => import('@/pages/Admin/AdminCategory.vue'),
+      path: '/admin/:link',
+      name: 'Admin',
+      component: () => import('@/pages/Admin/AdminWrapper.vue'),
     },
   ],
 })
