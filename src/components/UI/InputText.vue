@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch, type PropType } from 'vue'
+import { ref, watch } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -15,7 +15,7 @@ const props = defineProps({
     default: '',
   },
   required: {
-    type: Boolean as PropType<false>,
+    type: Boolean,
     default: true,
   },
 })
@@ -31,24 +31,17 @@ watch(
     }
   }
 )
-
-const input = ref<HTMLInputElement | null>(null)
-onMounted(() => {
-  if (input.value && props.required) {
-    input.value.setAttribute('required', '')
-  }
-})
 </script>
 
 <template>
   <div>
     <span class="wrapper">
       <input
-        ref="input"
         v-model="value"
         :type="type"
         class="input"
         :placeholder="placeholder"
+        :required="required"
         @input="$emit('update:modelValue', value)"
       />
     </span>
