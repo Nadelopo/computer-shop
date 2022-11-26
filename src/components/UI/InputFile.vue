@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { insertInStorage } from '@/utils/insertInStorage'
-import { removeFromStorage } from '@/utils/removeFromStorage'
 import { ref, watch } from 'vue'
+import { insertInStorage, removeFromStorage } from '@/utils/storageQueris'
 
 const props = defineProps({
   modelValue: {

@@ -1,25 +1,27 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { supabase } from '@/supabase'
+import { create, getAll } from '@/utils/dbQueries'
 
-export interface IcategoriesValues {
-  title: string
-  enTitle: string
-  img: string
-}
-
-export interface Icategories extends IcategoriesValues {
+interface defaultValuse {
   id: number
   created_at: Date
 }
 
-export interface IcategoryFields {
+export interface IcategoriesInsert {
+  title: string
+  enTitle: string
+  img: string
+}
+export interface Icategories extends defaultValuse, IcategoriesInsert {}
+
+export interface IcategoryFieldsInsert {
   categoryId: number
   title: string | number
   type: boolean
   visible: boolean
   units: string
 }
+export interface IcategoryFields extends defaultValuse, IcategoryFieldsInsert {}
 
 export const useCategoriesStore = defineStore('categories', {
   state: () => {
@@ -29,29 +31,30 @@ export const useCategoriesStore = defineStore('categories', {
     return { categories, categoryFields }
   },
   actions: {
-    async createCategory(params: IcategoriesValues) {
-      const { enTitle, title, img } = params
-      const { data, error } = await supabase
-        .from<Icategories>('categories')
-        .insert({ enTitle, title, img })
-        .single()
-      if (error) console.log(error)
-      if (data) this.categories.push(data)
-    },
     async setCategories() {
-      const { data, error } = await supabase
-        .from<Icategories>('categories')
-        .select()
-      if (error) console.log(error)
-      if (data) this.categories = data
+      const { data } = await getAll<Icategories>('categories')
+      if (data) {
+        this.categories = data
+      }
     },
-    async createCategoryFields(form: IcategoryFields) {
-      const { data, error } = await supabase
-        .from<IcategoryFields>('categoryfields')
-        .insert(form)
-        .single()
-      if (error) console.log(error)
-      if (data) return true
+    async createCategory(params: IcategoriesInsert) {
+      const { data } = await create<IcategoriesInsert, Icategories>(
+        'categories',
+        params
+      )
+      if (data) {
+        this.categories.push(data)
+      }
+    },
+    async createCategoryFields(form: IcategoryFieldsInsert) {
+      const { data } = await create<IcategoryFieldsInsert, IcategoryFields>(
+        'categoryfields',
+        form
+      )
+      if (data) {
+        this.categoryFields.push(data)
+        return true
+      }
     },
   },
 })
