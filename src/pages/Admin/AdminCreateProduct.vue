@@ -5,26 +5,28 @@ import {
   useCategoriesStore,
   type IcategoryFields,
 } from '@/stores/categoriesStore'
-import { useProductsStore, type IproductsForm } from '@/stores/productsStore'
+import {
+  useProductsStore,
+  type IproductForm,
+  type IspetificationsForm,
+} from '@/stores/productsStore'
 import InputText from '@/components/UI/InputText.vue'
 import InputFile from '@/components/UI/InputFile.vue'
 
-interface IformCategoryFields {
-  categoryFieldId: number
+interface IformCategoryFields extends Omit<IspetificationsForm, 'productId'> {
   productId: number | null
-  value: string
 }
 
 const route = useRoute()
 
 const { getCategoryFields } = useCategoriesStore()
-const { createProduct } = useProductsStore()
+const { createProduct, createSpecifications } = useProductsStore()
 
 const categoryId = ref<number>(Number(route.params.id))
 const categoryFields = ref<IcategoryFields[]>([])
 const categoryFormFields = ref<IformCategoryFields[]>([])
 
-const copyForm: IproductsForm = {
+const copyForm: IproductForm = {
   categoryId: categoryId.value,
   name: '',
   description: '',
@@ -38,7 +40,7 @@ const copyForm: IproductsForm = {
   countReviews: 0,
 }
 
-const products = ref<IproductsForm>({ ...copyForm })
+const products = ref<IproductForm>({ ...copyForm })
 
 const setCategoryFields = async () => {
   const { data } = await getCategoryFields(categoryId.value)
@@ -53,7 +55,6 @@ const setCategoryFields = async () => {
     })
     categoryFormFields.value = mapData
   } else categoryFormFields.value = []
-  console.log(categoryFormFields.value)
 }
 
 onBeforeMount(async () => {
@@ -70,9 +71,14 @@ watch(
   }
 )
 
-const create = () => {
-  createProduct(products.value)
-  console.log(categoryFormFields.value)
+const create = async () => {
+  const { data } = await createProduct(products.value)
+  if (data) {
+    const categoryFields = categoryFormFields.value.map((e) => {
+      return { ...e, productId: data.id }
+    })
+    createSpecifications(categoryFields)
+  }
 }
 </script>
 

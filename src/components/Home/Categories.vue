@@ -13,7 +13,7 @@ const { categories } = storeToRefs(useCategoriesStore())
         @click="
           $router.push({
             name: 'CategoryProducts',
-            params: { id: category.enTitle },
+            params: { category: category.enTitle, id: category.id },
           })
         "
       >

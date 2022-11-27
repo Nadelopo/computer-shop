@@ -32,7 +32,7 @@ const router = createRouter({
     },
 
     {
-      path: '/:id',
+      path: '/products/:category/:id',
       name: 'CategoryProducts',
       component: () => import('@/pages/CategoryProducts.vue'),
     },

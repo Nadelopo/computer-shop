@@ -1,5 +1,5 @@
 import { supabase } from '@/supabase'
-
+//fix
 export const getAll = async <T>(table: string) => {
   const { data, error } = await supabase.from<T>(table).select()
   if (error) console.log(error)
@@ -26,6 +26,13 @@ export const getAllFromField = async <T>(
 
 export const create = async <T, K>(table: string, params: T) => {
   const resp = await supabase.from<T>(table).insert(params).single()
+  if (resp.error) console.log(resp.error)
+  const data = resp.data as K | null
+  return { data }
+}
+
+export const createMany = async <T, K>(table: string, params: T) => {
+  const resp = await supabase.from<T>(table).insert(params)
   if (resp.error) console.log(resp.error)
   const data = resp.data as K | null
   return { data }
