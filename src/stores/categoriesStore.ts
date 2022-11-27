@@ -3,8 +3,8 @@ import { defineStore } from 'pinia'
 import { create, getAll } from '@/utils/dbQueries'
 
 interface defaultValuse {
-  id: number
-  created_at: Date
+  readonly id: number
+  readonly created_at: Date
 }
 
 export interface IcategoriesInsert {

@@ -3,8 +3,8 @@ import { defineStore } from 'pinia'
 import { getOneWithId } from '@/utils/dbQueries'
 
 export interface Iuser {
-  id: string
-  created_at: Date
+  readonly id: string
+  readonly created_at: Date
   email: string
   name: string
   phone: number
