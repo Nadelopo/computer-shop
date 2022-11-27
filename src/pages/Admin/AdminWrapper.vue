@@ -1,17 +1,19 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import Sidebar from '@/components/Admin/AdminSidebar.vue'
-import specifications from './AdminSpecifications.vue'
+import Specifications from './AdminSpecifications.vue'
 import Home from './AdminHome.vue'
-import categories from './AdminCategory.vue'
-import { computed } from 'vue'
+import Categories from './AdminCategory.vue'
+import CreateProduct from '@/components/Admin/CreateProduct.vue'
 
 const route = useRoute()
 const currentComponent = computed(() => {
   const link = route.params.link
   if (route.path === '/admin') return Home
-  if (link === 'categories') return categories
-  if (link === 'specifications') return specifications
+  if (link === 'categories') return Categories
+  if (link === 'specifications') return Specifications
+  if (link.includes('product')) return CreateProduct
   else return 'notFound'
 })
 </script>

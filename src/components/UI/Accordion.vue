@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onUpdated, ref, watch } from 'vue'
+import { onMounted, onUpdated, ref, watch } from 'vue'
 
 interface Ichildrens {
   element: HTMLElement
@@ -30,17 +30,23 @@ const childrenns = ref<Ichildrens[]>([])
 
 const isUpdate = ref(true)
 
-onUpdated(async () => {
-  if (isUpdate.value) {
-    const childs: HTMLElement[] = [...parent.value.children]
+const setChildrens = () => {
+  const childs: HTMLElement[] = [...parent.value.children]
 
-    childs.forEach(async (el) => {
-      el.style.paddingTop = '0'
-      el.style.paddingBottom = '0'
-      setTimeout(() => {
-        childrenns.value.push({ element: el, height: el.scrollHeight })
-      }, 250)
-    })
+  childs.forEach(async (el) => {
+    el.style.paddingTop = '0'
+    el.style.paddingBottom = '0'
+    setTimeout(() => {
+      childrenns.value.push({ element: el, height: el.scrollHeight })
+    }, 250)
+  })
+}
+
+onMounted(() => setChildrens())
+
+onUpdated(async () => {
+  if (isUpdate.value && !childrenns.value.length) {
+    setChildrens()
   }
   isUpdate.value = false
 })

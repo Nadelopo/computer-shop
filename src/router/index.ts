@@ -25,6 +25,11 @@ const router = createRouter({
       name: 'Admin',
       component: () => import('@/pages/Admin/AdminWrapper.vue'),
     },
+    {
+      path: '/:id',
+      name: 'CategoryProducts',
+      component: () => import('@/pages/CategoryProducts.vue'),
+    },
   ],
 })
 
