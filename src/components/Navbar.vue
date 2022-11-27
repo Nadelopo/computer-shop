@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import Swal from 'sweetalert2'
 import { useUserStore } from '../stores/userStore'
+import { supabase } from '@/supabase'
 import Popup from './UI/Popup.vue'
 import Sidebar from './Sidebar.vue'
 import UserSvg from '@/assets/icons/user.svg?component'
@@ -11,9 +12,12 @@ import FavouritesSVG from '@/assets/icons/favourites.svg?component'
 
 const { user, userId } = storeToRefs(useUserStore())
 
-const logout = (): void => {}
+const logout = async () => {
+  const { error } = await supabase.auth.signOut()
+  if (error) console.log(error)
+}
 
-const checkAuth = (): void => {
+const checkAuth = () => {
   if (!userId.value) {
     Swal.fire({
       icon: 'error',

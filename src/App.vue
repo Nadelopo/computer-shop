@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeMount } from 'vue'
+import { computed, onBeforeMount, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from './stores/userStore'
 import { supabase } from './supabase'
@@ -17,6 +17,18 @@ onBeforeMount(async () => {
       setUserData(user.id)
     }
     if (error) console.log(error)
+  }
+})
+
+const eventValue = ref('')
+supabase.auth.onAuthStateChange(async (event, session) => {
+  if (eventValue.value !== event) {
+    if (session?.user) {
+      setUserData(session.user.id)
+    } else {
+      setUserData('')
+    }
+    eventValue.value = event
   }
 })
 
