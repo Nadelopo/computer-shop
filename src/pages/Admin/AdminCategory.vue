@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import InputFile from '@/components/UI/InputFile.vue'
 import InputText from '@/components/UI/InputText.vue'
-import {
-  useCategoriesStore,
-  type IcategoriesInsert,
-} from '@/stores/categoriesStore'
+import { useCategoriesStore } from '@/stores/categoriesStore'
+import type { IcategoriesInsert } from '@/stores/categoriesStore/types'
 import { ref } from 'vue'
 
 const { createCategory } = useCategoriesStore()

@@ -1,44 +1,15 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import type { defaultValues } from './types'
 import { create, createMany, getAllFromField } from '@/utils/dbQueries'
 import { supabase } from '@/supabase'
-
-export interface IspetificationsForm {
-  productId: number
-  value: string
-  categoryFieldId: number
-}
-
-export interface Ispetifications extends defaultValues, IspetificationsForm {}
-
-export interface IproductForm {
-  categoryId: number
-  name: string
-  description: string
-  manufacturer: string
-  img: string
-  warranty: number
-  quantity: number
-  price: number
-  rating: number
-  countReviews: number
-  popularity: number
-}
-
-interface Iproduct extends defaultValues, IproductForm {}
-
-interface IspecificationsProductCard {
-  categoryFieldId: {
-    title: string
-    units: string
-  }
-  value: string
-}
-
-interface IproductCard extends defaultValues, IproductForm {
-  fields: IspecificationsProductCard[]
-}
+import type {
+  Iproduct,
+  IproductCard,
+  IproductForm,
+  IspecificationsProductCard,
+  Ispetifications,
+  IspetificationsForm,
+} from './types'
 
 export const useProductsStore = defineStore('products', {
   state: () => {
@@ -66,7 +37,7 @@ export const useProductsStore = defineStore('products', {
     },
     //fix
     async getProductsCard(categoryId: number) {
-      const products: IproductCard[] = []
+      const products = ref<IproductCard[]>([])
       const { data } = await getAllFromField<any>(
         'products',
         'categoryId',
@@ -83,7 +54,7 @@ export const useProductsStore = defineStore('products', {
           if (fieldsError) console.log(fieldsError)
           if (fields) {
             product.fields = fields
-            products.push(product)
+            products.value.push(product)
             // console.log(product)
           }
         })

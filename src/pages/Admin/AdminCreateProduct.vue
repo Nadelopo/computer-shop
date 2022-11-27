@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import {
-  useCategoriesStore,
-  type IcategoryFields,
-} from '@/stores/categoriesStore'
-import {
-  useProductsStore,
-  type IproductForm,
-  type IspetificationsForm,
-} from '@/stores/productsStore'
+import { useCategoriesStore } from '@/stores/categoriesStore'
+import { useProductsStore } from '@/stores/productsStore'
 import InputText from '@/components/UI/InputText.vue'
 import InputFile from '@/components/UI/InputFile.vue'
+import type { IcategoryFields } from '@/stores/categoriesStore/types'
+import type {
+  IproductForm,
+  IspetificationsForm,
+} from '@/stores/productsStore/types'
 
 interface IformCategoryFields extends Omit<IspetificationsForm, 'productId'> {
   productId: number | null
@@ -102,7 +100,7 @@ const create = async () => {
         </div>
         <div>
           <label>изображение</label>
-          <InputFile v-model.trim="products.img" :required="false" />
+          <InputFile v-model.trim="products.img" />
         </div>
 
         <div>

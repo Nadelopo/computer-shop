@@ -2,11 +2,9 @@
 import { ref, watch } from 'vue'
 import DoubleButtons from '@/components/UI/DoubleButtons.vue'
 import InputText from '@/components/UI/InputText.vue'
-import {
-  useCategoriesStore,
-  type IcategoryFieldsInsert,
-} from '@/stores/categoriesStore'
+import { useCategoriesStore } from '@/stores/categoriesStore'
 import { storeToRefs } from 'pinia'
+import type { IcategoryFieldsInsert } from '@/stores/categoriesStore/types'
 
 const { categories } = storeToRefs(useCategoriesStore())
 const { createCategoryFields } = useCategoriesStore()
