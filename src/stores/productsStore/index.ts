@@ -38,24 +38,22 @@ export const useProductsStore = defineStore('products', {
     //fix
     async getProductsCard(categoryId: number) {
       const products = ref<IproductCard[]>([])
-      const { data } = await getAllFromField<any>(
+      const { data } = await getAllFromField<Iproduct>(
         'products',
         'categoryId',
         categoryId
       )
+
       if (data) {
-        // console.log(data)
-        data.forEach(async (product: IproductCard) => {
-          // console.log(product)
+        data.forEach(async (product) => {
           const { data: fields, error: fieldsError } = await supabase
             .from<IspecificationsProductCard>('specifications')
             .select('value,  categoryFieldId!inner(title, units)')
             .match({ 'categoryFieldId.visible': true, productId: product.id })
           if (fieldsError) console.log(fieldsError)
           if (fields) {
-            product.fields = fields
-            products.value.push(product)
-            // console.log(product)
+            const newProduct: IproductCard = { ...product, fields }
+            products.value.push(newProduct)
           }
         })
       }
