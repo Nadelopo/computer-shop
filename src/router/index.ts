@@ -26,6 +26,12 @@ const router = createRouter({
       component: () => import('@/pages/Admin/AdminWrapper.vue'),
     },
     {
+      path: '/admin/product/:link',
+      name: 'AdminCreateProducts',
+      component: () => import('@/pages/Admin/AdminWrapper.vue'),
+    },
+
+    {
       path: '/:id',
       name: 'CategoryProducts',
       component: () => import('@/pages/CategoryProducts.vue'),

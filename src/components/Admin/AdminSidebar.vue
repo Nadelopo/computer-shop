@@ -28,8 +28,8 @@ const { categories } = storeToRefs(useCategoriesStore())
               >
                 <router-link
                   :to="{
-                    name: 'Admin',
-                    params: { link: 'categories' },
+                    name: 'AdminCreateProducts',
+                    params: { link: category.enTitle },
                   }"
                 >
                   {{ category.title }}

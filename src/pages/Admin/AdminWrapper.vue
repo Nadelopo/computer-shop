@@ -5,7 +5,7 @@ import Sidebar from '@/components/Admin/AdminSidebar.vue'
 import Specifications from './AdminSpecifications.vue'
 import Home from './AdminHome.vue'
 import Categories from './AdminCategory.vue'
-import CreateProduct from '@/components/Admin/CreateProduct.vue'
+import CreateProduct from './AdminCreateProduct.vue'
 
 const route = useRoute()
 const currentComponent = computed(() => {
@@ -13,7 +13,7 @@ const currentComponent = computed(() => {
   if (route.path === '/admin') return Home
   if (link === 'categories') return Categories
   if (link === 'specifications') return Specifications
-  if (link.includes('product')) return CreateProduct
+  if (route.path.includes('product')) return CreateProduct
   else return 'notFound'
 })
 </script>
