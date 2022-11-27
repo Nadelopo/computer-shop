@@ -43,7 +43,7 @@ const create = async () => {
 </script>
 
 <template>
-  <form class="list" @submit.prevent="create">
+  <form class="list__form" @submit.prevent="create">
     <div v-if="categories">
       <select v-model="select" required>
         <option value="" selected disabled hidden>выберите категорию</option>
@@ -88,11 +88,3 @@ const create = async () => {
     </div>
   </form>
 </template>
-
-<style scoped lang="sass">
-
-.list
-  display: flex
-  flex-direction: column
-  gap: 20px
-</style>

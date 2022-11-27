@@ -26,7 +26,7 @@ const create = () => {
 </script>
 
 <template>
-  <form class="list" @submit.prevent="create">
+  <form class="list__form" @submit.prevent="create">
     <div>
       <label>загрузить изображение</label>
       <InputFile v-model="form.img" class="mt-4" />
@@ -44,11 +44,3 @@ const create = () => {
     </div>
   </form>
 </template>
-
-<style scoped lang="sass">
-
-.list
-  display: flex
-  flex-direction: column
-  gap: 20px
-</style>

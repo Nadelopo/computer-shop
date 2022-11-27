@@ -1,18 +1,14 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { create, getAll } from '@/utils/dbQueries'
-
-interface defaultValuse {
-  readonly id: number
-  readonly created_at: Date
-}
+import { create, getAll, getAllFromField } from '@/utils/dbQueries'
+import type { defaultValues } from './types'
 
 export interface IcategoriesInsert {
   title: string
   enTitle: string
   img: string
 }
-export interface Icategories extends defaultValuse, IcategoriesInsert {}
+export interface Icategories extends defaultValues, IcategoriesInsert {}
 
 export interface IcategoryFieldsInsert {
   categoryId: number
@@ -21,7 +17,7 @@ export interface IcategoryFieldsInsert {
   visible: boolean
   units: string
 }
-export interface IcategoryFields extends defaultValuse, IcategoryFieldsInsert {}
+export interface IcategoryFields extends defaultValues, IcategoryFieldsInsert {}
 
 export const useCategoriesStore = defineStore('categories', {
   state: () => {
@@ -55,6 +51,14 @@ export const useCategoriesStore = defineStore('categories', {
         this.categoryFields.push(data)
         return true
       }
+    },
+    async getCategoryFields(categoryId: number) {
+      const { data } = await getAllFromField<IcategoryFields>(
+        'categoryfields',
+        'categoryId',
+        categoryId
+      )
+      return { data }
     },
   },
 })

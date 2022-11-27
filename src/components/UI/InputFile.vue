@@ -7,6 +7,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  required: {
+    type: Boolean,
+    default: true,
+  },
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -50,7 +54,13 @@ watch(
 <template>
   <div>
     <span class="wrapper">
-      <input ref="input" type="file" class="input" required @input="onInput" />
+      <input
+        ref="input"
+        type="file"
+        class="input"
+        :required="required"
+        @input="onInput"
+      />
     </span>
     <div v-if="modelValue">
       <img :src="modelValue" class="my-2" alt="картинка" width="300" />
