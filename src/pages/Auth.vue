@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
 import { supabase } from '@/supabase'
-import type { Iuser } from '@/stores/userStore'
+import type { Iuser } from '@/stores/userStore/types'
 
 const router = useRouter()
 

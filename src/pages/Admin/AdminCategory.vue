@@ -27,7 +27,7 @@ const create = () => {
   <form class="list__form" @submit.prevent="create">
     <div>
       <label>загрузить изображение</label>
-      <InputFile v-model="form.img" class="mt-4" />
+      <InputFile v-model="form.img" class="mt-4" folder="categories" />
     </div>
     <div>
       <label>наименование на английском</label>

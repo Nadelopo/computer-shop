@@ -1,15 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { getOneWithId } from '@/utils/dbQueries'
-
-export interface Iuser {
-  readonly id: string
-  readonly created_at: Date
-  email: string
-  name: string
-  phone: number
-  role: number
-}
+import type { Iuser } from './types'
 
 export const useUserStore = defineStore('user', {
   state: () => {

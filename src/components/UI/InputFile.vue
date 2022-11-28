@@ -11,6 +11,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  folder: {
+    type: String,
+    required: true,
+  },
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -20,7 +24,7 @@ const onInput = async (event: Event) => {
   const target = event.target as HTMLInputElement
   if (target?.files) {
     imageData.value = target.files[0]
-    const url = await insertInStorage('categories', imageData.value)
+    const url = await insertInStorage(props.folder, imageData.value)
     if (url) emit('update:modelValue', url)
   }
 }
@@ -28,7 +32,7 @@ const onInput = async (event: Event) => {
 const remove = async () => {
   if (imageData.value) {
     const isSuccess = await removeFromStorage(
-      'categories',
+      props.folder,
       imageData.value.name
     )
     if (isSuccess) {
