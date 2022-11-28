@@ -4,14 +4,14 @@ import DoubleButtons from '@/components/UI/DoubleButtons.vue'
 import InputText from '@/components/UI/InputText.vue'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { storeToRefs } from 'pinia'
-import type { IcategoryFieldsInsert } from '@/stores/categoriesStore/types'
+import type { IcategoryFieldCU } from '@/stores/categoriesStore/types'
 
 const { categories } = storeToRefs(useCategoriesStore())
 const { createCategoryFields } = useCategoriesStore()
 
 const select = ref('')
 
-const form = ref<IcategoryFieldsInsert>({
+const form = ref<IcategoryFieldCU>({
   categoryId: 0,
   title: '',
   type: true,

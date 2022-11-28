@@ -1,14 +1,15 @@
 import type { defaultValues } from '../types'
 
-export interface IspetificationsForm {
+// C - create(insert) U - update
+export interface IspetificationsCU {
   productId: number
   value: string
   categoryFieldId: number
 }
 
-export interface Ispetifications extends defaultValues, IspetificationsForm {}
+export interface Ispetification extends defaultValues, IspetificationsCU {}
 
-export interface IproductForm {
+export interface IproductCU {
   categoryId: number
   name: string
   description: string
@@ -20,11 +21,12 @@ export interface IproductForm {
   rating: number
   countReviews: number
   popularity: number
+  discount: number
 }
 
-export interface Iproduct extends defaultValues, IproductForm {}
+export interface Iproduct extends defaultValues, IproductCU {}
 
-export interface IspecificationsProductCard {
+export interface IproductSpecification {
   categoryFieldId: {
     title: string
     units: string
@@ -34,6 +36,6 @@ export interface IspecificationsProductCard {
   productId: number
 }
 
-export interface IproductCard extends defaultValues, IproductForm {
-  fields: IspecificationsProductCard[]
+export interface IproductWithSpecifications extends defaultValues, IproductCU {
+  fields: IproductSpecification[]
 }

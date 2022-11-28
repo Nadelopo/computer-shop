@@ -4,10 +4,10 @@ import { create, createMany, getAllFromColumn } from '@/utils/dbQueries'
 import { supabase } from '@/supabase'
 import type {
   Iproduct,
-  IproductCard,
-  IproductForm,
-  IspecificationsProductCard,
-  IspetificationsForm,
+  IproductWithSpecifications,
+  IproductCU,
+  IproductSpecification,
+  IspetificationsCU,
 } from './types'
 
 export const useProductsStore = defineStore('products', {
@@ -17,12 +17,12 @@ export const useProductsStore = defineStore('products', {
     return { products }
   },
   actions: {
-    async createProduct(params: IproductForm) {
+    async createProduct(params: IproductCU) {
       const { data } = await create('products', params)
 
       return { data }
     },
-    async createSpecifications(params: IspetificationsForm[]) {
+    async createSpecifications(params: IspetificationsCU[]) {
       const { data } = await createMany('specifications', params)
       if (data) {
         console.log(data)
@@ -30,7 +30,7 @@ export const useProductsStore = defineStore('products', {
     },
     //fix
     async getProductsCard(categoryId: number) {
-      const products = ref<IproductCard[]>([])
+      const products = ref<IproductWithSpecifications[]>([])
       const { data } = await getAllFromColumn<Iproduct>(
         'products',
         'categoryId',
@@ -40,12 +40,15 @@ export const useProductsStore = defineStore('products', {
       if (data) {
         data.forEach(async (product) => {
           const { data: fields, error: fieldsError } = await supabase
-            .from<IspecificationsProductCard>('specifications')
+            .from<IproductSpecification>('specifications')
             .select('value,  categoryFieldId!inner(title, units, visible)')
             .eq('productId', product.id)
           if (fieldsError) console.log(fieldsError)
           if (fields) {
-            const newProduct: IproductCard = { ...product, fields }
+            const newProduct: IproductWithSpecifications = {
+              ...product,
+              fields,
+            }
             products.value.push(newProduct)
           }
         })

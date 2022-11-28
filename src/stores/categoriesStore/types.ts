@@ -1,17 +1,18 @@
 import type { defaultValues } from '../types'
 
-export interface IcategoriesInsert {
+// C - create(insert) U - update
+export interface IcategoriesCU {
   title: string
   enTitle: string
   img: string
 }
-export interface Icategories extends defaultValues, IcategoriesInsert {}
+export interface Icategories extends defaultValues, IcategoriesCU {}
 
-export interface IcategoryFieldsInsert {
+export interface IcategoryFieldCU {
   categoryId: number
   title: string | number
   type: boolean
   visible: boolean
   units: string
 }
-export interface IcategoryFields extends defaultValues, IcategoryFieldsInsert {}
+export interface IcategoryField extends defaultValues, IcategoryFieldCU {}

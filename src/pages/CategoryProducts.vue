@@ -3,11 +3,11 @@ import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProductsStore } from '@/stores/productsStore'
 import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
-import type { IproductCard } from '@/stores/productsStore/types'
+import type { IproductWithSpecifications } from '@/stores/productsStore/types'
 
 const { getProductsCard } = useProductsStore()
 
-const products = ref<IproductCard[]>([])
+const products = ref<IproductWithSpecifications[]>([])
 
 onMounted(async () => {
   const data = await getProductsCard(Number(useRoute().params.id))

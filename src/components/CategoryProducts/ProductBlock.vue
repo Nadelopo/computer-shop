@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { IproductCard } from '@/stores/productsStore/types'
+import type { IproductWithSpecifications } from '@/stores/productsStore/types'
 // import CartButton from '../UI/CartButton.vue'
 defineProps({
   item: {
-    type: Object as PropType<IproductCard>,
+    type: Object as PropType<IproductWithSpecifications>,
     default: () => {},
   },
 })

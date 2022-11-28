@@ -5,13 +5,13 @@ import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useProductsStore } from '@/stores/productsStore'
 import InputText from '@/components/UI/InputText.vue'
 import InputFile from '@/components/UI/InputFile.vue'
-import type { IcategoryFields } from '@/stores/categoriesStore/types'
+import type { IcategoryField } from '@/stores/categoriesStore/types'
 import type {
-  IproductForm,
-  IspetificationsForm,
+  IproductCU,
+  IspetificationsCU,
 } from '@/stores/productsStore/types'
 
-interface IformCategoryFields extends Omit<IspetificationsForm, 'productId'> {
+interface IformCategoryFields extends Omit<IspetificationsCU, 'productId'> {
   productId: number | null
 }
 
@@ -21,10 +21,10 @@ const { getCategoryFields } = useCategoriesStore()
 const { createProduct, createSpecifications } = useProductsStore()
 
 const categoryId = ref<number>(Number(route.params.id))
-const categoryFields = ref<IcategoryFields[]>([])
+const categoryFields = ref<IcategoryField[]>([])
 const categoryFormFields = ref<IformCategoryFields[]>([])
 
-const copyForm: IproductForm = {
+const copyForm: IproductCU = {
   categoryId: categoryId.value,
   name: '',
   description: '',
@@ -36,9 +36,10 @@ const copyForm: IproductForm = {
   quantity: 100,
   rating: 0,
   countReviews: 0,
+  discount: 0,
 }
 
-const products = ref<IproductForm>({ ...copyForm })
+const products = ref<IproductCU>({ ...copyForm })
 
 const setCategoryFields = async () => {
   const { data } = await getCategoryFields(categoryId.value)

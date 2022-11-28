@@ -3,15 +3,15 @@ import { defineStore } from 'pinia'
 import { create, getAll, getAllFromColumn } from '@/utils/dbQueries'
 import type {
   Icategories,
-  IcategoriesInsert,
-  IcategoryFields,
-  IcategoryFieldsInsert,
+  IcategoriesCU,
+  IcategoryField,
+  IcategoryFieldCU,
 } from './types'
 
 export const useCategoriesStore = defineStore('categories', {
   state: () => {
     const categories = ref<Icategories[]>([])
-    const categoryFields = ref<IcategoryFields[]>([])
+    const categoryFields = ref<IcategoryField[]>([])
 
     return { categories, categoryFields }
   },
@@ -22,13 +22,13 @@ export const useCategoriesStore = defineStore('categories', {
         this.categories = data
       }
     },
-    async createCategory(params: IcategoriesInsert) {
+    async createCategory(params: IcategoriesCU) {
       const { data } = await create('categories', params)
       if (data) {
         this.categories.push(data)
       }
     },
-    async createCategoryFields(form: IcategoryFieldsInsert) {
+    async createCategoryFields(form: IcategoryFieldCU) {
       const { data } = await create('categoryfields', form)
       if (data) {
         this.categoryFields.push(data)
@@ -36,7 +36,7 @@ export const useCategoriesStore = defineStore('categories', {
       }
     },
     async getCategoryFields(categoryId: number) {
-      const { data } = await getAllFromColumn<IcategoryFields>(
+      const { data } = await getAllFromColumn<IcategoryField>(
         'categoryfields',
         'categoryId',
         categoryId
