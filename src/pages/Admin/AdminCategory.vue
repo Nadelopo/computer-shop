@@ -2,12 +2,12 @@
 import InputFile from '@/components/UI/InputFile.vue'
 import InputText from '@/components/UI/InputText.vue'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import type { IcategoriesCU } from '@/stores/categoriesStore/types'
+import type { IcategoryCU } from '@/stores/categoriesStore/types'
 import { ref } from 'vue'
 
 const { createCategory } = useCategoriesStore()
 
-let form = ref<IcategoriesCU>({
+let form = ref<IcategoryCU>({
   img: '',
   title: '',
   enTitle: '',

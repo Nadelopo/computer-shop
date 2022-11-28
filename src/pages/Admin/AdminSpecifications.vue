@@ -4,14 +4,14 @@ import DoubleButtons from '@/components/UI/DoubleButtons.vue'
 import InputText from '@/components/UI/InputText.vue'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { storeToRefs } from 'pinia'
-import type { IcategoryFieldCU } from '@/stores/categoriesStore/types'
+import type { IcategorySpecificationsCU } from '@/stores/categoriesStore/types'
 
 const { categories } = storeToRefs(useCategoriesStore())
-const { createCategoryFields } = useCategoriesStore()
+const { createCategorySpecifications } = useCategoriesStore()
 
 const select = ref('')
 
-const form = ref<IcategoryFieldCU>({
+const form = ref<IcategorySpecificationsCU>({
   categoryId: 0,
   title: '',
   type: true,
@@ -26,7 +26,7 @@ watch(select, (cur) => {
 })
 
 const create = async () => {
-  const resp = await createCategoryFields(form.value)
+  const resp = await createCategorySpecifications(form.value)
   if (resp) {
     form.value = {
       categoryId: 0,

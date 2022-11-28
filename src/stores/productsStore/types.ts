@@ -4,7 +4,7 @@ import type { defaultValues } from '../types'
 export interface IspetificationsCU {
   productId: number
   value: string
-  categoryFieldId: number
+  categorySpecificationsId: number
 }
 
 export interface Ispetification extends defaultValues, IspetificationsCU {}
@@ -27,7 +27,7 @@ export interface IproductCU {
 export interface Iproduct extends defaultValues, IproductCU {}
 
 export interface IproductSpecification {
-  categoryFieldId: {
+  categorySpecificationsId: {
     title: string
     units: string
     visible: boolean
@@ -37,5 +37,5 @@ export interface IproductSpecification {
 }
 
 export interface IproductWithSpecifications extends defaultValues, IproductCU {
-  fields: IproductSpecification[]
+  specifications: IproductSpecification[]
 }

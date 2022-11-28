@@ -5,24 +5,25 @@ import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useProductsStore } from '@/stores/productsStore'
 import InputText from '@/components/UI/InputText.vue'
 import InputFile from '@/components/UI/InputFile.vue'
-import type { IcategoryField } from '@/stores/categoriesStore/types'
+import type { IcategorySpecifications } from '@/stores/categoriesStore/types'
 import type {
   IproductCU,
   IspetificationsCU,
 } from '@/stores/productsStore/types'
 
-interface IformCategoryFields extends Omit<IspetificationsCU, 'productId'> {
+interface IformCategorySpecifications
+  extends Omit<IspetificationsCU, 'productId'> {
   productId: number | null
 }
 
 const route = useRoute()
 
-const { getCategoryFields } = useCategoriesStore()
+const { getCategorySpecifications } = useCategoriesStore()
 const { createProduct, createSpecifications } = useProductsStore()
 
 const categoryId = ref<number>(Number(route.params.id))
-const categoryFields = ref<IcategoryField[]>([])
-const categoryFormFields = ref<IformCategoryFields[]>([])
+const categorySpecifications = ref<IcategorySpecifications[]>([])
+const categoryFormSpecifications = ref<IformCategorySpecifications[]>([])
 
 const copyForm: IproductCU = {
   categoryId: categoryId.value,
@@ -41,23 +42,23 @@ const copyForm: IproductCU = {
 
 const products = ref<IproductCU>({ ...copyForm })
 
-const setCategoryFields = async () => {
-  const { data } = await getCategoryFields(categoryId.value)
+const setCategorySpecifications = async () => {
+  const { data } = await getCategorySpecifications(categoryId.value)
   if (data) {
-    categoryFields.value = data
+    categorySpecifications.value = data
     const mapData = data.map((e) => {
       return {
-        categoryFieldId: e.id,
+        categorySpecificationsId: e.id,
         value: '',
         productId: null,
       }
     })
-    categoryFormFields.value = mapData
-  } else categoryFormFields.value = []
+    categoryFormSpecifications.value = mapData
+  } else categoryFormSpecifications.value = []
 }
 
 onBeforeMount(async () => {
-  setCategoryFields()
+  setCategorySpecifications()
 })
 
 watch(
@@ -65,7 +66,7 @@ watch(
   (cur) => {
     if (cur) {
       categoryId.value = Number(cur)
-      setCategoryFields()
+      setCategorySpecifications()
     }
   }
 )
@@ -73,7 +74,7 @@ watch(
 const create = async () => {
   const { data } = await createProduct(products.value)
   if (data) {
-    const productFields = categoryFormFields.value.map((e) => {
+    const productFields = categoryFormSpecifications.value.map((e) => {
       return { ...e, productId: data.id }
     })
     createSpecifications(productFields)
@@ -84,11 +85,14 @@ const create = async () => {
 <template>
   <form @submit.prevent="create">
     <div class="list__form">
-      <div v-for="(field, i) in categoryFields" :key="field.id">
+      <div
+        v-for="(specification, i) in categorySpecifications"
+        :key="specification.id"
+      >
         <label>
-          {{ field.title }}
+          {{ specification.title }}
         </label>
-        <InputText v-model.trim="categoryFormFields[i].value" />
+        <InputText v-model.trim="categoryFormSpecifications[i].value" />
       </div>
       <template v-if="products">
         <div>

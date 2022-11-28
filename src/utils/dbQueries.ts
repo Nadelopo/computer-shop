@@ -16,10 +16,10 @@ export const getOneWithId = async <T>(table: string, id: string | number) => {
 
 export const getAllFromColumn = async <T>(
   table: string,
-  field: string,
+  column: string,
   id: string | number | boolean
 ) => {
-  const resp = await supabase.from(table).select().eq(field, id)
+  const resp = await supabase.from(table).select().eq(column, id)
   if (resp.error) console.log(resp.error)
   const data: T[] | null = resp.data
   return { data }

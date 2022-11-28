@@ -39,15 +39,17 @@ export const useProductsStore = defineStore('products', {
 
       if (data) {
         data.forEach(async (product) => {
-          const { data: fields, error: fieldsError } = await supabase
+          const { data: specifications, error } = await supabase
             .from<IproductSpecification>('specifications')
-            .select('value,  categoryFieldId!inner(title, units, visible)')
+            .select(
+              'value,  categorySpecificationsId!inner(title, units, visible)'
+            )
             .eq('productId', product.id)
-          if (fieldsError) console.log(fieldsError)
-          if (fields) {
+          if (error) console.log(error)
+          if (specifications) {
             const newProduct: IproductWithSpecifications = {
               ...product,
-              fields,
+              specifications,
             }
             products.value.push(newProduct)
           }

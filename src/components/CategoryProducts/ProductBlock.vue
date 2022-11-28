@@ -24,13 +24,19 @@ defineProps({
           </div>
         </div>
         <div
-          v-for="field in item.fields"
-          :key="field.categoryFieldId.title"
+          v-for="specification in item.specifications"
+          :key="specification.categorySpecificationsId.title"
           class="flex flex-col gap-2"
         >
-          <div v-if="field.categoryFieldId.visible" class="flex gap-2">
-            <div>{{ field.categoryFieldId.title }}</div>
-            <div>{{ field.value }} {{ field.categoryFieldId.units }}</div>
+          <div
+            v-if="specification.categorySpecificationsId.visible"
+            class="flex gap-2"
+          >
+            <div>{{ specification.categorySpecificationsId.title }}</div>
+            <div>
+              {{ specification.value }}
+              {{ specification.categorySpecificationsId.units }}
+            </div>
           </div>
         </div>
       </div>
