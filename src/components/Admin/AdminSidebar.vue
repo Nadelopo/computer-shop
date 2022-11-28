@@ -11,64 +11,73 @@ const { categories } = storeToRefs(useCategoriesStore())
 
 <template>
   <div class="sidebar">
-    <div class="mb-6">
+    <div class="mb-6 flex justify-between items-center">
       <h1><router-link :to="{ name: 'AdminHome' }">Главная</router-link></h1>
+      <router-link :to="{ name: 'Home' }">
+        <img src="@/assets/img/logoChangeWhiteSizeFnew.png" width="95" alt="" />
+      </router-link>
     </div>
-    <div class="wrapper">
+    <div class="list">
       <div class="head" @click="isVisible = !isVisible">Категории</div>
-      <div class="overflow-hidden">
-        <div class="list">
-          <Accordion :visible="isVisible">
-            <template v-if="categories">
-              <div
-                v-for="category in categories"
-                :key="category.title"
-                ref="listRef"
-                class="li"
-              >
-                <router-link
-                  :to="{
-                    name: 'AdminCreateProducts',
-                    params: { link: category.enTitle, id: category.id },
-                  }"
-                >
-                  {{ category.title }}
-                </router-link>
-              </div>
-            </template>
-          </Accordion>
-          <div class="head">
+      <Accordion :visible="isVisible">
+        <template v-if="categories">
+          <div
+            v-for="category in categories"
+            :key="category.title"
+            ref="listRef"
+            class="li"
+          >
             <router-link
               :to="{
-                name: 'Admin',
-                params: { link: 'categories' },
+                name: 'AdminCreateProducts',
+                params: { link: category.enTitle, id: category.id },
               }"
             >
-              Создать категорию
+              {{ category.title }}
             </router-link>
           </div>
-          <div class="head">
-            <router-link
-              :to="{
-                name: 'Admin',
-                params: { link: 'specifications' },
-              }"
-            >
-              Добавление характеристик категории
-            </router-link>
-          </div>
+        </template>
+      </Accordion>
+      <div class="head">
+        <router-link
+          :to="{
+            name: 'Admin',
+            params: { link: 'categories' },
+          }"
+        >
+          Создать категорию
+        </router-link>
+      </div>
+      <div class="head">
+        <router-link
+          :to="{
+            name: 'Admin',
+            params: { link: 'specifications' },
+          }"
+        >
+          Добавление характеристик категории
+        </router-link>
+      </div>
 
-          <div class="head">
-            <router-link
-              :to="{
-                name: 'Admin',
-                params: { link: 'categories' },
-              }"
-            >
-              Создать фильтр
-            </router-link>
-          </div>
-        </div>
+      <div class="head">
+        <router-link
+          :to="{
+            name: 'Admin',
+            params: { link: 'categories' },
+          }"
+        >
+          Создать фильтр
+        </router-link>
+      </div>
+      <div class="head">
+        <router-link
+          :to="{
+            name: 'Admin',
+            params: { link: 'manufacturers' },
+          }"
+        >
+          добавить производителя
+        </router-link>
       </div>
     </div>
   </div>
@@ -89,7 +98,6 @@ const { categories } = storeToRefs(useCategoriesStore())
   user-select: none
   a
     display: block
-
 
 .li
   padding: 0 10px

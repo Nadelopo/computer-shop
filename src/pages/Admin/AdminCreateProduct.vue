@@ -92,7 +92,10 @@ const create = async () => {
         <label>
           {{ specification.title }}
         </label>
-        <InputText v-model.trim="categoryFormSpecifications[i].value" />
+        <InputText
+          v-model.trim="categoryFormSpecifications[i].value"
+          :type="specification.type ? 'number' : 'text'"
+        />
       </div>
       <template v-if="products">
         <div>

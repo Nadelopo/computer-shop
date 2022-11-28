@@ -6,6 +6,7 @@ import Specifications from './AdminSpecifications.vue'
 import Home from './AdminHome.vue'
 import Categories from './AdminCategory.vue'
 import CreateProduct from './AdminCreateProduct.vue'
+import Manufacturers from './AdminManufacturers.vue'
 
 const route = useRoute()
 const currentComponent = computed(() => {
@@ -13,6 +14,7 @@ const currentComponent = computed(() => {
   if (route.path === '/admin') return Home
   if (link === 'categories') return Categories
   if (link === 'specifications') return Specifications
+  if (link === 'manufacturers') return Manufacturers
   if (route.path.includes('product')) return CreateProduct
   else return 'notFound'
 })
