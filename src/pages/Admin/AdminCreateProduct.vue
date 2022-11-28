@@ -74,10 +74,10 @@ watch(
 const create = async () => {
   const { data } = await createProduct(products.value)
   if (data) {
-    const productFields = categoryFormSpecifications.value.map((e) => {
+    const productSpecifications = categoryFormSpecifications.value.map((e) => {
       return { ...e, productId: data.id }
     })
-    createSpecifications(productFields)
+    createSpecifications(productSpecifications)
   }
 }
 </script>
