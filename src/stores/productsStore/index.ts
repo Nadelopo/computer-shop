@@ -1,7 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { create, createMany, getAllFromColumn } from '@/utils/dbQueries'
-import { supabase } from '@/supabase'
+import { create, createMany, getAllByColumn } from '@/utils/dbQueries'
 import type {
   Iproduct,
   IproductWithSpecifications,
@@ -14,38 +13,37 @@ export const useProductsStore = defineStore('products', {
   state: () => {
     const products = ref<Iproduct[]>([])
 
-    return { products }
-  },
-  actions: {
-    async createProduct(params: IproductCU) {
+    const createProduct = async (params: IproductCU) => {
       const { data } = await create('products', params)
 
       return { data }
-    },
-    async createSpecifications(params: IspetificationsCU[]) {
+    }
+
+    const createSpecifications = async (params: IspetificationsCU[]) => {
       const { data } = await createMany('specifications', params)
       if (data) {
         console.log(data)
       }
-    },
+    }
+
     //fix
-    async getProductsCard(categoryId: number) {
+    const getProductsCard = async (categoryId: number) => {
       const products = ref<IproductWithSpecifications[]>([])
-      const { data } = await getAllFromColumn<Iproduct>(
+      const { data } = await getAllByColumn<Iproduct>(
         'products',
         'categoryId',
         categoryId
       )
-
-      if (data) {
+      if (data?.length) {
         data.forEach(async (product) => {
-          const { data: specifications, error } = await supabase
-            .from<IproductSpecification>('specifications')
-            .select(
+          const { data: specifications } =
+            await getAllByColumn<IproductSpecification>(
+              'specifications',
+              'productId',
+              product.id,
               'value,  categorySpecificationsId!inner(title, units, visible)'
             )
-            .eq('productId', product.id)
-          if (error) console.log(error)
+
           if (specifications) {
             const newProduct: IproductWithSpecifications = {
               ...product,
@@ -56,6 +54,7 @@ export const useProductsStore = defineStore('products', {
         })
       }
       return { products }
-    },
+    }
+    return { products, createProduct, createSpecifications, getProductsCard }
   },
 })

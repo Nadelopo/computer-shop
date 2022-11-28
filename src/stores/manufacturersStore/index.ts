@@ -7,19 +7,20 @@ export const useManufacturersStore = defineStore('manufacturers', {
   state: () => {
     const manufacturers = ref<Imanufacturer[]>([])
 
-    return { manufacturers }
-  },
-  actions: {
-    async createManufacturer(params: ImanufacturerCU) {
+    const createManufacturer = async (params: ImanufacturerCU) => {
       const { data } = await create('manufacturers', params)
       if (data) {
-        this.manufacturers.push(data)
+        manufacturers.value.push(data)
       }
       return { data }
-    },
-    async setManufacturers() {
+    }
+
+    const setManufacturers = async () => {
       const { data } = await getAll<Imanufacturer>('manufacturers')
-      if (data) this.manufacturers = data
-    },
+      if (data) manufacturers.value = data
+    }
+
+    setManufacturers()
+    return { manufacturers, createManufacturer, setManufacturers }
   },
 })

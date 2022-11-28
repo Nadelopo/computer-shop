@@ -8,13 +8,12 @@ export const useUserStore = defineStore('user', {
     const user = ref<Iuser | null>(null)
     const userId = ref('')
 
-    return { user, userId }
-  },
-  actions: {
-    async setUserData(userId: string) {
-      const { data } = await getOneWithId<Iuser>('users', userId)
-      this.user = data
-      this.userId = userId
-    },
+    const setUserData = async (id: string) => {
+      const { data } = await getOneWithId<Iuser>('users', id)
+      user.value = data
+      userId.value = id
+    }
+
+    return { user, userId, setUserData }
   },
 })

@@ -14,12 +14,14 @@ export const getOneWithId = async <T>(table: string, id: string | number) => {
   return { data }
 }
 
-export const getAllFromColumn = async <T>(
+export const getAllByColumn = async <T>(
   table: string,
   column: string,
-  id: string | number | boolean
+  id: string | number,
+  selectValue?: string
 ) => {
-  const resp = await supabase.from(table).select().eq(column, id)
+  const select = selectValue ?? '*'
+  const resp = await supabase.from(table).select(select).eq(column, id)
   if (resp.error) console.log(resp.error)
   const data: T[] | null = resp.data
   return { data }

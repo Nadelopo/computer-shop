@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { create, getAll, getAllFromColumn } from '@/utils/dbQueries'
+import { create, getAll, getAllByColumn } from '@/utils/dbQueries'
 import type {
   Icategory,
   IcategoryCU,
@@ -13,35 +13,47 @@ export const useCategoriesStore = defineStore('categories', {
     const categories = ref<Icategory[]>([])
     const categorySpecifications = ref<IcategorySpecifications[]>([])
 
-    return { categories, categorySpecifications }
-  },
-  actions: {
-    async setCategories() {
+    const setCategories = async () => {
       const { data } = await getAll<Icategory>('categories')
       if (data) {
-        this.categories = data
+        categories.value = data
       }
-    },
-    async createCategory(params: IcategoryCU) {
+    }
+
+    const createCategory = async (params: IcategoryCU) => {
       const { data } = await create('categories', params)
       if (data) {
-        this.categories.push(data)
+        categories.value.push(data)
       }
-    },
-    async createCategorySpecifications(form: IcategorySpecificationsCU) {
+    }
+    const createCategorySpecifications = async (
+      form: IcategorySpecificationsCU
+    ) => {
       const { data } = await create('category_specifications', form)
       if (data) {
-        this.categorySpecifications.push(data)
+        categorySpecifications.value.push(data)
         return true
       }
-    },
-    async getCategorySpecifications(categoryId: number) {
-      const { data } = await getAllFromColumn<IcategorySpecifications>(
+    }
+
+    const getCategorySpecifications = async (categoryId: number) => {
+      const { data } = await getAllByColumn<IcategorySpecifications>(
         'category_specifications',
         'categoryId',
         categoryId
       )
       return { data }
-    },
+    }
+
+    setCategories()
+
+    return {
+      categories,
+      categorySpecifications,
+      setCategories,
+      createCategory,
+      createCategorySpecifications,
+      getCategorySpecifications,
+    }
   },
 })

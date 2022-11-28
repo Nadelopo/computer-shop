@@ -20,11 +20,10 @@ interface IformCategorySpecifications
 
 const route = useRoute()
 const { manufacturers } = storeToRefs(useManufacturersStore())
-const { setManufacturers } = useManufacturersStore()
+
 const { getCategorySpecifications } = useCategoriesStore()
 const { createProduct, createSpecifications } = useProductsStore()
 
-setManufacturers()
 const manufacturerSelect = ref<number | string>('')
 const categoryId = ref<number>(Number(route.params.id))
 const categorySpecifications = ref<IcategorySpecifications[]>([])
