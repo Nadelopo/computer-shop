@@ -89,6 +89,7 @@ const create = async () => {
       return { ...e, productId: data.id }
     })
     createSpecifications(productSpecifications)
+    products.value = { ...copyForm }
   }
 }
 </script>
@@ -118,7 +119,7 @@ const create = async () => {
       </div>
       <div>
         <label>изображение</label>
-        <InputFile v-model.trim="products.img" folder="categories" />
+        <InputFile v-model.trim="products.img" folder="products" />
       </div>
 
       <div>
