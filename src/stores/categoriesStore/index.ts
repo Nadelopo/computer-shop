@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { create, getAll, getAllFromField } from '@/utils/dbQueries'
+import { create, getAll, getAllFromColumn } from '@/utils/dbQueries'
 import type {
   Icategories,
   IcategoriesInsert,
@@ -23,26 +23,20 @@ export const useCategoriesStore = defineStore('categories', {
       }
     },
     async createCategory(params: IcategoriesInsert) {
-      const { data } = await create<IcategoriesInsert, Icategories>(
-        'categories',
-        params
-      )
+      const { data } = await create('categories', params)
       if (data) {
         this.categories.push(data)
       }
     },
     async createCategoryFields(form: IcategoryFieldsInsert) {
-      const { data } = await create<IcategoryFieldsInsert, IcategoryFields>(
-        'categoryfields',
-        form
-      )
+      const { data } = await create('categoryfields', form)
       if (data) {
         this.categoryFields.push(data)
         return true
       }
     },
     async getCategoryFields(categoryId: number) {
-      const { data } = await getAllFromField<IcategoryFields>(
+      const { data } = await getAllFromColumn<IcategoryFields>(
         'categoryfields',
         'categoryId',
         categoryId

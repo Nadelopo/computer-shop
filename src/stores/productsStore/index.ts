@@ -1,13 +1,12 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { create, createMany, getAllFromField } from '@/utils/dbQueries'
+import { create, createMany, getAllFromColumn } from '@/utils/dbQueries'
 import { supabase } from '@/supabase'
 import type {
   Iproduct,
   IproductCard,
   IproductForm,
   IspecificationsProductCard,
-  Ispetifications,
   IspetificationsForm,
 } from './types'
 
@@ -19,26 +18,20 @@ export const useProductsStore = defineStore('products', {
   },
   actions: {
     async createProduct(params: IproductForm) {
-      const { data } = await create<IproductForm, Iproduct>('products', params)
-      if (data) {
-        this.products.push(data)
-      }
+      const { data } = await create('products', params)
+
       return { data }
     },
     async createSpecifications(params: IspetificationsForm[]) {
-      const { data } = await createMany<
-        IspetificationsForm[],
-        Ispetifications[]
-      >('specifications', params)
+      const { data } = await createMany('specifications', params)
       if (data) {
         console.log(data)
-        // this.products.push(data)
       }
     },
     //fix
     async getProductsCard(categoryId: number) {
       const products = ref<IproductCard[]>([])
-      const { data } = await getAllFromField<Iproduct>(
+      const { data } = await getAllFromColumn<Iproduct>(
         'products',
         'categoryId',
         categoryId
@@ -48,8 +41,8 @@ export const useProductsStore = defineStore('products', {
         data.forEach(async (product) => {
           const { data: fields, error: fieldsError } = await supabase
             .from<IspecificationsProductCard>('specifications')
-            .select('value,  categoryFieldId!inner(title, units)')
-            .match({ 'categoryFieldId.visible': true, productId: product.id })
+            .select('value,  categoryFieldId!inner(title, units, visible)')
+            .eq('productId', product.id)
           if (fieldsError) console.log(fieldsError)
           if (fields) {
             const newProduct: IproductCard = { ...product, fields }

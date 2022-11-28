@@ -72,10 +72,10 @@ watch(
 const create = async () => {
   const { data } = await createProduct(products.value)
   if (data) {
-    const categoryFields = categoryFormFields.value.map((e) => {
+    const productFields = categoryFormFields.value.map((e) => {
       return { ...e, productId: data.id }
     })
-    createSpecifications(categoryFields)
+    createSpecifications(productFields)
   }
 }
 </script>
@@ -117,6 +117,6 @@ const create = async () => {
         </div>
       </template>
     </div>
-    <button class="btn">создать</button>
+    <button class="btn mt-6">создать</button>
   </form>
 </template>

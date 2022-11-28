@@ -1,4 +1,5 @@
 import { supabase } from '@/supabase'
+import type { defaultValues } from '@/stores/types'
 //fix
 export const getAll = async <T>(table: string) => {
   const { data, error } = await supabase.from<T>(table).select()
@@ -13,7 +14,7 @@ export const getOneWithId = async <T>(table: string, id: string | number) => {
   return { data }
 }
 
-export const getAllFromField = async <T>(
+export const getAllFromColumn = async <T>(
   table: string,
   field: string,
   id: string | number | boolean
@@ -24,16 +25,16 @@ export const getAllFromField = async <T>(
   return { data }
 }
 
-export const create = async <T, K>(table: string, params: T) => {
+export const create = async <T>(table: string, params: T) => {
   const resp = await supabase.from<T>(table).insert(params).single()
   if (resp.error) console.log(resp.error)
-  const data = resp.data as K | null
+  const data = resp.data as (T & defaultValues) | null
   return { data }
 }
 
-export const createMany = async <T, K>(table: string, params: T) => {
+export const createMany = async <T>(table: string, params: T) => {
   const resp = await supabase.from<T>(table).insert(params)
   if (resp.error) console.log(resp.error)
-  const data = resp.data as K | null
+  const data = resp.data as (T & defaultValues) | null
   return { data }
 }

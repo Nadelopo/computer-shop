@@ -28,8 +28,10 @@ export interface IspecificationsProductCard {
   categoryFieldId: {
     title: string
     units: string
+    visible: boolean
   }
   value: string
+  productId: number
 }
 
 export interface IproductCard extends defaultValues, IproductForm {
