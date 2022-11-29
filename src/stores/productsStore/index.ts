@@ -11,7 +11,8 @@ import type {
 
 export const useProductsStore = defineStore('products', {
   state: () => {
-    const products = ref<Iproduct[]>([])
+    const products = ref<IproductWithSpecifications[]>([])
+    const categoryId = ref(0)
 
     const createProduct = async (params: IproductCU) => {
       const { data } = await create('products', params)
@@ -28,11 +29,12 @@ export const useProductsStore = defineStore('products', {
 
     //fix
     const getProductsCard = async (categoryId: number) => {
-      const products = ref<IproductWithSpecifications[]>([])
+      const newProducts = ref<IproductWithSpecifications[]>([])
       const { data } = await getAllByColumn<Iproduct>(
         'products',
         'categoryId',
-        categoryId
+        categoryId,
+        '*, manufacturerId(id, title)'
       )
       if (data?.length) {
         data.forEach(async (product) => {
@@ -49,12 +51,18 @@ export const useProductsStore = defineStore('products', {
               ...product,
               specifications,
             }
-            products.value.push(newProduct)
+            newProducts.value.push(newProduct)
           }
         })
       }
-      return { products }
+      products.value = newProducts.value
     }
-    return { products, createProduct, createSpecifications, getProductsCard }
+    return {
+      products,
+      createProduct,
+      createSpecifications,
+      getProductsCard,
+      categoryId,
+    }
   },
 })

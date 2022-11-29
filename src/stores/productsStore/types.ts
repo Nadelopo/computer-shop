@@ -13,7 +13,10 @@ export interface IproductCU {
   categoryId: number
   name: string
   description: string
-  manufacturerId: number
+  manufacturerId: {
+    id: number
+    title: string
+  }
   img: string
   warranty: number
   quantity: number

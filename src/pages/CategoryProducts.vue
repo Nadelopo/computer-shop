@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
 import { useProductsStore } from '@/stores/productsStore'
 import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
-import type { IproductWithSpecifications } from '@/stores/productsStore/types'
+import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
 
+const { products, categoryId } = storeToRefs(useProductsStore())
 const { getProductsCard } = useProductsStore()
 
-const products = ref<IproductWithSpecifications[]>([])
+categoryId.value = Number(useRoute().params.id)
 
-onMounted(async () => {
-  const data = await getProductsCard(Number(useRoute().params.id))
-  products.value = data.products.value
-})
+if (!products.value.length) {
+  getProductsCard(categoryId.value)
+} else if (products.value[0].categoryId !== categoryId.value) {
+  products.value = []
+  getProductsCard(categoryId.value)
+}
 </script>
 
 <template>

@@ -12,6 +12,7 @@ import type {
 } from '@/stores/productsStore/types'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { storeToRefs } from 'pinia'
+import ProdctsList from '@/components/Admin/ProductsList.vue'
 
 interface IformCategorySpecifications
   extends Omit<IspetificationsCU, 'productId'> {
@@ -24,7 +25,12 @@ const { manufacturers } = storeToRefs(useManufacturersStore())
 const { getCategorySpecifications } = useCategoriesStore()
 const { createProduct, createSpecifications } = useProductsStore()
 
-const manufacturerSelect = ref<number | string>('')
+interface ImanufacturerSelect {
+  id: number
+  title: string
+}
+
+const manufacturerSelect = ref<ImanufacturerSelect | string>('')
 const categoryId = ref<number>(Number(route.params.id))
 const categorySpecifications = ref<IcategorySpecifications[]>([])
 const categoryFormSpecifications = ref<IformCategorySpecifications[]>([])
@@ -34,7 +40,10 @@ const copyForm: IproductCU = {
   name: '',
   description: '',
   img: '',
-  manufacturerId: 0,
+  manufacturerId: {
+    id: 0,
+    title: '',
+  },
   warranty: 0,
   price: 0,
   popularity: 0,
@@ -76,7 +85,7 @@ watch(
 )
 
 watch(manufacturerSelect, (cur) => {
-  if (typeof cur === 'number') {
+  if (typeof cur !== 'string') {
     products.value.manufacturerId = cur
   }
 })
@@ -94,54 +103,59 @@ const create = async () => {
 </script>
 
 <template>
-  <form class="list__form" @submit.prevent="create">
-    <div
-      v-for="(specification, i) in categorySpecifications"
-      :key="specification.id"
-    >
-      <label>
-        {{ specification.title }}
-      </label>
-      <InputText
-        v-model.trim="categoryFormSpecifications[i].value"
-        :type="specification.type ? 'number' : 'text'"
-      />
-    </div>
-    <template v-if="products">
-      <div>
-        <label>наименование</label>
-        <InputText v-model.trim="products.name" />
+  <div>
+    <form class="list__form" @submit.prevent="create">
+      <div
+        v-for="(specification, i) in categorySpecifications"
+        :key="specification.id"
+      >
+        <label>
+          {{ specification.title }}
+        </label>
+        <InputText
+          v-model.trim="categoryFormSpecifications[i].value"
+          :type="specification.type ? 'number' : 'text'"
+        />
       </div>
-      <div>
-        <label>описание</label>
-        <InputText v-model.trim="products.description" />
-      </div>
-      <div>
-        <label>изображение</label>
-        <InputFile v-model.trim="products.img" folder="products" />
-      </div>
+      <template v-if="products">
+        <div>
+          <label>наименование</label>
+          <InputText v-model.trim="products.name" />
+        </div>
+        <div>
+          <label>описание</label>
+          <InputText v-model.trim="products.description" />
+        </div>
+        <div>
+          <label>изображение</label>
+          <InputFile v-model.trim="products.img" folder="products" />
+        </div>
 
-      <div>
-        <select v-model="manufacturerSelect" required>
-          <option value="" selected disabled hidden>выберите категорию</option>
-          <option
-            v-for="manufacturer in manufacturers"
-            :key="manufacturer.id"
-            :value="manufacturer.id"
-          >
-            {{ manufacturer.title }}
-          </option>
-        </select>
-      </div>
-      <div>
-        <label>гарантия</label>
-        <InputText v-model="products.warranty" type="number" />
-      </div>
-      <div>
-        <label>цена</label>
-        <InputText v-model="products.price" type="number" />
-      </div>
-    </template>
-    <div><button class="btn">создать</button></div>
-  </form>
+        <div>
+          <select v-model="manufacturerSelect" required>
+            <option value="" selected disabled hidden>
+              выберите категорию
+            </option>
+            <option
+              v-for="manufacturer in manufacturers"
+              :key="manufacturer.id"
+              :value="{ id: manufacturer.id, title: manufacturer.title }"
+            >
+              {{ manufacturer.title }}
+            </option>
+          </select>
+        </div>
+        <div>
+          <label>гарантия</label>
+          <InputText v-model="products.warranty" type="number" />
+        </div>
+        <div>
+          <label>цена</label>
+          <InputText v-model="products.price" type="number" />
+        </div>
+      </template>
+      <div><button class="btn">создать</button></div>
+    </form>
+    <ProdctsList :form="copyForm" />
+  </div>
 </template>
