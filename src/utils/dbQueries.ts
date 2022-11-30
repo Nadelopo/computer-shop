@@ -58,7 +58,7 @@ export const updateOne = async <T extends Partial<T>>(
   return { data }
 }
 
-export const updateMany = async <T extends Partial<T>>(
+export const updateManyById = async <T extends Partial<T>>(
   table: string,
   params: any
 ) => {

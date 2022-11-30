@@ -5,7 +5,7 @@ import {
   createMany,
   getAllByColumn,
   getOneWithId,
-  updateMany,
+  updateManyById,
   updateOne,
 } from '@/utils/dbQueries'
 import type {
@@ -107,7 +107,7 @@ export const useProductsStore = defineStore('products', {
     const updateProductSpecifications = async (
       specifications: IproductSpecificationU[]
     ) => {
-      const { data } = await updateMany<IproductWithSpecifications>(
+      const { data } = await updateManyById<IproductWithSpecifications>(
         'specifications',
         specifications
       )
