@@ -17,5 +17,6 @@ module.exports = {
     'vue/multi-word-component-names': 'off',
     'vue/max-attributes-per-line': 'off',
     'vue/html-self-closing': 'off',
+    'vue/html-indent': 'off',
   },
 }

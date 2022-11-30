@@ -6,19 +6,15 @@ import { useProductsStore } from '@/stores/productsStore'
 import InputText from '@/components/UI/InputText.vue'
 import InputFile from '@/components/UI/InputFile.vue'
 import type { IcategorySpecifications } from '@/stores/categoriesStore/types'
-import type {
-  IproductCU,
-  IspetificationsCU,
-} from '@/stores/productsStore/types'
+import type { IproductC } from '@/stores/productsStore/types'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { storeToRefs } from 'pinia'
 import ProdctsList from '@/components/Admin/ProductsList.vue'
 import Loader from '@/components/UI/loader.vue'
-
-interface IformCategorySpecifications
-  extends Omit<IspetificationsCU, 'productId'> {
-  productId: number | null
-}
+import type {
+  IformCategorySpecifications,
+  ImanufacturerSelect,
+} from '@/stores/types'
 
 const route = useRoute()
 const { manufacturers } = storeToRefs(useManufacturersStore())
@@ -26,17 +22,12 @@ const { manufacturers } = storeToRefs(useManufacturersStore())
 const { getCategorySpecifications } = useCategoriesStore()
 const { createProduct, createSpecifications } = useProductsStore()
 
-interface ImanufacturerSelect {
-  id: number
-  title: string
-}
-
 const manufacturerSelect = ref<ImanufacturerSelect | string>('')
 const categoryId = ref<number>(Number(route.params.id))
 const categorySpecifications = ref<IcategorySpecifications[]>([])
 const categoryFormSpecifications = ref<IformCategorySpecifications[]>([])
 
-const copyForm: IproductCU = {
+const copyForm: IproductC = {
   categoryId: categoryId.value,
   name: '',
   description: '',
@@ -54,7 +45,7 @@ const copyForm: IproductCU = {
   discount: 0,
 }
 
-const products = ref<IproductCU>({ ...copyForm })
+const products = ref<IproductC>({ ...copyForm })
 
 const setCategorySpecifications = async () => {
   const { data } = await getCategorySpecifications(categoryId.value)
@@ -105,7 +96,7 @@ const create = async () => {
 
 <template>
   <div v-if="categorySpecifications.length">
-    <form class="list__form" @submit.prevent="create">
+    <form class="list__form mb-8" @submit.prevent="create">
       <div
         v-for="(specification, i) in categorySpecifications"
         :key="specification.id"

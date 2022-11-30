@@ -25,7 +25,7 @@ defineProps({
         </div>
         <div
           v-for="specification in item.specifications"
-          :key="specification.categorySpecificationsId.title"
+          :key="specification.categorySpecificationsId.id"
           class="flex flex-col gap-2"
         >
           <div

@@ -9,7 +9,7 @@ export interface IspetificationsCU {
 
 export interface Ispetification extends defaultValues, IspetificationsCU {}
 
-export interface IproductCU {
+export interface IproductC {
   categoryId: number
   name: string
   description: string
@@ -27,18 +27,33 @@ export interface IproductCU {
   discount: number
 }
 
-export interface Iproduct extends defaultValues, IproductCU {}
+export interface Iproduct extends defaultValues, IproductC {}
 
 export interface IproductSpecification {
   categorySpecificationsId: {
+    id: number
     title: string
     units: string
     visible: boolean
+    type: boolean
   }
   value: string
   productId: number
 }
 
-export interface IproductWithSpecifications extends defaultValues, IproductCU {
+export interface IproductWithSpecifications extends defaultValues, IproductC {
   specifications: IproductSpecification[]
+}
+
+export interface IproductU
+  extends Omit<
+    IproductC,
+    | 'categoryId'
+    | 'quantity'
+    | 'rating'
+    | 'countReviews'
+    | 'popularity'
+    | 'manufacturerId'
+  > {
+  manufacturerId: number
 }

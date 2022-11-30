@@ -60,7 +60,7 @@ watch(useRoute(), (cur) => {
             <td>{{ product.name }}</td>
             <td
               v-for="specification in product.specifications"
-              :key="specification.categorySpecificationsId.title"
+              :key="specification.categorySpecificationsId.id"
             >
               {{ specification.value }}
               {{ specification.categorySpecificationsId.units }}
@@ -72,12 +72,27 @@ watch(useRoute(), (cur) => {
             <td>{{ product.warranty }} мес</td>
             <td>{{ product.price }} Р</td>
             <td>
-              <button
-                class="btn__dunger"
-                @click="deleteProduct(product.id, product.img)"
-              >
-                удалить
-              </button>
+              <div class="flex flex-col justify-center gap-y-2">
+                <router-link
+                  :to="{
+                    name: 'Edit',
+                    params: { categoryId: product.categoryId, id: product.id },
+                  }"
+                >
+                  <button
+                    class="btn w-full"
+                    @click="deleteProduct(product.id, product.img)"
+                  >
+                    изменить
+                  </button>
+                </router-link>
+                <button
+                  class="btn__dunger"
+                  @click="deleteProduct(product.id, product.img)"
+                >
+                  удалить
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>

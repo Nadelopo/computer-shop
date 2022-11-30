@@ -18,11 +18,15 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  step: {
+    type: String,
+    default: '',
+  },
 })
 
 defineEmits(['update:modelValue'])
 
-const value = ref('')
+const value = ref(props.modelValue)
 watch(
   () => props.modelValue,
   (cur) => {
@@ -42,6 +46,7 @@ watch(
         class="input"
         :placeholder="placeholder"
         :required="required"
+        :step="step"
         @input="$emit('update:modelValue', value)"
       />
     </span>

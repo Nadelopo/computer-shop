@@ -13,6 +13,9 @@ export default defineConfig({
       eslint: {
         lintCommand: 'eslint "./src/**/*.{js,vue}"',
       },
+      overlay: {
+        initialIsOpen: false,
+      },
     }),
   ],
   resolve: {
