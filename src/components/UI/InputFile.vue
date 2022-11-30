@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onUnmounted, ref, watch } from 'vue'
 import { insertInStorage, removeFromStorage } from '@/utils/storageQueris'
 
 const props = defineProps({
@@ -53,6 +53,19 @@ watch(
     }
   }
 )
+
+const removeOnReload = () => {
+  if (imageData.value) {
+    removeFromStorage(props.folder, imageData.value.name)
+  }
+}
+
+window.addEventListener('beforeunload', removeOnReload)
+
+onUnmounted(() => {
+  window.removeEventListener('beforeunload', removeOnReload)
+  removeOnReload()
+})
 </script>
 
 <template>

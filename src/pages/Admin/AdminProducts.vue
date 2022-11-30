@@ -70,6 +70,7 @@ watch(
   () => route.params.id,
   (cur) => {
     if (cur) {
+      categorySpecifications.value = []
       categoryId.value = Number(cur)
       setCategorySpecifications()
     }

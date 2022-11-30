@@ -48,7 +48,7 @@ watch(useRoute(), (cur) => {
             {{ field.title }}
           </th>
           <th>производитель</th>
-          <th>изображение</th>
+          <th width="140">изображение</th>
           <th>гарантия</th>
           <th>цена</th>
           <th width="5%"></th>
@@ -102,19 +102,22 @@ watch(useRoute(), (cur) => {
   </div>
 </template>
 
-<style scoped>
-table {
-  width: 100%;
-  table-layout: fixed;
-}
-th {
-  text-align: center;
-  vertical-align: text-bottom;
-  font-size: 14px;
-}
-td {
-  text-align: center;
-  vertical-align: middle;
-  border-top: 2px solid #1c1c1c;
-}
+<style scoped lang="sass">
+table
+  width: 100%
+  table-layout: fixed
+
+th
+  text-align: center
+  vertical-align: text-bottom
+  font-size: 14px
+
+td
+  text-align: center
+  vertical-align: middle
+  border-top: 2px solid #1c1c1c
+  padding: 6px 0
+  img
+    max-height: 150px
+    max-width: 100%
 </style>
