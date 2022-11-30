@@ -30,6 +30,7 @@ export interface IproductC {
 export interface Iproduct extends defaultValues, IproductC {}
 
 export interface IproductSpecification {
+  id: number
   categorySpecificationsId: {
     id: number
     title: string
@@ -40,6 +41,12 @@ export interface IproductSpecification {
   value: string
   productId: number
 }
+
+export interface IproductSpecificationU
+  extends Omit<
+    IproductSpecification,
+    'categorySpecificationsId' | 'productId'
+  > {}
 
 export interface IproductWithSpecifications extends defaultValues, IproductC {
   specifications: IproductSpecification[]

@@ -5,6 +5,7 @@ import {
   createMany,
   getAllByColumn,
   getOneWithId,
+  updateMany,
   updateOne,
 } from '@/utils/dbQueries'
 import type {
@@ -14,6 +15,7 @@ import type {
   IproductSpecification,
   IspetificationsCU,
   IproductU,
+  IproductSpecificationU,
 } from './types'
 
 export const useProductsStore = defineStore('products', {
@@ -50,7 +52,7 @@ export const useProductsStore = defineStore('products', {
               'specifications',
               'productId',
               product.id,
-              'value,  categorySpecificationsId!inner(title, units, visible)'
+              'id, value,  categorySpecificationsId!inner(id, title, units, visible, type)'
             )
 
           if (specifications) {
@@ -78,7 +80,7 @@ export const useProductsStore = defineStore('products', {
             'specifications',
             'productId',
             productId,
-            'value,  categorySpecificationsId!inner(id, title, units, visible, type)'
+            'id, value,  categorySpecificationsId!inner(id, title, units, visible, type)'
           )
         if (specifications) {
           product.value = { ...data, specifications }
@@ -102,6 +104,16 @@ export const useProductsStore = defineStore('products', {
       return { data }
     }
 
+    const updateProductSpecifications = async (
+      specifications: IproductSpecificationU[]
+    ) => {
+      const { data } = await updateMany<IproductWithSpecifications>(
+        'specifications',
+        specifications
+      )
+      return { data }
+    }
+
     return {
       products,
       createProduct,
@@ -110,6 +122,7 @@ export const useProductsStore = defineStore('products', {
       categoryId,
       getProduct,
       updateProduct,
+      updateProductSpecifications,
     }
   },
 })

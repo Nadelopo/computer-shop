@@ -9,11 +9,13 @@ import InputFile from '@/components/UI/InputFile.vue'
 import type {
   IproductWithSpecifications,
   IproductU,
+  IproductSpecificationU,
 } from '@/stores/productsStore/types'
 import type { ImanufacturerSelect } from '@/stores/types'
 import Loader from '@/components/UI/loader.vue'
 
-const { getProduct, updateProduct } = useProductsStore()
+const { getProduct, updateProduct, updateProductSpecifications } =
+  useProductsStore()
 const { manufacturers } = storeToRefs(useManufacturersStore())
 
 const router = useRouter()
@@ -41,7 +43,14 @@ const save = async () => {
       price: product.value.price,
       discount: product.value.discount,
     }
+
+    const newSpecifications: IproductSpecificationU[] =
+      product.value.specifications.map((spec) => {
+        return { id: spec.id, value: spec.value }
+      })
+
     product.value = null
+    updateProductSpecifications(newSpecifications)
     await updateProduct(id, productU)
     router.go(-1)
   }

@@ -53,7 +53,18 @@ export const updateOne = async <T extends Partial<T>>(
 ) => {
   const resp = await supabase.from(table).update(params).eq('id', id).single()
   if (resp.error) console.log(resp.error)
-  const data: T = resp.data
+  const data: T | null = resp.data
+
+  return { data }
+}
+
+export const updateMany = async <T extends Partial<T>>(
+  table: string,
+  params: any
+) => {
+  const resp = await supabase.from(table).upsert(params)
+  if (resp.error) console.log(resp.error)
+  const data: T[] | null = resp.data
 
   return { data }
 }
