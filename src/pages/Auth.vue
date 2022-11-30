@@ -148,22 +148,22 @@ hr
   background: rgba(255,255,255, .4)
 
 .input
-    outline: none
-    border: none
-    color: #fff
-    background: rgba(255,255,255,.2)
-    height: 35px
-    border-radius: 20px
-    padding-left: 20px
-    transition: 0.3s linear
-    &:focus
-        background: rgba(255,255,255,.3)
-        transition: 0.3s linear
+  outline: none
+  border: none
+  color: #fff
+  background: rgba(255,255,255,.2)
+  height: 35px
+  border-radius: 20px
+  padding-left: 20px
+  transition: 0.3s linear
+  &:focus
+      background: rgba(255,255,255,.3)
+      transition: 0.3s linear
 
 .btnn
-    height: 40px
-    width: 100%
-    border-radius: 20px
+  height: 40px
+  width: 100%
+  border-radius: 20px
 
 .link
   color: rgba(255,255,255, .75)

@@ -1,0 +1,68 @@
+@import "tailwindcss/base"
+@import "tailwindcss/components"
+@import "tailwindcss/utilities"
+
+@import './buttons'
+
+*
+  box-sizing: border-box
+  font-family: Roboto
+
+:root
+  --shadow: rgba(0, 0, 0, 0.1)
+  --color-main: #26a69a
+  --color-sec: #2bbbad
+  --back-main: #1c1c1c
+  --back-sec: #333333
+  --color-text: #61BEB5
+
+body
+  font-family: 'Roboto Flex'
+  margin: 0
+  background: #f5f5f5
+
+body::-webkit-scrollbar
+  width: 8px
+
+body::-webkit-scrollbar-track
+  background-color: #fff
+  border-radius: 0 0 8px 0
+
+body::-webkit-scrollbar-thumb
+  background: #7b7b7b
+  border-radius: 10px
+  transform: matrix(1, 0, 0, -1, 0, 0)
+
+progress::-webkit-progress-bar
+  border-radius: 20px
+  background: #fff
+  border: 2px solid var(--color-main)
+
+progress::-webkit-progress-value
+  background: var(--color-main)
+
+.container
+  margin: 0 auto
+  padding: 6px 12px
+  @media (min-width: 1536px)
+    padding: 0 50px
+
+.list__form
+  display: flex
+  flex-direction: column
+  gap: 20px
+
+.rating
+  overflow: hidden
+  label
+    float: right
+    width: 32px
+    padding: 0
+    cursor: pointer
+    font-size: 32px
+    line-height: 32px
+    color: var(--color-main)
+    text-shadow: 1px 1px #bbb
+    transition: 0.3s
+    &:before
+      content: '★'

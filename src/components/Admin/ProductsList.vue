@@ -1,17 +1,19 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { watch, type PropType } from 'vue'
 import { useProductsStore } from '@/stores/productsStore'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
+import type { IcategorySpecifications } from '@/stores/categoriesStore/types'
+import Loader from '@/components/UI/loader.vue'
 
 defineProps({
-  form: {
-    type: Object,
-    default: () => ({}),
+  specifications: {
+    type: Array as PropType<IcategorySpecifications[]>,
+    required: true,
   },
 })
 
-const deleteProduct = (id: number, img: string) => null
+const deleteProduct = (id: number, img: string) => [id, img]
 
 const { products, categoryId } = storeToRefs(useProductsStore())
 const { getProductsCard } = useProductsStore()
@@ -38,15 +40,12 @@ watch(useRoute(), (cur) => {
 
 <template>
   <div>
-    <table v-if="products[0]?.specifications">
+    <table>
       <thead>
         <tr>
           <th>наименование</th>
-          <th
-            v-for="field in products[0].specifications"
-            :key="field.categorySpecificationsId.title"
-          >
-            {{ field.categorySpecificationsId.title }}
+          <th v-for="field in specifications" :key="field.title">
+            {{ field.title }}
           </th>
           <th>производитель</th>
           <th>изображение</th>
@@ -55,30 +54,36 @@ watch(useRoute(), (cur) => {
           <th width="5%"></th>
         </tr>
       </thead>
-      <tbody v-for="product in products" :key="product.id">
-        <tr>
-          <td>{{ product.name }}</td>
-          <td
-            v-for="specification in product.specifications"
-            :key="specification.categorySpecificationsId.title"
-          >
-            {{ specification.value }}
-            {{ specification.categorySpecificationsId.units }}
-          </td>
-          <td>{{ product.manufacturerId.title }}</td>
-          <td>
-            <img :src="product.img" alt="" />
-          </td>
-          <td>{{ product.warranty }} мес</td>
-          <td>{{ product.price }} Р</td>
-          <td>
-            <button class="btn" @click="deleteProduct(product.id, product.img)">
-              удалить
-            </button>
-          </td>
-        </tr>
-      </tbody>
+      <template v-if="products.length">
+        <tbody v-for="product in products" :key="product.id">
+          <tr>
+            <td>{{ product.name }}</td>
+            <td
+              v-for="specification in product.specifications"
+              :key="specification.categorySpecificationsId.title"
+            >
+              {{ specification.value }}
+              {{ specification.categorySpecificationsId.units }}
+            </td>
+            <td>{{ product.manufacturerId.title }}</td>
+            <td>
+              <img :src="product.img" alt="" />
+            </td>
+            <td>{{ product.warranty }} мес</td>
+            <td>{{ product.price }} Р</td>
+            <td>
+              <button
+                class="btn__dunger"
+                @click="deleteProduct(product.id, product.img)"
+              >
+                удалить
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </template>
     </table>
+    <Loader v-if="!products.length" />
   </div>
 </template>
 

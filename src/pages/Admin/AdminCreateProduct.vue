@@ -13,6 +13,7 @@ import type {
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { storeToRefs } from 'pinia'
 import ProdctsList from '@/components/Admin/ProductsList.vue'
+import Loader from '@/components/UI/loader.vue'
 
 interface IformCategorySpecifications
   extends Omit<IspetificationsCU, 'productId'> {
@@ -103,7 +104,7 @@ const create = async () => {
 </script>
 
 <template>
-  <div>
+  <div v-if="categorySpecifications.length">
     <form class="list__form" @submit.prevent="create">
       <div
         v-for="(specification, i) in categorySpecifications"
@@ -156,6 +157,7 @@ const create = async () => {
       </template>
       <div><button class="btn">создать</button></div>
     </form>
-    <ProdctsList :form="copyForm" />
+    <ProdctsList :specifications="categorySpecifications" />
   </div>
+  <Loader v-else />
 </template>
