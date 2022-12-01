@@ -17,6 +17,9 @@ const form = ref<IcategorySpecificationsCU>({
   type: true,
   visible: false,
   units: '',
+  step: 1,
+  min: 0,
+  max: 64,
 })
 
 watch(select, (cur) => {
@@ -34,6 +37,9 @@ const create = async () => {
       type: true,
       visible: false,
       units: '',
+      step: 1,
+      min: 0,
+      max: 64,
     }
     select.value = ''
   }
@@ -71,6 +77,20 @@ const create = async () => {
         text-second="текстовый"
       />
     </div>
+    <template v-if="form.type">
+      <div>
+        <label>шаг изменения числа для поля ввода</label>
+        <InputText v-model="form.units" type="number" :step="0.1" />
+      </div>
+      <div>
+        <label>минимальное значение для поля ввода</label>
+        <InputText v-model="form.min" type="number" :min="0" />
+      </div>
+      <div>
+        <label>максимальное значение для поля ввода</label>
+        <InputText v-model="form.max" type="number" :min="0" />
+      </div>
+    </template>
     <div>
       <label>отображать на карточке товара</label>
       <DoubleButtons

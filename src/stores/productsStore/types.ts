@@ -35,8 +35,11 @@ export interface IproductSpecification {
     id: number
     title: string
     units: string
-    visible: boolean
-    type: boolean
+    visible?: boolean
+    type?: boolean
+    step?: number
+    min?: number
+    max?: number
   }
   value: string
   productId: number

@@ -11,16 +11,24 @@ const props = defineProps({
     default: 'text',
   },
   placeholder: {
-    type: String,
-    default: '',
+    type: String || null,
+    default: null,
   },
   required: {
     type: Boolean,
     default: true,
   },
   step: {
-    type: String,
-    default: '',
+    type: Number || null,
+    default: null,
+  },
+  min: {
+    type: Number || null,
+    default: null,
+  },
+  max: {
+    type: Number || null,
+    default: null,
   },
 })
 
@@ -47,6 +55,8 @@ watch(
         :placeholder="placeholder"
         :required="required"
         :step="step"
+        :min="min"
+        :max="max"
         @input="$emit('update:modelValue', value)"
       />
     </span>

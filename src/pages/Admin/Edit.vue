@@ -25,7 +25,10 @@ const id = Number(route.params.id)
 const product = ref<IproductWithSpecifications | null>(null)
 const manufacturerSelect = ref<ImanufacturerSelect | string>('')
 
-getProduct(id).then((resp) => {
+getProduct(
+  id,
+  'id, value,  categorySpecificationsId!inner(id, title, units, visible, type, step, min, max)'
+).then((resp) => {
   product.value = resp.value
   if (product.value) {
     manufacturerSelect.value = product.value.manufacturerId
@@ -71,7 +74,9 @@ const save = async () => {
           <InputText
             v-if="specification.categorySpecificationsId.type"
             v-model="specification.value"
-            step="0.1"
+            :step="specification.categorySpecificationsId.step"
+            :min="specification.categorySpecificationsId.min"
+            :max="specification.categorySpecificationsId.max"
             type="number"
           />
           <InputText v-else v-model.trim="specification.value" type="text" />

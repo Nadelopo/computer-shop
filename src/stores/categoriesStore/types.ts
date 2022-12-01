@@ -14,6 +14,9 @@ export interface IcategorySpecificationsCU {
   type: boolean
   visible: boolean
   units: string
+  step: number
+  min: number
+  max: number
 }
 export interface IcategorySpecifications
   extends defaultValues,

@@ -67,8 +67,14 @@ export const useProductsStore = defineStore('products', {
       products.value = newProducts.value
     }
 
-    const getProduct = async (productId: number) => {
+    const getProduct = async (
+      productId: number,
+      selectSpecifications?: string
+    ) => {
       const product = ref<IproductWithSpecifications | null>(null)
+      const selectValue =
+        selectSpecifications ??
+        'id, value,  categorySpecificationsId!inner(id, title, units)'
       const { data } = await getOneWithId<Iproduct>(
         'products',
         productId,
@@ -80,7 +86,7 @@ export const useProductsStore = defineStore('products', {
             'specifications',
             'productId',
             productId,
-            'id, value,  categorySpecificationsId!inner(id, title, units, visible, type)'
+            selectValue
           )
         if (specifications) {
           product.value = { ...data, specifications }

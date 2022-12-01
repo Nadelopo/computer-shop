@@ -106,8 +106,17 @@ const create = async () => {
           {{ specification.title }}
         </label>
         <InputText
+          v-if="specification.type"
+          v-model="categoryFormSpecifications[i].value"
+          type="number"
+          :step="specification.max"
+          :min="specification.min"
+          :max="specification.max"
+        />
+        <InputText
+          v-else
           v-model.trim="categoryFormSpecifications[i].value"
-          :type="specification.type ? 'number' : 'text'"
+          type="text"
         />
       </div>
       <template v-if="products">
