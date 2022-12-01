@@ -8,21 +8,19 @@ const { categories } = storeToRefs(useCategoriesStore())
 <template>
   <div v-if="categories" class="grid">
     <div v-for="category in categories" :key="category.id">
-      <div
+      <router-link
         class="lev"
-        @click="
-          $router.push({
-            name: 'CategoryProducts',
-            params: { category: category.enTitle, id: category.id },
-          })
-        "
+        :to="{
+          name: 'CategoryProducts',
+          params: { category: category.enTitle, id: category.id },
+        }"
       >
         <div class="wrap">
           <img :src="category.img" alt="" class="mx-auto mb-auto" />
 
           <div class="text-center text1">{{ category.title }}</div>
         </div>
-      </div>
+      </router-link>
     </div>
   </div>
 </template>

@@ -18,7 +18,6 @@ const signIn = async () => {
       email: email.value,
       password: password.value,
     })
-    console.log(user)
     if (error) console.log(error)
     if (user) router.push({ name: 'Home' })
   } else {
