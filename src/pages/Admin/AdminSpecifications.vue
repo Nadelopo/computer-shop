@@ -10,7 +10,7 @@ const { categories } = storeToRefs(useCategoriesStore())
 const { createCategorySpecifications } = useCategoriesStore()
 
 const select = ref('')
-
+//fix
 const form = ref<IcategorySpecificationsCU>({
   categoryId: 0,
   title: '',
@@ -20,6 +20,7 @@ const form = ref<IcategorySpecificationsCU>({
   step: 1,
   min: 0,
   max: 64,
+  variantsValues: null,
 })
 
 watch(select, (cur) => {
@@ -40,6 +41,7 @@ const create = async () => {
       step: 1,
       min: 0,
       max: 64,
+      variantsValues: null,
     }
     select.value = ''
   }
@@ -86,7 +88,7 @@ const create = async () => {
         <label>минимальное значение для поля ввода</label>
         <InputText v-model="form.min" type="number" :min="0" />
       </div>
-      <div>
+      <div v-if="form.max">
         <label>максимальное значение для поля ввода</label>
         <InputText v-model="form.max" type="number" :min="0" />
       </div>

@@ -72,7 +72,11 @@ const save = async () => {
             {{ specification.categorySpecificationsId.title }}
           </label>
           <InputText
-            v-if="specification.categorySpecificationsId.type"
+            v-if="
+              specification.categorySpecificationsId.type &&
+              specification.categorySpecificationsId.step &&
+              specification.categorySpecificationsId.max
+            "
             v-model="specification.value"
             :step="specification.categorySpecificationsId.step"
             :min="specification.categorySpecificationsId.min"

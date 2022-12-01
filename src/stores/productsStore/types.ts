@@ -13,10 +13,7 @@ export interface IproductC {
   categoryId: number
   name: string
   description: string
-  manufacturerId: {
-    id: number
-    title: string
-  }
+  manufacturerId: number
   img: string
   warranty: number
   quantity: number
@@ -27,7 +24,14 @@ export interface IproductC {
   discount: number
 }
 
-export interface Iproduct extends defaultValues, IproductC {}
+export interface Iproduct
+  extends defaultValues,
+    Omit<IproductC, 'manufacturerId'> {
+  manufacturerId: {
+    id: number
+    title: string
+  }
+}
 
 export interface IproductSpecification {
   id: number
@@ -37,9 +41,9 @@ export interface IproductSpecification {
     units: string
     visible?: boolean
     type?: boolean
-    step?: number
+    step?: number | null
     min?: number
-    max?: number
+    max?: number | null
   }
   value: string
   productId: number
@@ -51,8 +55,20 @@ export interface IproductSpecificationU
     'categorySpecificationsId' | 'productId'
   > {}
 
-export interface IproductWithSpecifications extends defaultValues, IproductC {
+export interface IproductSpecificationR
+  extends Omit<IproductSpecification, 'categorySpecificationsId'> {
+  categorySpecificationsId: number
+  created_at: Date
+}
+
+export interface IproductWithSpecifications
+  extends defaultValues,
+    Omit<IproductC, 'manufacturerId'> {
   specifications: IproductSpecification[]
+  manufacturerId: {
+    id: number
+    title: string
+  }
 }
 
 export interface IproductU

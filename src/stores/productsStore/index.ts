@@ -16,6 +16,7 @@ import type {
   IspetificationsCU,
   IproductU,
   IproductSpecificationU,
+  IproductSpecificationR,
 } from './types'
 
 export const useProductsStore = defineStore('products', {
@@ -113,10 +114,11 @@ export const useProductsStore = defineStore('products', {
     const updateProductSpecifications = async (
       specifications: IproductSpecificationU[]
     ) => {
-      const { data } = await updateManyById<IproductWithSpecifications>(
+      const { data } = await updateManyById<IproductSpecificationR>(
         'specifications',
         specifications
       )
+      console.log(data)
       return { data }
     }
 

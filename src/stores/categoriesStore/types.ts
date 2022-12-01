@@ -14,9 +14,10 @@ export interface IcategorySpecificationsCU {
   type: boolean
   visible: boolean
   units: string
-  step: number
+  step: number | null
   min: number
-  max: number
+  max: number | null
+  variantsValues: string[] | null
 }
 export interface IcategorySpecifications
   extends defaultValues,
