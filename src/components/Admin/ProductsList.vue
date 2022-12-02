@@ -50,6 +50,7 @@ watch(useRoute(), (cur) => {
           <th>производитель</th>
           <th width="140">изображение</th>
           <th>гарантия</th>
+          <th>скидка</th>
           <th>цена</th>
           <th width="5%"></th>
         </tr>
@@ -70,6 +71,7 @@ watch(useRoute(), (cur) => {
               <img :src="product.img" alt="" />
             </td>
             <td>{{ product.warranty }} мес</td>
+            <td>{{ product.discount }} %</td>
             <td>{{ product.price }} Р</td>
             <td>
               <div class="flex flex-col justify-center gap-y-2">
