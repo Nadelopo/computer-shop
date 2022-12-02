@@ -5,6 +5,7 @@ export interface IproductWithSpecifications extends IproductR {
   specifications: Omit<IproductSpecificationR, 'created_at'>[]
 }
 
+//editPage
 export interface IproductSpecificationOnEdit {
   id: number
   categorySpecificationsId: {
@@ -26,6 +27,7 @@ export interface IproductWithSpecificationsOnEdit extends IproductR {
   specifications: IproductSpecificationOnEdit[]
 }
 
+//
 export interface ImanufacturerSelect {
   id: number
   title: string

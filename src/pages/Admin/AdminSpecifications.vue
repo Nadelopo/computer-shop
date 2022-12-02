@@ -10,7 +10,7 @@ const { categories } = storeToRefs(useCategoriesStore())
 const { createCategorySpecifications } = useCategoriesStore()
 
 const select = ref('')
-//fix
+
 const form = ref<IcategorySpecificationCU>({
   categoryId: 0,
   title: '',
