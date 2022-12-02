@@ -1,5 +1,5 @@
 import { supabase } from '@/supabase'
-import type { defaultValues } from '@/stores/types'
+
 //fix
 export const getAll = async <T>(table: string) => {
   const { data, error } = await supabase.from<T>(table).select()
@@ -32,39 +32,36 @@ export const getAllByColumn = async <T>(
   return { data }
 }
 
-export const create = async <T>(table: string, params: T) => {
+export const create = async <T, R>(table: string, params: T) => {
   const resp = await supabase.from<T>(table).insert(params).single()
   if (resp.error) console.log(resp.error)
-  const data = resp.data as (T & defaultValues) | null
+  const data = resp.data as R | null
   return { data }
 }
 
-export const createMany = async <T>(table: string, params: T) => {
+export const createMany = async <T, R>(table: string, params: T) => {
   const resp = await supabase.from<T>(table).insert(params)
   if (resp.error) console.log(resp.error)
-  const data = resp.data as (T & defaultValues) | null
+  const data = resp.data as R | null
   return { data }
 }
 
-export const updateOne = async <T extends Partial<T>>(
+export const updateOne = async <T extends Partial<T>, R>(
   table: string,
   id: number,
-  params: any
+  params: T
 ) => {
   const resp = await supabase.from(table).update(params).eq('id', id).single()
   if (resp.error) console.log(resp.error)
-  const data: T | null = resp.data
+  const data: R | null = resp.data
 
   return { data }
 }
 
-export const updateManyById = async <T extends Partial<T>>(
-  table: string,
-  params: any
-) => {
-  const resp = await supabase.from(table).upsert(params)
+export const updateManyById = async <T, R>(table: string, params: T) => {
+  const resp = await supabase.from<T>(table).upsert(params)
   if (resp.error) console.log(resp.error)
-  const data: T[] | null = resp.data
+  const data = resp.data as R | null
 
   return { data }
 }

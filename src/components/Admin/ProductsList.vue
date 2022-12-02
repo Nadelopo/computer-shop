@@ -3,12 +3,12 @@ import { watch, type PropType } from 'vue'
 import { useProductsStore } from '@/stores/productsStore'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
-import type { IcategorySpecifications } from '@/stores/categoriesStore/types'
 import Loader from '@/components/UI/loader.vue'
+import type { IcategorySpecificationR } from '@/types/tables'
 
 defineProps({
   specifications: {
-    type: Array as PropType<IcategorySpecifications[]>,
+    type: Array as PropType<IcategorySpecificationR[]>,
     required: true,
   },
 })

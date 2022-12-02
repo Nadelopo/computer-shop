@@ -8,16 +8,15 @@ import {
   updateManyById,
   updateOne,
 } from '@/utils/dbQueries'
+import type { IproductWithSpecifications } from '@/types'
 import type {
-  Iproduct,
-  IproductWithSpecifications,
   IproductC,
-  IproductSpecification,
-  IspetificationsCU,
-  IproductU,
-  IproductSpecificationU,
+  IproductR,
+  IproductSpecificationC,
   IproductSpecificationR,
-} from './types'
+  IproductSpecificationU,
+  IproductU,
+} from '@/types/tables'
 
 export const useProductsStore = defineStore('products', {
   state: () => {
@@ -25,13 +24,16 @@ export const useProductsStore = defineStore('products', {
     const categoryId = ref(0)
 
     const createProduct = async (params: IproductC) => {
-      const { data } = await create('products', params)
+      const { data } = await create<IproductC, IproductR>('products', params)
 
       return { data }
     }
 
-    const createSpecifications = async (params: IspetificationsCU[]) => {
-      const { data } = await createMany('specifications', params)
+    const createSpecifications = async (params: IproductSpecificationC[]) => {
+      const { data } = await createMany<
+        IproductSpecificationC[],
+        IproductSpecificationR[]
+      >('specifications', params)
       if (data) {
         console.log(data)
       }
@@ -40,7 +42,7 @@ export const useProductsStore = defineStore('products', {
     //fix
     const getProductsCard = async (categoryId: number) => {
       const newProducts = ref<IproductWithSpecifications[]>([])
-      const { data } = await getAllByColumn<Iproduct>(
+      const { data } = await getAllByColumn<IproductR>(
         'products',
         'categoryId',
         categoryId,
@@ -49,7 +51,7 @@ export const useProductsStore = defineStore('products', {
       if (data?.length) {
         data.forEach(async (product) => {
           const { data: specifications } =
-            await getAllByColumn<IproductSpecification>(
+            await getAllByColumn<IproductSpecificationR>(
               'specifications',
               'productId',
               product.id,
@@ -73,17 +75,19 @@ export const useProductsStore = defineStore('products', {
       selectSpecifications?: string
     ) => {
       const product = ref<IproductWithSpecifications | null>(null)
-      const selectValue =
-        selectSpecifications ??
-        'id, value,  categorySpecificationsId(id, title, units)'
-      const { data } = await getOneWithId<Iproduct>(
+
+      const { data } = await getOneWithId<IproductR>(
         'products',
         productId,
         '*, manufacturerId(id, title)'
       )
+
+      const selectValue =
+        selectSpecifications ??
+        'id, value,  categorySpecificationsId(id, title, units)'
       if (data) {
         const { data: specifications } =
-          await getAllByColumn<IproductSpecification>(
+          await getAllByColumn<IproductSpecificationR>(
             'specifications',
             'productId',
             productId,
@@ -97,7 +101,7 @@ export const useProductsStore = defineStore('products', {
     }
 
     const updateProduct = async (id: number, params: IproductU) => {
-      const { data } = await updateOne<IproductWithSpecifications>(
+      const { data } = await updateOne<IproductU, IproductR>(
         'products',
         id,
         params
@@ -114,11 +118,10 @@ export const useProductsStore = defineStore('products', {
     const updateProductSpecifications = async (
       specifications: IproductSpecificationU[]
     ) => {
-      const { data } = await updateManyById<IproductSpecificationR>(
-        'specifications',
-        specifications
-      )
-      console.log(data)
+      const { data } = await updateManyById<
+        IproductSpecificationU[],
+        IproductSpecificationR[]
+      >('specifications', specifications)
       return { data }
     }
 

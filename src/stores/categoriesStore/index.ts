@@ -2,34 +2,40 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { create, getAll, getAllByColumn } from '@/utils/dbQueries'
 import type {
-  Icategory,
+  IcategoryR,
   IcategoryCU,
-  IcategorySpecifications,
-  IcategorySpecificationsCU,
-} from './types'
+  IcategorySpecificationCU,
+  IcategorySpecificationR,
+} from '@/types/tables'
 
 export const useCategoriesStore = defineStore('categories', {
   state: () => {
-    const categories = ref<Icategory[]>([])
-    const categorySpecifications = ref<IcategorySpecifications[]>([])
+    const categories = ref<IcategoryR[]>([])
+    const categorySpecifications = ref<IcategorySpecificationCU[]>([])
 
     const setCategories = async () => {
-      const { data } = await getAll<Icategory>('categories')
+      const { data } = await getAll<IcategoryR>('categories')
       if (data) {
         categories.value = data
       }
     }
 
     const createCategory = async (params: IcategoryCU) => {
-      const { data } = await create('categories', params)
+      const { data } = await create<IcategoryCU, IcategoryR>(
+        'categories',
+        params
+      )
       if (data) {
         categories.value.push(data)
       }
     }
     const createCategorySpecifications = async (
-      form: IcategorySpecificationsCU
+      form: IcategorySpecificationCU
     ) => {
-      const { data } = await create('category_specifications', form)
+      const { data } = await create<
+        IcategorySpecificationCU,
+        IcategorySpecificationR
+      >('category_specifications', form)
       if (data) {
         categorySpecifications.value.push(data)
         return true
@@ -37,7 +43,7 @@ export const useCategoriesStore = defineStore('categories', {
     }
 
     const getCategorySpecifications = async (categoryId: number) => {
-      const { data } = await getAllByColumn<IcategorySpecifications>(
+      const { data } = await getAllByColumn<IcategorySpecificationR>(
         'category_specifications',
         'categoryId',
         categoryId

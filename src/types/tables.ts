@@ -1,6 +1,6 @@
 export interface IdefaultValues {
-  id: number
-  created_at: Date
+  readonly id: number
+  readonly created_at: Date
 }
 
 //products
@@ -22,7 +22,7 @@ export interface IproductR extends IdefaultValues {
   }
 }
 
-export interface IproductCU
+export interface IproductU
   extends Omit<
     IproductR,
     | 'categoryId'
@@ -36,42 +36,35 @@ export interface IproductCU
   manufacturerId: number
 }
 
+export interface IproductC extends IproductU {
+  categoryId: number
+}
+
 //specifications
 
-export interface IproductSpecificationCU {
+export interface IproductSpecificationC {
   productId: number
   value: string
   categorySpecificationsId: number
 }
 
+export interface IproductSpecificationU
+  extends Omit<
+    IproductSpecificationC,
+    'categorySpecificationsId' | 'productId'
+  > {
+  id: number
+}
+
 export interface IproductSpecificationR
-  extends Omit<IproductSpecificationCU, 'categorySpecificationsId'>,
+  extends Omit<IproductSpecificationC, 'categorySpecificationsId'>,
     IdefaultValues {
   categorySpecificationsId: {
+    id: number
     title: string
-    visible: boolean
+    visible?: boolean
     units: string
   }
-}
-
-export interface IproductSpecificationOnEditR
-  extends Omit<IproductSpecificationCU, 'categorySpecificationsId'>,
-    IdefaultValues {
-  categorySpecificationsId: {
-    title: string
-    visible: boolean
-    units: string
-    type: boolean
-    step: number | null
-    min: number | null
-    max: number
-    variantsValues: string[] | null
-  }
-}
-
-//productWithSpecifications
-export interface IproductWithSpecifications extends IproductR {
-  specifications: Omit<IproductSpecificationR, 'created_at'>[]
 }
 
 //category_specification
@@ -82,7 +75,7 @@ export interface IcategorySpecificationCU {
   visible: boolean
   units: string
   step?: number | null
-  min: number
+  min?: number | null
   max?: number | null
   variantsValues?: string[] | null
 }
@@ -96,23 +89,26 @@ export interface IcategorySpecificationR
 }
 
 //categories
-export interface IcategorysCU {
+export interface IcategoryCU {
   title: string
   enTitle: string
   img: string
 }
 
-export interface IcategoeiesR extends IcategorysCU, IdefaultValues {}
+export interface IcategoryR extends IcategoryCU, IdefaultValues {}
 
 //users
-export interface IuserCU {
+export interface IuserC {
+  id: string
   email: string
   name: string
   phone: number | null
   role: number
 }
 
-export interface IuserR extends IuserCU, IdefaultValues {}
+export interface IuserU extends Omit<IuserC, 'id'> {}
+
+export interface IuserR extends IuserU, IdefaultValues {}
 
 //manufacturers
 export interface ImanufacturerCU {

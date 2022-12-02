@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { PropType } from 'vue'
+
 defineProps({
   textFirst: {
     type: String,
@@ -7,6 +9,10 @@ defineProps({
   textSecond: {
     type: String,
     default: 'false',
+  },
+  type: {
+    type: String as PropType<'button' | 'submit' | 'reset' | undefined>,
+    default: 'button',
   },
   modelValue: Boolean,
 })
@@ -23,7 +29,7 @@ defineEmits(['update:modelValue'])
       {{ textFirst }}
     </button>
     <button
-      type="button"
+      :type="type"
       class="btn"
       :class="!modelValue ? 'btn' : 'btn__noactive'"
       @click="$emit('update:modelValue', false)"

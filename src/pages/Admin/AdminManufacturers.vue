@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import InputFile from '@/components/UI/InputFile.vue'
 import InputText from '@/components/UI/InputText.vue'
-import type { ImanufacturerCU } from '@/stores/manufacturersStore/types'
+import type { ImanufacturerCU } from '@/types/tables'
 
 const { createManufacturer } = useManufacturersStore()
 

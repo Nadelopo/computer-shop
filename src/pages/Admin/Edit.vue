@@ -1,37 +1,57 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/productsStore'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import InputText from '@/components/UI/InputText.vue'
 import InputFile from '@/components/UI/InputFile.vue'
-import type {
-  IproductWithSpecifications,
-  IproductU,
-  IproductSpecificationU,
-} from '@/stores/productsStore/types'
-import type { ImanufacturerSelect } from '@/stores/types'
-import Loader from '@/components/UI/loader.vue'
 
-const { getProduct, updateProduct, updateProductSpecifications } =
-  useProductsStore()
+import Loader from '@/components/UI/loader.vue'
+import type {
+  ImanufacturerSelect,
+  IproductSpecificationOnEdit,
+  IproductWithSpecificationsOnEdit,
+} from '@/types'
+import type {
+  IproductR,
+  IproductSpecificationU,
+  IproductU,
+} from '@/types/tables'
+import { getAllByColumn, getOneWithId } from '@/utils/dbQueries'
+
+const { updateProduct, updateProductSpecifications } = useProductsStore()
 const { manufacturers } = storeToRefs(useManufacturersStore())
 
 const router = useRouter()
 const route = useRoute()
 
 const id = Number(route.params.id)
-const product = ref<IproductWithSpecifications | null>(null)
+const product = ref<IproductWithSpecificationsOnEdit | null>(null)
+
 const manufacturerSelect = ref<ImanufacturerSelect | string>('')
 
-getProduct(
-  id,
-  'id, value,  categorySpecificationsId!inner(id, title, units, visible, type, step, min, max)'
-).then((resp) => {
-  product.value = resp.value
-  if (product.value) {
-    manufacturerSelect.value = product.value.manufacturerId
+onBeforeMount(async () => {
+  const { data } = await getOneWithId<IproductR>(
+    'products',
+    id,
+    '*, manufacturerId(id, title)'
+  )
+  const spec = await getAllByColumn<IproductSpecificationOnEdit>(
+    'specifications',
+    'productId',
+    id,
+    'id, value, productId, categorySpecificationsId(id, title,  visible, units, type, step, min, max, variantsValues)'
+  )
+
+  if (data && spec.data) {
+    const sortSpec = spec.data.sort((a, b) =>
+      a.categorySpecificationsId.title.localeCompare(
+        b.categorySpecificationsId.title
+      )
+    )
+    manufacturerSelect.value = data.manufacturerId
+    product.value = { ...data, specifications: sortSpec }
   }
 })
 
@@ -45,18 +65,35 @@ const save = async () => {
       warranty: product.value.warranty,
       price: product.value.price,
       discount: product.value.discount,
+      quantity: product.value.quantity,
     }
 
     const newSpecifications: IproductSpecificationU[] =
       product.value.specifications.map((spec) => {
         return { id: spec.id, value: spec.value }
       })
-
+    console.log(product.value.specifications)
+    console.log(newSpecifications)
     product.value = null
     updateProductSpecifications(newSpecifications)
     await updateProduct(id, productU)
     router.go(-1)
   }
+}
+
+const isInputText = (i: number) => {
+  let value = false
+  if (product.value) {
+    const spec = product.value?.specifications[i].categorySpecificationsId
+    if (
+      typeof spec.step === 'number' &&
+      typeof spec.max === 'number' &&
+      typeof spec.min === 'number'
+    ) {
+      value = true
+    }
+  }
+  return value
 }
 </script>
 
@@ -65,25 +102,38 @@ const save = async () => {
     <div v-if="product" class="container">
       <form class="list__form pt-10" @submit.prevent="save">
         <div
-          v-for="specification in product.specifications"
+          v-for="(specification, i) in product.specifications"
           :key="specification.categorySpecificationsId.id"
         >
           <label>
             {{ specification.categorySpecificationsId.title }}
           </label>
-          <InputText
-            v-if="
-              specification.categorySpecificationsId.type &&
-              specification.categorySpecificationsId.step &&
-              specification.categorySpecificationsId.max
-            "
-            v-model="specification.value"
-            :step="specification.categorySpecificationsId.step"
-            :min="specification.categorySpecificationsId.min"
-            :max="specification.categorySpecificationsId.max"
-            type="number"
-          />
-          <InputText v-else v-model.trim="specification.value" type="text" />
+          <template v-if="specification.categorySpecificationsId.type">
+            <InputText
+              v-if="isInputText(i)"
+              v-model="specification.value"
+              :step="specification.categorySpecificationsId.step!"
+              :min="specification.categorySpecificationsId.min!"
+              :max="specification.categorySpecificationsId.max!"
+              type="number"
+            />
+          </template>
+          <template v-else>
+            <br />
+            <select v-model="specification.value" required class="mt-4">
+              <option value="" selected disabled hidden>
+                выберите значение
+              </option>
+              <option
+                v-for="value in specification.categorySpecificationsId
+                  .variantsValues"
+                :key="value"
+                :value="value"
+              >
+                {{ value }}
+              </option>
+            </select>
+          </template>
         </div>
         <div>
           <label>наименование</label>

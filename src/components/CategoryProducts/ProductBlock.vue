@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { IproductWithSpecifications } from '@/types'
 import type { PropType } from 'vue'
-import type { IproductWithSpecifications } from '@/stores/productsStore/types'
 // import CartButton from '../UI/CartButton.vue'
 defineProps({
   item: {
@@ -32,7 +32,7 @@ defineProps({
             v-if="specification.categorySpecificationsId.visible"
             class="flex gap-2"
           >
-            <div>{{ specification.categorySpecificationsId.title }}</div>
+            <div>{{ specification.categorySpecificationsId.title }}:</div>
             <div>
               {{ specification.value }}
               {{ specification.categorySpecificationsId.units }}

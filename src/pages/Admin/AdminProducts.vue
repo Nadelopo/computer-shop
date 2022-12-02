@@ -5,13 +5,21 @@ import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useProductsStore } from '@/stores/productsStore'
 import InputText from '@/components/UI/InputText.vue'
 import InputFile from '@/components/UI/InputFile.vue'
-import type { IcategorySpecifications } from '@/stores/categoriesStore/types'
-import type { IproductC } from '@/stores/productsStore/types'
+
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { storeToRefs } from 'pinia'
 import ProdctsList from '@/components/Admin/ProductsList.vue'
 import Loader from '@/components/UI/loader.vue'
-import type { IformCategorySpecifications } from '@/stores/types'
+import type {
+  IcategorySpecificationR,
+  IproductC,
+  IproductSpecificationC,
+} from '@/types/tables'
+
+interface IproductSpecificationForm
+  extends Omit<IproductSpecificationC, 'productId'> {
+  productId: number | null
+}
 
 const route = useRoute()
 const { manufacturers } = storeToRefs(useManufacturersStore())
@@ -21,8 +29,8 @@ const { createProduct, createSpecifications } = useProductsStore()
 
 const manufacturerSelect = ref<number | string>('')
 const categoryId = ref<number>(Number(route.params.id))
-const categorySpecifications = ref<IcategorySpecifications[]>([])
-const categoryFormSpecifications = ref<IformCategorySpecifications[]>([])
+const categorySpecifications = ref<IcategorySpecificationR[]>([])
+const categoryFormSpecifications = ref<IproductSpecificationForm[]>([])
 
 const copyForm: IproductC = {
   categoryId: categoryId.value,
@@ -32,10 +40,7 @@ const copyForm: IproductC = {
   manufacturerId: 0,
   warranty: 0,
   price: 0,
-  popularity: 0,
   quantity: 100,
-  rating: 0,
-  countReviews: 0,
   discount: 0,
 }
 
@@ -84,10 +89,23 @@ const create = async () => {
     const productSpecifications = categoryFormSpecifications.value.map((e) => {
       return { ...e, productId: data.id }
     })
-    console.log(productSpecifications)
+
     createSpecifications(productSpecifications)
     product.value = { ...copyForm }
   }
+}
+
+const isInputText = (i: number) => {
+  let value = false
+  const spec = categorySpecifications.value[i]
+  if (
+    typeof spec.step === 'number' &&
+    typeof spec.max === 'number' &&
+    typeof spec.min === 'number'
+  ) {
+    value = true
+  }
+  return value
 }
 </script>
 
@@ -101,19 +119,16 @@ const create = async () => {
         <label>
           {{ specification.title }}
         </label>
-        <InputText
-          v-if="specification.type && specification.max && specification.step"
-          v-model="categoryFormSpecifications[i].value"
-          type="number"
-          :step="specification.step"
-          :min="specification.min"
-          :max="specification.max"
-        />
-        <!-- <InputText
-          v-else
-          v-model.trim="categoryFormSpecifications[i].value"
-          type="text"
-        /> -->
+        <template v-if="specification.type">
+          <InputText
+            v-if="isInputText(i)"
+            v-model="categoryFormSpecifications[i].value"
+            type="number"
+            :step="specification.step!"
+            :min="specification.min!"
+            :max="specification.max!"
+          />
+        </template>
         <template v-else>
           <br />
           <select

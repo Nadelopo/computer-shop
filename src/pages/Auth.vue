@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
 import { supabase } from '@/supabase'
-import type { Iuser } from '@/stores/userStore/types'
+import type { IuserC } from '@/types/tables'
 
 const router = useRouter()
 
@@ -34,8 +34,12 @@ const signUp = async () => {
     if (error) console.log(error)
     if (user) {
       const { error, data: insertData } = await supabase
-        .from<Iuser>('users')
-        .insert({ name: name.value, email: email.value, id: user.id })
+        .from<IuserC>('users')
+        .insert({
+          name: name.value,
+          email: email.value,
+          id: user.id,
+        })
       if (error) console.log(error)
       if (insertData) router.push({ name: 'Home' })
     }
