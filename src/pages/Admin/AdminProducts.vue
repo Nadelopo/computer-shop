@@ -39,7 +39,7 @@ const copyForm: IproductC = {
   discount: 0,
 }
 
-const products = ref<IproductC>({ ...copyForm })
+const product = ref<IproductC>({ ...copyForm })
 
 const setCategorySpecifications = async () => {
   const { data } = await getCategorySpecifications(categoryId.value)
@@ -73,20 +73,20 @@ watch(
 
 watch(manufacturerSelect, (cur) => {
   if (typeof cur !== 'string') {
-    products.value.manufacturerId = cur
+    product.value.manufacturerId = cur
   }
 })
 
 const create = async () => {
-  const { data } = await createProduct(products.value)
-  console.log(products.value)
+  const { data } = await createProduct(product.value)
+  console.log(product.value)
   if (data) {
     const productSpecifications = categoryFormSpecifications.value.map((e) => {
       return { ...e, productId: data.id }
     })
     console.log(productSpecifications)
     createSpecifications(productSpecifications)
-    products.value = { ...copyForm }
+    product.value = { ...copyForm }
   }
 }
 </script>
@@ -132,18 +132,18 @@ const create = async () => {
           </select>
         </template>
       </div>
-      <template v-if="products">
+      <template v-if="product">
         <div>
           <label>наименование</label>
-          <InputText v-model.trim="products.name" />
+          <InputText v-model.trim="product.name" />
         </div>
         <div>
           <label>описание</label>
-          <InputText v-model.trim="products.description" />
+          <InputText v-model.trim="product.description" />
         </div>
         <div>
           <label>изображение</label>
-          <InputFile v-model.trim="products.img" folder="products" />
+          <InputFile v-model.trim="product.img" folder="product" />
         </div>
 
         <div>
@@ -162,11 +162,11 @@ const create = async () => {
         </div>
         <div>
           <label>гарантия</label>
-          <InputText v-model="products.warranty" type="number" />
+          <InputText v-model="product.warranty" type="number" />
         </div>
         <div>
           <label>цена</label>
-          <InputText v-model="products.price" type="number" />
+          <InputText v-model="product.price" type="number" />
         </div>
       </template>
       <div><button class="btn">создать</button></div>

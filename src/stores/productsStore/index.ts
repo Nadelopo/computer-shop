@@ -53,7 +53,7 @@ export const useProductsStore = defineStore('products', {
               'specifications',
               'productId',
               product.id,
-              'id, value,  categorySpecificationsId!inner(id, title, units, visible, type)'
+              'id, value,  categorySpecificationsId(id, title, units, visible)'
             )
 
           if (specifications) {
@@ -75,7 +75,7 @@ export const useProductsStore = defineStore('products', {
       const product = ref<IproductWithSpecifications | null>(null)
       const selectValue =
         selectSpecifications ??
-        'id, value,  categorySpecificationsId!inner(id, title, units)'
+        'id, value,  categorySpecificationsId(id, title, units)'
       const { data } = await getOneWithId<Iproduct>(
         'products',
         productId,
