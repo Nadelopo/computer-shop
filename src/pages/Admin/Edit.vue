@@ -27,6 +27,8 @@ const router = useRouter()
 const route = useRoute()
 
 const id = Number(route.params.id)
+const categoryId = Number(route.params.categoryId)
+
 const product = ref<IproductWithSpecificationsOnEdit | null>(null)
 
 const manufacturerSelect = ref<ImanufacturerSelect | string>('')
@@ -41,17 +43,12 @@ onBeforeMount(async () => {
     'specifications',
     'productId',
     id,
-    'id, value, productId, categorySpecificationsId(id, title,  visible, units, type, step, min, max, variantsValues)'
+    'id, value, productId, categorySpecificationsId(id, title,  visible, units, type, step, min, max, variantsValues)',
+    'categorySpecificationsId'
   )
-
   if (data && spec.data) {
-    const sortSpec = spec.data.sort((a, b) =>
-      a.categorySpecificationsId.title.localeCompare(
-        b.categorySpecificationsId.title
-      )
-    )
     manufacturerSelect.value = data.manufacturerId
-    product.value = { ...data, specifications: sortSpec }
+    product.value = { ...data, specifications: spec.data }
   }
 })
 
@@ -77,7 +74,10 @@ const save = async () => {
     product.value = null
     updateProductSpecifications(newSpecifications)
     await updateProduct(id, productU)
-    router.go(-1)
+    router.push({
+      name: 'AdminCreateProducts',
+      params: { link: route.params.category, id: categoryId },
+    })
   }
 }
 

@@ -55,7 +55,8 @@ export const useProductsStore = defineStore('products', {
               'specifications',
               'productId',
               product.id,
-              'id, value,  categorySpecificationsId(id, title, units, visible)'
+              'id, value,  categorySpecificationsId(id, title, units, visible)',
+              'categorySpecificationsId'
             )
 
           if (specifications) {

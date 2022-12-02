@@ -46,8 +46,11 @@ export const useCategoriesStore = defineStore('categories', {
       const { data } = await getAllByColumn<IcategorySpecificationR>(
         'category_specifications',
         'categoryId',
-        categoryId
+        categoryId,
+        '*',
+        'id'
       )
+      console.log(data)
       return { data }
     }
 

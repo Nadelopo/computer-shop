@@ -23,10 +23,15 @@ export const getAllByColumn = async <T>(
   table: string,
   column: string,
   id: string | number,
-  selectValue?: string
+  selectValue?: string,
+  order?: string
 ) => {
   const select = selectValue ?? '*'
-  const resp = await supabase.from(table).select(select).eq(column, id)
+  let query = supabase.from(table).select(select).eq(column, id)
+  if (order) {
+    query = query.order(order)
+  }
+  const resp = await query
   if (resp.error) console.log(resp.error)
   const data: T[] | null = resp.data
   return { data }

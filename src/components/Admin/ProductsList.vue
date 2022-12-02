@@ -76,7 +76,11 @@ watch(useRoute(), (cur) => {
                 <router-link
                   :to="{
                     name: 'Edit',
-                    params: { categoryId: product.categoryId, id: product.id },
+                    params: {
+                      categoryId: product.categoryId,
+                      category: $route.params.link,
+                      id: product.id,
+                    },
                   }"
                 >
                   <button
