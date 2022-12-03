@@ -5,7 +5,6 @@ import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useProductsStore } from '@/stores/productsStore'
 import InputText from '@/components/UI/InputText.vue'
 import InputFile from '@/components/UI/InputFile.vue'
-
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { storeToRefs } from 'pinia'
 import ProdctsList from '@/components/Admin/ProductsList.vue'

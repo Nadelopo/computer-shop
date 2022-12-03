@@ -89,13 +89,17 @@ export interface IcategorySpecificationR
 }
 
 //categories
-export interface IcategoryCU {
+export interface IcategoryC {
   title: string
   enTitle: string
   img: string
 }
 
-export interface IcategoryR extends IcategoryCU, IdefaultValues {}
+export interface IcategoryU extends IcategoryC {
+  id: number
+}
+
+export interface IcategoryR extends IcategoryC, IdefaultValues {}
 
 //users
 export interface IuserC {

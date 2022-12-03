@@ -1,11 +1,12 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { create, getAll, getAllByColumn } from '@/utils/dbQueries'
+import { create, getAll, getAllByColumn, updateOne } from '@/utils/dbQueries'
 import type {
   IcategoryR,
-  IcategoryCU,
+  IcategoryC,
   IcategorySpecificationCU,
   IcategorySpecificationR,
+  IcategoryU,
 } from '@/types/tables'
 
 export const useCategoriesStore = defineStore('categories', {
@@ -20,8 +21,8 @@ export const useCategoriesStore = defineStore('categories', {
       }
     }
 
-    const createCategory = async (params: IcategoryCU) => {
-      const { data } = await create<IcategoryCU, IcategoryR>(
+    const createCategory = async (params: IcategoryC) => {
+      const { data } = await create<IcategoryC, IcategoryR>(
         'categories',
         params
       )
@@ -29,6 +30,21 @@ export const useCategoriesStore = defineStore('categories', {
         categories.value.push(data)
       }
     }
+
+    const updateCategory = async (params: IcategoryU) => {
+      const { data } = await updateOne<IcategoryU, IcategoryR>(
+        'categories',
+        params.id,
+        params
+      )
+      if (data) {
+        categories.value = categories.value.map((e) =>
+          e.id === params.id ? { ...e, ...params } : e
+        )
+      }
+      return data
+    }
+
     const createCategorySpecifications = async (
       form: IcategorySpecificationCU
     ) => {
@@ -50,7 +66,6 @@ export const useCategoriesStore = defineStore('categories', {
         '*',
         'id'
       )
-      console.log(data)
       return { data }
     }
 
@@ -63,6 +78,7 @@ export const useCategoriesStore = defineStore('categories', {
       createCategory,
       createCategorySpecifications,
       getCategorySpecifications,
+      updateCategory,
     }
   },
 })

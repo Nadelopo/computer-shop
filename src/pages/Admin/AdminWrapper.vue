@@ -33,5 +33,4 @@ const currentComponent = computed(() => {
 .roottt
   display: grid
   grid-template-columns: 300px auto
-  background: #fff
 </style>

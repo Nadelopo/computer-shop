@@ -38,8 +38,13 @@ const router = createRouter({
     },
     {
       path: '/admin/edit/:category/:categoryId/:id',
-      name: 'Edit',
-      component: () => import('@/pages/Admin/Edit.vue'),
+      name: 'EditProducts',
+      component: () => import('@/pages/Admin/EditProducts.vue'),
+    },
+    {
+      path: '/admin/edit/:categoryId',
+      name: 'EditCategory',
+      component: () => import('@/pages/Admin/EditCategory.vue'),
     },
   ],
 })

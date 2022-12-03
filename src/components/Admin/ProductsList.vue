@@ -77,7 +77,7 @@ watch(useRoute(), (cur) => {
               <div class="flex flex-col justify-center gap-y-2">
                 <router-link
                   :to="{
-                    name: 'Edit',
+                    name: 'EditProducts',
                     params: {
                       categoryId: product.categoryId,
                       category: $route.params.link,
