@@ -15,7 +15,7 @@ export const useCategoriesStore = defineStore('categories', {
     const categorySpecifications = ref<IcategorySpecificationCU[]>([])
 
     const setCategories = async () => {
-      const { data } = await getAll<IcategoryR>('categories')
+      const { data } = await getAll<IcategoryR>('categories', 'id')
       if (data) {
         categories.value = data
       }
@@ -66,6 +66,7 @@ export const useCategoriesStore = defineStore('categories', {
         '*',
         'id'
       )
+      console.log(data)
       return { data }
     }
 

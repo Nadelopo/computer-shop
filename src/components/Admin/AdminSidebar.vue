@@ -45,7 +45,7 @@ const { categories } = storeToRefs(useCategoriesStore())
             params: { link: 'categories' },
           }"
         >
-          Создать категорию
+          Управление категориями
         </router-link>
       </div>
       <div class="head">

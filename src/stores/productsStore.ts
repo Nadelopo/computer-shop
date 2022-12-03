@@ -22,10 +22,10 @@ export const useProductsStore = defineStore('products', {
   state: () => {
     const products = ref<IproductWithSpecifications[]>([])
     const categoryId = ref(0)
+    const searchProducts = ref('')
 
     const createProduct = async (params: IproductC) => {
       const { data } = await create<IproductC, IproductR>('products', params)
-
       return { data }
     }
 
@@ -40,13 +40,15 @@ export const useProductsStore = defineStore('products', {
     }
 
     //fix
-    const getProductsCard = async (categoryId: number) => {
+    const getProducts = async (categoryId: number, search?: string) => {
       const newProducts = ref<IproductWithSpecifications[]>([])
       const { data } = await getAllByColumn<IproductR>(
         'products',
         'categoryId',
         categoryId,
-        '*, manufacturerId(id, title)'
+        '*, manufacturerId(id, title)',
+        'id',
+        search
       )
       if (data?.length) {
         data.forEach(async (product) => {
@@ -130,11 +132,12 @@ export const useProductsStore = defineStore('products', {
       products,
       createProduct,
       createSpecifications,
-      getProductsCard,
+      getProducts,
       categoryId,
       getProduct,
       updateProduct,
       updateProductSpecifications,
+      searchProducts,
     }
   },
 })

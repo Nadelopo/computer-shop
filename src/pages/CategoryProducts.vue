@@ -3,17 +3,18 @@ import { useProductsStore } from '@/stores/productsStore'
 import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
+import Search from '@/components/CategoryProducts/Search.vue'
 
 const { products, categoryId } = storeToRefs(useProductsStore())
-const { getProductsCard } = useProductsStore()
+const { getProducts } = useProductsStore()
 
 categoryId.value = Number(useRoute().params.id)
 
 if (!products.value.length) {
-  getProductsCard(categoryId.value)
+  getProducts(categoryId.value)
 } else if (products.value[0].categoryId !== categoryId.value) {
   products.value = []
-  getProductsCard(categoryId.value)
+  getProducts(categoryId.value)
 }
 </script>
 
@@ -22,9 +23,12 @@ if (!products.value.length) {
     <div class="grid">
       <div />
       <div>
-        <template v-for="product in products" :key="product.id">
-          <ProductBlock :item="product" />
-        </template>
+        <Search />
+        <div class="product__list">
+          <template v-for="product in products" :key="product.id">
+            <ProductBlock :item="product" />
+          </template>
+        </div>
       </div>
     </div>
   </div>
@@ -35,4 +39,10 @@ if (!products.value.length) {
   display: grid
   grid-template-columns: 20% 1fr
   gap: 20px
+
+.product__list
+  margin-top: 20px
+  display: flex
+  flex-direction: column
+  gap: 30px
 </style>

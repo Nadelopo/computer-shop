@@ -1,9 +1,21 @@
 import { supabase } from '@/supabase'
 
 //fix
-export const getAll = async <T>(table: string) => {
-  const { data, error } = await supabase.from<T>(table).select()
-  if (error) console.log(error)
+export const getAll = async <T>(
+  table: string,
+  order?: string,
+  select?: string
+) => {
+  let query = supabase.from(table).select()
+  if (order) {
+    query = query.order(order)
+  }
+  if (select) {
+    query = query.select(select)
+  }
+  const resp = await query
+  if (resp.error) console.log(resp.error)
+  const data = resp.data as T[] | null
   return { data }
 }
 
@@ -24,12 +36,21 @@ export const getAllByColumn = async <T>(
   column: string,
   id: string | number,
   selectValue?: string,
-  order?: string
+  order?: string,
+  seach?: string
 ) => {
   const select = selectValue ?? '*'
   let query = supabase.from(table).select(select).eq(column, id)
   if (order) {
     query = query.order(order)
+  }
+  if (seach) {
+    {
+      query = query.textSearch('name', seach, {
+        config: 'russian',
+        type: 'websearch',
+      })
+    }
   }
   const resp = await query
   if (resp.error) console.log(resp.error)
