@@ -4,18 +4,24 @@ import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import Search from '@/components/CategoryProducts/Search.vue'
+import { onUnmounted } from 'vue'
+import Loader from '@/components/UI/loader.vue'
 
-const { products, categoryId } = storeToRefs(useProductsStore())
+const { products, loader } = storeToRefs(useProductsStore())
 const { getProducts } = useProductsStore()
 
-categoryId.value = Number(useRoute().params.id)
+const categoryId = Number(useRoute().params.id)
 
 if (!products.value.length) {
-  getProducts(categoryId.value)
-} else if (products.value[0].categoryId !== categoryId.value) {
+  getProducts(categoryId)
+} else if (products.value[0].categoryId !== categoryId) {
   products.value = []
-  getProducts(categoryId.value)
+  getProducts(categoryId)
 }
+
+onUnmounted(() => {
+  getProducts(categoryId)
+})
 </script>
 
 <template>
@@ -24,11 +30,22 @@ if (!products.value.length) {
       <div />
       <div>
         <Search />
-        <div class="product__list">
-          <template v-for="product in products" :key="product.id">
-            <ProductBlock :item="product" />
-          </template>
-        </div>
+        <template v-if="loader === 'success'">
+          <div class="product__list">
+            <template v-for="product in products" :key="product.id">
+              <ProductBlock :item="product" />
+            </template>
+          </div>
+        </template>
+        <template v-else-if="loader === 'loading'">
+          <Loader />
+        </template>
+        <template v-else>
+          <div class="font-bold text-center text-2xl mt-8">
+            К сожалению, по вашему запросу ничего не найдено. Проверьте
+            правильность ввода или попробуйте изменить запрос.
+          </div>
+        </template>
       </div>
     </div>
   </div>

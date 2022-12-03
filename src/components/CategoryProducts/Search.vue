@@ -17,21 +17,29 @@ const names = ref<string[]>([])
 const setSearch = debounce(500, async () => {
   let searchQueryValue = ''
   if (!search.value) return getProducts(categoryId, '')
-  names.value.forEach((n) => {
-    const arr = n.split(' ')
+  names.value.every((n) => {
+    let stop = false
+    let arr = n.split(' ')
     for (let i = 0; i < arr.length; i++) {
+      console.log(
+        arr[i],
+        arr[i].toLowerCase().includes(search.value.toLowerCase())
+      )
       if (
         arr[i].toLowerCase().includes(search.value.toLowerCase()) &&
         search.value.length < arr[i].length + 2
       ) {
-        console.log(arr[i])
         searchQueryValue = arr[i]
+        stop = true
         break
       } else {
         searchQueryValue = '34jkfvm34'
       }
     }
+    if (stop) return false
+    else return true
   })
+  console.log(searchQueryValue)
   getProducts(categoryId, searchQueryValue)
 })
 
