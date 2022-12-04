@@ -9,16 +9,37 @@ import InputFile from '@/components/UI/InputFile.vue'
 
 import Loader from '@/components/UI/loader.vue'
 import type {
-  ImanufacturerSelect,
-  IproductSpecificationOnEdit,
-  IproductWithSpecificationsOnEdit,
-} from '@/types'
-import type {
   IproductR,
   IproductSpecificationU,
   IproductU,
 } from '@/types/tables'
 import { getAllByColumn, getOneWithId } from '@/utils/dbQueries'
+
+interface IproductSpecificationOnEdit {
+  id: number
+  categorySpecificationsId: {
+    id: number
+    title: string
+    type: boolean
+    visible: boolean
+    units: string
+    step: number | null
+    min: number | null
+    max: number | null
+    variantsValues: string[] | null
+  }
+  productId: number
+  value: string
+}
+
+interface IproductWithSpecificationsOnEdit extends IproductR {
+  specifications: IproductSpecificationOnEdit[]
+}
+
+interface ImanufacturerSelect {
+  id: number
+  title: string
+}
 
 const { updateProduct, updateProductSpecifications } = useProductsStore()
 const { manufacturers } = storeToRefs(useManufacturersStore())
