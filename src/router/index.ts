@@ -56,25 +56,26 @@ const router = createRouter({
   ],
 })
 
+// role 1 - user, 0 - admin
 router.beforeEach(async (to, from, next) => {
   const requireAuth = to.matched.some((record) => record.meta.auth)
-  const token = JSON.parse(localStorage.getItem('supabase.auth.token') || '{}')
-    ?.currentSession?.access_token
-  if (requireAuth && !token) return next('/')
-  const user = supabase.auth.user()
-  let role = 1
-  if (user) {
-    const { data } = await getOneWithId<{ role: number }>(
-      'users',
-      user.id,
-      'role'
-    )
-    if (data) role = data.role
-  }
-  if (requireAuth && role !== 0) {
-    next('/')
-  } else {
-    next()
+  if (!requireAuth) return next()
+  else {
+    const user = supabase.auth.user()
+    let role = 1
+    if (user) {
+      const { data } = await getOneWithId<{ role: number }>(
+        'users',
+        user.id,
+        'role'
+      )
+      if (data) role = data.role
+    }
+    if (role !== 0) {
+      next('/')
+    } else {
+      next()
+    }
   }
 })
 
