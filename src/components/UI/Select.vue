@@ -1,31 +1,28 @@
 <script setup lang="ts">
-import { onUnmounted, ref } from 'vue'
+import { onUnmounted, ref, type PropType } from 'vue'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
 import { isOutside } from '@/utils/isOutside'
 
-const props = defineProps({
+defineProps({
   modelValue: {
     type: String,
     required: true,
   },
   values: {
-    type: Array,
+    type: Array as PropType<string[]>,
     required: true,
   },
 })
 
 const emit = defineEmits(['update:modelValue'])
 
-const currentValue = ref(props.modelValue)
 const active = ref(false)
 const btn = ref<HTMLElement | null>(null)
 
 const color = ref('#a9a9a9')
 
-const onClick = (e: MouseEvent) => {
-  const target = e.target as HTMLOptionElement
-  currentValue.value = target.value
-  emit('update:modelValue', currentValue.value)
+const onClick = (value: string) => {
+  emit('update:modelValue', value)
   if (color.value === '#a9a9a9') {
     color.value = '#fff'
   }
@@ -58,12 +55,17 @@ onUnmounted(() => {
   <span class="root">
     <button ref="btn" class="select" :class="{ active }" @click="onHead">
       <div class="head">
-        <span>{{ currentValue ?? 'Select' }}</span>
+        <span>{{ modelValue ? modelValue : 'Select' }}</span>
         <ArrowSVG class="svg" :class="{ active }" />
       </div>
     </button>
     <div class="list" :class="{ active }">
-      <option v-for="(value, i) in values" :key="i" @click="onClick">
+      <option
+        v-for="(value, i) in values"
+        :key="i"
+        :class="modelValue === value && 'active '"
+        @click="onClick(value)"
+      >
         {{ value }}
       </option>
     </div>
@@ -138,7 +140,7 @@ option
   color: #fff
   transition: $transition
   cursor: pointer
-  &:hover
+  &:hover, &.active
     transform: translateX(4px)
     color: var(--color-text)
 </style>
