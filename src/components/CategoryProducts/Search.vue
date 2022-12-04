@@ -18,28 +18,20 @@ const setSearch = debounce(500, async () => {
   let searchQueryValue = ''
   if (!search.value) return getProducts(categoryId, '')
   names.value.every((n) => {
-    let stop = false
     let arr = n.split(' ')
-    for (let i = 0; i < arr.length; i++) {
-      console.log(
-        arr[i],
-        arr[i].toLowerCase().includes(search.value.toLowerCase())
-      )
-      if (
-        arr[i].toLowerCase().includes(search.value.toLowerCase()) &&
-        search.value.length < arr[i].length + 2
-      ) {
-        searchQueryValue = arr[i]
-        stop = true
-        break
+    for (let value of arr) {
+      const condition = value
+        .toLowerCase()
+        .includes(search.value.toLowerCase().slice(0, -1))
+      if (condition) {
+        searchQueryValue = value
+        return false
       } else {
         searchQueryValue = '34jkfvm34'
       }
     }
-    if (stop) return false
-    else return true
+    return true
   })
-  console.log(searchQueryValue)
   getProducts(categoryId, searchQueryValue)
 })
 
