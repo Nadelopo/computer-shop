@@ -31,8 +31,10 @@ const onClick = (value: string) => {
 const onHead = () => {
   if (active.value) {
     active.value = false
+    removeEventListener('click', clickOutside)
   } else {
     active.value = true
+    addEventListener('click', clickOutside)
   }
 }
 
@@ -40,15 +42,12 @@ const clickOutside = (e: MouseEvent) => {
   if (btn.value) {
     if (isOutside(btn.value, e)) {
       active.value = false
+      removeEventListener('click', clickOutside)
     }
   }
 }
 
-addEventListener('click', clickOutside)
-
-onUnmounted(() => {
-  removeEventListener('click', clickOutside)
-})
+onUnmounted(() => removeEventListener('click', clickOutside))
 </script>
 
 <template>
