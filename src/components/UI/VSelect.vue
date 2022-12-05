@@ -18,12 +18,12 @@ const emit = defineEmits(['update:modelValue'])
 
 const active = ref(false)
 const btn = ref<HTMLElement | null>(null)
-const listWrapper = ref<HTMLElement | null>(null)
 const selected = ref(props.modelValue)
+const optionsRefs = ref<HTMLButtonElement[]>([])
 
 const color = ref('#a9a9a9')
 
-const onClick = (selectValue: string, i: number) => {
+const onOptionClick = (selectValue: string, i: number) => {
   selected.value = props.options[i].title
   emit('update:modelValue', selectValue)
   if (color.value === '#a9a9a9') {
@@ -31,47 +31,22 @@ const onClick = (selectValue: string, i: number) => {
   }
 }
 
-const focusOption = () => {
-  if (listWrapper.value) {
-    const isValue = props.options.find((e) => e.value === props.modelValue)
-    if (isValue) {
-      const element = [...listWrapper.value.children].filter(
-        (e) => e.textContent === isValue.title
-      )[0] as HTMLButtonElement
-      setTimeout(() => element.focus(), 100)
-    } else {
-      setTimeout(() => {
-        if (listWrapper.value) {
-          const firstChildren = [
-            ...listWrapper.value.children,
-          ][0] as HTMLButtonElement
-          firstChildren.focus()
-        }
-      }, 100)
-    }
-  }
-}
-
-const onOptionUp = (e: KeyboardEvent, i: number) => {
-  const btn = e.composedPath()[1] as HTMLButtonElement
+const onOptionUp = (i: number) => {
   if (i) {
-    const prevElement = btn.children[i - 1] as HTMLButtonElement
+    const prevElement = optionsRefs.value[i - 1]
     prevElement.focus()
   } else {
-    const lastElement = btn.children[
-      btn.children.length - 1
-    ] as HTMLButtonElement
-    lastElement.focus()
+    const lastElement = optionsRefs.value.at(-1)
+    lastElement?.focus()
   }
 }
 
-const onOptionDown = (e: KeyboardEvent, i: number) => {
-  const btn = e.composedPath()[1] as HTMLButtonElement
+const onOptionDown = (i: number) => {
   if (i < props.options.length - 1) {
-    const nextElement = btn.children[i + 1] as HTMLButtonElement
+    const nextElement = optionsRefs.value[i + 1]
     nextElement.focus()
   } else {
-    const firstElement = btn.children[0] as HTMLButtonElement
+    const firstElement = optionsRefs.value[0]
     firstElement.focus()
   }
 }
@@ -85,17 +60,32 @@ const clickOutside = (e: Event) => {
 }
 
 const onFocus = () => {
-  focusOption()
+  if (optionsRefs.value) {
+    const isValue = props.options.find((e) => e.value === props.modelValue)
+    if (isValue) {
+      const selectedElement = optionsRefs.value.filter(
+        (e) => e.textContent === isValue.title
+      )[0]
+      setTimeout(() => selectedElement.focus(), 100)
+    } else {
+      setTimeout(() => {
+        if (optionsRefs.value) {
+          const firstChildren = optionsRefs.value[0]
+          firstChildren.focus()
+        }
+      }, 100)
+    }
+  }
   active.value = !active.value
 }
-
-onUnmounted(() => {
-  removeEventListener('click', clickOutside)
-})
 
 watchEffect(() => {
   const eventType = active.value ? 'addEventListener' : 'removeEventListener'
   window[eventType]('click', clickOutside)
+})
+
+onUnmounted(() => {
+  removeEventListener('click', clickOutside)
 })
 </script>
 
@@ -107,15 +97,16 @@ watchEffect(() => {
         <ArrowSVG class="svg" :class="{ active }" />
       </div>
     </button>
-    <div ref="listWrapper" class="list" :class="{ active }">
+    <div class="list" :class="{ active }">
       <button
         v-for="(option, i) in options"
         :key="i"
+        ref="optionsRefs"
         class="option"
         :class="modelValue === option.value && 'active '"
-        @click="onClick(option.value, i)"
-        @keyup.arrow-down="onOptionDown($event, i)"
-        @keyup.arrow-up="onOptionUp($event, i)"
+        @click="onOptionClick(option.value, i)"
+        @keyup.arrow-down="onOptionDown(i)"
+        @keyup.arrow-up="onOptionUp(i)"
       >
         {{ option.title }}
       </button>
