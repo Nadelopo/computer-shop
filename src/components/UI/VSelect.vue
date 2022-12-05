@@ -31,8 +31,7 @@ const onClick = (selectValue: string, i: number) => {
   }
 }
 
-const onSelect = () => {
-  active.value = !active.value
+const focusOption = () => {
   if (listWrapper.value) {
     const isValue = props.options.find((e) => e.value === props.modelValue)
     if (isValue) {
@@ -53,28 +52,27 @@ const onSelect = () => {
   }
 }
 
-const onOptionKey = (e: KeyboardEvent, i: number) => {
+const onOptionUp = (e: KeyboardEvent, i: number) => {
   const btn = e.composedPath()[1] as HTMLButtonElement
-  if (e.key === 'ArrowUp') {
-    if (i) {
-      const prevElement = btn.children[i - 1] as HTMLButtonElement
-      prevElement.focus()
-    } else {
-      console.log()
-      const lastElement = btn.children[
-        btn.children.length - 1
-      ] as HTMLButtonElement
-      lastElement.focus()
-    }
+  if (i) {
+    const prevElement = btn.children[i - 1] as HTMLButtonElement
+    prevElement.focus()
+  } else {
+    const lastElement = btn.children[
+      btn.children.length - 1
+    ] as HTMLButtonElement
+    lastElement.focus()
   }
-  if (e.key === 'ArrowDown') {
-    if (i < props.options.length - 1 || i == 0) {
-      const nextElement = btn.children[i + 1] as HTMLButtonElement
-      nextElement.focus()
-    } else {
-      const firstElement = btn.children[0] as HTMLButtonElement
-      firstElement.focus()
-    }
+}
+
+const onOptionDown = (e: KeyboardEvent, i: number) => {
+  const btn = e.composedPath()[1] as HTMLButtonElement
+  if (i < props.options.length - 1) {
+    const nextElement = btn.children[i + 1] as HTMLButtonElement
+    nextElement.focus()
+  } else {
+    const firstElement = btn.children[0] as HTMLButtonElement
+    firstElement.focus()
   }
 }
 
@@ -87,32 +85,23 @@ const clickOutside = (e: Event) => {
 }
 
 const onFocus = () => {
-  onSelect()
-  setTimeout(() => {
-    if (!active.value) {
-      active.value = true
-    }
-  }, 100)
+  focusOption()
+  active.value = !active.value
 }
 
 onUnmounted(() => {
   removeEventListener('click', clickOutside)
-  btn.value?.removeEventListener('focus', onFocus)
 })
 
 watchEffect(() => {
   const eventType = active.value ? 'addEventListener' : 'removeEventListener'
-  const eventTypeFocus = !active.value
-    ? 'addEventListener'
-    : 'removeEventListener'
   window[eventType]('click', clickOutside)
-  btn.value?.[eventTypeFocus]('focus', onFocus)
 })
 </script>
 
 <template>
   <span class="root">
-    <button ref="btn" class="select" :class="{ active }" @click="onSelect">
+    <button ref="btn" class="select" :class="{ active }" @focus="onFocus">
       <div class="head">
         <span>{{ selected ?? 'Select' }}</span>
         <ArrowSVG class="svg" :class="{ active }" />
@@ -125,7 +114,8 @@ watchEffect(() => {
         class="option"
         :class="modelValue === option.value && 'active '"
         @click="onClick(option.value, i)"
-        @keyup="onOptionKey($event, i)"
+        @keyup.arrow-down="onOptionDown($event, i)"
+        @keyup.arrow-up="onOptionUp($event, i)"
       >
         {{ option.title }}
       </button>
