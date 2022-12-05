@@ -97,7 +97,7 @@ const onFocus = () => {
 
 onUnmounted(() => {
   removeEventListener('click', clickOutside)
-  removeEventListener('focus', onFocus)
+  btn.value?.removeEventListener('focus', onFocus)
 })
 
 watchEffect(() => {
@@ -136,11 +136,11 @@ watchEffect(() => {
 <style scoped lang="sass">
 $transition: .2s
 $back: #1e2023
+
 .root
   position: relative
   height: 38px
   display: inline-block
-
   width: 200px
 
 .select
@@ -161,8 +161,6 @@ $back: #1e2023
     display: flex
     justify-content: space-between
     align-items: center
-
-
 
 .icon-arrow
   width: 10px

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { IproductWithSpecifications } from '@/types'
 import type { PropType } from 'vue'
+import Button from '@/components/UI/Button.vue'
 // import CartButton from '../UI/CartButton.vue'
 defineProps({
   item: {
@@ -44,7 +45,7 @@ defineProps({
     <div class="flex flex-col gap-y-3">
       <div>{{ item.price }} ₽</div>
       <!-- <div><CartButton :product-id="item.id" /></div> -->
-      <button class="btn">в корзину</button>
+      <Button>в корзину</Button>
     </div>
   </div>
 </template>

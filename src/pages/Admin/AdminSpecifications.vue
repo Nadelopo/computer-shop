@@ -5,6 +5,7 @@ import InputText from '@/components/UI/InputText.vue'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { storeToRefs } from 'pinia'
 import type { IcategorySpecificationCU } from '@/types/tables'
+import Button from '@/components/UI/Button.vue'
 
 const { categories } = storeToRefs(useCategoriesStore())
 const { createCategorySpecifications } = useCategoriesStore()
@@ -119,12 +120,12 @@ const deleteVarianValues = () => {
         <InputText v-model="form.variantsValues[i]" />
       </div>
       <div class="flex gap-4">
-        <button class="btn mt-4" type="button" @click="addVarianValues">
+        <Button class="mt-4" type="button" @click="addVarianValues">
           добавить
-        </button>
-        <button class="btn mt-4" type="button" @click="deleteVarianValues">
+        </Button>
+        <Button class="mt-4" type="button" @click="deleteVarianValues">
           удалить
-        </button>
+        </Button>
       </div>
     </div>
     <div>
@@ -138,7 +139,7 @@ const deleteVarianValues = () => {
     </div>
 
     <div>
-      <button class="btn mt-4">создать поле</button>
+      <Button class="mt-4">создать поле</Button>
     </div>
   </form>
 </template>

@@ -3,11 +3,12 @@ import { ref, watch, onBeforeMount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
+import { removeFromStorage } from '@/utils/storageQueris'
 import InputText from '@/components/UI/InputText.vue'
 import InputFile from '@/components/UI/InputFile.vue'
-import type { IcategoryR, IcategoryU } from '@/types/tables'
 import Loader from '@/components/UI/loader.vue'
-import { removeFromStorage } from '@/utils/storageQueris'
+import Button from '@/components/UI/Button.vue'
+import type { IcategoryR, IcategoryU } from '@/types/tables'
 
 const { categories } = storeToRefs(useCategoriesStore())
 const { updateCategory } = useCategoriesStore()
@@ -98,7 +99,7 @@ const save = async () => {
         />
       </div>
       <div>
-        <button class="btn">сохранить</button>
+        <Button>сохранить</Button>
       </div>
     </form>
     <div v-else class="min-h-screen flex justify-center items-center">

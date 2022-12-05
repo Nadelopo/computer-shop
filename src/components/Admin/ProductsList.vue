@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import Loader from '@/components/UI/loader.vue'
 import type { IcategorySpecificationR } from '@/types/tables'
+import Button from '@/components/UI/Button.vue'
 
 defineProps({
   specifications: {
@@ -85,19 +86,19 @@ watch(useRoute(), (cur) => {
                     },
                   }"
                 >
-                  <button
-                    class="btn w-full"
+                  <Button
+                    class="w-full"
                     @click="deleteProduct(product.id, product.img)"
                   >
                     изменить
-                  </button>
+                  </Button>
                 </router-link>
-                <button
+                <Button
                   class="btn__dunger"
                   @click="deleteProduct(product.id, product.img)"
                 >
                   удалить
-                </button>
+                </Button>
               </div>
             </td>
           </tr>

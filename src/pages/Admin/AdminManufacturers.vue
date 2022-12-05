@@ -4,6 +4,7 @@ import { useManufacturersStore } from '@/stores/manufacturersStore'
 import InputFile from '@/components/UI/InputFile.vue'
 import InputText from '@/components/UI/InputText.vue'
 import type { ImanufacturerCU } from '@/types/tables'
+import Button from '@/components/UI/Button.vue'
 
 const { createManufacturer } = useManufacturersStore()
 
@@ -40,7 +41,7 @@ const create = async () => {
       <InputFile v-model.trim="form.img" folder="manufacturers" />
     </div>
     <div>
-      <button class="btn">добавить</button>
+      <Button>добавить</Button>
     </div>
   </form>
 </template>

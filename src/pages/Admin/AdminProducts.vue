@@ -14,6 +14,7 @@ import type {
   IproductC,
   IproductSpecificationC,
 } from '@/types/tables'
+import Button from '@/components/UI/Button.vue'
 
 interface IproductSpecificationForm
   extends Omit<IproductSpecificationC, 'productId'> {
@@ -183,7 +184,7 @@ const isInputText = (i: number) => {
           <InputText v-model="product.price" type="number" />
         </div>
       </template>
-      <div><button class="btn">создать</button></div>
+      <div><Button>создать</Button></div>
     </form>
     <ProdctsList :specifications="categorySpecifications" />
   </div>

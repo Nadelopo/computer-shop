@@ -6,7 +6,7 @@ import { useProductsStore } from '@/stores/productsStore'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import InputText from '@/components/UI/InputText.vue'
 import InputFile from '@/components/UI/InputFile.vue'
-
+import Button from '@/components/UI/Button.vue'
 import Loader from '@/components/UI/loader.vue'
 import type {
   IproductR,
@@ -201,10 +201,10 @@ const isInputText = (i: number) => {
           <InputText v-model="product.price" type="number" />
         </div>
         <div>
-          <button class="btn">сохранить</button>
+          <Button>сохранить</Button>
         </div>
       </form>
-      <button class="btn mt-8" @click="$router.go(-1)">назад</button>
+      <Button class="mt-8" @click="$router.go(-1)">назад</Button>
     </div>
     <div v-else class="h-screen flex items-center">
       <Loader />

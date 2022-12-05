@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
 import { supabase } from '@/supabase'
 import type { IuserC } from '@/types/tables'
+import Button from '@/components/UI/Button.vue'
 
 const router = useRouter()
 
@@ -81,9 +82,9 @@ const signUp = async () => {
         <input v-model="password" class="input" type="password" />
       </div>
       <div class="my-12">
-        <button class="btn btnn">
+        <Button class="btnn">
           {{ active ? 'Войти' : 'Зарегистрироваться' }}
-        </button>
+        </Button>
       </div>
       <hr class="mb-4" />
       <div v-if="active" class="text-center">

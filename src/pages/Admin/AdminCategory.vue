@@ -5,6 +5,7 @@ import InputText from '@/components/UI/InputText.vue'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import type { IcategoryC } from '@/types/tables'
 import CategoriesList from '@/components/Admin/CategoriesList.vue'
+import Button from '@/components/UI/Button.vue'
 
 const { createCategory } = useCategoriesStore()
 
@@ -40,7 +41,7 @@ const create = () => {
         <InputText v-model="form.title" />
       </div>
       <div>
-        <button class="btn">создать категорию</button>
+        <Button>создать категорию</Button>
       </div>
     </form>
     <hr class="my-8" />
