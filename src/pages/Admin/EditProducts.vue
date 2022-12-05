@@ -4,16 +4,16 @@ import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/productsStore'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
-import InputText from '@/components/UI/InputText.vue'
-import InputFile from '@/components/UI/InputFile.vue'
-import Button from '@/components/UI/Button.vue'
-import Loader from '@/components/UI/loader.vue'
+import { getAllByColumn, getOneWithId } from '@/utils/dbQueries'
+import VInputText from '@/components/UI/VInputText.vue'
+import VInputFile from '@/components/UI/VInputFile.vue'
+import VButton from '@/components/UI/VButton.vue'
+import VLoader from '@/components/UI/Vloader.vue'
 import type {
   IproductR,
   IproductSpecificationU,
   IproductU,
 } from '@/types/tables'
-import { getAllByColumn, getOneWithId } from '@/utils/dbQueries'
 
 interface IproductSpecificationOnEdit {
   id: number
@@ -130,7 +130,7 @@ const isInputText = (i: number) => {
             {{ specification.categorySpecificationsId.title }}
           </label>
           <template v-if="specification.categorySpecificationsId.type">
-            <InputText
+            <v-input-text
               v-if="isInputText(i)"
               v-model="specification.value"
               :step="specification.categorySpecificationsId.step!"
@@ -158,20 +158,20 @@ const isInputText = (i: number) => {
         </div>
         <div>
           <label>наименование</label>
-          <InputText v-model.trim="product.name" />
+          <v-input-text v-model.trim="product.name" />
         </div>
         <div>
           <label>описание</label>
-          <InputText v-model.trim="product.description" />
+          <v-input-text v-model.trim="product.description" />
         </div>
         <div>
           <label>скидка</label>
-          <InputText v-model.number="product.discount" type="number" />
+          <v-input-text v-model.number="product.discount" type="number" />
         </div>
 
         <div>
           <label>изображение</label>
-          <InputFile
+          <v-input-file
             v-model.trim="product.img"
             folder="products"
             :required="false"
@@ -194,20 +194,20 @@ const isInputText = (i: number) => {
         </div>
         <div>
           <label>гарантия</label>
-          <InputText v-model="product.warranty" type="number" />
+          <v-input-text v-model="product.warranty" type="number" />
         </div>
         <div>
           <label>цена</label>
-          <InputText v-model="product.price" type="number" />
+          <v-input-text v-model="product.price" type="number" />
         </div>
         <div>
-          <Button>сохранить</Button>
+          <v-button>сохранить</v-button>
         </div>
       </form>
-      <Button class="mt-8" @click="$router.go(-1)">назад</Button>
+      <v-button class="mt-8" @click="$router.go(-1)">назад</v-button>
     </div>
     <div v-else class="h-screen flex items-center">
-      <Loader />
+      <v-loader />
     </div>
   </div>
 </template>

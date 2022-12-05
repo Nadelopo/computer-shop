@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import InputText from '../UI/InputText.vue'
-import { useProductsStore } from '@/stores/productsStore'
 import { onBeforeMount, ref } from 'vue'
-import { debounce } from '@/utils/debounce'
 import { useRoute } from 'vue-router'
+import { useProductsStore } from '@/stores/productsStore'
 import { getAll } from '@/utils/dbQueries'
+import { debounce } from '@/utils/debounce'
+import VInputText from '../UI/VInputText.vue'
 
 const { getProducts } = useProductsStore()
 
@@ -45,6 +45,6 @@ onBeforeMount(async () => {
 
 <template>
   <div>
-    <InputText v-model="search" placeholder="поиск..." @input="setSearch" />
+    <v-input-text v-model="search" placeholder="поиск..." @input="setSearch" />
   </div>
 </template>

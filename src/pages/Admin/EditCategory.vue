@@ -4,10 +4,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { removeFromStorage } from '@/utils/storageQueris'
-import InputText from '@/components/UI/InputText.vue'
-import InputFile from '@/components/UI/InputFile.vue'
-import Loader from '@/components/UI/loader.vue'
-import Button from '@/components/UI/Button.vue'
+import VInputText from '@/components/UI/VInputText.vue'
+import VInputFile from '@/components/UI/VInputFile.vue'
+import VLoader from '@/components/UI/Vloader.vue'
+import VButton from '@/components/UI/VButton.vue'
 import type { IcategoryR, IcategoryU } from '@/types/tables'
 
 const { categories } = storeToRefs(useCategoriesStore())
@@ -84,26 +84,26 @@ const save = async () => {
     <form v-if="loader" class="list__form mt-16" @submit.prevent="save">
       <div>
         <label>наименование на русском</label>
-        <InputText v-model="newCategory!.title" />
+        <v-input-text v-model="newCategory!.title" />
       </div>
       <div>
         <label>наименование на английском</label>
-        <InputText v-model="newCategory!.enTitle" />
+        <v-input-text v-model="newCategory!.enTitle" />
       </div>
       <div>
         <label>изображение</label>
-        <InputFile
+        <v-input-file
           v-model="newCategory!.img"
           folder="categories"
           :required="false"
         />
       </div>
       <div>
-        <Button>сохранить</Button>
+        <v-button>сохранить</v-button>
       </div>
     </form>
     <div v-else class="min-h-screen flex justify-center items-center">
-      <Loader />
+      <v-loader />
     </div>
   </div>
 </template>

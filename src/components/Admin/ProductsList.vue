@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { watch, type PropType } from 'vue'
-import { useProductsStore } from '@/stores/productsStore'
-import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
-import Loader from '@/components/UI/loader.vue'
+import { storeToRefs } from 'pinia'
+import { useProductsStore } from '@/stores/productsStore'
+import VLoader from '@/components/UI/Vloader.vue'
+import VButton from '@/components/UI/VButton.vue'
 import type { IcategorySpecificationR } from '@/types/tables'
-import Button from '@/components/UI/Button.vue'
 
 defineProps({
   specifications: {
@@ -86,26 +86,26 @@ watch(useRoute(), (cur) => {
                     },
                   }"
                 >
-                  <Button
+                  <v-button
                     class="w-full"
                     @click="deleteProduct(product.id, product.img)"
                   >
                     изменить
-                  </Button>
+                  </v-button>
                 </router-link>
-                <Button
+                <v-button
                   class="btn__dunger"
                   @click="deleteProduct(product.id, product.img)"
                 >
                   удалить
-                </Button>
+                </v-button>
               </div>
             </td>
           </tr>
         </tbody>
       </template>
     </table>
-    <Loader v-if="!products.length" />
+    <v-loader v-if="!products.length" />
   </div>
 </template>
 

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import DoubleButtons from '@/components/UI/DoubleButtons.vue'
-import InputText from '@/components/UI/InputText.vue'
-import { useCategoriesStore } from '@/stores/categoriesStore'
 import { storeToRefs } from 'pinia'
+import { useCategoriesStore } from '@/stores/categoriesStore'
+import VDoubleButtons from '@/components/UI/VDoubleButtons.vue'
+import VInputText from '@/components/UI/VInputText.vue'
+import VButton from '@/components/UI/VButton.vue'
 import type { IcategorySpecificationCU } from '@/types/tables'
-import Button from '@/components/UI/Button.vue'
 
 const { categories } = storeToRefs(useCategoriesStore())
 const { createCategorySpecifications } = useCategoriesStore()
@@ -85,15 +85,15 @@ const deleteVarianValues = () => {
     </div>
     <div>
       <label>наименование</label>
-      <InputText v-model="form.title" />
+      <v-input-text v-model="form.title" />
     </div>
     <div>
       <label>единицы измерения</label>
-      <InputText v-model="form.units" :required="false" />
+      <v-input-text v-model="form.units" :required="false" />
     </div>
     <div>
       <label>тип поля</label>
-      <DoubleButtons
+      <v-double-buttons
         v-model="form.type"
         class="mt-2"
         text-first="числовой"
@@ -103,34 +103,34 @@ const deleteVarianValues = () => {
     <template v-if="form.type">
       <div>
         <label>шаг изменения числа для поля ввода</label>
-        <InputText v-model="form.units" type="number" :step="0.1" />
+        <v-input-text v-model="form.units" type="number" :step="0.1" />
       </div>
       <div v-if="typeof form.min == 'number'">
         <label>минимальное значение для поля ввода</label>
-        <InputText v-model="form.min" type="number" :min="0" />
+        <v-input-text v-model="form.min" type="number" :min="0" />
       </div>
       <div v-if="typeof form.max == 'number'">
         <label>максимальное значение для поля ввода</label>
-        <InputText v-model="form.max" type="number" :min="0" />
+        <v-input-text v-model="form.max" type="number" :min="0" />
       </div>
     </template>
     <div v-else-if="Array.isArray(form.variantsValues)">
       <label>вартианты значений</label>
       <div v-for="(_, i) in form.variantsValues.length" :key="i">
-        <InputText v-model="form.variantsValues[i]" />
+        <v-input-text v-model="form.variantsValues[i]" />
       </div>
       <div class="flex gap-4">
-        <Button class="mt-4" type="button" @click="addVarianValues">
+        <v-button class="mt-4" type="button" @click="addVarianValues">
           добавить
-        </Button>
-        <Button class="mt-4" type="button" @click="deleteVarianValues">
+        </v-button>
+        <v-button class="mt-4" type="button" @click="deleteVarianValues">
           удалить
-        </Button>
+        </v-button>
       </div>
     </div>
     <div>
       <label>отображать на карточке товара</label>
-      <DoubleButtons
+      <v-double-buttons
         v-model="form.visible"
         class="mt-2"
         text-first="да"
@@ -139,7 +139,7 @@ const deleteVarianValues = () => {
     </div>
 
     <div>
-      <Button class="mt-4">создать поле</Button>
+      <v-button class="mt-4">создать поле</v-button>
     </div>
   </form>
 </template>

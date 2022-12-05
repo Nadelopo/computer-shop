@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import Sidebar from '@/components/Admin/AdminSidebar.vue'
-import Specifications from './AdminSpecifications.vue'
 import Home from './AdminHome.vue'
 import Categories from './AdminCategory.vue'
-import CreateProduct from './AdminProducts.vue'
+import Specifications from './AdminSpecifications.vue'
 import Manufacturers from './AdminManufacturers.vue'
+import CreateProduct from './AdminProducts.vue'
+import Sidebar from '@/components/Admin/AdminSidebar.vue'
 
 const route = useRoute()
 const currentComponent = computed(() => {

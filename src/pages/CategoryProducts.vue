@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/productsStore'
 import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
-import { storeToRefs } from 'pinia'
-import { useRoute } from 'vue-router'
 import Search from '@/components/CategoryProducts/Search.vue'
-import { onUnmounted } from 'vue'
-import Loader from '@/components/UI/loader.vue'
+import VLoader from '@/components/UI/Vloader.vue'
 
 const { products, loader } = storeToRefs(useProductsStore())
 const { getProducts } = useProductsStore()
@@ -38,7 +38,7 @@ onUnmounted(() => {
           </div>
         </template>
         <template v-else-if="loader === 'loading'">
-          <Loader />
+          <v-loader />
         </template>
         <template v-else>
           <div class="font-bold text-center text-2xl mt-8">

@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useProductsStore } from '@/stores/productsStore'
-import InputText from '@/components/UI/InputText.vue'
-import InputFile from '@/components/UI/InputFile.vue'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
-import { storeToRefs } from 'pinia'
+import VInputText from '@/components/UI/VInputText.vue'
+import VInputFile from '@/components/UI/VInputFile.vue'
 import ProdctsList from '@/components/Admin/ProductsList.vue'
-import Loader from '@/components/UI/loader.vue'
+import VLoader from '@/components/UI/Vloader.vue'
+import VButton from '@/components/UI/VButton.vue'
 import type {
   IcategorySpecificationR,
   IproductC,
   IproductSpecificationC,
 } from '@/types/tables'
-import Button from '@/components/UI/Button.vue'
 
 interface IproductSpecificationForm
   extends Omit<IproductSpecificationC, 'productId'> {
@@ -120,7 +120,7 @@ const isInputText = (i: number) => {
           {{ specification.title }}
         </label>
         <template v-if="specification.type">
-          <InputText
+          <v-input-text
             v-if="isInputText(i)"
             v-model="categoryFormSpecifications[i].value"
             type="number"
@@ -150,15 +150,15 @@ const isInputText = (i: number) => {
       <template v-if="product">
         <div>
           <label>наименование</label>
-          <InputText v-model.trim="product.name" />
+          <v-input-text v-model.trim="product.name" />
         </div>
         <div>
           <label>описание</label>
-          <InputText v-model.trim="product.description" />
+          <v-input-text v-model.trim="product.description" />
         </div>
         <div>
           <label>изображение</label>
-          <InputFile v-model.trim="product.img" folder="product" />
+          <v-input-file v-model.trim="product.img" folder="product" />
         </div>
 
         <div>
@@ -177,16 +177,16 @@ const isInputText = (i: number) => {
         </div>
         <div>
           <label>гарантия</label>
-          <InputText v-model="product.warranty" type="number" />
+          <v-input-text v-model="product.warranty" type="number" />
         </div>
         <div>
           <label>цена</label>
-          <InputText v-model="product.price" type="number" />
+          <v-input-text v-model="product.price" type="number" />
         </div>
       </template>
-      <div><Button>создать</Button></div>
+      <div><v-button>создать</v-button></div>
     </form>
     <ProdctsList :specifications="categorySpecifications" />
   </div>
-  <Loader v-else />
+  <v-loader v-else />
 </template>

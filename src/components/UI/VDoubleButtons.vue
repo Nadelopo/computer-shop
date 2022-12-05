@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Button from '@/components/UI/Button.vue'
+import VButton from '@/components/UI/VButton.vue'
 import type { PropType } from 'vue'
 
 defineProps({
@@ -22,20 +22,20 @@ defineEmits(['update:modelValue'])
 
 <template>
   <div class="wrap">
-    <Button
+    <v-button
       type="button"
       :class="!modelValue && 'btn__noactive'"
       @click="$emit('update:modelValue', true)"
     >
       {{ textFirst }}
-    </Button>
-    <Button
+    </v-button>
+    <v-button
       :type="type"
       :class="modelValue && 'btn__noactive'"
       @click="$emit('update:modelValue', false)"
     >
       {{ textSecond }}
-    </Button>
+    </v-button>
   </div>
 </template>
 

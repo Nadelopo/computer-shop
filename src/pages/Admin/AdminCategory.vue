@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import InputFile from '@/components/UI/InputFile.vue'
-import InputText from '@/components/UI/InputText.vue'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import type { IcategoryC } from '@/types/tables'
+import VInputFile from '@/components/UI/VInputFile.vue'
+import VInputText from '@/components/UI/VInputText.vue'
 import CategoriesList from '@/components/Admin/CategoriesList.vue'
-import Button from '@/components/UI/Button.vue'
+import VButton from '@/components/UI/VButton.vue'
+import type { IcategoryC } from '@/types/tables'
 
 const { createCategory } = useCategoriesStore()
 
@@ -30,18 +30,18 @@ const create = () => {
     <form class="list__form" @submit.prevent="create">
       <div>
         <label>загрузить изображение</label>
-        <InputFile v-model="form.img" class="mt-4" folder="categories" />
+        <v-input-file v-model="form.img" class="mt-4" folder="categories" />
       </div>
       <div>
         <label>наименование на английском</label>
-        <InputText v-model="form.enTitle" />
+        <v-input-text v-model="form.enTitle" />
       </div>
       <div>
         <label>наименование на русском</label>
-        <InputText v-model="form.title" />
+        <v-input-text v-model="form.title" />
       </div>
       <div>
-        <Button>создать категорию</Button>
+        <v-button>создать категорию</v-button>
       </div>
     </form>
     <hr class="my-8" />

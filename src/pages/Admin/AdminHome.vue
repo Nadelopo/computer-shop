@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Select from '@/components/UI/Select.vue'
 import { ref } from 'vue'
+import VSelect from '@/components/UI/VSelect.vue'
 
 const value = ref('выберете значение')
 const arr = [
@@ -12,6 +12,6 @@ const arr = [
 
 <template>
   <div>
-    <Select v-model="value" :options="arr" />
+    <v-select v-model="value" :options="arr" />
   </div>
 </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onUnmounted, ref, watchEffect, type PropType } from 'vue'
-import ArrowSVG from '@/assets/icons/arrow.svg?component'
 import { isOutside } from '@/utils/isOutside'
+import ArrowSVG from '@/assets/icons/arrow.svg?component'
 
 const props = defineProps({
   modelValue: {

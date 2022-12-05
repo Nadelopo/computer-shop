@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import Accordion from '@/components/UI/Accordion.vue'
-import { useCategoriesStore } from '@/stores/categoriesStore'
 import { storeToRefs } from 'pinia'
+import { useCategoriesStore } from '@/stores/categoriesStore'
+import VAccordion from '@/components/UI/VAccordion.vue'
 
 const isVisible = ref(false)
 
@@ -19,7 +19,7 @@ const { categories } = storeToRefs(useCategoriesStore())
     </div>
     <div class="list">
       <div class="head" @click="isVisible = !isVisible">Категории</div>
-      <Accordion :visible="isVisible">
+      <v-accordion :visible="isVisible">
         <template v-if="categories">
           <div
             v-for="category in categories"
@@ -37,7 +37,7 @@ const { categories } = storeToRefs(useCategoriesStore())
             </router-link>
           </div>
         </template>
-      </Accordion>
+      </v-accordion>
       <div class="head">
         <router-link
           :to="{

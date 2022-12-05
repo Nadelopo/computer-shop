@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia'
 import Swal from 'sweetalert2'
 import { useUserStore } from '../stores/userStore'
 import { supabase } from '@/supabase'
-import Popup from './UI/Popup.vue'
+import VPopup from './UI/VPopup.vue'
 import Sidebar from './Sidebar.vue'
 import UserSvg from '@/assets/icons/user.svg?component'
 import FavouritesSVG from '@/assets/icons/favourites.svg?component'
@@ -97,7 +97,7 @@ const open = ref(false)
         </div>
         <div class="nav__rigth">
           <div>
-            <Popup>
+            <v-popup>
               <template #active>
                 <UserSvg width="25" class="user__svg" />
               </template>
@@ -111,7 +111,7 @@ const open = ref(false)
                   профиль
                 </router-link>
               </template>
-            </Popup>
+            </v-popup>
           </div>
           <div>
             <FavouritesSVG fill="#fff" width="25" class="cursor-pointer" />

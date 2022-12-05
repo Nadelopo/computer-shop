@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
-import InputFile from '@/components/UI/InputFile.vue'
-import InputText from '@/components/UI/InputText.vue'
+import VInputFile from '@/components/UI/VInputFile.vue'
+import VInputText from '@/components/UI/VInputText.vue'
+import VButton from '@/components/UI/VButton.vue'
 import type { ImanufacturerCU } from '@/types/tables'
-import Button from '@/components/UI/Button.vue'
 
 const { createManufacturer } = useManufacturersStore()
 
@@ -30,18 +30,18 @@ const create = async () => {
   <form class="list__form" @submit.prevent="create">
     <div>
       <label>наименование</label>
-      <InputText v-model.trim="form.title" />
+      <v-input-text v-model.trim="form.title" />
     </div>
     <div>
       <label>описание</label>
-      <InputText v-model.trim="form.description" />
+      <v-input-text v-model.trim="form.description" />
     </div>
     <div>
       <label>наименование</label>
-      <InputFile v-model.trim="form.img" folder="manufacturers" />
+      <v-input-file v-model.trim="form.img" folder="manufacturers" />
     </div>
     <div>
-      <Button>добавить</Button>
+      <v-button>добавить</v-button>
     </div>
   </form>
 </template>
