@@ -1,3 +1,3 @@
-export const isOutside = (ref: HTMLElement, e: MouseEvent) => {
+export const isOutside = (ref: HTMLElement, e: Event) => {
   return ref && !e.composedPath().includes(ref)
 }

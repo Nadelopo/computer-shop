@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { onUnmounted, ref, type PropType } from 'vue'
+import { onUnmounted, ref, watchEffect, type PropType } from 'vue'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
 import { isOutside } from '@/utils/isOutside'
 
-defineProps({
+const props = defineProps({
   modelValue: {
     type: String,
     required: true,
   },
-  values: {
-    type: Array as PropType<string[]>,
+  options: {
+    type: Array as PropType<{ title: string; value: string }[]>,
     required: true,
   },
 })
@@ -18,62 +18,124 @@ const emit = defineEmits(['update:modelValue'])
 
 const active = ref(false)
 const btn = ref<HTMLElement | null>(null)
+const listWrapper = ref<HTMLElement | null>(null)
+const selected = ref(props.modelValue)
 
 const color = ref('#a9a9a9')
 
-const onClick = (value: string) => {
-  emit('update:modelValue', value)
+const onClick = (selectValue: string, i: number) => {
+  selected.value = props.options[i].title
+  emit('update:modelValue', selectValue)
   if (color.value === '#a9a9a9') {
     color.value = '#fff'
   }
 }
 
-const onHead = () => {
-  if (active.value) {
-    active.value = false
-    removeEventListener('click', clickOutside)
-  } else {
-    active.value = true
-    addEventListener('click', clickOutside)
-  }
-}
-
-const clickOutside = (e: MouseEvent) => {
-  if (btn.value) {
-    if (isOutside(btn.value, e)) {
-      active.value = false
-      removeEventListener('click', clickOutside)
+const onSelect = () => {
+  active.value = !active.value
+  if (listWrapper.value) {
+    const isValue = props.options.find((e) => e.value === props.modelValue)
+    if (isValue) {
+      const element = [...listWrapper.value.children].filter(
+        (e) => e.textContent === isValue.title
+      )[0] as HTMLButtonElement
+      setTimeout(() => element.focus(), 100)
+    } else {
+      setTimeout(() => {
+        if (listWrapper.value) {
+          const firstChildren = [
+            ...listWrapper.value.children,
+          ][0] as HTMLButtonElement
+          firstChildren.focus()
+        }
+      }, 100)
     }
   }
 }
 
-onUnmounted(() => removeEventListener('click', clickOutside))
+const onOptionKey = (e: KeyboardEvent, i: number) => {
+  const btn = e.composedPath()[1] as HTMLButtonElement
+  if (e.key === 'ArrowUp') {
+    if (i) {
+      const prevElement = btn.children[i - 1] as HTMLButtonElement
+      prevElement.focus()
+    } else {
+      console.log()
+      const lastElement = btn.children[
+        btn.children.length - 1
+      ] as HTMLButtonElement
+      lastElement.focus()
+    }
+  }
+  if (e.key === 'ArrowDown') {
+    if (i < props.options.length - 1 || i == 0) {
+      const nextElement = btn.children[i + 1] as HTMLButtonElement
+      nextElement.focus()
+    } else {
+      const firstElement = btn.children[0] as HTMLButtonElement
+      firstElement.focus()
+    }
+  }
+}
+
+const clickOutside = (e: Event) => {
+  if (btn.value) {
+    if (isOutside(btn.value, e)) {
+      active.value = false
+    }
+  }
+}
+
+const onFocus = () => {
+  onSelect()
+  setTimeout(() => {
+    if (!active.value) {
+      active.value = true
+    }
+  }, 100)
+}
+
+onUnmounted(() => {
+  removeEventListener('click', clickOutside)
+  removeEventListener('focus', onFocus)
+})
+
+watchEffect(() => {
+  const eventType = active.value ? 'addEventListener' : 'removeEventListener'
+  const eventTypeFocus = !active.value
+    ? 'addEventListener'
+    : 'removeEventListener'
+  window[eventType]('click', clickOutside)
+  btn.value?.[eventTypeFocus]('focus', onFocus)
+})
 </script>
 
 <template>
   <span class="root">
-    <button ref="btn" class="select" :class="{ active }" @click="onHead">
+    <button ref="btn" class="select" :class="{ active }" @click="onSelect">
       <div class="head">
-        <span>{{ modelValue ? modelValue : 'Select' }}</span>
+        <span>{{ selected ?? 'Select' }}</span>
         <ArrowSVG class="svg" :class="{ active }" />
       </div>
     </button>
-    <div class="list" :class="{ active }">
-      <option
-        v-for="(value, i) in values"
+    <div ref="listWrapper" class="list" :class="{ active }">
+      <button
+        v-for="(option, i) in options"
         :key="i"
-        :class="modelValue === value && 'active '"
-        @click="onClick(value)"
+        class="option"
+        :class="modelValue === option.value && 'active '"
+        @click="onClick(option.value, i)"
+        @keyup="onOptionKey($event, i)"
       >
-        {{ value }}
-      </option>
+        {{ option.title }}
+      </button>
     </div>
   </span>
 </template>
 
 <style scoped lang="sass">
 $transition: .2s
-
+$back: #1e2023
 .root
   position: relative
   height: 38px
@@ -83,8 +145,8 @@ $transition: .2s
 
 .select
   border-radius: 12px
-  background: var(--back-main)
-
+  background: $back
+  border: 2px solid transparent
   width: 200px
   height: 38px
   color: v-bind(color)
@@ -99,6 +161,7 @@ $transition: .2s
     display: flex
     justify-content: space-between
     align-items: center
+
 
 
 .icon-arrow
@@ -122,7 +185,7 @@ $transition: .2s
   left: 0
   width: 100%
   transition: $transition
-  background: var(--back-main)
+  background: $back
   opacity: 0
   overflow: hidden
   visibility: hidden
@@ -132,14 +195,20 @@ $transition: .2s
     visibility: visible
     transform: translateY(0) scale(1)
 
-option
+.option
   padding: 6px 10px
-  background: var(--back-main)
+  background: $back
   width: 200px
   color: #fff
   transition: $transition
   cursor: pointer
-  &:hover, &.active
+  text-align: start
+  width: 96%
+  border-radius: 7px
+  &:hover, &.active, &:focus
     transform: translateX(4px)
     color: var(--color-text)
+    outline: none
+  &.active
+    background: var(--back-main)
 </style>
