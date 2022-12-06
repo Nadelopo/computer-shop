@@ -5,12 +5,16 @@ import ArrowSVG from '@/assets/icons/arrow.svg?component'
 
 const props = defineProps({
   modelValue: {
-    type: String,
+    type: [String, Number],
     required: true,
   },
   options: {
-    type: Array as PropType<{ title: string; value: string }[]>,
+    type: Array as PropType<{ title: string; value: string | number }[]>,
     required: true,
+  },
+  classes: {
+    type: String,
+    default: '',
   },
 })
 
@@ -18,12 +22,20 @@ const emit = defineEmits(['update:modelValue'])
 
 const active = ref(false)
 const btn = ref<HTMLElement | null>(null)
-const selected = ref(props.modelValue)
+const selected = ref('')
 const optionsRefs = ref<HTMLButtonElement[]>([])
 
 const color = ref('#a9a9a9')
 
-const onOptionClick = (selectValue: string, i: number) => {
+const findSelectedValue = props.options.find(
+  (e) => e.value === props.modelValue
+)
+if (findSelectedValue) {
+  selected.value = findSelectedValue.title
+  color.value = '#fff'
+}
+
+const onOptionClick = (selectValue: string | number, i: number) => {
   selected.value = props.options[i].title
   emit('update:modelValue', selectValue)
   if (color.value === '#a9a9a9') {
@@ -59,6 +71,12 @@ const clickOutside = (e: Event) => {
   }
 }
 
+const stopScrollDocument = (e: KeyboardEvent) => {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault()
+  }
+}
+
 const onFocus = () => {
   if (optionsRefs.value) {
     const isValue = props.options.find((e) => e.value === props.modelValue)
@@ -82,43 +100,58 @@ const onFocus = () => {
 watchEffect(() => {
   const eventType = active.value ? 'addEventListener' : 'removeEventListener'
   window[eventType]('click', clickOutside)
+  if (active.value) {
+    addEventListener('keydown', stopScrollDocument)
+  } else {
+    removeEventListener('keydown', stopScrollDocument)
+  }
 })
 
 onUnmounted(() => {
   removeEventListener('click', clickOutside)
+  removeEventListener('keydown', stopScrollDocument)
 })
 </script>
 
 <template>
-  <span class="root">
-    <button ref="btn" class="select" :class="{ active }" @focus="onFocus">
-      <div class="head">
-        <span>{{ selected ?? 'Select' }}</span>
-        <ArrowSVG class="svg" :class="{ active }" />
-      </div>
-    </button>
-    <transition name="list">
-      <div v-show="active" class="list">
-        <button
-          v-for="(option, i) in options"
-          :key="i"
-          ref="optionsRefs"
-          class="option"
-          :class="modelValue === option.value && 'active '"
-          @click="onOptionClick(option.value, i)"
-          @keyup.arrow-down="onOptionDown(i)"
-          @keyup.arrow-up="onOptionUp(i)"
-        >
-          {{ option.title }}
-        </button>
-      </div>
-    </transition>
+  <span>
+    <span class="root" :class="classes">
+      <button
+        ref="btn"
+        class="select"
+        type="button"
+        :class="{ active }"
+        @focus="onFocus"
+      >
+        <div class="head">
+          <span>{{ selected ?? 'Select' }}</span>
+          <ArrowSVG class="svg" :class="{ active }" />
+        </div>
+      </button>
+      <transition name="list">
+        <div v-show="active" class="list">
+          <button
+            v-for="(option, i) in options"
+            :key="i"
+            ref="optionsRefs"
+            class="option"
+            type="button"
+            :class="modelValue === option.value && 'active '"
+            @click="onOptionClick(option.value, i)"
+            @keyup.arrow-down="onOptionDown(i)"
+            @keyup.arrow-up="onOptionUp(i)"
+          >
+            {{ option.title }}
+          </button>
+        </div>
+      </transition>
+    </span>
   </span>
 </template>
 
 <style scoped lang="sass">
 $transition: .2s
-$back: #1e2023
+$back: var(--back-sec)
 
 .root
   position: relative
@@ -164,7 +197,7 @@ $back: #1e2023
   padding: 5px
   border-radius: 0 0 12px 12px
   position: absolute
-  top: 30px
+  top: 36px
   left: 0
   width: 100%
   transition: $transition
@@ -172,6 +205,7 @@ $back: #1e2023
   overflow: hidden
   opacity: 1
   transform: translateY(0) scale(1)
+  z-index: 50
 
 .list-enter-active,
 .list-leave-active
@@ -181,7 +215,6 @@ $back: #1e2023
 .list-leave-to
   opacity: 0
   transform: translateY(-5px) scale(0.95)
-
 
 .option
   padding: 6px 10px
@@ -193,10 +226,11 @@ $back: #1e2023
   text-align: start
   width: 96%
   border-radius: 7px
-  &:hover, &.active, &:focus
+  &:hover, &:focus, &.active
     transform: translateX(4px)
-    color: var(--color-text)
     outline: none
-  &.active
+  &:hover, &:focus
     background: var(--back-main)
+  &.active
+    color: var(--color-text)
 </style>
