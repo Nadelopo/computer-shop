@@ -39,7 +39,6 @@ export const useProductsStore = defineStore('products', {
       }
     }
 
-    //fix
     const getProducts = async (categoryId: number, search?: string) => {
       const newProducts = ref<IproductWithSpecifications[]>([])
       loader.value = 'loading'

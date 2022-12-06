@@ -99,13 +99,10 @@ const save = async () => {
 
 const specificationsVariantsValues = (i: number) => {
   let arr: { value: string; title: string }[] = []
-  if (
+  const varinsValues =
     product.value?.specifications[i].categorySpecificationsId.variantsValues
-      ?.length
-  ) {
-    arr = product.value.specifications[
-      i
-    ].categorySpecificationsId.variantsValues!.map((e) => ({
+  if (varinsValues) {
+    arr = varinsValues.map((e) => ({
       value: e,
       title: e,
     }))

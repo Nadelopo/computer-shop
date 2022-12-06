@@ -84,7 +84,6 @@ watch(manufacturerSelect, (cur) => {
 
 const create = async () => {
   const { data } = await createProduct(product.value)
-  console.log(product.value)
   if (data) {
     const productSpecifications = categoryFormSpecifications.value.map((e) => {
       return { ...e, productId: data.id }
