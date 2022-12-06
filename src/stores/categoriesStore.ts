@@ -66,7 +66,6 @@ export const useCategoriesStore = defineStore('categories', {
         '*',
         'id'
       )
-      console.log(data)
       return { data }
     }
 

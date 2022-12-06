@@ -6,11 +6,12 @@ import VDoubleButtons from '@/components/UI/VDoubleButtons.vue'
 import VInputText from '@/components/UI/VInputText.vue'
 import VButton from '@/components/UI/VButton.vue'
 import type { IcategorySpecificationCU } from '@/types/tables'
+import VSelect from '@/components/UI/VSelect.vue'
 
 const { categories } = storeToRefs(useCategoriesStore())
 const { createCategorySpecifications } = useCategoriesStore()
 
-const select = ref('')
+const select = ref('выберите категорию')
 
 const form = ref<IcategorySpecificationCU>({
   categoryId: 0,
@@ -72,16 +73,10 @@ const deleteVarianValues = () => {
 <template>
   <form class="list__form" @submit.prevent="create">
     <div v-if="categories">
-      <select v-model="select" required>
-        <option value="" selected disabled hidden>выберите категорию</option>
-        <option
-          v-for="category in categories"
-          :key="category.id"
-          :value="category.id"
-        >
-          {{ category.title }}
-        </option>
-      </select>
+      <v-select
+        v-model="select"
+        :options="categories.map((e) => ({ value: e.id, title: e.title }))"
+      />
     </div>
     <div>
       <label>наименование</label>

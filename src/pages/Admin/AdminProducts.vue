@@ -15,6 +15,7 @@ import type {
   IproductC,
   IproductSpecificationC,
 } from '@/types/tables'
+import VSelect from '@/components/UI/VSelect.vue'
 
 interface IproductSpecificationForm
   extends Omit<IproductSpecificationC, 'productId'> {
@@ -128,22 +129,15 @@ const isInputText = (i: number) => {
             :max="specification.max!"
           />
         </template>
-        <template v-else>
+        <template v-else-if="specification.variantsValues">
           <br />
-          <select
+          <v-select
             v-model="categoryFormSpecifications[i].value"
-            required
-            class="mt-4"
-          >
-            <option value="" selected disabled hidden>выберите значение</option>
-            <option
-              v-for="value in specification.variantsValues"
-              :key="value"
-              :value="value"
-            >
-              {{ value }}
-            </option>
-          </select>
+            :options="
+              specification.variantsValues.map((e) => ({ title: e, value: e }))
+            "
+            classes="mt-4"
+          />
         </template>
       </div>
       <template v-if="product">
@@ -161,18 +155,12 @@ const isInputText = (i: number) => {
         </div>
 
         <div>
-          <select v-model="manufacturerSelect" required>
-            <option value="" selected disabled hidden>
-              выберите категорию
-            </option>
-            <option
-              v-for="manufacturer in manufacturers"
-              :key="manufacturer.id"
-              :value="manufacturer.id"
-            >
-              {{ manufacturer.title }}
-            </option>
-          </select>
+          <v-select
+            v-model="manufacturerSelect"
+            :options="
+              manufacturers.map((e) => ({ value: e.id, title: e.title }))
+            "
+          />
         </div>
         <div>
           <label>гарантия</label>

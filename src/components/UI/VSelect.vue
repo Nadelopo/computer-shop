@@ -33,6 +33,10 @@ const findSelectedValue = props.options.find(
 if (findSelectedValue) {
   selected.value = findSelectedValue.title
   color.value = '#fff'
+} else if (props.modelValue) {
+  selected.value = String(props.modelValue)
+} else {
+  selected.value = 'выберите значение'
 }
 
 const onOptionClick = (selectValue: string | number, i: number) => {
@@ -179,6 +183,11 @@ $back: var(--back-sec)
     display: flex
     justify-content: space-between
     align-items: center
+    gap: 10px
+    span
+      text-overflow: ellipsis
+      white-space: nowrap
+      overflow: hidden
 
 .icon-arrow
   width: 10px
@@ -226,6 +235,7 @@ $back: var(--back-sec)
   text-align: start
   width: 96%
   border-radius: 7px
+  margin-bottom: 2px
   &:hover, &:focus, &.active
     transform: translateX(4px)
     outline: none
@@ -233,4 +243,5 @@ $back: var(--back-sec)
     background: var(--back-main)
   &.active
     color: var(--color-text)
+    background: #1f292b
 </style>
