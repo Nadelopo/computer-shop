@@ -61,6 +61,7 @@ defineProps({
   grid-template-columns: 20% auto 10%
   grid-gap: 40px
   align-items: center
+  box-shadow: 0px 0px 6px 4px rgba(0,0,0, 0.1 )
   &:hover
     transition: 0.5s
     box-shadow: rgb(0, 0, 0 , .25) 0px 0px 15px 5px

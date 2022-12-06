@@ -105,5 +105,11 @@ const save = async () => {
     <div v-else class="min-h-screen flex justify-center items-center">
       <v-loader />
     </div>
+    <v-button
+      class="mt-6"
+      @click="$router.push({ name: 'Admin', params: { link: 'categories' } })"
+    >
+      назад
+    </v-button>
   </div>
 </template>

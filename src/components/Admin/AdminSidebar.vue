@@ -18,7 +18,7 @@ const { categories } = storeToRefs(useCategoriesStore())
       </router-link>
     </div>
     <div class="list">
-      <div class="head" @click="isVisible = !isVisible">Категории</div>
+      <div class="head" @click="isVisible = !isVisible">Продукты категорий</div>
       <v-accordion :visible="isVisible">
         <template v-if="categories">
           <div
@@ -45,7 +45,7 @@ const { categories } = storeToRefs(useCategoriesStore())
             params: { link: 'categories' },
           }"
         >
-          Управление категориями
+          Категории
         </router-link>
       </div>
       <div class="head">
@@ -55,7 +55,7 @@ const { categories } = storeToRefs(useCategoriesStore())
             params: { link: 'specifications' },
           }"
         >
-          Добавление характеристик категории
+          Характеристик категорий
         </router-link>
       </div>
 
@@ -66,7 +66,7 @@ const { categories } = storeToRefs(useCategoriesStore())
             params: { link: 'categories' },
           }"
         >
-          Создать фильтр
+          Фильтры
         </router-link>
       </div>
       <div class="head">
@@ -76,7 +76,7 @@ const { categories } = storeToRefs(useCategoriesStore())
             params: { link: 'manufacturers' },
           }"
         >
-          добавить производителя
+          Производители
         </router-link>
       </div>
     </div>

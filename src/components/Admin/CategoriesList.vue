@@ -39,6 +39,9 @@ const { categories } = storeToRefs(useCategoriesStore())
   justify-content: center
   flex-direction: column
   justify-content: space-between
+  box-shadow: 0 0 6px 3px rgb(1,1,1,0.1)
+  border-radius: 6px
+  transition: .2s
   div
     align-self: center
     transition: .3s
@@ -46,4 +49,6 @@ const { categories } = storeToRefs(useCategoriesStore())
       max-height: 150px
   &:hover div
     color: var(--color-text)
+  &:hover
+    box-shadow: 0 0 10px 3px rgb(1,1,1,0.2)
 </style>
