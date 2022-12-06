@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onUnmounted, ref, watchEffect, type PropType } from 'vue'
+import { computed, onUnmounted, ref, watchEffect, type PropType } from 'vue'
 import { isOutside } from '@/utils/isOutside'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
 
@@ -15,6 +15,10 @@ const props = defineProps({
   classes: {
     type: String,
     default: '',
+  },
+  required: {
+    type: Boolean,
+    default: true,
   },
 })
 
@@ -115,6 +119,16 @@ onUnmounted(() => {
   removeEventListener('click', clickOutside)
   removeEventListener('keydown', stopScrollDocument)
 })
+
+const required = computed(() => {
+  if (props.required) {
+    let s = true
+    if (props.options.find((e) => e.value === props.modelValue)) s = false
+    return s
+  } else {
+    return false
+  }
+})
 </script>
 
 <template>
@@ -134,21 +148,24 @@ onUnmounted(() => {
       </button>
       <transition name="list">
         <div v-show="active" class="list">
-          <button
-            v-for="(option, i) in options"
-            :key="i"
-            ref="optionsRefs"
-            class="option"
-            type="button"
-            :class="modelValue === option.value && 'active '"
-            @click="onOptionClick(option.value, i)"
-            @keyup.arrow-down="onOptionDown(i)"
-            @keyup.arrow-up="onOptionUp(i)"
-          >
-            {{ option.title }}
-          </button>
+          <div class="scroll">
+            <button
+              v-for="(option, i) in options"
+              :key="i"
+              ref="optionsRefs"
+              class="option"
+              type="button"
+              :class="modelValue === option.value && 'active '"
+              @click="onOptionClick(option.value, i)"
+              @keyup.arrow-down="onOptionDown(i)"
+              @keyup.arrow-up="onOptionUp(i)"
+            >
+              {{ option.title }}
+            </button>
+          </div>
         </div>
       </transition>
+      <select :required="required" class="required" />
     </span>
   </span>
 </template>
@@ -211,10 +228,20 @@ $back: var(--back-sec)
   width: 100%
   transition: $transition
   background: $back
-  overflow: hidden
   opacity: 1
   transform: translateY(0) scale(1)
   z-index: 50
+  .scroll
+    max-height: 200px
+    overflow: auto
+    &::-webkit-scrollbar
+      width: 4px
+    &::-webkit-scrollbar-track
+      background-color: transparent
+      border-radius: 20px
+    &::-webkit-scrollbar-thumb
+      background: var(--back-main)
+      border-radius: 30px
 
 .list-enter-active,
 .list-leave-active
@@ -244,4 +271,12 @@ $back: var(--back-sec)
   &.active
     color: var(--color-text)
     background: #1f292b
+
+.required
+  all: unset
+  position: absolute
+  width: 1px
+  height: 1px
+  left: 100px
+  top: 39px
 </style>
