@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/productsStore'
@@ -8,13 +8,13 @@ import { getAllByColumn, getOneWithId } from '@/utils/dbQueries'
 import VInputText from '@/components/UI/VInputText.vue'
 import VInputFile from '@/components/UI/VInputFile.vue'
 import VButton from '@/components/UI/VButton.vue'
+import VSelect from '@/components/UI/VSelect.vue'
 import VLoader from '@/components/UI/Vloader.vue'
 import type {
   IproductR,
   IproductSpecificationU,
   IproductU,
 } from '@/types/tables'
-import VSelect from '@/components/UI/VSelect.vue'
 
 interface IproductSpecificationOnEdit {
   id: number
@@ -47,27 +47,24 @@ const id = Number(route.params.id)
 const categoryId = Number(route.params.categoryId)
 
 const product = ref<IproductWithSpecificationsOnEdit | null>(null)
-
 const manufacturerSelect = ref(0)
 
-onBeforeMount(async () => {
-  const { data } = await getOneWithId<IproductR>(
-    'products',
-    id,
-    '*, manufacturerId(id, title)'
-  )
-  const spec = await getAllByColumn<IproductSpecificationOnEdit>(
-    'specifications',
-    'productId',
-    id,
-    'id, value, productId, categorySpecificationsId(id, title,  visible, units, type, step, min, max, variantsValues)',
-    'categorySpecificationsId'
-  )
-  if (data && spec.data) {
-    manufacturerSelect.value = data.manufacturerId.id
-    product.value = { ...data, specifications: spec.data }
-  }
-})
+const { data } = await getOneWithId<IproductR>(
+  'products',
+  id,
+  '*, manufacturerId(id, title)'
+)
+const spec = await getAllByColumn<IproductSpecificationOnEdit>(
+  'specifications',
+  'productId',
+  id,
+  'id, value, productId, categorySpecificationsId(id, title,  visible, units, type, step, min, max, variantsValues)',
+  'categorySpecificationsId'
+)
+if (data && spec.data) {
+  manufacturerSelect.value = data.manufacturerId.id
+  product.value = { ...data, specifications: spec.data }
+}
 
 const save = async () => {
   if (product.value) {
@@ -186,7 +183,17 @@ const manufacturersSelect = computed(() => {
           <v-button>сохранить</v-button>
         </div>
       </form>
-      <v-button class="mt-8" @click="$router.go(-1)">назад</v-button>
+      <v-button
+        class="mt-8"
+        @click="
+          $router.push({
+            name: 'AdminCreateProducts',
+            params: { link: 'products', id: categoryId },
+          })
+        "
+      >
+        назад
+      </v-button>
     </div>
     <div v-else class="h-screen flex items-center">
       <v-loader />

@@ -35,12 +35,11 @@ const router = createRouter({
       meta: { auth: true },
     },
     {
-      path: '/admin/product/:link/:id',
+      path: '/admin/:link/:id',
       name: 'AdminCreateProducts',
       component: () => import('@/pages/Admin/AdminWrapper.vue'),
       meta: { auth: true },
     },
-
     {
       path: '/admin/edit/:category/:categoryId/:id',
       name: 'EditProducts',
@@ -48,9 +47,15 @@ const router = createRouter({
       meta: { auth: true },
     },
     {
-      path: '/admin/edit/:categoryId',
+      path: '/admin/edit/category/:categoryId',
       name: 'EditCategory',
       component: () => import('@/pages/Admin/EditCategory.vue'),
+      meta: { auth: true },
+    },
+    {
+      path: '/admin/edit/manufacturer/:id',
+      name: 'EditManufacturer',
+      component: () => import('@/pages/Admin/EditManufacturer.vue'),
       meta: { auth: true },
     },
   ],
