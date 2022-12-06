@@ -97,20 +97,22 @@ onUnmounted(() => {
         <ArrowSVG class="svg" :class="{ active }" />
       </div>
     </button>
-    <div class="list" :class="{ active }">
-      <button
-        v-for="(option, i) in options"
-        :key="i"
-        ref="optionsRefs"
-        class="option"
-        :class="modelValue === option.value && 'active '"
-        @click="onOptionClick(option.value, i)"
-        @keyup.arrow-down="onOptionDown(i)"
-        @keyup.arrow-up="onOptionUp(i)"
-      >
-        {{ option.title }}
-      </button>
-    </div>
+    <transition name="list">
+      <div v-show="active" class="list">
+        <button
+          v-for="(option, i) in options"
+          :key="i"
+          ref="optionsRefs"
+          class="option"
+          :class="modelValue === option.value && 'active '"
+          @click="onOptionClick(option.value, i)"
+          @keyup.arrow-down="onOptionDown(i)"
+          @keyup.arrow-up="onOptionUp(i)"
+        >
+          {{ option.title }}
+        </button>
+      </div>
+    </transition>
   </span>
 </template>
 
@@ -136,6 +138,8 @@ $back: #1e2023
   cursor: pointer
   outline: none
   transition: $transition
+  position: absolute
+  z-index: 100
   &.active
     border-radius: 12px 12px 0 0
   .head
@@ -165,14 +169,19 @@ $back: #1e2023
   width: 100%
   transition: $transition
   background: $back
-  opacity: 0
   overflow: hidden
-  visibility: hidden
+  opacity: 1
+  transform: translateY(0) scale(1)
+
+.list-enter-active,
+.list-leave-active
+  transition: all $transition ease
+
+.list-enter-from,
+.list-leave-to
+  opacity: 0
   transform: translateY(-5px) scale(0.95)
-  &.active
-    opacity: 1
-    visibility: visible
-    transform: translateY(0) scale(1)
+
 
 .option
   padding: 6px 10px
