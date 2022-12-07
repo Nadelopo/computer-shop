@@ -1,26 +1,47 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRoute } from 'vue-router'
-import { getOneWithId } from '@/utils/dbQueries'
+import { useRoute, useRouter } from 'vue-router'
 import VInputText from '@/components/UI/VInputText.vue'
 import VInputFileVue from '@/components/UI/VInputFile.vue'
 import VButton from '@/components/UI/VButton.vue'
-import type { ImanufacturerR } from '@/types/tables'
+import { useManufacturersStore } from '@/stores/manufacturersStore'
+import type { ImanufacturerCU } from '@/types/tables'
 
-const manufactuerId = useRoute().params.id
+const { getManufacturer, updateManufacturer } = useManufacturersStore()
 
-const { data } = await getOneWithId<ImanufacturerR>(
-  'manufacturers',
-  String(manufactuerId)
-)
+const manufactuerId = Number(useRoute().params.id)
 
-const manufacturer = ref(data)
+const { data } = await getManufacturer(manufactuerId)
+const manufacturer = ref<ImanufacturerCU | null>(null)
+
+if (data) {
+  manufacturer.value = {
+    title: data.title,
+    description: data.description,
+    img: data.img,
+  }
+}
+
+const router = useRouter()
+const update = async () => {
+  if (manufacturer.value) {
+    await updateManufacturer(manufactuerId, manufacturer.value)
+    router.push({
+      name: 'Admin',
+      params: { link: 'manufacturers' },
+    })
+  }
+}
 </script>
 
 <template>
   <div>
     <div class="container">
-      <div v-if="manufacturer" class="list__form pt-10">
+      <form
+        v-if="manufacturer"
+        class="list__form pt-10"
+        @submit.prevent="update"
+      >
         <div>
           <label>наименование</label>
           <v-input-text v-model="manufacturer.title" />
@@ -34,21 +55,28 @@ const manufacturer = ref(data)
         <div>
           <label>изображение</label>
           <div>
-            <v-input-fileVue v-model="manufacturer.img" />
+            <v-input-fileVue
+              v-model="manufacturer.img"
+              folder="manufacturers"
+              :required="false"
+            />
           </div>
         </div>
         <div>
-          <v-button
-            @click="
-              $router.push({
-                name: 'AdminCreateProducts',
-                params: { link: 'manufacturers' },
-              })
-            "
-          >
-            сохранить
-          </v-button>
+          <v-button> сохранить </v-button>
         </div>
+      </form>
+      <div class="mt-4">
+        <v-button
+          @click="
+            $router.push({
+              name: 'AdminCreateProducts',
+              params: { link: 'manufacturers' },
+            })
+          "
+        >
+          назад
+        </v-button>
       </div>
     </div>
   </div>

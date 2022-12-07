@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { create, getAll } from '@/utils/dbQueries'
+import { create, getAll, getOneWithId, updateOne } from '@/utils/dbQueries'
 import type { ImanufacturerCU, ImanufacturerR } from '@/types/tables'
 
 export const useManufacturersStore = defineStore('manufacturers', {
@@ -23,7 +23,31 @@ export const useManufacturersStore = defineStore('manufacturers', {
       if (data) manufacturers.value = data
     }
 
+    const getManufacturer = async (id: number) => {
+      const { data } = await getOneWithId<ImanufacturerR>('manufacturers', id)
+      return { data }
+    }
+
+    const updateManufacturer = async (id: number, params: ImanufacturerCU) => {
+      const { data } = await updateOne<ImanufacturerCU, ImanufacturerR>(
+        'manufacturers',
+        id,
+        params
+      )
+      if (data) {
+        manufacturers.value = manufacturers.value.map((e) =>
+          e.id === id ? data : e
+        )
+      }
+    }
+
     setManufacturers()
-    return { manufacturers, createManufacturer, setManufacturers }
+    return {
+      manufacturers,
+      createManufacturer,
+      setManufacturers,
+      getManufacturer,
+      updateManufacturer,
+    }
   },
 })

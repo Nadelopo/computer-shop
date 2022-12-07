@@ -20,14 +20,16 @@ let oldImg: string | undefined = undefined
 const newCategory = ref<IcategoryU | null>(null)
 
 const setNewCategory = () => {
-  const currentCategory: IcategoryR = categories.value.filter(
+  const currentCategory: IcategoryR | undefined = categories.value.find(
     (e) => e.id === categoryId
-  )[0]
-  newCategory.value = {
-    id: currentCategory.id,
-    enTitle: currentCategory.enTitle,
-    img: currentCategory.img,
-    title: currentCategory.title,
+  )
+  if (currentCategory) {
+    newCategory.value = {
+      id: currentCategory.id,
+      enTitle: currentCategory.enTitle,
+      img: currentCategory.img,
+      title: currentCategory.title,
+    }
   }
 }
 

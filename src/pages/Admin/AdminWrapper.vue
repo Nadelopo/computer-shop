@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import Home from './AdminHome.vue'
-import Categories from './AdminCategory.vue'
+import Categories from './AdminCategories.vue'
 import Specifications from './AdminSpecifications.vue'
 import Manufacturers from './AdminManufacturers.vue'
 import CreateProduct from './AdminProducts.vue'

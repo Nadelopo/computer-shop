@@ -35,7 +35,7 @@ const router = createRouter({
       meta: { auth: true },
     },
     {
-      path: '/admin/:link/:id',
+      path: '/admin/products/:link/:id',
       name: 'AdminCreateProducts',
       component: () => import('@/pages/Admin/AdminWrapper.vue'),
       meta: { auth: true },
