@@ -260,16 +260,14 @@ $back: var(--back-sec)
   transition: $transition
   cursor: pointer
   text-align: start
-  width: 96%
+  width: 94%
   border-radius: 7px
   margin-bottom: 2px
   &:hover, &:focus, &.active
-    transform: translateX(4px)
+    transform: translateX(6px)
     outline: none
-  &:hover, &:focus
-    background: var(--back-main)
-  &.active
     color: var(--color-text)
+  &:hover, &:focus
     background: #1f292b
 
 .required
