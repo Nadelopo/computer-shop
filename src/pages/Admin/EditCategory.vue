@@ -12,7 +12,7 @@ import type { IcategoryR, IcategoryU } from '@/types/tables'
 
 const { categories } = storeToRefs(useCategoriesStore())
 const { updateCategory } = useCategoriesStore()
-const categoryId = Number(useRoute().params.categoryId)
+const categoryId = Number(useRoute().params.id)
 const router = useRouter()
 
 const loader = ref(false)
@@ -72,8 +72,7 @@ const save = async () => {
       const data = await removeFromStorage('categories', oldImg)
       if (data) {
         router.push({
-          name: 'Admin',
-          params: { link: 'categories' },
+          name: 'AdminCategories',
         })
       }
     }
@@ -107,10 +106,7 @@ const save = async () => {
     <div v-else class="min-h-screen flex justify-center items-center">
       <v-loader />
     </div>
-    <v-button
-      class="mt-6"
-      @click="$router.push({ name: 'Admin', params: { link: 'categories' } })"
-    >
+    <v-button class="mt-6" @click="$router.push({ name: 'AdminCategories' })">
       назад
     </v-button>
   </div>

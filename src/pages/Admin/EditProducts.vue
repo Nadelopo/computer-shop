@@ -45,6 +45,7 @@ const route = useRoute()
 
 const id = Number(route.params.id)
 const categoryId = Number(route.params.categoryId)
+const categoryTitle = route.params.category
 
 const product = ref<IproductWithSpecificationsOnEdit | null>(null)
 const manufacturerSelect = ref(0)
@@ -88,8 +89,8 @@ const save = async () => {
     updateProductSpecifications(newSpecifications)
     await updateProduct(id, productU)
     router.push({
-      name: 'AdminCreateProducts',
-      params: { link: route.params.category, id: categoryId },
+      name: 'AdminProducts',
+      params: { category: categoryTitle, id: categoryId },
     })
   }
 }
@@ -187,8 +188,8 @@ const manufacturersSelect = computed(() => {
         class="mt-8"
         @click="
           $router.push({
-            name: 'AdminCreateProducts',
-            params: { link: 'products', id: categoryId },
+            name: 'AdminProducts',
+            params: { category: categoryTitle, id: categoryId },
           })
         "
       >

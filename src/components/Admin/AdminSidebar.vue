@@ -29,8 +29,8 @@ const { categories } = storeToRefs(useCategoriesStore())
           >
             <router-link
               :to="{
-                name: 'AdminCreateProducts',
-                params: { link: category.enTitle, id: category.id },
+                name: 'AdminProducts',
+                params: { category: category.enTitle, id: category.id },
               }"
             >
               {{ category.title }}
@@ -41,8 +41,7 @@ const { categories } = storeToRefs(useCategoriesStore())
       <div class="head">
         <router-link
           :to="{
-            name: 'Admin',
-            params: { link: 'categories' },
+            name: 'AdminCategories',
           }"
         >
           Категории
@@ -51,8 +50,7 @@ const { categories } = storeToRefs(useCategoriesStore())
       <div class="head">
         <router-link
           :to="{
-            name: 'Admin',
-            params: { link: 'specifications' },
+            name: 'AdminSpecifications',
           }"
         >
           Характеристик категорий
@@ -62,8 +60,7 @@ const { categories } = storeToRefs(useCategoriesStore())
       <div class="head">
         <router-link
           :to="{
-            name: 'Admin',
-            params: { link: 'categories' },
+            name: 'AdminSpecifications',
           }"
         >
           Фильтры
@@ -72,8 +69,7 @@ const { categories } = storeToRefs(useCategoriesStore())
       <div class="head">
         <router-link
           :to="{
-            name: 'Admin',
-            params: { link: 'manufacturers' },
+            name: 'AdminManufacturers',
           }"
         >
           Производители

@@ -80,8 +80,8 @@ watch(useRoute(), (cur) => {
                   :to="{
                     name: 'EditProducts',
                     params: {
+                      category: $route.params.category,
                       categoryId: product.categoryId,
-                      category: $route.params.link,
                       id: product.id,
                     },
                   }"

@@ -27,8 +27,7 @@ const update = async () => {
   if (manufacturer.value) {
     await updateManufacturer(manufactuerId, manufacturer.value)
     router.push({
-      name: 'Admin',
-      params: { link: 'manufacturers' },
+      name: 'AdminManufacturers',
     })
   }
 }
@@ -70,8 +69,7 @@ const update = async () => {
         <v-button
           @click="
             $router.push({
-              name: 'AdminCreateProducts',
-              params: { link: 'manufacturers' },
+              name: 'AdminManufacturers',
             })
           "
         >
@@ -86,4 +84,5 @@ const update = async () => {
 textarea
   width: 100%
   min-height: 50px
+  background: inherit
 </style>
