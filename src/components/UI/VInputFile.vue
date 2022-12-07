@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onUnmounted, ref, watch } from 'vue'
+import { onUnmounted, ref, watch, type PropType } from 'vue'
 import { insertInStorage, removeFromStorage } from '@/utils/storageQueris'
 
 const props = defineProps({
@@ -12,7 +12,7 @@ const props = defineProps({
     default: true,
   },
   folder: {
-    type: String,
+    type: String as PropType<'categories' | 'manufacturers' | 'products'>,
     required: true,
   },
 })

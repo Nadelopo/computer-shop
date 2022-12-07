@@ -158,7 +158,7 @@ const isInputText = (i: number) => {
         </div>
         <div>
           <label>изображение</label>
-          <v-input-file v-model.trim="product.img" folder="product" />
+          <v-input-file v-model.trim="product.img" folder="products" />
         </div>
 
         <div>
