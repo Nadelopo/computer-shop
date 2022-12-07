@@ -17,16 +17,16 @@ defineProps({
 const deleteProduct = (id: number, img: string) => [id, img]
 
 const { products } = storeToRefs(useProductsStore())
-const { getProducts } = useProductsStore()
+const { setProducts } = useProductsStore()
 
 const categoryId = Number(useRoute().params.id)
 
 const setTable = (id: number) => {
   if (!products.value.length) {
-    getProducts(id)
+    setProducts(id)
   } else if (products.value[0].categoryId !== id) {
     products.value = []
-    getProducts(id)
+    setProducts(id)
   }
 }
 

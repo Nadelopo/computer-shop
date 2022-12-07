@@ -23,10 +23,10 @@ interface IproductSpecificationForm
 }
 
 const route = useRoute()
-const { manufacturers } = storeToRefs(useManufacturersStore())
 
+const { manufacturers } = storeToRefs(useManufacturersStore())
 const { getCategorySpecifications } = useCategoriesStore()
-const { createProduct, createSpecifications } = useProductsStore()
+const { createProduct, createSpecifications, setProducts } = useProductsStore()
 
 const manufacturerSelect = ref<number | string>('')
 const categoryId = ref<number>(Number(route.params.id))
@@ -92,6 +92,13 @@ const create = async () => {
 
     createSpecifications(productSpecifications)
     product.value = { ...copyForm }
+    setProducts(data.categoryId)
+    categoryFormSpecifications.value = categoryFormSpecifications.value.map(
+      (e) => ({
+        ...e,
+        value: '',
+      })
+    )
   }
 }
 

@@ -6,7 +6,7 @@ import { getAll } from '@/utils/dbQueries'
 import { debounce } from '@/utils/debounce'
 import VInputText from '../UI/VInputText.vue'
 
-const { getProducts } = useProductsStore()
+const { setProducts } = useProductsStore()
 
 const route = useRoute()
 const search = ref('')
@@ -16,7 +16,7 @@ const names = ref<string[]>([])
 
 const setSearch = debounce(500, async () => {
   let searchQueryValue = ''
-  if (!search.value) return getProducts(categoryId, '')
+  if (!search.value) return setProducts(categoryId, '')
   names.value.every((n) => {
     let arr = n.split(' ')
     for (let value of arr) {
@@ -32,7 +32,7 @@ const setSearch = debounce(500, async () => {
     }
     return true
   })
-  getProducts(categoryId, searchQueryValue)
+  setProducts(categoryId, searchQueryValue)
 })
 
 onBeforeMount(async () => {

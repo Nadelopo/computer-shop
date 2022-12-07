@@ -39,7 +39,7 @@ export const useProductsStore = defineStore('products', {
       }
     }
 
-    const getProducts = async (categoryId: number, search?: string) => {
+    const setProducts = async (categoryId: number, search?: string) => {
       const newProducts = ref<IproductWithSpecifications[]>([])
       loader.value = 'loading'
       const { data } = await getAllByColumn<IproductR>(
@@ -133,8 +133,7 @@ export const useProductsStore = defineStore('products', {
       products,
       createProduct,
       createSpecifications,
-      getProducts,
-      // categoryId,
+      setProducts,
       getProduct,
       updateProduct,
       updateProductSpecifications,

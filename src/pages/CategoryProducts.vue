@@ -8,19 +8,19 @@ import Search from '@/components/CategoryProducts/Search.vue'
 import VLoader from '@/components/UI/Vloader.vue'
 
 const { products, loader } = storeToRefs(useProductsStore())
-const { getProducts } = useProductsStore()
+const { setProducts } = useProductsStore()
 
 const categoryId = Number(useRoute().params.id)
 
 if (!products.value.length) {
-  getProducts(categoryId)
+  setProducts(categoryId)
 } else if (products.value[0].categoryId !== categoryId) {
   products.value = []
-  getProducts(categoryId)
+  setProducts(categoryId)
 }
 
 onUnmounted(() => {
-  getProducts(categoryId)
+  setProducts(categoryId)
 })
 </script>
 
