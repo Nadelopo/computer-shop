@@ -36,9 +36,7 @@ const setChildrens = () => {
   childs.forEach(async (el) => {
     el.style.paddingTop = '0'
     el.style.paddingBottom = '0'
-    setTimeout(() => {
-      childrenns.value.push({ element: el, height: el.scrollHeight })
-    }, 250)
+    childrenns.value.push({ element: el, height: el.scrollHeight })
   })
 }
 
