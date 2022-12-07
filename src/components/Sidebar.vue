@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import { isOutside } from '@/utils/isOutside'
 
 defineProps({
   isOpen: {
@@ -9,25 +10,17 @@ defineProps({
 })
 const emit = defineEmits(['update:isOpen'])
 
-const translateSidebar = ref('-320px')
-const brightness = ref('1')
-
+const active = ref(false)
 const sidebarRef = ref()
 const isMounted = ref(false)
 
 const closeSidebar = () => {
-  removeEventListener('click', checkClick)
-  translateSidebar.value = '-320px'
-  brightness.value = '1'
+  active.value = false
   setTimeout(() => emit('update:isOpen', false), 100)
 }
 
 const checkClick = (event: MouseEvent) => {
-  if (
-    sidebarRef.value &&
-    !event.composedPath().includes(sidebarRef.value) &&
-    isMounted.value
-  ) {
+  if (isOutside(sidebarRef.value, event) && isMounted.value) {
     closeSidebar()
   }
   isMounted.value = true
@@ -35,16 +28,17 @@ const checkClick = (event: MouseEvent) => {
 
 onMounted(() => {
   addEventListener('click', checkClick)
-  setTimeout(() => (translateSidebar.value = '0px'))
-  setTimeout(() => (brightness.value = '0.4'))
+  setTimeout(() => {
+    active.value = true
+  })
 })
 onUnmounted(() => removeEventListener('click', checkClick))
 </script>
 
 <template>
   <div>
-    <div class="wrapper">
-      <div ref="sidebarRef" class="sidebar">
+    <div class="wrapper" :class="{ active }">
+      <div ref="sidebarRef" class="sidebar" :class="{ active }">
         <div class="grid grid-cols-2 items-center">
           <div>
             <router-link :to="{ name: 'Home' }" @click="closeSidebar">
@@ -85,17 +79,21 @@ onUnmounted(() => removeEventListener('click', checkClick))
   left: 0
   right: 0
   transition: .2s
-  backdrop-filter: brightness(v-bind(brightness))
+  backdrop-filter: brightness(1)
+  &.active
+    backdrop-filter: brightness(0.4)
   .sidebar
     position: absolute
     background: var(--back-main)
     min-width: 320px
     top: 0
-    translate: v-bind(translateSidebar)
+    translate: -320px
     height: 100%
     color: #fff
     padding: 20px
     transition: .2s
+    &.active
+      translate: 0px
     .list
       margin-top: 20px
       font-size: 20px
@@ -115,10 +113,6 @@ onUnmounted(() => removeEventListener('click', checkClick))
   border-radius: 4px
   &-f
     transform: rotate(45deg)
-    // &__close
-    //   transform: rotate(0)
   &-l
     transform: rotate(-45deg)
-    // &__close
-    //   transform: rotate(0)
 </style>
