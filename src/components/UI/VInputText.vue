@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import type { PropType } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -7,49 +7,47 @@ const props = defineProps({
     required: true,
   },
   type: {
-    type: String,
+    type: String as PropType<'text' | 'number'>,
     default: 'text',
   },
   placeholder: {
-    type: String || null,
-    default: null,
+    type: String,
+    default: '',
   },
   required: {
     type: Boolean,
     default: true,
   },
   step: {
-    type: Number || null,
-    default: null,
+    type: Number as PropType<number | undefined>,
+    default: undefined,
   },
   min: {
-    type: Number || null,
-    default: null,
+    type: Number as PropType<number | undefined>,
+    default: undefined,
   },
   max: {
-    type: Number || null,
-    default: null,
+    type: Number as PropType<number | undefined>,
+    default: undefined,
   },
 })
 
-defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue'])
 
-const value = ref(props.modelValue)
-watch(
-  () => props.modelValue,
-  (cur) => {
-    if (!cur) {
-      value.value = ''
-    }
+const onChange = (e: Event) => {
+  if (e.target instanceof HTMLInputElement) {
+    const value: number | string =
+      props.type === 'number' ? Number(e.target.value) : e.target.value
+    emit('update:modelValue', value)
   }
-)
+}
 </script>
 
 <template>
   <div>
     <span class="wrapper">
       <input
-        v-model="value"
+        :value="modelValue"
         :type="type"
         class="input"
         :placeholder="placeholder"
@@ -57,7 +55,7 @@ watch(
         :step="step"
         :min="min"
         :max="max"
-        @input="$emit('update:modelValue', value)"
+        @input="onChange"
       />
     </span>
   </div>
