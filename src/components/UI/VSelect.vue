@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { computed, onUnmounted, ref, watchEffect, type PropType } from 'vue'
+import {
+  computed,
+  onUnmounted,
+  ref,
+  watch,
+  watchEffect,
+  type PropType,
+} from 'vue'
 import { isOutside } from '@/utils/isOutside'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
 
@@ -30,6 +37,16 @@ const selected = ref('')
 const optionsRefs = ref<HTMLButtonElement[]>([])
 
 const color = ref('#a9a9a9')
+
+watch(
+  () => props.modelValue,
+  (cur) => {
+    const find = props.options.find((e) => e.value === cur)
+    if (!find) {
+      selected.value = String(cur)
+    }
+  }
+)
 
 const findSelectedValue = props.options.find(
   (e) => e.value === props.modelValue
