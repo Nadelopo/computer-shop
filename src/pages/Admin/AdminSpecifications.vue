@@ -41,7 +41,6 @@ const create = async () => {
   }
 
   const { data } = await createCategorySpecifications(form.value)
-  console.log(data)
   if (data) {
     form.value = {
       categoryId: 0,
@@ -54,8 +53,7 @@ const create = async () => {
       max: 64,
       variantsValues: [''],
     }
-    console.log(form.value)
-    select.value = ''
+    select.value = 'выберите категорию'
   }
 }
 
@@ -136,7 +134,7 @@ const deleteVarianValues = () => {
     </div>
 
     <div>
-      <v-button class="mt-4">создать поле</v-button>
+      <v-button class="mt-4">создать характеристику</v-button>
     </div>
   </form>
 </template>

@@ -16,7 +16,7 @@ const props = defineProps({
     required: true,
   },
   options: {
-    type: Array as PropType<{ title: string; value: string | number }[]>,
+    type: <PropType<{ title: string; value: string | number }[]>>Array,
     required: true,
   },
   classes: {

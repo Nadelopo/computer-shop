@@ -7,7 +7,7 @@ const props = defineProps({
     required: true,
   },
   type: {
-    type: String as PropType<'text' | 'number'>,
+    type: <PropType<'text' | 'number'>>String,
     default: 'text',
   },
   placeholder: {
@@ -19,15 +19,15 @@ const props = defineProps({
     default: true,
   },
   step: {
-    type: Number as PropType<number | undefined>,
+    type: <PropType<number | undefined>>Number,
     default: undefined,
   },
   min: {
-    type: Number as PropType<number | undefined>,
+    type: <PropType<number | undefined>>Number,
     default: undefined,
   },
   max: {
-    type: Number as PropType<number | undefined>,
+    type: <PropType<number | undefined>>Number,
     default: undefined,
   },
 })
