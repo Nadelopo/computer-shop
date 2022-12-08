@@ -40,8 +40,9 @@ const create = async () => {
     delete form.value.step
   }
 
-  const resp = await createCategorySpecifications(form.value)
-  if (resp) {
+  const { data } = await createCategorySpecifications(form.value)
+  console.log(data)
+  if (data) {
     form.value = {
       categoryId: 0,
       title: '',
@@ -53,6 +54,7 @@ const create = async () => {
       max: 64,
       variantsValues: [''],
     }
+    console.log(form.value)
     select.value = ''
   }
 }
@@ -96,9 +98,9 @@ const deleteVarianValues = () => {
       />
     </div>
     <template v-if="form.type">
-      <div>
+      <div v-if="typeof form.step == 'number'">
         <label>шаг изменения числа для поля ввода</label>
-        <v-input-text v-model="form.units" type="number" :step="0.1" />
+        <v-input-text v-model="form.step" type="number" :step="0.1" />
       </div>
       <div v-if="typeof form.min == 'number'">
         <label>минимальное значение для поля ввода</label>
