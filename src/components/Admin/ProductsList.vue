@@ -14,8 +14,6 @@ defineProps({
   },
 })
 
-const deleteProduct = (id: number, img: string) => [id, img]
-
 const { products } = storeToRefs(useProductsStore())
 const { setProducts } = useProductsStore()
 
@@ -86,19 +84,8 @@ watch(useRoute(), (cur) => {
                     },
                   }"
                 >
-                  <v-button
-                    class="w-full"
-                    @click="deleteProduct(product.id, product.img)"
-                  >
-                    изменить
-                  </v-button>
+                  <v-button class="w-full"> изменить </v-button>
                 </router-link>
-                <v-button
-                  class="btn__dunger"
-                  @click="deleteProduct(product.id, product.img)"
-                >
-                  удалить
-                </v-button>
               </div>
             </td>
           </tr>

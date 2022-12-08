@@ -16,6 +16,7 @@ export interface IproductR extends IdefaultValues {
   popularity: number
   quantity: number
   discount: number
+  sell: boolean
   manufacturerId: {
     id: number
     title: string

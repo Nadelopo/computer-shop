@@ -15,7 +15,10 @@ defineProps({
     type: String as PropType<'button' | 'submit' | 'reset' | undefined>,
     default: 'button',
   },
-  modelValue: Boolean,
+  modelValue: {
+    type: Boolean,
+    required: true,
+  },
 })
 defineEmits(['update:modelValue'])
 </script>

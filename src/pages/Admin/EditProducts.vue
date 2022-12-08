@@ -10,6 +10,7 @@ import VInputFile from '@/components/UI/VInputFile.vue'
 import VButton from '@/components/UI/VButton.vue'
 import VSelect from '@/components/UI/VSelect.vue'
 import VLoader from '@/components/UI/Vloader.vue'
+import VDoubleButtons from '@/components/UI/VDoubleButtons.vue'
 import type {
   IproductR,
   IproductSpecificationU,
@@ -78,6 +79,7 @@ const save = async () => {
       price: product.value.price,
       discount: product.value.discount,
       quantity: product.value.quantity,
+      sell: product.value.sell,
     }
 
     const newSpecifications: IproductSpecificationU[] =
@@ -136,12 +138,12 @@ const manufacturersSelect = computed(() => {
             />
           </template>
           <template v-else>
-            <br />
-            <v-select
-              v-model="specification.value"
-              classes="mt-2"
-              :options="specificationsVariantsValues(i)"
-            />
+            <div>
+              <v-select
+                v-model="specification.value"
+                :options="specificationsVariantsValues(i)"
+              />
+            </div>
           </template>
         </div>
         <div>
@@ -167,9 +169,21 @@ const manufacturersSelect = computed(() => {
         </div>
 
         <div>
-          <v-select
-            v-model="manufacturerSelect"
-            :options="manufacturersSelect"
+          <label>производитель</label>
+          <div>
+            <v-select
+              v-model="manufacturerSelect"
+              :options="manufacturersSelect"
+            />
+          </div>
+        </div>
+        <div>
+          <label>продажи</label>
+          <v-double-buttons
+            v-model="product.sell"
+            type="button"
+            text-first="продавать"
+            text-second="остановить продажи"
           />
         </div>
         <div>

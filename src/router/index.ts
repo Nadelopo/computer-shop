@@ -25,7 +25,7 @@ const router = createRouter({
     {
       path: '/admin',
       name: 'AdminHome',
-      component: () => import('@/pages/Admin/AdminWrapper.vue'),
+      component: () => import('@/pages/Admin/AdminHome.vue'),
       meta: { auth: true },
       children: [
         {
