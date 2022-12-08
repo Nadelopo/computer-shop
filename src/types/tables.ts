@@ -37,7 +37,7 @@ export interface IproductU
   manufacturerId: number
 }
 
-export interface IproductC extends IproductU {
+export interface IproductC extends Omit<IproductU, 'sell'> {
   categoryId: number
 }
 
