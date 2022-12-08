@@ -83,6 +83,9 @@ const stopScrollDocument = (e: KeyboardEvent) => {
   if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
     e.preventDefault()
   }
+  if (e.key === 'Escape') {
+    active.value = false
+  }
 }
 
 const onFocus = () => {
