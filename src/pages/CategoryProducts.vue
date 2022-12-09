@@ -12,15 +12,10 @@ const { setProducts } = useProductsStore()
 
 const categoryId = Number(useRoute().params.id)
 
-if (!products.value.length) {
-  setProducts(categoryId)
-} else if (products.value[0].categoryId !== categoryId) {
-  products.value = []
-  setProducts(categoryId)
-}
+setProducts(categoryId)
 
 onUnmounted(() => {
-  setProducts(categoryId)
+  products.value = []
 })
 </script>
 
