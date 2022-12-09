@@ -14,7 +14,7 @@ defineProps({
   },
 })
 
-const { products } = storeToRefs(useProductsStore())
+const { products, loader } = storeToRefs(useProductsStore())
 const { setProducts } = useProductsStore()
 
 const categoryId = Number(useRoute().params.id)
@@ -54,7 +54,7 @@ watch(useRoute(), (cur) => {
           <th width="5%"></th>
         </tr>
       </thead>
-      <template v-if="products.length">
+      <template v-if="loader === 'success'">
         <tbody v-for="product in products" :key="product.id">
           <tr>
             <td>{{ product.name }}</td>
@@ -92,7 +92,13 @@ watch(useRoute(), (cur) => {
         </tbody>
       </template>
     </table>
-    <v-loader v-if="!products.length" />
+    <v-loader v-if="loader === 'loading'" />
+    <div
+      v-if="loader === 'empty'"
+      class="text-2xl text-center font-normal mt-16"
+    >
+      товары отсутствуют
+    </div>
   </div>
 </template>
 

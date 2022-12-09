@@ -24,7 +24,7 @@ export const insertInStorage = async (
 }
 
 export const removeFromStorage = async (
-  folder: string,
+  folder: 'categories' | 'manufacturers' | 'products',
   imgName: string
 ): Promise<boolean> => {
   let value = false

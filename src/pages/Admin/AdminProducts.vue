@@ -168,5 +168,7 @@ const create = async () => {
     </form>
     <ProdctsList :specifications="categorySpecifications" />
   </div>
-  <v-loader v-else />
+  <div v-else class="h-screen flex items-center">
+    <v-loader />
+  </div>
 </template>

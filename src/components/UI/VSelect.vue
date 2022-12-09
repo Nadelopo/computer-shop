@@ -209,7 +209,7 @@ $back: var(--back-sec)
   outline: none
   transition: $transition
   position: absolute
-  z-index: 100
+  z-index: 50
   &.active
     border-radius: 12px 12px 0 0
   .head
@@ -246,7 +246,7 @@ $back: var(--back-sec)
   background: $back
   opacity: 1
   transform: translateY(0) scale(1)
-  z-index: 50
+  z-index: 100
   .scroll
     max-height: 200px
     overflow: auto
