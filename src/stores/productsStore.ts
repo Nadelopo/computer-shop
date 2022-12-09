@@ -40,8 +40,9 @@ export const useProductsStore = defineStore('products', {
     }
 
     const setProducts = async (categoryId: number, search?: string) => {
-      const newProducts = ref<IproductWithSpecifications[]>([])
       loader.value = 'loading'
+      products.value = []
+      const newProducts = ref<IproductWithSpecifications[]>([])
       const { data } = await getAllByColumn<IproductR>(
         'products',
         'categoryId',
@@ -51,7 +52,7 @@ export const useProductsStore = defineStore('products', {
         search
       )
       if (data?.length) {
-        data.forEach(async (product) => {
+        for (const product of data) {
           const { data: specifications } =
             await getAllByColumn<IproductSpecificationR>(
               'specifications',
@@ -67,11 +68,11 @@ export const useProductsStore = defineStore('products', {
               specifications,
             }
             newProducts.value.push(newProduct)
-            loader.value = 'success'
           }
-        })
+        }
       } else loader.value = 'empty'
       products.value = newProducts.value
+      loader.value = 'success'
     }
 
     const getProduct = async (
