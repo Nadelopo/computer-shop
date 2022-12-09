@@ -82,14 +82,18 @@ const save = async () => {
 
 <template>
   <div class="container">
-    <form v-if="loader" class="list__form mt-16" @submit.prevent="save">
+    <form
+      v-if="loader && newCategory"
+      class="list__form mt-16"
+      @submit.prevent="save"
+    >
       <div>
         <label>наименование на русском</label>
-        <v-input-text v-model="newCategory!.title" />
+        <v-input-text v-model="newCategory.title" />
       </div>
       <div>
         <label>наименование на английском</label>
-        <v-input-text v-model="newCategory!.enTitle" />
+        <v-input-text v-model="newCategory.enTitle" />
       </div>
       <div>
         <label>изображение</label>

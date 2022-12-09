@@ -19,10 +19,6 @@ const props = defineProps({
     type: <PropType<{ title: string; value: string | number }[]>>Array,
     required: true,
   },
-  classes: {
-    type: String,
-    default: '',
-  },
   required: {
     type: Boolean,
     default: true,
@@ -153,7 +149,7 @@ const required = computed(() => {
 
 <template>
   <span>
-    <span class="root" :class="classes">
+    <span class="root" v-bind="$attrs">
       <button
         ref="btn"
         class="select"

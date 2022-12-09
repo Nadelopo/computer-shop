@@ -54,8 +54,8 @@ export const useCategoriesStore = defineStore('categories', {
       >('category_specifications', form)
       if (data) {
         categorySpecifications.value.push(data)
-        return true
       }
+      return { data }
     }
 
     const getCategorySpecifications = async (categoryId: number) => {
