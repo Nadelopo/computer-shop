@@ -73,6 +73,7 @@ watch(
       categorySpecifications.value = []
       categoryId.value = Number(cur)
       setCategorySpecifications()
+      product.value.categoryId = categoryId.value
     }
   }
 )
