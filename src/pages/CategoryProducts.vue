@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onUnmounted } from 'vue'
+import { nextTick, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/productsStore'
@@ -17,6 +17,20 @@ setProducts(categoryId)
 onUnmounted(() => {
   products.value = []
 })
+
+const styles = ref('card__disable')
+
+watch(
+  () => products.value.length,
+  async (cur) => {
+    await nextTick()
+    if (cur) {
+      styles.value = 'card__active'
+    } else {
+      styles.value = 'card__disable'
+    }
+  }
+)
 </script>
 
 <template>
@@ -27,9 +41,14 @@ onUnmounted(() => {
         <Search />
         <template v-if="loader === 'success'">
           <div class="product__list">
-            <template v-for="product in products" :key="product.id">
-              <ProductBlock :item="product" />
-            </template>
+            <transition-group name="list">
+              <ProductBlock
+                v-for="product in products"
+                :key="product.id"
+                :item="product"
+                :class="styles"
+              />
+            </transition-group>
           </div>
         </template>
         <template v-else-if="loader === 'loading'">
@@ -57,4 +76,13 @@ onUnmounted(() => {
   display: flex
   flex-direction: column
   gap: 30px
+  position: relative
+
+.card__active
+  transform: scale(1)
+  opacity: 1
+
+.card__disable
+  transform: scale(0.7)
+  opacity: 0
 </style>

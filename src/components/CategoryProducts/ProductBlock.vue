@@ -53,7 +53,7 @@ defineProps({
 <style scoped lang="sass">
 .card__wrapper
   background-color: #fff
-  transition: 0.4s
+  transition: 0.35s
   padding: 20px 20px 20px 0
   border-radius: 8px
   padding: 20px 40px
