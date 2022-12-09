@@ -64,7 +64,6 @@ window.addEventListener('beforeunload', removeOnReload)
 
 onUnmounted(() => {
   window.removeEventListener('beforeunload', removeOnReload)
-  removeOnReload()
 })
 </script>
 

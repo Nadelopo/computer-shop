@@ -16,6 +16,7 @@ import type {
   IproductSpecificationU,
   IproductU,
 } from '@/types/tables'
+import { removeFromStorage } from '@/utils/storageQueris'
 
 interface IproductSpecificationOnEdit {
   id: number
@@ -49,7 +50,9 @@ const categoryId = Number(route.params.categoryId)
 const categoryTitle = route.params.category
 
 const product = ref<IproductWithSpecificationsOnEdit | null>(null)
+const img = ref('')
 const manufacturerSelect = ref(0)
+const loader = ref<'loading' | 'success'>('loading')
 
 const { data } = await getOneWithId<IproductR>(
   'products',
@@ -64,12 +67,21 @@ const spec = await getAllByColumn<IproductSpecificationOnEdit>(
   'categorySpecificationsId'
 )
 if (data && spec.data) {
+  img.value = data.img
   manufacturerSelect.value = data.manufacturerId.id
   product.value = { ...data, specifications: spec.data }
+  loader.value = 'success'
 }
+
+const getImgName = (url: string) => url.split('/').reverse()[0]
 
 const save = async () => {
   if (product.value) {
+    loader.value = 'loading'
+    const imgName = getImgName(img.value)
+    if (imgName !== getImgName(product.value.img)) {
+      await removeFromStorage('products', imgName)
+    }
     const productU: IproductU = {
       name: product.value.name,
       description: product.value.description,
@@ -115,11 +127,25 @@ const manufacturersSelect = computed(() => {
   arr = manufacturers.value.map((e) => ({ value: e.id, title: e.title }))
   return arr
 })
+
+const back = async () => {
+  loader.value = 'loading'
+  if (product.value) {
+    const imgName = getImgName(img.value)
+    if (imgName !== getImgName(product.value.img)) {
+      await removeFromStorage('products', getImgName(product.value.img))
+    }
+  }
+  router.push({
+    name: 'AdminProducts',
+    params: { category: categoryTitle, id: categoryId },
+  })
+}
 </script>
 
 <template>
   <div class="root">
-    <div v-if="product" class="container">
+    <div v-if="product && loader === 'success'" class="container">
       <form class="list__form pt-10" @submit.prevent="save">
         <div
           v-for="(specification, i) in product.specifications"
@@ -198,17 +224,7 @@ const manufacturersSelect = computed(() => {
           <v-button>сохранить</v-button>
         </div>
       </form>
-      <v-button
-        class="mt-8"
-        @click="
-          $router.push({
-            name: 'AdminProducts',
-            params: { category: categoryTitle, id: categoryId },
-          })
-        "
-      >
-        назад
-      </v-button>
+      <v-button class="mt-8" @click="back"> назад </v-button>
     </div>
     <div v-else class="h-screen flex items-center">
       <v-loader />
