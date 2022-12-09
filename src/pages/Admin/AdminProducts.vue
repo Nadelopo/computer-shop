@@ -101,19 +101,6 @@ const create = async () => {
     )
   }
 }
-
-const isInputText = (i: number) => {
-  let value = false
-  const spec = categorySpecifications.value[i]
-  if (
-    typeof spec.step === 'number' &&
-    typeof spec.max === 'number' &&
-    typeof spec.min === 'number'
-  ) {
-    value = true
-  }
-  return value
-}
 </script>
 
 <template>
@@ -128,12 +115,11 @@ const isInputText = (i: number) => {
         </label>
         <template v-if="specification.type">
           <v-input-text
-            v-if="isInputText(i)"
             v-model="categoryFormSpecifications[i].value"
             type="number"
-            :step="specification.step!"
-            :min="specification.min!"
-            :max="specification.max!"
+            :step="specification.step"
+            :min="specification.min"
+            :max="specification.max"
           />
         </template>
         <template v-else-if="specification.variantsValues">
@@ -143,7 +129,7 @@ const isInputText = (i: number) => {
             :options="
               specification.variantsValues.map((e) => ({ title: e, value: e }))
             "
-            classes="mt-4"
+            class="mt-4"
           />
         </template>
       </div>

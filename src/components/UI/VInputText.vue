@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PropType } from 'vue'
+import { onMounted, ref, type PropType } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -10,25 +10,13 @@ const props = defineProps({
     type: <PropType<'text' | 'number'>>String,
     default: 'text',
   },
-  placeholder: {
-    type: String,
-    default: '',
-  },
   required: {
     type: Boolean,
     default: true,
   },
-  step: {
-    type: <PropType<number | undefined>>Number,
-    default: undefined,
-  },
-  min: {
-    type: <PropType<number | undefined>>Number,
-    default: undefined,
-  },
-  max: {
-    type: <PropType<number | undefined>>Number,
-    default: undefined,
+  autofocus: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -41,20 +29,26 @@ const onChange = (e: Event) => {
     emit('update:modelValue', value)
   }
 }
+
+const inputRef = ref<HTMLInputElement | null>(null)
+
+onMounted(() => {
+  if (props.autofocus) {
+    inputRef.value?.focus()
+  }
+})
 </script>
 
 <template>
   <div>
     <span class="wrapper">
       <input
+        v-bind="$attrs"
+        ref="inputRef"
         :value="modelValue"
         :type="type"
         class="input"
-        :placeholder="placeholder"
         :required="required"
-        :step="step"
-        :min="min"
-        :max="max"
         @input="onChange"
       />
     </span>
