@@ -12,7 +12,7 @@ defineProps({
     default: 'false',
   },
   type: {
-    type: <PropType<'button' | 'submit' | 'reset' | undefined>>String,
+    type: String as PropType<string | undefined>,
     default: 'button',
   },
   modelValue: {

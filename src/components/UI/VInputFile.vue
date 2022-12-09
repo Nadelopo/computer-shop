@@ -12,7 +12,7 @@ const props = defineProps({
     default: true,
   },
   folder: {
-    type: <PropType<'categories' | 'manufacturers' | 'products'>>String,
+    type: String as PropType<'categories' | 'manufacturers' | 'products'>,
     required: true,
   },
 })

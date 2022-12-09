@@ -7,7 +7,7 @@ const props = defineProps({
     required: true,
   },
   type: {
-    type: <PropType<'text' | 'number'>>String,
+    type: String as PropType<'text' | 'number'>,
     default: 'text',
   },
   required: {
