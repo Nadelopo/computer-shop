@@ -20,9 +20,7 @@ const setSearch = debounce(500, async () => {
   names.value.every((n) => {
     let arr = n.split(' ')
     for (let value of arr) {
-      const condition = value
-        .toLowerCase()
-        .includes(search.value.toLowerCase().slice(0, -1))
+      const condition = value.toLowerCase().includes(search.value.toLowerCase())
       if (condition) {
         searchQueryValue = value
         return false
