@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/productsStore'
 import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
 import Search from '@/components/CategoryProducts/Search.vue'
-import VLoader from '@/components/UI/Vloader.vue'
+import FiltersList from '@/components/CategoryProducts/FiltersList.vue'
 
 const { products, loader } = storeToRefs(useProductsStore())
 const { setProducts } = useProductsStore()
@@ -36,7 +36,7 @@ watch(
 <template>
   <div class="container">
     <div class="grid">
-      <div />
+      <filters-list />
       <div>
         <Search />
         <template v-if="loader === 'success'">
