@@ -38,7 +38,7 @@ const open = ref(false)
 </script>
 
 <template>
-  <header class="mb-8 py-1">
+  <header class="mb-10 py-1">
     <div class="container">
       <div class="root__small">
         <div>

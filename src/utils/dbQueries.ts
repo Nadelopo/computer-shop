@@ -1,8 +1,16 @@
 import { supabase } from '@/supabase'
 
+type table =
+  | 'categories'
+  | 'category_specifications'
+  | 'manufacturers'
+  | 'products'
+  | 'specifications'
+  | 'users'
+
 //fix
 export const getAll = async <T>(
-  table: string,
+  table: table,
   order?: string,
   select?: string
 ) => {
@@ -20,7 +28,7 @@ export const getAll = async <T>(
 }
 
 export const getOneWithId = async <T>(
-  table: string,
+  table: table,
   id: string | number,
   selectValue?: string
 ) => {
@@ -32,7 +40,7 @@ export const getOneWithId = async <T>(
 }
 
 export const getAllByColumn = async <T>(
-  table: string,
+  table: table,
   column: string,
   id: string | number,
   selectValue?: string,
@@ -58,14 +66,14 @@ export const getAllByColumn = async <T>(
   return { data }
 }
 
-export const create = async <T, R>(table: string, params: T) => {
+export const create = async <T, R>(table: table, params: T) => {
   const resp = await supabase.from<T>(table).insert(params).single()
   if (resp.error) console.log(resp.error)
   const data = resp.data as R | null
   return { data }
 }
 
-export const createMany = async <T, R>(table: string, params: T) => {
+export const createMany = async <T, R>(table: table, params: T) => {
   const resp = await supabase.from<T>(table).insert(params)
   if (resp.error) console.log(resp.error)
   const data = resp.data as R | null
@@ -73,7 +81,7 @@ export const createMany = async <T, R>(table: string, params: T) => {
 }
 
 export const updateOne = async <T extends Partial<T>, R>(
-  table: string,
+  table: table,
   id: number,
   params: T
 ) => {
@@ -84,7 +92,7 @@ export const updateOne = async <T extends Partial<T>, R>(
   return { data }
 }
 
-export const updateManyById = async <T, R>(table: string, params: T) => {
+export const updateManyById = async <T, R>(table: table, params: T) => {
   const resp = await supabase.from<T>(table).upsert(params)
   if (resp.error) console.log(resp.error)
   const data = resp.data as R | null

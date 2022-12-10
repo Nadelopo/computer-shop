@@ -13,7 +13,7 @@ defineProps({
 
 <template>
   <div class="card__wrapper">
-    <div><img :src="item.img" alt="" /></div>
+    <div class="img__wrapper"><img :src="item.img" alt="" /></div>
 
     <div>
       <div class="cart__link">
@@ -43,7 +43,7 @@ defineProps({
       </div>
     </div>
     <div class="flex flex-col gap-y-3">
-      <div>{{ item.price }} ₽</div>
+      <div class="text-center">{{ item.price }} ₽</div>
       <!-- <div><CartButton :product-id="item.id" /></div> -->
       <v-button>в корзину</v-button>
     </div>
@@ -53,7 +53,7 @@ defineProps({
 <style scoped lang="sass">
 .card__wrapper
   background-color: #fff
-  transition: 0.35s
+  transition: 0.4s
   padding: 20px 20px 20px 0
   border-radius: 8px
   padding: 20px 40px
@@ -65,6 +65,11 @@ defineProps({
   &:hover
     transition: 0.5s
     box-shadow: rgb(0, 0, 0 , .25) 0px 0px 15px 5px
+  .img__wrapper
+    display: flex
+    justify-content: center
+    img
+      max-height: 220px
 
 .cart__link
   cursor: pointer

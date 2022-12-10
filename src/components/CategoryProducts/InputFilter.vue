@@ -4,7 +4,7 @@ import { ref } from 'vue'
 const props = defineProps({
   minValue: {
     type: Number,
-    required: true,
+    default: 0,
   },
   maxValue: {
     type: Number,
@@ -25,6 +25,16 @@ const max = String(props.maxValue)
 
 const minValue = ref(props.minValue)
 const maxValue = ref(props.maxValue)
+
+const onChange = () => {
+  const prevMin = minValue.value
+  const prevMax = maxValue.value
+
+  if (minValue.value > maxValue.value) {
+    maxValue.value = prevMin
+    minValue.value = prevMax
+  }
+}
 </script>
 
 <template>
@@ -41,6 +51,7 @@ const maxValue = ref(props.maxValue)
           class="filter_price min"
           placeholder="0"
           type="number"
+          @input="onChange"
         />
       </div>
       <div>
@@ -56,6 +67,7 @@ const maxValue = ref(props.maxValue)
           class="filter_price max"
           :placeholder="max"
           type="number"
+          @input="onChange"
         />
       </div>
     </div>
