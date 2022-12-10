@@ -6,6 +6,7 @@ import { useProductsStore } from '@/stores/productsStore'
 import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
 import Search from '@/components/CategoryProducts/Search.vue'
 import FiltersList from '@/components/CategoryProducts/FiltersList.vue'
+import Skeleton from '@/components/CategoryProducts/SkeletonProducts.vue'
 
 const { products, loader } = storeToRefs(useProductsStore())
 const { setProducts } = useProductsStore()
@@ -51,9 +52,11 @@ watch(
             </transition-group>
           </div>
         </template>
-        <template v-else-if="loader === 'loading'">
-          <v-loader />
-        </template>
+        <div v-else-if="loader === 'loading'">
+          <template v-for="_ in 10" :key="_">
+            <Skeleton />
+          </template>
+        </div>
         <template v-else>
           <div class="font-bold text-center text-2xl mt-8">
             К сожалению, по вашему запросу ничего не найдено. Проверьте
