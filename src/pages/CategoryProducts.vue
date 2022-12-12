@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/productsStore'
 import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
 import Search from '@/components/CategoryProducts/Search.vue'
+import Sort from '@/components/CategoryProducts/Sort.vue'
 import FiltersList from '@/components/CategoryProducts/FiltersList.vue'
 import Skeleton from '@/components/CategoryProducts/SkeletonProducts.vue'
 
@@ -40,6 +41,7 @@ watch(
       <filters-list />
       <div>
         <Search />
+        <Sort />
         <template v-if="loader === 'success'">
           <div class="product__list">
             <transition-group name="list">

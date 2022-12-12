@@ -39,7 +39,11 @@ export const useProductsStore = defineStore('products', {
       }
     }
 
-    const setProducts = async (categoryId: number, search?: string) => {
+    const setProducts = async (
+      categoryId: number,
+      search?: string,
+      order?: string
+    ) => {
       loader.value = 'loading'
       products.value = []
       const newProducts = ref<IproductWithSpecifications[]>([])
@@ -48,7 +52,7 @@ export const useProductsStore = defineStore('products', {
         'categoryId',
         categoryId,
         '*, manufacturerId(id, title)',
-        'id',
+        order ?? 'id',
         search
       )
       if (data?.length) {

@@ -50,7 +50,7 @@ export const getAllByColumn = async <T>(
   const select = selectValue ?? '*'
   let query = supabase.from(table).select(select).eq(column, id)
   if (order) {
-    query = query.order(order)
+    query = query.order(order, { ascending: true })
   }
   if (seach) {
     {
