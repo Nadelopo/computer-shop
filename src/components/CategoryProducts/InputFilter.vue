@@ -2,11 +2,11 @@
 import { ref } from 'vue'
 
 const props = defineProps({
-  minValue: {
+  min: {
     type: Number,
     default: 0,
   },
-  maxValue: {
+  max: {
     type: Number,
     required: true,
   },
@@ -20,21 +20,34 @@ const props = defineProps({
   },
 })
 
-const min = String(props.minValue)
-const max = String(props.maxValue)
+const emit = defineEmits(['update:minValue', 'update:maxValue'])
 
-const minValue = ref(props.minValue)
-const maxValue = ref(props.maxValue)
+const minDefault = String(props.min)
+const maxDefault = String(props.max)
+
+const min = ref(props.min)
+const max = ref(props.max)
 
 const onChange = () => {
-  const prevMin = minValue.value
-  const prevMax = maxValue.value
+  const prevMin = min.value
+  const prevMax = max.value
 
-  if (minValue.value > maxValue.value) {
-    maxValue.value = prevMin
-    minValue.value = prevMax
+  if (min.value > Number(maxDefault)) {
+    min.value = Number(maxDefault)
+  }
+
+  if (min.value > max.value) {
+    max.value = prevMin
+    min.value = prevMax
   }
 }
+
+defineExpose({
+  apply: () => {
+    emit('update:minValue', min.value)
+    emit('update:maxValue', max.value)
+  },
+})
 </script>
 
 <template>
@@ -44,28 +57,26 @@ const onChange = () => {
       <div>
         <input
           ref="minRef"
-          v-model.number="minValue"
+          v-model.number="min"
           :step="step"
-          :min="min"
-          :max="max"
-          class="filter_price min"
+          :min="minDefault"
+          :max="maxDefault"
+          class="filter_price"
           placeholder="0"
           type="number"
           @input="onChange"
         />
       </div>
-      <div>
-        <div class="line"></div>
-      </div>
+      <div class="line"></div>
       <div class="text-end">
         <input
           ref="maxRef"
-          v-model.number="maxValue"
+          v-model.number="max"
           :step="step"
-          :min="min"
-          :max="max"
-          class="filter_price max"
-          :placeholder="max"
+          :min="minDefault"
+          :nax="maxDefault"
+          class="filter_price"
+          :placeholder="maxDefault"
           type="number"
           @input="onChange"
         />
@@ -88,9 +99,9 @@ const onChange = () => {
   width: 100%
   outline: none
   transition: 0.3s
-.filter_price:focus
-  border-color: #26a69a
-  transition: 0.3s
+  &:focus
+    border-color: #26a69a
+    transition: 0.3s
 .line
   border: 1px solid #000
   height: 0
