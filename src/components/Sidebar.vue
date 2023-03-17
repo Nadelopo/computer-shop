@@ -5,18 +5,16 @@ import { isOutside } from '@/utils/isOutside'
 defineProps({
   isOpen: {
     type: Boolean,
-    required: true,
-  },
+    required: true
+  }
 })
 const emit = defineEmits(['update:isOpen'])
 
-const active = ref(false)
 const sidebarRef = ref()
 const isMounted = ref(false)
 
 const closeSidebar = () => {
-  active.value = false
-  setTimeout(() => emit('update:isOpen', false), 100)
+  emit('update:isOpen', false)
 }
 
 const checkClick = (event: MouseEvent) => {
@@ -28,41 +26,36 @@ const checkClick = (event: MouseEvent) => {
 
 onMounted(() => {
   addEventListener('click', checkClick)
-  setTimeout(() => {
-    active.value = true
-  })
 })
 onUnmounted(() => removeEventListener('click', checkClick))
 </script>
 
 <template>
-  <div>
-    <div class="wrapper" :class="{ active }">
-      <div ref="sidebarRef" class="sidebar" :class="{ active }">
-        <div class="grid grid-cols-2 items-center">
-          <div>
-            <router-link :to="{ name: 'Home' }" @click="closeSidebar">
-              <img
-                src="@/assets/img/logoChangeWhiteSizeFnew.png"
-                width="95"
-                alt=""
-              />
-            </router-link>
-          </div>
-          <div class="text-end">
-            <button @click="closeSidebar">
-              <div class="dot dot-f"></div>
-              <div class="dot dot-l"></div>
-            </button>
-          </div>
+  <div class="wrapper">
+    <div ref="sidebarRef" class="sidebar">
+      <div class="grid grid-cols-2 items-center">
+        <div>
+          <router-link :to="{ name: 'Home' }" @click="closeSidebar">
+            <img
+              src="@/assets/img/logoChangeWhiteSizeFnew.png"
+              width="95"
+              alt=""
+            />
+          </router-link>
         </div>
-        <div class="list">
-          <div>Главная</div>
-          <div>Товары</div>
-          <div>О нас</div>
-          <div>Доставка</div>
-          <div>Контакты</div>
+        <div class="text-end">
+          <button @click="closeSidebar">
+            <div class="dot dot-f"></div>
+            <div class="dot dot-l"></div>
+          </button>
         </div>
+      </div>
+      <div class="list">
+        <div>Главная</div>
+        <div>Товары</div>
+        <div>О нас</div>
+        <div>Доставка</div>
+        <div>Контакты</div>
       </div>
     </div>
   </div>
@@ -79,21 +72,16 @@ onUnmounted(() => removeEventListener('click', checkClick))
   left: 0
   right: 0
   transition: .2s
-  backdrop-filter: brightness(1)
-  &.active
-    backdrop-filter: brightness(0.4)
+  backdrop-filter: brightness(0.4)
   .sidebar
     position: absolute
     background: var(--back-main)
     min-width: 320px
     top: 0
-    translate: -320px
     height: 100%
     color: #fff
     padding: 20px
     transition: .2s
-    &.active
-      translate: 0px
     .list
       margin-top: 20px
       font-size: 20px
