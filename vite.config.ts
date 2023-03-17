@@ -7,23 +7,25 @@ import vue from '@vitejs/plugin-vue'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
+    vue({
+      reactivityTransform: true
+    }),
     svgLoader(),
     checker({
       eslint: {
-        lintCommand: 'eslint "./src/**/*.{js,vue}"',
+        lintCommand: 'eslint "./src/**/*.{js,vue}"'
       },
       overlay: {
-        initialIsOpen: false,
-      },
-    }),
+        initialIsOpen: false
+      }
+    })
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-    },
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
   },
   server: {
-    port: 3000,
-  },
+    port: 3000
+  }
 })

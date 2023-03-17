@@ -6,7 +6,9 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "preserveValueImports": false,
+    "importsNotUsedAsValues": "remove",
   },
 
   "references": [

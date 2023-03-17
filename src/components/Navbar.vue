@@ -25,7 +25,7 @@ const checkAuth = () => {
       text: '',
       showDenyButton: true,
       confirmButtonText: 'Войти',
-      denyButtonText: `Ок`,
+      denyButtonText: `Ок`
     }).then((result) => {
       if (result.isConfirmed) {
         useRouter().push({ name: 'Auth' })
@@ -125,10 +125,24 @@ const open = ref(false)
       </div>
     </div>
   </header>
-  <Sidebar v-if="open" v-model:is-open="open" />
+  <Transition name="v">
+    <Sidebar v-if="open" v-model:is-open="open" />
+  </Transition>
 </template>
 
 <style scoped lang="sass">
+.v-enter-active,
+.v-leave-active
+  transition: .5s ease
+  overflow: hidden
+  position: fixed
+
+.v-enter-from,
+.v-leave-to
+  translate: -320px
+  width: 3000px
+  transition: .5s ease
+  opacity: 0
 
 header
   background: var(--back-main)
@@ -142,7 +156,6 @@ header
   height: 60px
   @media (max-width: 1023px)
     display: none
-
 
 .nav
   display: grid

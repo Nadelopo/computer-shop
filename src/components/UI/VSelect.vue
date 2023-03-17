@@ -5,7 +5,7 @@ import {
   ref,
   watch,
   watchEffect,
-  type PropType,
+  type PropType
 } from 'vue'
 import { isOutside } from '@/utils/isOutside'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
@@ -13,16 +13,16 @@ import ArrowSVG from '@/assets/icons/arrow.svg?component'
 const props = defineProps({
   modelValue: {
     type: [String, Number],
-    required: true,
+    required: true
   },
   options: {
     type: Array as PropType<{ title: string; value: string | number }[]>,
-    required: true,
+    required: true
   },
   required: {
     type: Boolean,
-    default: true,
-  },
+    default: true
+  }
 })
 
 const emit = defineEmits(['update:modelValue'])
