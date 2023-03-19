@@ -1,4 +1,4 @@
-export interface ProductsRow {
+export interface ProductRead {
   categoryId: number
   countReviews: number
   created_at: string
@@ -16,7 +16,7 @@ export interface ProductsRow {
   warranty: number
 }
 
-export interface ProductsInsert {
+export interface ProductInsert {
   categoryId: number
   countReviews?: number
   created_at?: string
@@ -34,7 +34,7 @@ export interface ProductsInsert {
   warranty: number
 }
 
-export interface ProductsUpdate {
+export interface ProductUpdate {
   categoryId?: number
   countReviews?: number
   created_at?: string

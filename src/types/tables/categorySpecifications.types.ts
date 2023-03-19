@@ -1,6 +1,6 @@
 //categorySpecifications
 
-export type CategorySpecificationsReact = {
+export type CategorySpecificationReact = {
   categoryId: number
   created_at: string
   id: number
@@ -24,7 +24,7 @@ export type CategorySpecificationsReact = {
     }
 )
 
-export type CategorySpecificationsInsert = {
+export type CategorySpecificationInsert = {
   categoryId?: number
   created_at?: string
   id?: number
@@ -48,7 +48,7 @@ export type CategorySpecificationsInsert = {
     }
 )
 
-export type CategorySpecificationsUpdate = {
+export type CategorySpecificationUpdate = {
   categoryId?: number
   created_at?: string
   id?: number

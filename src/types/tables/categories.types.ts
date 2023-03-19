@@ -1,4 +1,4 @@
-export interface CategoriesRead {
+export interface CategoryRead {
   created_at: string
   enTitle: string
   id: number
@@ -6,7 +6,7 @@ export interface CategoriesRead {
   title: string
 }
 
-export interface CategoriesInsert {
+export interface CategoryInsert {
   created_at?: string
   enTitle: string
   id?: number
@@ -14,7 +14,7 @@ export interface CategoriesInsert {
   title: string
 }
 
-export interface CategoriesUpdate {
+export interface CategoryUpdate {
   created_at?: string
   enTitle?: string
   id?: number
