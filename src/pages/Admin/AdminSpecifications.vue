@@ -22,7 +22,7 @@ const form = ref<IcategorySpecificationCU>({
   step: 1,
   min: 0,
   max: 64,
-  variantsValues: [''],
+  variantsValues: ['']
 })
 
 watch(select, (cur) => {
@@ -51,7 +51,7 @@ const create = async () => {
       step: 1,
       min: 0,
       max: 64,
-      variantsValues: [''],
+      variantsValues: ['']
     }
     select.value = 'выберите категорию'
   }

@@ -36,13 +36,6 @@ const isNeed = computed((): boolean => {
   const href = useRoute().fullPath
   return !href.includes('admin') && !href.includes('auth')
 })
-
-// ;(async () => {
-//   const response = await fetch(
-//     'https://www.dns-shop.ru/product/09a7f8b0c526ed20/65-165-sm-televizor-led-tcl-65c735-cernyj/'
-//   )
-//   console.log(await response.text())
-// })()
 </script>
 
 <template>
