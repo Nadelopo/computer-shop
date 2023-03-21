@@ -1,32 +1,26 @@
 <script setup lang="ts">
 import { onMounted, onUpdated, ref, watch } from 'vue'
 
-interface Ichildrens {
+interface Childrens {
   element: HTMLElement
   height: number
 }
 
-const props = defineProps({
-  visible: {
-    type: Boolean,
-    required: true,
-  },
-  paddingTop: {
-    type: Number,
-    default: 5,
-  },
-  paddingBottom: {
-    type: Number,
-    default: 5,
-  },
-  transition: {
-    type: Number,
-    default: 0.3,
-  },
+type Props = {
+  visible: boolean
+  paddingTop?: number
+  paddingBottom?: number
+  transition?: number
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  paddingTop: 5,
+  paddingBottom: 5,
+  transition: 0.3
 })
 
 const parent = ref()
-const childrenns = ref<Ichildrens[]>([])
+const childrenns = ref<Childrens[]>([])
 
 const isUpdate = ref(true)
 

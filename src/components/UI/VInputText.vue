@@ -1,23 +1,17 @@
 <script setup lang="ts">
-import { onMounted, ref, type PropType } from 'vue'
+import { onMounted, ref } from 'vue'
 
-const props = defineProps({
-  modelValue: {
-    type: [String, Number],
-    required: true,
-  },
-  type: {
-    type: String as PropType<'text' | 'number'>,
-    default: 'text',
-  },
-  required: {
-    type: Boolean,
-    default: true,
-  },
-  autofocus: {
-    type: Boolean,
-    default: false,
-  },
+type Props = {
+  modelValue: string | number | undefined
+  type?: 'text' | 'number'
+  required?: boolean
+  autofocus?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  type: 'text',
+  required: true,
+  autofocus: false
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -40,7 +34,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div v-if="modelValue !== undefined">
     <span class="wrapper">
       <input
         v-bind="$attrs"

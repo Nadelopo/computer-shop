@@ -1,28 +1,16 @@
 <script setup lang="ts">
-import {
-  computed,
-  onUnmounted,
-  ref,
-  watch,
-  watchEffect,
-  type PropType
-} from 'vue'
+import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
 import { isOutside } from '@/utils/isOutside'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
 
-const props = defineProps({
-  modelValue: {
-    type: [String, Number],
-    required: true
-  },
-  options: {
-    type: Array as PropType<{ title: string; value: string | number }[]>,
-    required: true
-  },
-  required: {
-    type: Boolean,
-    default: true
-  }
+type Props = {
+  modelValue: string | number
+  options: { title: string; value: string | number }[]
+  required?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  required: true
 })
 
 const emit = defineEmits(['update:modelValue'])

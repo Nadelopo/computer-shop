@@ -1,25 +1,17 @@
 <script setup lang="ts">
 import VButton from '@/components/UI/VButton.vue'
-import type { PropType } from 'vue'
 
-defineProps({
-  textFirst: {
-    type: String,
-    default: 'true',
-  },
-  textSecond: {
-    type: String,
-    default: 'false',
-  },
-  type: {
-    type: String as PropType<string | undefined>,
-    default: 'button',
-  },
-  modelValue: {
-    type: Boolean,
-    required: true,
-  },
+type Props = {
+  textFirst: string
+  textSecond: string
+  type?: string
+  modelValue: boolean
+}
+
+withDefaults(defineProps<Props>(), {
+  type: 'button'
 })
+
 defineEmits(['update:modelValue'])
 </script>
 

@@ -1,20 +1,19 @@
 <script setup lang="ts">
-import { onUnmounted, ref, watch, type PropType } from 'vue'
-import { insertInStorage, removeFromStorage } from '@/utils/queries/storage'
+import { onUnmounted, ref, watch } from 'vue'
+import {
+  type Folder,
+  insertInStorage,
+  removeFromStorage
+} from '@/utils/queries/storage'
 
-const props = defineProps({
-  modelValue: {
-    type: String,
-    required: true
-  },
-  required: {
-    type: Boolean,
-    default: true
-  },
-  folder: {
-    type: String as PropType<'categories' | 'manufacturers' | 'products'>,
-    required: true
-  }
+type Props = {
+  modelValue: string | undefined
+  required?: boolean
+  folder: Folder
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  required: true
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -68,7 +67,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div>
+  <div v-if="modelValue">
     <span class="wrapper">
       <input
         ref="input"
