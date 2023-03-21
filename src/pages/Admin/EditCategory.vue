@@ -3,7 +3,7 @@ import { ref, watch, onBeforeMount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import { removeFromStorage } from '@/utils/storageQueris'
+import { removeFromStorage } from '@/utils/queries/storage'
 import VInputText from '@/components/UI/VInputText.vue'
 import VInputFile from '@/components/UI/VInputFile.vue'
 import VLoader from '@/components/UI/Vloader.vue'
@@ -28,7 +28,7 @@ const setNewCategory = () => {
       id: currentCategory.id,
       enTitle: currentCategory.enTitle,
       img: currentCategory.img,
-      title: currentCategory.title,
+      title: currentCategory.title
     }
   }
 }
@@ -65,14 +65,14 @@ const save = async () => {
       id: 0,
       enTitle: '',
       img: '',
-      title: '',
+      title: ''
     }
     setTimeout(() => (loader.value = false))
     if (oldImg) {
       const data = await removeFromStorage('categories', oldImg)
       if (data) {
         router.push({
-          name: 'AdminCategories',
+          name: 'AdminCategories'
         })
       }
     }

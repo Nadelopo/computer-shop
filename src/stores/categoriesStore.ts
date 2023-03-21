@@ -6,7 +6,7 @@ import type {
   IcategoryC,
   IcategorySpecificationCU,
   IcategorySpecificationR,
-  IcategoryU,
+  IcategoryU
 } from '@/types/tables'
 
 export const useCategoriesStore = defineStore('categories', {
@@ -78,7 +78,7 @@ export const useCategoriesStore = defineStore('categories', {
       createCategory,
       createCategorySpecifications,
       getCategorySpecifications,
-      updateCategory,
+      updateCategory
     }
-  },
+  }
 })

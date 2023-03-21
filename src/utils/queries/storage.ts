@@ -1,7 +1,7 @@
 import { supabase } from '@/supabase'
 
 export const insertInStorage = async (
-  folder: string,
+  folder: 'categories' | 'manufacturers' | 'products',
   imageData: File
 ): Promise<string | null> => {
   let value = null
@@ -9,7 +9,7 @@ export const insertInStorage = async (
     .from('storage')
     .upload(`${folder}/${imageData.name}`, imageData, {
       cacheControl: '3600',
-      upsert: false,
+      upsert: false
     })
   if (error) console.log(error)
   if (data) {

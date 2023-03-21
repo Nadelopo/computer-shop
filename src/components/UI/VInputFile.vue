@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { onUnmounted, ref, watch, type PropType } from 'vue'
-import { insertInStorage, removeFromStorage } from '@/utils/storageQueris'
+import { insertInStorage, removeFromStorage } from '@/utils/queries/storage'
 
 const props = defineProps({
   modelValue: {
     type: String,
-    required: true,
+    required: true
   },
   required: {
     type: Boolean,
-    default: true,
+    default: true
   },
   folder: {
     type: String as PropType<'categories' | 'manufacturers' | 'products'>,
-    required: true,
-  },
+    required: true
+  }
 })
 
 const emit = defineEmits(['update:modelValue'])

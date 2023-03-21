@@ -14,9 +14,9 @@ import VDoubleButtons from '@/components/UI/VDoubleButtons.vue'
 import type {
   IproductR,
   IproductSpecificationU,
-  IproductU,
+  IproductU
 } from '@/types/tables'
-import { removeFromStorage } from '@/utils/storageQueris'
+import { removeFromStorage } from '@/utils/queries/storage'
 
 interface IproductSpecificationOnEdit {
   id: number
@@ -91,7 +91,7 @@ const save = async () => {
       price: product.value.price,
       discount: product.value.discount,
       quantity: product.value.quantity,
-      sell: product.value.sell,
+      sell: product.value.sell
     }
 
     const newSpecifications: IproductSpecificationU[] =
@@ -104,7 +104,7 @@ const save = async () => {
     await updateProduct(id, productU)
     router.push({
       name: 'AdminProducts',
-      params: { category: categoryTitle, id: categoryId },
+      params: { category: categoryTitle, id: categoryId }
     })
   }
 }
@@ -116,7 +116,7 @@ const specificationsVariantsValues = (i: number) => {
   if (varinsValues) {
     arr = varinsValues.map((e) => ({
       value: e,
-      title: e,
+      title: e
     }))
   }
   return arr
@@ -138,7 +138,7 @@ const back = async () => {
   }
   router.push({
     name: 'AdminProducts',
-    params: { category: categoryTitle, id: categoryId },
+    params: { category: categoryTitle, id: categoryId }
   })
 }
 </script>

@@ -138,9 +138,9 @@ onUnmounted(() => {
 
 const required = computed(() => {
   if (props.required) {
-    let s = true
-    if (props.options.find((e) => e.value === props.modelValue)) s = false
-    return s
+    let value = true
+    if (props.options.find((e) => e.value === props.modelValue)) value = false
+    return value
   } else {
     return false
   }

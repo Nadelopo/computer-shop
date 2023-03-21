@@ -6,7 +6,7 @@ import {
   getAllByColumn,
   getOneWithId,
   updateManyById,
-  updateOne,
+  updateOne
 } from '@/utils/dbQueries'
 import type { IproductWithSpecifications } from '@/types'
 import type {
@@ -15,7 +15,7 @@ import type {
   IproductSpecificationC,
   IproductSpecificationR,
   IproductSpecificationU,
-  IproductU,
+  IproductU
 } from '@/types/tables'
 
 export const useProductsStore = defineStore('products', {
@@ -69,7 +69,7 @@ export const useProductsStore = defineStore('products', {
           if (specifications) {
             const newProduct: IproductWithSpecifications = {
               ...product,
-              specifications,
+              specifications
             }
             newProducts.value.push(newProduct)
           }
@@ -143,7 +143,7 @@ export const useProductsStore = defineStore('products', {
       updateProduct,
       updateProductSpecifications,
       searchProducts,
-      loader,
+      loader
     }
-  },
+  }
 })

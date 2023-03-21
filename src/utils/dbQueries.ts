@@ -56,7 +56,7 @@ export const getAllByColumn = async <T>(
     {
       query = query.textSearch('name', seach, {
         config: 'russian',
-        type: 'websearch',
+        type: 'websearch'
       })
     }
   }
