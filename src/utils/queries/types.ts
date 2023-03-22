@@ -70,17 +70,17 @@ export type CreateParams<T> = T extends ProductRead
   ? CategorySpecificationCreate
   : {}
 
-export type CreateManyParams<T> = T extends ProductRead[]
+export type CreateManyParams<T> = T extends ProductRead
   ? ProductCreate[]
-  : T extends CategoryRead[]
+  : T extends CategoryRead
   ? CategoryCreate[]
-  : T extends SpecificationRead[]
+  : T extends SpecificationRead
   ? SpecificationCreate[]
-  : T extends ManufacturerRead[]
+  : T extends ManufacturerRead
   ? ManufacturerCreate[]
-  : T extends UserRead[]
+  : T extends UserRead
   ? UserCreate[]
-  : T extends CategorySpecificationRead[]
+  : T extends CategorySpecificationRead
   ? CategorySpecificationCreate[]
   : {}
 
@@ -147,20 +147,6 @@ export type TableType<T> = T extends ProductRead
   : T extends UserRead
   ? 'users'
   : T extends CategorySpecificationRead
-  ? 'category_specifications'
-  : ''
-
-export type TableTypeMany<T> = T extends ProductRead[]
-  ? 'products'
-  : T extends CategoryRead[]
-  ? 'categories'
-  : T extends SpecificationRead[]
-  ? 'specifications'
-  : T extends ManufacturerRead[]
-  ? 'manufacturers'
-  : T extends UserRead[]
-  ? 'users'
-  : T extends CategorySpecificationRead[]
   ? 'category_specifications'
   : ''
 

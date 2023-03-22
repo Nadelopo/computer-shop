@@ -5,7 +5,6 @@ import type {
   GetAllByColumnsEq,
   GetAllByColumnsParams,
   TableType,
-  TableTypeMany,
   UpdateManyParams,
   UpdateOneParams,
   getAllParams,
@@ -88,13 +87,13 @@ export const createOne = async <T extends resultType>(
   return data
 }
 
-export const createMany = async <T extends resultType[]>(
-  table: TableTypeMany<T>,
+export const createMany = async <T extends resultType>(
+  table: TableType<T>,
   params: CreateManyParams<T>
-): Promise<T | null> => {
+): Promise<T[] | null> => {
   const { data, error } = await supabase.from(table).insert(params)
   if (error) console.log(error)
-  return data as T | null
+  return data
 }
 
 export async function updateOne<T extends resultType>(

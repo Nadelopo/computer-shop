@@ -38,10 +38,7 @@ export const useProductsStore = defineStore('products', {
     async function createSpecifications(
       params: SpecificationCreate[]
     ): Promise<void> {
-      const data = await createMany<SpecificationRead[]>(
-        'specifications',
-        params
-      )
+      const data = await createMany<SpecificationRead>('specifications', params)
       if (data) {
         console.log(data)
       }
