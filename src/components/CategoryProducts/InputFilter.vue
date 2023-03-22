@@ -2,10 +2,10 @@
 import { ref } from 'vue'
 
 type Props = {
-  min: number
+  min?: number
   max: number
-  step: number
-  title: string
+  step?: number
+  title?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
