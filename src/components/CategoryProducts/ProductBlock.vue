@@ -32,7 +32,7 @@ defineProps<{
           >
             <div>{{ specification.categorySpecificationsId.title }}:</div>
             <div>
-              {{ specification.value }}
+              {{ specification.valueNumber ?? specification.valueString }}
               {{ specification.categorySpecificationsId.units }}
             </div>
           </div>

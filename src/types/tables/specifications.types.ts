@@ -8,7 +8,8 @@ export type SpecificationRead = {
   created_at: string
   id: number
   productId: number
-  value: string
+  valueString: string | null
+  valueNumber: number | null
 }
 
 export type SpecificationCreate = {
@@ -16,7 +17,8 @@ export type SpecificationCreate = {
   created_at?: string
   id?: number
   productId: number
-  value: string
+  valueString: string | null
+  valueNumber: number | null
 }
 
 export type SpecificationUpdate = Partial<SpecificationCreate>

@@ -59,7 +59,7 @@ watch(useRoute(), (cur) => {
               v-for="specification in product.specifications"
               :key="specification.categorySpecificationsId.id"
             >
-              {{ specification.value }}
+              {{ specification.valueNumber ?? specification.valueString }}
               {{ specification.categorySpecificationsId.units }}
             </td>
             <td>{{ product.manufacturerId.title }}</td>

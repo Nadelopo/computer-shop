@@ -98,11 +98,15 @@ const save = async () => {
 
     const newSpecifications: SpecificationUpdateMany[] =
       product.value.specifications.map((spec) => {
-        return { id: spec.id, value: spec.value }
+        return {
+          id: spec.id,
+          valueNumber: spec.valueNumber,
+          valueString: spec.valueString
+        }
       })
 
     product.value = null
-    updateProductSpecifications(newSpecifications)
+    await updateProductSpecifications(newSpecifications)
     await updateProduct(id, productU)
     router.push({
       name: 'AdminProducts',
@@ -158,7 +162,7 @@ const back = async () => {
           </label>
           <template v-if="specification.categorySpecificationsId.type">
             <v-input-text
-              v-model="specification.value"
+              v-model="specification.valueNumber"
               :step="Number(specification.categorySpecificationsId.step)"
               :min="Number(specification.categorySpecificationsId.min)"
               :max="Number(specification.categorySpecificationsId.max)"
@@ -168,7 +172,7 @@ const back = async () => {
           <template v-else>
             <div>
               <v-select
-                v-model="specification.value"
+                v-model="specification.valueString"
                 :options="specificationsVariantsValues(i)"
               />
             </div>

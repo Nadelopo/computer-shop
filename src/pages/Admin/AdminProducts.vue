@@ -49,10 +49,22 @@ const setCategorySpecifications = async () => {
   if (data) {
     categorySpecifications.value = data
     const mapData = data.map((e) => {
-      return {
-        categorySpecificationsId: e.id,
-        value: '',
-        productId: null
+      if (e.type) {
+        return {
+          categorySpecificationsId: e.id,
+          value: '',
+          productId: null,
+          valueString: null,
+          valueNumber: 0
+        }
+      } else {
+        return {
+          categorySpecificationsId: e.id,
+          value: '',
+          productId: null,
+          valueString: '',
+          valueNumber: null
+        }
       }
     })
     categoryFormSpecifications.value = mapData
@@ -113,7 +125,7 @@ const create = async () => {
         </label>
         <template v-if="specification.type">
           <v-input-text
-            v-model="categoryFormSpecifications[i].value"
+            v-model="categoryFormSpecifications[i].valueNumber"
             type="number"
             :step="specification.step"
             :min="specification.min"
@@ -123,9 +135,12 @@ const create = async () => {
         <template v-else-if="specification.variantsValues">
           <br />
           <v-select
-            v-model="categoryFormSpecifications[i].value"
+            v-model="categoryFormSpecifications[i].valueString"
             :options="
-              specification.variantsValues.map((e) => ({ title: e, value: e }))
+              specification.variantsValues.map((e) => ({
+                title: e,
+                value: e
+              }))
             "
             class="mt-4"
           />
