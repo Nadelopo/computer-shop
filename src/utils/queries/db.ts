@@ -20,14 +20,14 @@ export async function getAll<
 >(
   table: TableType<T>,
   params?: getAllParams<T>
-): Promise<conditionResult<T[], K[]> | null> {
+): Promise<conditionResult<T, K>[] | null> {
   const order = params?.order ?? 'id'
   const { data, error } = await supabase
     .from(table)
     .select(params?.select)
-    .order(order as keyof (T | K))
+    .order(order)
   if (error) console.log(error)
-  return data as conditionResult<T[], K[]> | null
+  return data as conditionResult<T, K>[] | null
 }
 
 export const getOneById = async <
