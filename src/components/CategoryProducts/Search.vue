@@ -2,9 +2,10 @@
 import { onBeforeMount, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProductsStore } from '@/stores/productsStore'
-import { getAll } from '@/utils/dbQueries'
 import { debounce } from '@/utils/debounce'
 import VInputText from '../UI/VInputText.vue'
+import { getAll } from '@/utils/queries/db'
+import type { ProductRead } from '@/types/tables/products.types'
 
 const { setProducts } = useProductsStore()
 
@@ -34,7 +35,9 @@ const setSearch = debounce(500, async () => {
 })
 
 onBeforeMount(async () => {
-  const { data } = await getAll<{ name: string }>('products', 'id', 'name')
+  const data = await getAll<ProductRead, { name: string }>('products', {
+    select: 'name'
+  })
   if (data) {
     names.value = data.map((e) => e.name)
   }

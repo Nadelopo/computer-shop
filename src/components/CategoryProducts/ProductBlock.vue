@@ -1,14 +1,11 @@
 <script setup lang="ts">
 import VButton from '@/components/UI/VButton.vue'
-import type { PropType } from 'vue'
-import type { IproductWithSpecifications } from '@/types'
+import type { ProductWithSpecifications } from '@/types/tables/products.types'
 // import CartButton from '../UI/CartButton.vue'
-defineProps({
-  item: {
-    type: Object as PropType<IproductWithSpecifications>,
-    default: () => {},
-  },
-})
+
+defineProps<{
+  item: ProductWithSpecifications
+}>()
 </script>
 
 <template>

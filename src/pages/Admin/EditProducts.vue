@@ -4,40 +4,34 @@ import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/productsStore'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
-import { getAllByColumn, getOneWithId } from '@/utils/dbQueries'
 import VInputText from '@/components/UI/VInputText.vue'
 import VInputFile from '@/components/UI/VInputFile.vue'
 import VButton from '@/components/UI/VButton.vue'
 import VSelect from '@/components/UI/VSelect.vue'
 import VLoader from '@/components/UI/Vloader.vue'
 import VDoubleButtons from '@/components/UI/VDoubleButtons.vue'
-import type {
-  IproductR,
-  IproductSpecificationU,
-  IproductU
-} from '@/types/tables'
 import { removeFromStorage } from '@/utils/queries/storage'
+import type {
+  SpecificationRead,
+  SpecificationUpdate
+} from '@/types/tables/specifications.types'
+import type { ProductRead, ProductUpdate } from '@/types/tables/products.types'
+import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
+import { getAllByColumns, getOneById } from '@/utils/queries/db'
 
-interface IproductSpecificationOnEdit {
-  id: number
-  categorySpecificationsId: {
-    id: number
-    title: string
-    type: boolean
-    visible: boolean
-    units: string
-    step: number | null
-    min: number | null
-    max: number | null
-    variantsValues: string[] | null
-  }
-  productId: number
-  value: string
+type ProductSpecificationOnEdit = SpecificationRead & {
+  categorySpecificationsId: Omit<
+    CategorySpecificationRead,
+    'created_at' | 'categoryId'
+  >
 }
 
-interface IproductWithSpecificationsOnEdit extends IproductR {
-  specifications: IproductSpecificationOnEdit[]
+type ProductWithSpecificationsOnEdit = ProductRead & {
+  specifications: ProductSpecificationOnEdit[]
 }
+
+type SpecificationUpdateMany = SpecificationUpdate &
+  Required<Pick<SpecificationUpdate, 'id'>>
 
 const { updateProduct, updateProductSpecifications } = useProductsStore()
 const { manufacturers } = storeToRefs(useManufacturersStore())
@@ -49,27 +43,35 @@ const id = Number(route.params.id)
 const categoryId = Number(route.params.categoryId)
 const categoryTitle = route.params.category
 
-const product = ref<IproductWithSpecificationsOnEdit | null>(null)
+const product = ref<ProductWithSpecificationsOnEdit | null>(null)
 const img = ref('')
 const manufacturerSelect = ref(0)
 const loader = ref<'loading' | 'success'>('loading')
 
-const { data } = await getOneWithId<IproductR>(
+const productData = await getOneById<ProductRead>(
   'products',
   id,
   '*, manufacturerId(id, title)'
 )
-const spec = await getAllByColumn<IproductSpecificationOnEdit>(
+const specifications = await getAllByColumns<ProductSpecificationOnEdit>(
   'specifications',
-  'productId',
-  id,
-  'id, value, productId, categorySpecificationsId(id, title,  visible, units, type, step, min, max, variantsValues)',
-  'categorySpecificationsId'
+  [
+    {
+      column: 'productId',
+      value: id
+    }
+  ],
+  {
+    select:
+      '*, categorySpecificationsId(id, title,  visible, units, type, step, min, max, variantsValues)',
+    order: 'categorySpecificationsId'
+  }
 )
-if (data && spec.data) {
-  img.value = data.img
-  manufacturerSelect.value = data.manufacturerId.id
-  product.value = { ...data, specifications: spec.data }
+
+if (productData && specifications) {
+  img.value = productData.img
+  manufacturerSelect.value = productData.manufacturerId.id
+  product.value = { ...productData, specifications: specifications }
   loader.value = 'success'
 }
 
@@ -82,7 +84,7 @@ const save = async () => {
     if (imgName !== getImgName(product.value.img)) {
       await removeFromStorage('products', imgName)
     }
-    const productU: IproductU = {
+    const productU: ProductUpdate = {
       name: product.value.name,
       description: product.value.description,
       img: product.value.img,
@@ -94,7 +96,7 @@ const save = async () => {
       sell: product.value.sell
     }
 
-    const newSpecifications: IproductSpecificationU[] =
+    const newSpecifications: SpecificationUpdateMany[] =
       product.value.specifications.map((spec) => {
         return { id: spec.id, value: spec.value }
       })

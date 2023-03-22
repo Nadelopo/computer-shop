@@ -1,4 +1,6 @@
-export interface ProductRead {
+import type { SpecificationRead } from './specifications.types'
+
+export type ProductRead = {
   categoryId: number
   countReviews: number
   created_at: string
@@ -6,7 +8,10 @@ export interface ProductRead {
   discount: number
   id: number
   img: string
-  manufacturerId: number
+  manufacturerId: {
+    id: number
+    title: string
+  }
   name: string
   popularity: number
   price: number
@@ -16,7 +21,7 @@ export interface ProductRead {
   warranty: number
 }
 
-export interface ProductInsert {
+export type ProductCreate = {
   categoryId: number
   countReviews?: number
   created_at?: string
@@ -34,20 +39,8 @@ export interface ProductInsert {
   warranty: number
 }
 
-export interface ProductUpdate {
-  categoryId?: number
-  countReviews?: number
-  created_at?: string
-  description?: string
-  discount?: number
-  id?: number
-  img?: string
-  manufacturerId?: number
-  name?: string
-  popularity?: number
-  price?: number
-  quantity?: number
-  rating?: number
-  sell?: boolean
-  warranty?: number
+export type ProductUpdate = Partial<ProductCreate>
+
+export type ProductWithSpecifications = ProductRead & {
+  specifications: SpecificationRead[]
 }

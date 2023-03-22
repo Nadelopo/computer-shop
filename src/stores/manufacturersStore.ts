@@ -1,35 +1,43 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { create, getAll, getOneWithId, updateOne } from '@/utils/dbQueries'
-import type { ImanufacturerCU, ImanufacturerR } from '@/types/tables'
+import type {
+  ManufacturerCreate,
+  ManufacturerRead,
+  ManufacturerUpdate
+} from '@/types/tables/manufacturers.types'
+import { createOne, getAll, getOneById, updateOne } from '@/utils/queries/db'
 
 export const useManufacturersStore = defineStore('manufacturers', {
   state: () => {
-    const manufacturers = ref<ImanufacturerR[]>([])
+    const manufacturers = ref<ManufacturerRead[]>([])
 
-    const createManufacturer = async (params: ImanufacturerCU) => {
-      const { data } = await create<ImanufacturerCU, ImanufacturerR>(
-        'manufacturers',
-        params
-      )
+    async function createManufacturer(
+      params: ManufacturerCreate
+    ): Promise<ManufacturerRead | null> {
+      const data = await createOne<ManufacturerRead>('manufacturers', params)
       if (data) {
         manufacturers.value.push(data)
       }
-      return { data }
+      return data
     }
 
-    const setManufacturers = async () => {
-      const { data } = await getAll<ImanufacturerR>('manufacturers')
+    async function setManufacturers(): Promise<void> {
+      const data = await getAll<ManufacturerRead>('manufacturers')
       if (data) manufacturers.value = data
     }
 
-    const getManufacturer = async (id: number) => {
-      const { data } = await getOneWithId<ImanufacturerR>('manufacturers', id)
-      return { data }
+    async function getManufacturer(
+      id: number
+    ): Promise<ManufacturerRead | null> {
+      const data = await getOneById<ManufacturerRead>('manufacturers', id)
+      return data
     }
 
-    const updateManufacturer = async (id: number, params: ImanufacturerCU) => {
-      const { data } = await updateOne<ImanufacturerCU, ImanufacturerR>(
+    async function updateManufacturer(
+      id: number,
+      params: ManufacturerUpdate
+    ): Promise<ManufacturerRead | null> {
+      const data = await updateOne<ManufacturerRead>(
         'manufacturers',
         id,
         params
@@ -39,6 +47,7 @@ export const useManufacturersStore = defineStore('manufacturers', {
           e.id === id ? data : e
         )
       }
+      return data
     }
 
     setManufacturers()
@@ -47,7 +56,7 @@ export const useManufacturersStore = defineStore('manufacturers', {
       createManufacturer,
       setManufacturers,
       getManufacturer,
-      updateManufacturer,
+      updateManufacturer
     }
-  },
+  }
 })

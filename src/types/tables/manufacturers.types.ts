@@ -1,21 +1,16 @@
-export interface ManufacturerRead {
+export type ManufacturerRead = {
   created_at: string
   description: string
   id: number
   img: string
   title: string
 }
-export interface ManufacturerInsert {
+export type ManufacturerCreate = {
   created_at?: string
   description: string
   id?: number
   img: string
   title: string
 }
-export interface ManufacturerUpdate {
-  created_at?: string
-  description?: string
-  id?: number
-  img?: string
-  title?: string
-}
+
+export type ManufacturerUpdate = Partial<ManufacturerCreate>

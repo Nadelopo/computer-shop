@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUpdated, ref, watch } from 'vue'
 
-interface Childrens {
+type Childrens = {
   element: HTMLElement
   height: number
 }

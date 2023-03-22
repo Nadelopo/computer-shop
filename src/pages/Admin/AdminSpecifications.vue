@@ -5,15 +5,15 @@ import { useCategoriesStore } from '@/stores/categoriesStore'
 import VDoubleButtons from '@/components/UI/VDoubleButtons.vue'
 import VInputText from '@/components/UI/VInputText.vue'
 import VButton from '@/components/UI/VButton.vue'
-import type { IcategorySpecificationCU } from '@/types/tables'
 import VSelect from '@/components/UI/VSelect.vue'
+import type { CategorySpecificationCreate } from '@/types/tables/categorySpecifications.types'
 
 const { categories } = storeToRefs(useCategoriesStore())
 const { createCategorySpecifications } = useCategoriesStore()
 
 const select = ref('выберите категорию')
 
-const form = ref<IcategorySpecificationCU>({
+const form = ref<CategorySpecificationCreate>({
   categoryId: 0,
   title: '',
   type: true,
@@ -22,7 +22,7 @@ const form = ref<IcategorySpecificationCU>({
   step: 1,
   min: 0,
   max: 64,
-  variantsValues: ['']
+  variantsValues: null
 })
 
 watch(select, (cur) => {
@@ -32,15 +32,7 @@ watch(select, (cur) => {
 })
 
 const create = async () => {
-  if (form.value.type) {
-    delete form.value.variantsValues
-  } else {
-    delete form.value.min
-    delete form.value.max
-    delete form.value.step
-  }
-
-  const { data } = await createCategorySpecifications(form.value)
+  const data = await createCategorySpecifications(form.value)
   if (data) {
     form.value = {
       categoryId: 0,
@@ -51,7 +43,7 @@ const create = async () => {
       step: 1,
       min: 0,
       max: 64,
-      variantsValues: ['']
+      variantsValues: null
     }
     select.value = 'выберите категорию'
   }
@@ -68,6 +60,31 @@ const deleteVarianValues = () => {
     form.value.variantsValues.splice(-1)
   }
 }
+
+watch(
+  () => form.value.type,
+  (cur) => {
+    if (cur) {
+      form.value = {
+        ...form.value,
+        type: true,
+        step: 1,
+        min: 0,
+        max: 64,
+        variantsValues: null
+      }
+    } else {
+      form.value = {
+        ...form.value,
+        type: false,
+        step: null,
+        min: null,
+        max: null,
+        variantsValues: ['']
+      }
+    }
+  }
+)
 </script>
 
 <template>
@@ -96,20 +113,20 @@ const deleteVarianValues = () => {
       />
     </div>
     <template v-if="form.type">
-      <div v-if="typeof form.step == 'number'">
+      <div>
         <label>шаг изменения числа для поля ввода</label>
         <v-input-text v-model="form.step" type="number" :step="0.1" />
       </div>
-      <div v-if="typeof form.min == 'number'">
+      <div>
         <label>минимальное значение для поля ввода</label>
         <v-input-text v-model="form.min" type="number" :min="0" />
       </div>
-      <div v-if="typeof form.max == 'number'">
+      <div>
         <label>максимальное значение для поля ввода</label>
         <v-input-text v-model="form.max" type="number" :min="0" />
       </div>
     </template>
-    <div v-else-if="Array.isArray(form.variantsValues)">
+    <div v-else-if="form.variantsValues">
       <label>вартианты значений</label>
       <div v-for="(_, i) in form.variantsValues.length" :key="i">
         <v-input-text v-model="form.variantsValues[i]" />
@@ -126,6 +143,7 @@ const deleteVarianValues = () => {
     <div>
       <label>отображать на карточке товара</label>
       <v-double-buttons
+        v-if="form.visible !== undefined"
         v-model="form.visible"
         class="mt-2"
         text-first="да"

@@ -2,7 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Auth from '@/pages/Auth.vue'
 import Home from '@/pages/Home.vue'
 import { supabase } from '@/supabase'
-import { getOneWithId } from '@/utils/dbQueries'
+import { getOneById } from '@/utils/queries/db'
+import type { UserRead } from '@/types/tables/users.types'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -10,17 +11,17 @@ const router = createRouter({
     {
       path: '/',
       name: 'Home',
-      component: Home,
+      component: Home
     },
     {
       path: '/auth',
       name: 'Auth',
-      component: Auth,
+      component: Auth
     },
     {
       path: '/products/:category/:id',
       name: 'CategoryProducts',
-      component: () => import('@/pages/CategoryProducts.vue'),
+      component: () => import('@/pages/CategoryProducts.vue')
     },
     {
       path: '/admin',
@@ -31,44 +32,44 @@ const router = createRouter({
         {
           path: 'categories',
           name: 'AdminCategories',
-          component: () => import('@/pages/Admin/AdminCategories.vue'),
+          component: () => import('@/pages/Admin/AdminCategories.vue')
         },
         {
           path: 'products/:category/:id',
           name: 'AdminProducts',
-          component: () => import('@/pages/Admin//AdminProducts.vue'),
+          component: () => import('@/pages/Admin//AdminProducts.vue')
         },
         {
           path: 'manufacturers',
           name: 'AdminManufacturers',
-          component: () => import('@/pages/Admin//AdminManufacturers.vue'),
+          component: () => import('@/pages/Admin//AdminManufacturers.vue')
         },
         {
           path: 'Specifications',
           name: 'AdminSpecifications',
-          component: () => import('@/pages/Admin//AdminSpecifications.vue'),
-        },
-      ],
+          component: () => import('@/pages/Admin//AdminSpecifications.vue')
+        }
+      ]
     },
     {
       path: '/admin/edit/:category/:categoryId/:id',
       name: 'EditProducts',
       component: () => import('@/pages/Admin/EditProducts.vue'),
-      meta: { auth: true },
+      meta: { auth: true }
     },
     {
       path: '/admin/edit/category/:id',
       name: 'EditCategory',
       component: () => import('@/pages/Admin/EditCategory.vue'),
-      meta: { auth: true },
+      meta: { auth: true }
     },
     {
       path: '/admin/edit/manufacturer/:id',
       name: 'EditManufacturer',
       component: () => import('@/pages/Admin/EditManufacturer.vue'),
-      meta: { auth: true },
-    },
-  ],
+      meta: { auth: true }
+    }
+  ]
 })
 
 // role 1 - user, 0 - admin
@@ -79,7 +80,7 @@ router.beforeEach(async (to, from, next) => {
     const user = supabase.auth.user()
     let role = 1
     if (user) {
-      const { data } = await getOneWithId<{ role: number }>(
+      const data = await getOneById<UserRead, { role: number }>(
         'users',
         user.id,
         'role'

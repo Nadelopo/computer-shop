@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
 import { supabase } from '@/supabase'
 import VButton from '@/components/UI/VButton.vue'
-import type { IuserC } from '@/types/tables'
+import type { UserCreate } from '@/types/tables/users.types'
 
 const router = useRouter()
 
@@ -17,7 +17,7 @@ const signIn = async () => {
   if (email.value && password.value) {
     const { user, error } = await supabase.auth.signIn({
       email: email.value,
-      password: password.value,
+      password: password.value
     })
     if (error) console.log(error)
     if (user) router.push({ name: 'Home' })
@@ -30,16 +30,16 @@ const signUp = async () => {
   if (email.value && password.value && name.value) {
     const { user, error } = await supabase.auth.signUp({
       email: email.value,
-      password: password.value,
+      password: password.value
     })
     if (error) console.log(error)
     if (user) {
       const { error, data: insertData } = await supabase
-        .from<IuserC>('users')
+        .from<UserCreate>('users')
         .insert({
           name: name.value,
           email: email.value,
-          id: user.id,
+          id: user.id
         })
       if (error) console.log(error)
       if (insertData) router.push({ name: 'Home' })

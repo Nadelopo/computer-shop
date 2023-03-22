@@ -1,7 +1,9 @@
 import { supabase } from '@/supabase'
 
+export type Folder = 'categories' | 'manufacturers' | 'products'
+
 export const insertInStorage = async (
-  folder: 'categories' | 'manufacturers' | 'products',
+  folder: Folder,
   imageData: File
 ): Promise<string | null> => {
   let value = null
@@ -24,7 +26,7 @@ export const insertInStorage = async (
 }
 
 export const removeFromStorage = async (
-  folder: 'categories' | 'manufacturers' | 'products',
+  folder: Folder,
   imgName: string
 ): Promise<boolean> => {
   let value = false

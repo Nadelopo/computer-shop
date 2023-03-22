@@ -2,12 +2,10 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { isOutside } from '@/utils/isOutside'
 
-defineProps({
-  isOpen: {
-    type: Boolean,
-    required: true
-  }
-})
+defineProps<{
+  isOpen: boolean
+}>()
+
 const emit = defineEmits(['update:isOpen'])
 
 const sidebarRef = ref()

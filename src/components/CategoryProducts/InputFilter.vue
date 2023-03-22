@@ -1,23 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const props = defineProps({
-  min: {
-    type: Number,
-    default: 0,
-  },
-  max: {
-    type: Number,
-    required: true,
-  },
-  step: {
-    type: Number,
-    default: 1,
-  },
-  title: {
-    type: String,
-    default: '',
-  },
+type Props = {
+  min: number
+  max: number
+  step: number
+  title: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  min: 0,
+  step: 1,
+  title: ''
 })
 
 const emit = defineEmits(['update:minValue', 'update:maxValue'])
@@ -46,7 +40,7 @@ defineExpose({
   apply: () => {
     emit('update:minValue', min.value)
     emit('update:maxValue', max.value)
-  },
+  }
 })
 </script>
 

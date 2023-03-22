@@ -1,4 +1,4 @@
-export interface CategoryRead {
+export type CategoryRead = {
   created_at: string
   enTitle: string
   id: number
@@ -6,7 +6,7 @@ export interface CategoryRead {
   title: string
 }
 
-export interface CategoryInsert {
+export type CategoryCreate = {
   created_at?: string
   enTitle: string
   id?: number
@@ -14,10 +14,4 @@ export interface CategoryInsert {
   title: string
 }
 
-export interface CategoryUpdate {
-  created_at?: string
-  enTitle?: string
-  id?: number
-  img?: string
-  title?: string
-}
+export type CategoryUpdate = Partial<CategoryCreate>

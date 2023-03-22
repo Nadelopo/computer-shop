@@ -1,19 +1,19 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { getOneWithId } from '@/utils/dbQueries'
-import type { IuserR } from '@/types/tables'
+import { getOneById } from '@/utils/queries/db'
+import type { UserRead } from '@/types/tables/users.types'
 
 export const useUserStore = defineStore('user', {
   state: () => {
-    const user = ref<IuserR | null>(null)
+    const user = ref<UserRead | null>(null)
     const userId = ref('')
 
-    const setUserData = async (id: string) => {
-      const { data } = await getOneWithId<IuserR>('users', id)
+    async function setUserData(id: string): Promise<void> {
+      const data = await getOneById<UserRead>('users', id)
       user.value = data
       userId.value = id
     }
 
     return { user, userId, setUserData }
-  },
+  }
 })

@@ -1,72 +1,88 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { create, getAll, getAllByColumn, updateOne } from '@/utils/dbQueries'
 import type {
-  IcategoryR,
-  IcategoryC,
-  IcategorySpecificationCU,
-  IcategorySpecificationR,
-  IcategoryU
-} from '@/types/tables'
+  CategoryCreate,
+  CategoryRead,
+  CategoryUpdate
+} from '@/types/tables/categories.types'
+import type {
+  CategorySpecificationCreate,
+  CategorySpecificationRead
+} from '@/types/tables/categorySpecifications.types'
+import {
+  createOne,
+  getAll,
+  getAllByColumns,
+  updateOne
+} from '@/utils/queries/db'
 
 export const useCategoriesStore = defineStore('categories', {
   state: () => {
-    const categories = ref<IcategoryR[]>([])
-    const categorySpecifications = ref<IcategorySpecificationCU[]>([])
+    const categories = ref<CategoryRead[]>([])
+    const categorySpecifications = ref<CategorySpecificationRead[]>([])
 
-    const setCategories = async () => {
-      const { data } = await getAll<IcategoryR>('categories', 'id')
+    async function setCategories(): Promise<void> {
+      const data = await getAll<CategoryRead>('categories', { order: 'id' })
       if (data) {
         categories.value = data
       }
     }
 
-    const createCategory = async (params: IcategoryC) => {
-      const { data } = await create<IcategoryC, IcategoryR>(
-        'categories',
-        params
-      )
+    async function createCategory(
+      params: CategoryCreate
+    ): Promise<CategoryRead | null> {
+      const data = await createOne<CategoryRead>('categories', params)
       if (data) {
         categories.value.push(data)
-      }
-    }
-
-    const updateCategory = async (params: IcategoryU) => {
-      const { data } = await updateOne<IcategoryU, IcategoryR>(
-        'categories',
-        params.id,
-        params
-      )
-      if (data) {
-        categories.value = categories.value.map((e) =>
-          e.id === params.id ? { ...e, ...params } : e
-        )
       }
       return data
     }
 
-    const createCategorySpecifications = async (
-      form: IcategorySpecificationCU
-    ) => {
-      const { data } = await create<
-        IcategorySpecificationCU,
-        IcategorySpecificationR
-      >('category_specifications', form)
+    async function updateCategory(
+      category: CategoryUpdate
+    ): Promise<CategoryRead | null> {
+      if (category.id) {
+        const data = await updateOne<CategoryRead>(
+          'categories',
+          category.id,
+          category
+        )
+        if (data) {
+          categories.value = categories.value.map((e) =>
+            e.id === category.id ? { ...e, ...category } : e
+          )
+        }
+        return data
+      }
+      return null
+    }
+
+    async function createCategorySpecifications(
+      form: CategorySpecificationCreate
+    ): Promise<CategorySpecificationRead | null> {
+      const data = await createOne<CategorySpecificationRead>(
+        'category_specifications',
+        form
+      )
       if (data) {
         categorySpecifications.value.push(data)
       }
-      return { data }
+      return data
     }
 
-    const getCategorySpecifications = async (categoryId: number) => {
-      const { data } = await getAllByColumn<IcategorySpecificationR>(
+    async function getCategorySpecifications(
+      categoryId: number
+    ): Promise<CategorySpecificationRead[] | null> {
+      const data = await getAllByColumns<CategorySpecificationRead>(
         'category_specifications',
-        'categoryId',
-        categoryId,
-        '*',
-        'id'
+        [
+          {
+            column: 'categoryId',
+            value: categoryId
+          }
+        ]
       )
-      return { data }
+      return data
     }
 
     setCategories()

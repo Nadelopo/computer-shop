@@ -1,6 +1,4 @@
-//categorySpecifications
-
-export type CategorySpecificationReact = {
+export type CategorySpecificationRead = {
   categoryId: number
   created_at: string
   id: number
@@ -24,7 +22,7 @@ export type CategorySpecificationReact = {
     }
 )
 
-export type CategorySpecificationInsert = {
+export type CategorySpecificationCreate = {
   categoryId?: number
   created_at?: string
   id?: number
@@ -34,17 +32,17 @@ export type CategorySpecificationInsert = {
 } & (
   | {
       type: true
-      max?: number
-      min?: number
-      step?: number
-      variantsValues?: null
+      max: number
+      min: number
+      step: number
+      variantsValues: null
     }
   | {
       type: false
-      max?: null
-      min?: null
-      step?: null
-      variantsValues?: string[]
+      max: null
+      min: null
+      step: null
+      variantsValues: string[]
     }
 )
 

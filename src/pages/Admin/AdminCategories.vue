@@ -5,14 +5,14 @@ import VInputFile from '@/components/UI/VInputFile.vue'
 import VInputText from '@/components/UI/VInputText.vue'
 import CategoriesList from '@/components/Admin/CategoriesList.vue'
 import VButton from '@/components/UI/VButton.vue'
-import type { IcategoryC } from '@/types/tables'
+import type { CategoryCreate } from '@/types/tables/categories.types'
 
 const { createCategory } = useCategoriesStore()
 
-let form = ref<IcategoryC>({
+let form = ref<CategoryCreate>({
   img: '',
   title: '',
-  enTitle: '',
+  enTitle: ''
 })
 
 const create = () => {
@@ -20,7 +20,7 @@ const create = () => {
   form.value = {
     img: '',
     title: '',
-    enTitle: '',
+    enTitle: ''
   }
 }
 </script>

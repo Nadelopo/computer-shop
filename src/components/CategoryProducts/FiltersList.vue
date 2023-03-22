@@ -5,12 +5,13 @@ import { useCategoriesStore } from '@/stores/categoriesStore'
 import InputFilter from '@/components/CategoryProducts/InputFilter.vue'
 import VButtonVue from '../UI/VButton.vue'
 import SkeletonFiltersVue from './SkeletonFilters.vue'
-import type { IcategorySpecificationR } from '@/types/tables'
+import { supabase } from '@/supabase'
+import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 // import { getAllByColumn } from '@/utils/dbQueries'
 // import type { IproductWithSpecifications } from '@/types'
 // import { supabase } from '@/supabase'
 
-interface IspecificationsValues {
+type SpecificationsValues = {
   id: number
   minValue: number
   maxValue: number
@@ -20,31 +21,61 @@ const { getCategorySpecifications } = useCategoriesStore()
 
 const categoryId = Number(useRoute().params.id)
 
-const specifications = ref<IcategorySpecificationR[] | null>(null)
-
-const specificationsValues = ref<IspecificationsValues[]>([])
+const specifications = ref<CategorySpecificationRead[] | null>(null)
+const specificationsValues = ref<SpecificationsValues[]>([])
 
 onBeforeMount(async () => {
-  const { data } = await getCategorySpecifications(categoryId)
+  const data = await getCategorySpecifications(categoryId)
   specifications.value = data
   if (data) {
     specificationsValues.value = data.map((e) => {
       return {
         id: e.id,
         minValue: Number(e.min),
-        maxValue: Number(e.max),
+        maxValue: Number(e.max)
       }
     })
   }
 })
 
-const inputRef = ref([])
+const inputRef = ref<{ apply: () => void }[]>([])
 
 const filter = async () => {
   for (let input of inputRef.value) {
-    //@ts-ignore
     input.apply()
   }
+
+  // const query =  getAllByColumn<IproductWithSpecifications>('specifications','categoryId', categoryId,'*','id')
+  // let query = await supabase
+  //   .from('specifications')
+  //   .select(
+  //     '*, categorySpecificationsId!inner(id, categoryId), productId!inner(price)'
+  //   )
+  //   .gt('productId.price', 23000)
+  // console.log(query)
+
+  let query = supabase
+    .from('specifications')
+    .select('*')
+    .order('id')
+    .eq('categorySpecificationsId', 2)
+
+  for (let spec of specificationsValues.value) {
+    if (spec.id === 2) {
+      console.log(spec)
+      {
+        query = query.gte('value', spec.minValue)
+      }
+      {
+        query = query.lte('value', spec.maxValue)
+      }
+    }
+    console.log(spec.id)
+    // {query = query.gte('population', filterPopLow)}
+    // {query = query.lt('population', filterPopLow)}
+  }
+  const { data } = await query
+  console.log(data)
 }
 </script>
 

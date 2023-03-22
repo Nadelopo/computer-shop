@@ -8,7 +8,10 @@ import VInputText from '@/components/UI/VInputText.vue'
 import VInputFile from '@/components/UI/VInputFile.vue'
 import VLoader from '@/components/UI/Vloader.vue'
 import VButton from '@/components/UI/VButton.vue'
-import type { IcategoryR, IcategoryU } from '@/types/tables'
+import type {
+  CategoryRead,
+  CategoryUpdate
+} from '@/types/tables/categories.types'
 
 const { categories } = storeToRefs(useCategoriesStore())
 const { updateCategory } = useCategoriesStore()
@@ -17,10 +20,10 @@ const router = useRouter()
 
 const loader = ref(false)
 let oldImg: string | undefined = undefined
-const newCategory = ref<IcategoryU | null>(null)
+const newCategory = ref<CategoryUpdate | null>(null)
 
 const setNewCategory = () => {
-  const currentCategory: IcategoryR | undefined = categories.value.find(
+  const currentCategory: CategoryRead | undefined = categories.value.find(
     (e) => e.id === categoryId
   )
   if (currentCategory) {
@@ -48,7 +51,7 @@ watch(categories, (cur) => {
 watch(
   () => newCategory.value,
   (cur) => {
-    if (!oldImg && cur?.title) {
+    if (!oldImg && cur?.title && cur?.img) {
       const path = cur.img.split('/')
       oldImg = path.at(-1)
     }
@@ -98,7 +101,7 @@ const save = async () => {
       <div>
         <label>изображение</label>
         <v-input-file
-          v-model="newCategory!.img"
+          v-model="newCategory.img"
           folder="categories"
           :required="false"
         />

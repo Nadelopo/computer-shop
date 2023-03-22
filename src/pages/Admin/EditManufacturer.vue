@@ -2,23 +2,23 @@
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import VInputText from '@/components/UI/VInputText.vue'
-import VInputFileVue from '@/components/UI/VInputFile.vue'
+import VInputFile from '@/components/UI/VInputFile.vue'
 import VButton from '@/components/UI/VButton.vue'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
-import type { ImanufacturerCU } from '@/types/tables'
+import type { ManufacturerUpdate } from '@/types/tables/manufacturers.types'
 
 const { getManufacturer, updateManufacturer } = useManufacturersStore()
 
 const manufactuerId = Number(useRoute().params.id)
 
-const { data } = await getManufacturer(manufactuerId)
-const manufacturer = ref<ImanufacturerCU | null>(null)
+const data = await getManufacturer(manufactuerId)
+const manufacturer = ref<ManufacturerUpdate | null>(null)
 
 if (data) {
   manufacturer.value = {
     title: data.title,
     description: data.description,
-    img: data.img,
+    img: data.img
   }
 }
 
@@ -27,7 +27,7 @@ const update = async () => {
   if (manufacturer.value) {
     await updateManufacturer(manufactuerId, manufacturer.value)
     router.push({
-      name: 'AdminManufacturers',
+      name: 'AdminManufacturers'
     })
   }
 }
@@ -54,7 +54,7 @@ const update = async () => {
         <div>
           <label>изображение</label>
           <div>
-            <v-input-fileVue
+            <v-input-file
               v-model="manufacturer.img"
               folder="manufacturers"
               :required="false"
@@ -69,7 +69,7 @@ const update = async () => {
         <v-button
           @click="
             $router.push({
-              name: 'AdminManufacturers',
+              name: 'AdminManufacturers'
             })
           "
         >

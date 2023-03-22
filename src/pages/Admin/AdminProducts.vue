@@ -10,15 +10,12 @@ import VInputFile from '@/components/UI/VInputFile.vue'
 import ProdctsList from '@/components/Admin/ProductsList.vue'
 import VLoader from '@/components/UI/Vloader.vue'
 import VButton from '@/components/UI/VButton.vue'
-import type {
-  IcategorySpecificationR,
-  IproductC,
-  IproductSpecificationC,
-} from '@/types/tables'
 import VSelect from '@/components/UI/VSelect.vue'
+import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
+import type { SpecificationCreate } from '@/types/tables/specifications.types'
+import type { ProductCreate } from '@/types/tables/products.types'
 
-interface IproductSpecificationForm
-  extends Omit<IproductSpecificationC, 'productId'> {
+type ProductSpecificationForm = Omit<SpecificationCreate, 'productId'> & {
   productId: number | null
 }
 
@@ -30,10 +27,10 @@ const { createProduct, createSpecifications, setProducts } = useProductsStore()
 
 const manufacturerSelect = ref<number | string>('')
 const categoryId = ref<number>(Number(route.params.id))
-const categorySpecifications = ref<IcategorySpecificationR[]>([])
-const categoryFormSpecifications = ref<IproductSpecificationForm[]>([])
+const categorySpecifications = ref<CategorySpecificationRead[]>([])
+const categoryFormSpecifications = ref<ProductSpecificationForm[]>([])
 
-const copyForm: IproductC = {
+const copyForm: ProductCreate = {
   categoryId: categoryId.value,
   name: '',
   description: '',
@@ -42,20 +39,20 @@ const copyForm: IproductC = {
   warranty: 0,
   price: 0,
   quantity: 100,
-  discount: 0,
+  discount: 0
 }
 
-const product = ref<IproductC>({ ...copyForm })
+const product = ref<ProductCreate>({ ...copyForm })
 
 const setCategorySpecifications = async () => {
-  const { data } = await getCategorySpecifications(categoryId.value)
+  const data = await getCategorySpecifications(categoryId.value)
   if (data) {
     categorySpecifications.value = data
     const mapData = data.map((e) => {
       return {
         categorySpecificationsId: e.id,
         value: '',
-        productId: null,
+        productId: null
       }
     })
     categoryFormSpecifications.value = mapData
@@ -85,7 +82,7 @@ watch(manufacturerSelect, (cur) => {
 })
 
 const create = async () => {
-  const { data } = await createProduct(product.value)
+  const data = await createProduct(product.value)
   if (data) {
     const productSpecifications = categoryFormSpecifications.value.map((e) => {
       return { ...e, productId: data.id }
@@ -97,7 +94,7 @@ const create = async () => {
     categoryFormSpecifications.value = categoryFormSpecifications.value.map(
       (e) => ({
         ...e,
-        value: '',
+        value: ''
       })
     )
   }

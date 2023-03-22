@@ -5,23 +5,23 @@ import VInputFile from '@/components/UI/VInputFile.vue'
 import VInputText from '@/components/UI/VInputText.vue'
 import VButton from '@/components/UI/VButton.vue'
 import ManufacturersList from '@/components/Admin/ManufacturersList.vue'
-import type { ImanufacturerCU } from '@/types/tables'
+import type { ManufacturerCreate } from '@/types/tables/manufacturers.types'
 
 const { createManufacturer } = useManufacturersStore()
 
-const form = ref<ImanufacturerCU>({
+const form = ref<ManufacturerCreate>({
   title: '',
   img: '',
-  description: '',
+  description: ''
 })
 
 const create = async () => {
-  const { data } = await createManufacturer(form.value)
+  const data = await createManufacturer(form.value)
   if (data) {
     form.value = {
       title: '',
       img: '',
-      description: '',
+      description: ''
     }
   }
 }

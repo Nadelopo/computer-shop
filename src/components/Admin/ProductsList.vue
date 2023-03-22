@@ -1,18 +1,15 @@
 <script setup lang="ts">
-import { watch, type PropType } from 'vue'
+import { watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/productsStore'
 import VLoader from '@/components/UI/Vloader.vue'
 import VButton from '@/components/UI/VButton.vue'
-import type { IcategorySpecificationR } from '@/types/tables'
+import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 
-defineProps({
-  specifications: {
-    type: Array as PropType<IcategorySpecificationR[]>,
-    required: true,
-  },
-})
+defineProps<{
+  specifications: CategorySpecificationRead[]
+}>()
 
 const { products, loader } = storeToRefs(useProductsStore())
 const { setProducts } = useProductsStore()
@@ -80,8 +77,8 @@ watch(useRoute(), (cur) => {
                     params: {
                       category: $route.params.category,
                       categoryId: product.categoryId,
-                      id: product.id,
-                    },
+                      id: product.id
+                    }
                   }"
                 >
                   <v-button class="w-full"> изменить </v-button>
