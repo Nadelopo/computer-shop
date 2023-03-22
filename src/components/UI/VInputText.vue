@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 
 type Props = {
-  modelValue: string | number | undefined
+  modelValue: string | number | undefined | null
   type?: 'text' | 'number'
   required?: boolean
   autofocus?: boolean
@@ -34,7 +34,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="modelValue !== undefined">
+  <div v-if="modelValue !== undefined || modelValue !== null">
     <span class="wrapper">
       <input
         v-bind="$attrs"

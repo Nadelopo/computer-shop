@@ -4,7 +4,7 @@ import { isOutside } from '@/utils/isOutside'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
 
 type Props = {
-  modelValue: string | number
+  modelValue: string | number | null
   options: { title: string; value: string | number }[]
   required?: boolean
 }
@@ -136,7 +136,7 @@ const required = computed(() => {
 </script>
 
 <template>
-  <span>
+  <span v-if="modelValue !== null">
     <span class="root" v-bind="$attrs">
       <button
         ref="btn"
