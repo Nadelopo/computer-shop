@@ -15,6 +15,15 @@ const search = ref('')
 const categoryId = Number(route.params.id)
 const names = ref<string[]>([])
 
+onBeforeMount(async () => {
+  const data = await getAll<ProductRead, { name: string }>('products', {
+    select: 'name'
+  })
+  if (data) {
+    names.value = data.map((e) => e.name)
+  }
+})
+
 const setSearch = debounce(500, async () => {
   let searchQueryValue = ''
   if (!search.value) return setProducts(categoryId, '')
@@ -32,15 +41,6 @@ const setSearch = debounce(500, async () => {
     return true
   })
   setProducts(categoryId, searchQueryValue)
-})
-
-onBeforeMount(async () => {
-  const data = await getAll<ProductRead, { name: string }>('products', {
-    select: 'name'
-  })
-  if (data) {
-    names.value = data.map((e) => e.name)
-  }
 })
 </script>
 

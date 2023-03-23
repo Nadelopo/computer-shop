@@ -40,6 +40,10 @@ defineExpose({
   apply: () => {
     emit('update:minValue', min.value)
     emit('update:maxValue', max.value)
+  },
+  resetValue: () => {
+    min.value = props.min
+    max.value = props.max
   }
 })
 </script>

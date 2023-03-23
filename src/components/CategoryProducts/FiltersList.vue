@@ -1,81 +1,116 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { supabase } from '@/supabase'
 import { useCategoriesStore } from '@/stores/categoriesStore'
+import { useProductsStore } from '@/stores/productsStore'
 import InputFilter from '@/components/CategoryProducts/InputFilter.vue'
 import VButtonVue from '../UI/VButton.vue'
 import SkeletonFiltersVue from './SkeletonFilters.vue'
-import { supabase } from '@/supabase'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
-// import { getAllByColumn } from '@/utils/dbQueries'
-// import type { IproductWithSpecifications } from '@/types'
-// import { supabase } from '@/supabase'
+import type { ProductWithSpecifications } from '@/types/tables/products.types'
 
 type SpecificationsValues = {
   id: number
   minValue: number
   maxValue: number
+  type: boolean
 }
 
 const { getCategorySpecifications } = useCategoriesStore()
 
+const { getProduct } = useProductsStore()
+const { products, loader } = storeToRefs(useProductsStore())
+
 const categoryId = Number(useRoute().params.id)
 
-const specifications = ref<CategorySpecificationRead[] | null>(null)
+const specifications = ref<CategorySpecificationRead[]>([])
 const specificationsValues = ref<SpecificationsValues[]>([])
 
 onBeforeMount(async () => {
   const data = await getCategorySpecifications(categoryId)
-  specifications.value = data
   if (data) {
+    specifications.value = data
     specificationsValues.value = data.map((e) => {
       return {
         id: e.id,
         minValue: Number(e.min),
-        maxValue: Number(e.max)
+        maxValue: Number(e.max),
+        type: e.type
       }
     })
   }
 })
 
-const inputRef = ref<{ apply: () => void }[]>([])
+type inputdefineExpose = {
+  apply: () => void
+  resetValue: () => void
+}
+
+const inputRef = ref<inputdefineExpose[]>([])
 
 const filter = async () => {
   for (let input of inputRef.value) {
     input.apply()
   }
-
-  // const query =  getAllByColumn<IproductWithSpecifications>('specifications','categoryId', categoryId,'*','id')
-  // let query = await supabase
-  //   .from('specifications')
-  //   .select(
-  //     '*, categorySpecificationsId!inner(id, categoryId), productId!inner(price)'
-  //   )
-  //   .gt('productId.price', 23000)
-  // console.log(query)
-
-  let query = supabase
-    .from('specifications')
-    .select('*')
-    .order('id')
-    .eq('categorySpecificationsId', 2)
+  loader.value = 'loading'
+  const arrayPoructId: number[][] = []
 
   for (let spec of specificationsValues.value) {
-    if (spec.id === 2) {
-      console.log(spec)
+    if (spec.type) {
+      let query = supabase
+        .from('specifications')
+        .select('categorySpecificationsId, productId!inner(id, categoryId)')
+        .order('id')
+        .match({
+          'productId.categoryId': categoryId,
+          categorySpecificationsId: spec.id
+        })
+      arrayPoructId.push([])
       {
-        query = query.gte('value', spec.minValue)
+        query = query.gte('valueNumber', spec.minValue)
       }
       {
-        query = query.lte('value', spec.maxValue)
+        query = query.lte('valueNumber', spec.maxValue)
+      }
+      {
+        query = query.eq('categorySpecificationsId', spec.id)
+      }
+
+      const { data } = await query
+      for (const d of data!) {
+        arrayPoructId[arrayPoructId.length - 1].push(d.productId.id)
       }
     }
-    console.log(spec.id)
-    // {query = query.gte('population', filterPopLow)}
-    // {query = query.lt('population', filterPopLow)}
   }
-  const { data } = await query
-  console.log(data)
+  const filteredProductsId = arrayPoructId[0].filter((value) => {
+    return arrayPoructId.every((arr) => arr.includes(value))
+  })
+  const filteredProducts: ProductWithSpecifications[] = []
+  for (const id of filteredProductsId) {
+    const data = await getProduct(id)
+    if (data.value) {
+      filteredProducts.push(data.value)
+    }
+  }
+
+  products.value = filteredProducts
+  loader.value = 'success'
+}
+
+const cancel = () => {
+  specifications.value.forEach((spec, i) => {
+    if (spec.type) {
+      console.log(specificationsValues.value[i].minValue)
+      specificationsValues.value[i].minValue = spec.min
+      specificationsValues.value[i].maxValue = spec.max
+    }
+  })
+  for (let input of inputRef.value) {
+    input.resetValue()
+  }
+  filter()
 }
 </script>
 
@@ -104,7 +139,14 @@ const filter = async () => {
           />
         </template>
       </template>
-      <v-button-vue class="mx-auto" @click="filter">применить</v-button-vue>
+      <div>
+        <v-button-vue class="mx-auto mb-2 w-full" @click="filter">
+          применить
+        </v-button-vue>
+        <v-button-vue class="mx-auto w-full" @click="cancel">
+          сбросить
+        </v-button-vue>
+      </div>
     </div>
     <div v-else>
       <SkeletonFiltersVue />
