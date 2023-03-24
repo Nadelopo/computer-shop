@@ -3,6 +3,7 @@ export type CategorySpecificationRead = {
   created_at: string
   id: number
   title: string
+  enTitle: string
   units: string
   visible: boolean
 } & (
@@ -27,6 +28,7 @@ export type CategorySpecificationCreate = {
   created_at?: string
   id?: number
   title: string
+  enTitle: string
   units: string
   visible?: boolean
 } & (
@@ -51,6 +53,7 @@ export type CategorySpecificationUpdate = {
   created_at?: string
   id?: number
   title?: string
+  enTitle?: string
   units?: string
   visible?: boolean
 } & (

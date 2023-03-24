@@ -16,6 +16,7 @@ const select = ref('выберите категорию')
 const form = ref<CategorySpecificationCreate>({
   categoryId: 0,
   title: '',
+  enTitle: '',
   type: true,
   visible: false,
   units: '',
@@ -37,6 +38,7 @@ const create = async () => {
     form.value = {
       categoryId: 0,
       title: '',
+      enTitle: '',
       type: true,
       visible: false,
       units: '',
@@ -98,6 +100,10 @@ watch(
     <div>
       <label>наименование</label>
       <v-input-text v-model="form.title" />
+    </div>
+    <div>
+      <label>наименование на английском</label>
+      <v-input-text v-model="form.enTitle" />
     </div>
     <div>
       <label>единицы измерения</label>
