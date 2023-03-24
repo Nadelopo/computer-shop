@@ -6,16 +6,40 @@ import { supabase } from '@/supabase'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useProductsStore } from '@/stores/productsStore'
 import InputFilter from '@/components/CategoryProducts/InputFilter.vue'
+import CheckboxFilter from '@/components/CategoryProducts/CheckboxFilter.vue'
 import VButtonVue from '../UI/VButton.vue'
 import SkeletonFiltersVue from './SkeletonFilters.vue'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
+import type { PostgrestResponse } from '@supabase/supabase-js'
 
-type SpecificationsValues = {
+type SpecificationsValues =
+  | {
+      id: number
+      minValue: number
+      maxValue: number
+      type: true
+    }
+  | {
+      id: number
+      variantsValues: string[]
+      type: false
+    }
+
+type QueryData = {
+  categorySpecificationsId: {
+    id: number
+    enTitle: string
+  }
+  productId: {
+    categoryId: number
+    id: number
+  }
+}
+
+type VariantsValues = {
   id: number
-  minValue: number
-  maxValue: number
-  type: boolean
+  variants: string[]
 }
 
 const { getCategorySpecifications } = useCategoriesStore()
@@ -31,62 +55,111 @@ const specificationsValues = ref<SpecificationsValues[]>([])
 onBeforeMount(async () => {
   const data = await getCategorySpecifications(categoryId)
   if (data) {
-    specifications.value = data
-    specificationsValues.value = data.map((e) => {
-      return {
-        id: e.id,
-        minValue: Number(e.min),
-        maxValue: Number(e.max),
-        type: e.type
-      }
-    })
+    specifications.value = data.sort((a, b) => Number(b.type) - Number(a.type))
+    specificationsValues.value = data
+      .map((e) => {
+        if (e.type) {
+          return {
+            id: e.id,
+            minValue: Number(e.min),
+            maxValue: Number(e.max),
+            type: e.type
+          }
+        } else {
+          return {
+            id: e.id,
+            variantsValues: e.variantsValues,
+            type: e.type
+          }
+        }
+      })
+      .sort((a, b) => Number(b.type) - Number(a.type))
   }
 })
 
-type inputdefineExpose = {
+type inputDefineExpose = {
   apply: () => void
   resetValue: () => void
 }
 
-const inputRef = ref<inputdefineExpose[]>([])
+type checkboxDefineExpose = {
+  apply: () =>
+    | {
+        id: number
+        title: string
+      }
+    | undefined
+  resetValue: () => void
+}
+
+const inputRef = ref<inputDefineExpose[]>([])
+const checkboxRef = ref<checkboxDefineExpose[]>([])
 
 const filter = async () => {
   for (let input of inputRef.value) {
     input.apply()
   }
+  const data = []
+  for (let checkbox of checkboxRef.value) {
+    const checkboxResult = checkbox.apply()
+    if (checkboxResult) {
+      data.push(checkboxResult)
+    }
+  }
+  let variantsValues: VariantsValues[] = []
+  for (const el of data) {
+    const variantExists = variantsValues.find((e) => e.id === el.id)
+    if (variantExists) {
+      variantsValues = variantsValues.map((e) =>
+        e.id === el.id ? { ...e, variants: [...e.variants, el.title] } : e
+      )
+    } else {
+      variantsValues.push({ id: el.id, variants: [el.title] })
+    }
+  }
+
   loader.value = 'loading'
   const arrayPoructId: number[][] = []
 
   for (let spec of specificationsValues.value) {
+    console.log('')
+    let query = supabase
+      .from('specifications')
+      .select(
+        'categorySpecificationsId!inner(id, enTitle), productId!inner(id, categoryId)'
+      )
+      .order('id')
+      .match({
+        'productId.categoryId': categoryId,
+        'categorySpecificationsId.id': spec.id
+      })
+    arrayPoructId.push([])
     if (spec.type) {
-      let query = supabase
-        .from('specifications')
-        .select('categorySpecificationsId, productId!inner(id, categoryId)')
-        .order('id')
-        .match({
-          'productId.categoryId': categoryId,
-          categorySpecificationsId: spec.id
-        })
-      arrayPoructId.push([])
       {
         query = query.gte('valueNumber', spec.minValue)
-      }
-      {
         query = query.lte('valueNumber', spec.maxValue)
       }
-      {
-        query = query.eq('categorySpecificationsId', spec.id)
+    } else {
+      for (const variant of variantsValues) {
+        if (spec.id == variant.id) {
+          {
+            query = query.in('valueString', variant.variants)
+          }
+        }
       }
-
-      const { data } = await query
-      for (const d of data!) {
-        arrayPoructId[arrayPoructId.length - 1].push(d.productId.id)
+    }
+    const { data }: PostgrestResponse<QueryData> = await query
+    if (data) {
+      for (const el of data) {
+        arrayPoructId[arrayPoructId.length - 1].push(el.productId.id)
       }
     }
   }
+
   const filteredProductsId = arrayPoructId[0].filter((value) => {
     return arrayPoructId.every((arr) => arr.includes(value))
   })
+
   const filteredProducts: ProductWithSpecifications[] = []
   for (const id of filteredProductsId) {
     const data = await getProduct(id)
@@ -101,15 +174,16 @@ const filter = async () => {
 
 const cancel = () => {
   specifications.value.forEach((spec, i) => {
-    if (spec.type) {
-      console.log(specificationsValues.value[i].minValue)
-      specificationsValues.value[i].minValue = spec.min
-      specificationsValues.value[i].maxValue = spec.max
+    const specificationsValue = specificationsValues.value[i]
+    if (spec.type && specificationsValue.type) {
+      specificationsValue.minValue = spec.min
+      specificationsValue.maxValue = spec.max
     }
   })
-  for (let input of inputRef.value) {
-    input.resetValue()
-  }
+
+  inputRef.value.forEach((e) => e.resetValue())
+  checkboxRef.value.forEach((e) => e.resetValue())
+
   filter()
 }
 </script>
@@ -125,22 +199,38 @@ const cancel = () => {
         class="mb-6"
       />
 
-      <template v-for="(spec, i) in specifications" :key="spec.ids">
-        <template v-if="spec.type">
+      <template v-for="(value, i) in specificationsValues" :key="value.id">
+        <template v-if="value.type">
           <InputFilter
             ref="inputRef"
-            v-model:min-value="specificationsValues[i].minValue"
-            v-model:max-value="specificationsValues[i].maxValue"
-            :max="Number(spec.max)"
-            :min="Number(spec.min)"
-            :step="Number(spec.step)"
-            :title="spec.title"
+            v-model:min-value="value.minValue"
+            v-model:max-value="value.maxValue"
+            :max="Number(specifications[i].max)"
+            :min="Number(specifications[i].min)"
+            :step="Number(specifications[i].step)"
+            :title="specifications[i].title"
             class="mb-6"
           />
         </template>
+        <template v-else>
+          <div>{{ specifications[i].title }}</div>
+          <div
+            v-for="variant in specifications[i].variantsValues"
+            :key="variant"
+          >
+            <div>
+              <checkbox-filter
+                :id="specifications[i].id"
+                ref="checkboxRef"
+                :title="variant"
+                :en-title="specifications[i].enTitle"
+              />
+            </div>
+          </div>
+        </template>
       </template>
       <div>
-        <v-button-vue class="mx-auto mb-2 w-full" @click="filter">
+        <v-button-vue class="mx-auto my-4 w-full" @click="filter">
           применить
         </v-button-vue>
         <v-button-vue class="mx-auto w-full" @click="cancel">
