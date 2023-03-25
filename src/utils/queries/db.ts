@@ -30,21 +30,18 @@ export async function getAll<
   return data as conditionResult<T, K>[] | null
 }
 
-export const getOneById = async <
-  T extends resultType,
-  K extends updateType | null = null
->(
+export const getOneById = async <T>(
   table: TableType<T>,
   id: string | number,
   select?: string
-): Promise<conditionResult<T, K> | null> => {
+): Promise<T | null> => {
   const { data, error } = await supabase
     .from(table)
-    .select(select ?? '*')
+    .select(select)
     .eq('id', id)
     .single()
   if (error) console.log(error)
-  return data as conditionResult<T, K> | null
+  return data
 }
 
 export const getAllByColumns = async <T extends resultType>(

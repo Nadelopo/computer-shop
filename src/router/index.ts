@@ -3,7 +3,6 @@ import Auth from '@/pages/Auth.vue'
 import Home from '@/pages/Home.vue'
 import { supabase } from '@/supabase'
 import { getOneById } from '@/utils/queries/db'
-import type { UserRead } from '@/types/tables/users.types'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -80,11 +79,7 @@ router.beforeEach(async (to, from, next) => {
     const user = supabase.auth.user()
     let role = 1
     if (user) {
-      const data = await getOneById<UserRead, { role: number }>(
-        'users',
-        user.id,
-        'role'
-      )
+      const data = await getOneById<{ role: number }>('users', user.id, 'role')
       if (data) role = data.role
     }
     if (role !== 0) {

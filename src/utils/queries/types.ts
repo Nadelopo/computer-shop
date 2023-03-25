@@ -148,7 +148,7 @@ export type TableType<T> = T extends ProductRead
   ? 'users'
   : T extends CategorySpecificationRead
   ? 'category_specifications'
-  : ''
+  : Table
 
 export type updateType =
   | ProductUpdate
