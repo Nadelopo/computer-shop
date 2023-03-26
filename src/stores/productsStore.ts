@@ -22,145 +22,143 @@ import {
 } from '@/utils/queries/db'
 import type { UpdateMany } from '@/utils/queries/types'
 
-export const useProductsStore = defineStore('products', {
-  state: () => {
-    const products = ref<ProductWithSpecifications[]>([])
-    const searchProducts = ref('')
-    const loader = ref<'loading' | 'success' | 'empty'>('loading')
+export const useProductsStore = defineStore('products', () => {
+  const products = ref<ProductWithSpecifications[]>([])
+  const searchProducts = ref('')
+  const loader = ref<'loading' | 'success' | 'empty'>('loading')
 
-    async function createProduct(
-      params: ProductCreate
-    ): Promise<ProductRead | null> {
-      const data = await createOne<ProductRead>('products', params)
-      return data
-    }
+  async function createProduct(
+    params: ProductCreate
+  ): Promise<ProductRead | null> {
+    const data = await createOne<ProductRead>('products', params)
+    return data
+  }
 
-    async function createSpecifications(
-      params: SpecificationCreate[]
-    ): Promise<SpecificationRead[] | null> {
-      const data = await createMany<SpecificationRead>('specifications', params)
-      return data
-    }
+  async function createSpecifications(
+    params: SpecificationCreate[]
+  ): Promise<SpecificationRead[] | null> {
+    const data = await createMany<SpecificationRead>('specifications', params)
+    return data
+  }
 
-    async function setProducts(
-      categoryId: number,
-      search?: string,
-      order?: string
-    ): Promise<void> {
-      loader.value = 'loading'
-      products.value = []
-      const newProducts = ref<ProductWithSpecifications[]>([])
+  async function setProducts(
+    categoryId: number,
+    search?: string,
+    order?: string
+  ): Promise<void> {
+    loader.value = 'loading'
+    products.value = []
+    const newProducts = ref<ProductWithSpecifications[]>([])
 
-      const data = await getAllByColumns<ProductRead>(
-        'products',
-        [
-          {
-            column: 'categoryId',
-            value: categoryId
-          }
-        ],
+    const data = await getAllByColumns<ProductRead>(
+      'products',
+      [
         {
-          select: '*, manufacturerId(id, title)',
-          order,
-          search: {
-            column: 'name',
-            value: search
-          }
+          column: 'categoryId',
+          value: categoryId
         }
-      )
-      if (data?.length) {
-        for (const product of data) {
-          const specifications = await getAllByColumns<SpecificationRead>(
-            'specifications',
-            [
-              {
-                column: 'productId',
-                value: product.id
-              }
-            ],
-            {
-              select: '*,  categorySpecificationsId(id, title, units, visible)',
-              order: 'categorySpecificationsId'
-            }
-          )
-
-          if (specifications) {
-            const newProduct: ProductWithSpecifications = {
-              ...product,
-              specifications
-            }
-            newProducts.value.push(newProduct)
-          }
+      ],
+      {
+        select: '*, manufacturerId(id, title)',
+        order,
+        search: {
+          column: 'name',
+          value: search
         }
-      } else loader.value = 'empty'
-      products.value = newProducts.value
-      loader.value = 'success'
-    }
-
-    async function getProduct(
-      productId: number
-    ): Promise<Ref<ProductWithSpecifications | null>> {
-      const product = ref<ProductWithSpecifications | null>(null)
-      const data = await getOneById<ProductRead>(
-        'products',
-        productId,
-        '*, manufacturerId(id, title)'
-      )
-
-      if (data) {
+      }
+    )
+    if (data?.length) {
+      for (const product of data) {
         const specifications = await getAllByColumns<SpecificationRead>(
           'specifications',
           [
             {
               column: 'productId',
-              value: productId
+              value: product.id
             }
           ],
           {
-            select: '*, categorySpecificationsId(id, title, units, visible)'
+            select: '*,  categorySpecificationsId(id, title, units, visible)',
+            order: 'categorySpecificationsId'
           }
         )
+
         if (specifications) {
-          product.value = { ...data, specifications }
+          const newProduct: ProductWithSpecifications = {
+            ...product,
+            specifications
+          }
+          newProducts.value.push(newProduct)
         }
       }
-      return product
-    }
+    } else loader.value = 'empty'
+    products.value = newProducts.value
+    loader.value = 'success'
+  }
 
-    async function updateProduct(
-      id: number,
-      params: ProductUpdate
-    ): Promise<ProductRead | null> {
-      const data = await updateOne<ProductRead>('products', id, params)
-      if (data) {
-        const product = await getProduct(data.id)
-        products.value = products.value.map((prod) =>
-          prod.id === data.id ? product.value ?? prod : prod
-        )
-      }
-      return data
-    }
+  async function getProduct(
+    productId: number
+  ): Promise<Ref<ProductWithSpecifications | null>> {
+    const product = ref<ProductWithSpecifications | null>(null)
+    const data = await getOneById<ProductRead>(
+      'products',
+      productId,
+      '*, manufacturerId(id, title)'
+    )
 
-    async function updateProductSpecifications(
-      specifications: UpdateMany<SpecificationUpdate>[]
-    ) {
-      const data = await updateMany<SpecificationRead>(
+    if (data) {
+      const specifications = await getAllByColumns<SpecificationRead>(
         'specifications',
-        specifications
+        [
+          {
+            column: 'productId',
+            value: productId
+          }
+        ],
+        {
+          select: '*, categorySpecificationsId(id, title, units, visible)'
+        }
       )
-      return data
+      if (specifications) {
+        product.value = { ...data, specifications }
+      }
     }
+    return product
+  }
 
-    return {
-      products,
-      createProduct,
-      createSpecifications,
-      setProducts,
-      getProduct,
-      updateProduct,
-      updateProductSpecifications,
-      searchProducts,
-      loader
+  async function updateProduct(
+    id: number,
+    params: ProductUpdate
+  ): Promise<ProductRead | null> {
+    const data = await updateOne<ProductRead>('products', id, params)
+    if (data) {
+      const product = await getProduct(data.id)
+      products.value = products.value.map((prod) =>
+        prod.id === data.id ? product.value ?? prod : prod
+      )
     }
+    return data
+  }
+
+  async function updateProductSpecifications(
+    specifications: UpdateMany<SpecificationUpdate>[]
+  ) {
+    const data = await updateMany<SpecificationRead>(
+      'specifications',
+      specifications
+    )
+    return data
+  }
+
+  return {
+    products,
+    createProduct,
+    createSpecifications,
+    setProducts,
+    getProduct,
+    updateProduct,
+    updateProductSpecifications,
+    searchProducts,
+    loader
   }
 })

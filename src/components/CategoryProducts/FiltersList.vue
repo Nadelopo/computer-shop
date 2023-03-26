@@ -7,7 +7,7 @@ import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useProductsStore } from '@/stores/productsStore'
 import InputFilter from '@/components/CategoryProducts/InputFilter.vue'
 import CheckboxFilter from '@/components/CategoryProducts/CheckboxFilter.vue'
-import VButtonVue from '../UI/VButton.vue'
+import VButton from '../UI/VButton.vue'
 import SkeletonFiltersVue from './SkeletonFilters.vue'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
@@ -122,7 +122,6 @@ const filter = async () => {
   const arrayPoructId: number[][] = []
 
   for (let spec of specificationsValues.value) {
-    console.log('')
     let query = supabase
       .from('specifications')
       .select(
@@ -174,10 +173,10 @@ const filter = async () => {
 
 const cancel = () => {
   specifications.value.forEach((spec, i) => {
-    const specificationsValue = specificationsValues.value[i]
-    if (spec.type && specificationsValue.type) {
-      specificationsValue.minValue = spec.min
-      specificationsValue.maxValue = spec.max
+    const specificationValue = specificationsValues.value[i]
+    if (spec.type && specificationValue.type) {
+      specificationValue.minValue = spec.min
+      specificationValue.maxValue = spec.max
     }
   })
 
@@ -230,12 +229,10 @@ const cancel = () => {
         </template>
       </template>
       <div>
-        <v-button-vue class="mx-auto my-4 w-full" @click="filter">
+        <v-button class="mx-auto my-4 w-full" @click="filter">
           применить
-        </v-button-vue>
-        <v-button-vue class="mx-auto w-full" @click="cancel">
-          сбросить
-        </v-button-vue>
+        </v-button>
+        <v-button class="mx-auto w-full" @click="cancel"> сбросить </v-button>
       </div>
     </div>
     <div v-else>

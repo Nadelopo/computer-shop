@@ -4,4 +4,6 @@
 
 <style scoped lang="sass">
 @import '@/styles/buttons'
+.btn
+  min-width: 100px
 </style>

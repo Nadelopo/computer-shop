@@ -17,8 +17,6 @@
   z-index: 2;
   margin: 0 auto;
   width: 50px;
-  height: 50px;
-
   & .path {
     stroke: #26a69a;
     stroke-linecap: round;
