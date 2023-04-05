@@ -67,6 +67,11 @@ const router = createRouter({
       name: 'EditManufacturer',
       component: () => import('@/pages/Admin/EditManufacturer.vue'),
       meta: { auth: true }
+    },
+    {
+      path: '/cart',
+      name: 'Cart',
+      component: () => import('@/pages/Cart.vue')
     }
   ]
 })

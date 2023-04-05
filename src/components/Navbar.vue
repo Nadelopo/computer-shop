@@ -117,7 +117,7 @@ const open = ref(false)
             <FavouritesSVG fill="#fff" width="25" class="cursor-pointer" />
           </div>
           <div>
-            <router-link :to="{ name: 'Home' }">
+            <router-link :to="{ name: 'Cart' }">
               <img src="@/assets/img/shopCart.png" class="cart__icon" alt="" />
             </router-link>
           </div>

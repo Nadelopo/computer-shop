@@ -2,7 +2,7 @@ import { supabase } from '@/supabase'
 import type {
   CreateManyParams,
   CreateParams,
-  GetAllByColumnsEq,
+  Eq,
   GetAllByColumnsParams,
   TableType,
   UpdateManyParams,
@@ -46,16 +46,14 @@ export const getOneById = async <T>(
 
 export const getAllByColumns = async <T extends resultType>(
   table: TableType<T>,
-  eq: GetAllByColumnsEq<T>[],
+  eq: Eq<T>[],
   params?: GetAllByColumnsParams<T>
 ): Promise<T[] | null> => {
-  const order = params?.order ?? 'id'
-  const select = params?.select
   const search = params?.search
   let query = supabase
     .from(table)
-    .select(select)
-    .order(order ?? 'id')
+    .select(params?.select)
+    .order(params?.order ?? 'id')
 
   for (const value of eq) {
     if (value.value) {
@@ -122,5 +120,28 @@ export const updateMany = async <T extends resultType>(
     if (result) data.push(result)
   }
 
+  return data
+}
+
+export const deleteOne = async <T extends resultType>(
+  table: TableType<T>,
+  id: number,
+  eq?: Eq<T>[]
+) => {
+  let query = supabase
+    .from<T>(table)
+    .delete()
+    .eq('id', id as T[keyof T])
+
+  if (eq) {
+    for (const value of eq) {
+      if (value.value) {
+        query = query.eq(value.column, value.value)
+      }
+    }
+  }
+
+  const { data, error } = await query.single()
+  if (error) console.log(error)
   return data
 }

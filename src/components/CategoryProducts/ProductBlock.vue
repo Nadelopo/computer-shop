@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import VButton from '@/components/UI/VButton.vue'
+import ButtonCart from '../ButtonCart.vue'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 // import CartButton from '../UI/CartButton.vue'
 
@@ -41,8 +41,9 @@ defineProps<{
     </div>
     <div class="flex flex-col gap-y-3">
       <div class="text-center">{{ item.price }} ₽</div>
-      <!-- <div><CartButton :product-id="item.id" /></div> -->
-      <v-button>в корзину</v-button>
+      <div>
+        <button-cart :product-id="item.id" />
+      </div>
     </div>
   </div>
 </template>
@@ -58,7 +59,7 @@ defineProps<{
   grid-template-columns: 20% auto 10%
   grid-gap: 40px
   align-items: center
-  box-shadow: 0px 0px 6px 4px rgba(0,0,0, 0.1 )
+  box-shadow: 0px 0px 10px 4px rgba(0,0,0, 0.1 )
   &:hover
     transition: 0.5s
     box-shadow: rgb(0, 0, 0 , .25) 0px 0px 15px 5px

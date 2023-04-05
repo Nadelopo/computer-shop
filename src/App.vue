@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useUserStore } from './stores/userStore'
 import { supabase } from './supabase'
+import { useUserStore } from './stores/userStore'
+import { useCartStore } from './stores/cartStore'
 import Navbar from './components/Navbar.vue'
 import VLoader from './components/UI/Vloader.vue'
 
 const { setUserData } = useUserStore()
+
+const { setCartItems } = useCartStore()
+setCartItems()
 
 onBeforeMount(async () => {
   const token = JSON.parse(localStorage.getItem('supabase.auth.token') || '{}')

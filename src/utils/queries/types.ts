@@ -1,4 +1,9 @@
 import type {
+  CartCreate,
+  CartRead,
+  CartUpdate
+} from '@/types/tables/cart.types'
+import type {
   CategoryRead,
   CategoryCreate,
   CategoryUpdate
@@ -36,13 +41,14 @@ export type Table =
   | 'products'
   | 'specifications'
   | 'users'
+  | 'cart'
 
 type GetParams<T> = {
   order?: keyof T
   select?: string
 }
 
-export type GetAllByColumnsEq<T> = {
+export type Eq<T> = {
   column: keyof T
   value: T[keyof T] | null
 }
@@ -68,6 +74,8 @@ export type CreateParams<T> = T extends ProductRead
   ? UserCreate
   : T extends CategorySpecificationRead
   ? CategorySpecificationCreate
+  : T extends CartRead
+  ? CartCreate
   : {}
 
 export type CreateManyParams<T> = T extends ProductRead
@@ -91,6 +99,7 @@ export type resultType =
   | UserRead
   | CategorySpecificationRead
   | SpecificationRead
+  | CartRead
 
 export type UpdateOneParams<T> = T extends ProductRead
   ? ProductUpdate
@@ -104,6 +113,8 @@ export type UpdateOneParams<T> = T extends ProductRead
   ? UserUpdate
   : T extends CategorySpecificationRead
   ? CategorySpecificationUpdate
+  : T extends CartRead
+  ? CartUpdate
   : {}
 
 export type UpdateMany<T> = T & Required<Pick<T, keyof T & 'id'>>
@@ -120,6 +131,8 @@ export type UpdateManyParams<T> = T extends ProductRead
   ? UpdateMany<UserUpdate>
   : T extends CategorySpecificationRead
   ? UpdateMany<CategorySpecificationUpdate>
+  : T extends CartRead
+  ? UpdateMany<CartUpdate>
   : {}
 
 export type getAllParams<T> = T extends ProductRead
@@ -134,7 +147,9 @@ export type getAllParams<T> = T extends ProductRead
   ? GetParams<UserRead>
   : T extends CategorySpecificationRead
   ? GetParams<CategorySpecificationRead>
-  : T
+  : T extends CartRead
+  ? GetParams<CartRead>
+  : GetParams<T>
 
 export type TableType<T> = T extends ProductRead
   ? 'products'
@@ -146,6 +161,8 @@ export type TableType<T> = T extends ProductRead
   ? 'manufacturers'
   : T extends UserRead
   ? 'users'
+  : T extends CartRead
+  ? 'cart'
   : T extends CategorySpecificationRead
   ? 'category_specifications'
   : Table
@@ -157,3 +174,4 @@ export type updateType =
   | CategoryUpdate
   | CategorySpecificationUpdate
   | ManufacturerUpdate
+  | CartUpdate
