@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
 import VButton from './UI/VButton.vue'
 import VLoader from './UI/Vloader.vue'
+import CartSVG from '@/assets/icons/cartInButton.svg?component'
 
 type Props = {
   productId: number
@@ -38,7 +39,9 @@ const add = async () => {
     <v-button v-if="state" @click="$router.push({ name: 'Cart' })">
       в корзину
     </v-button>
-    <v-button v-else @click="add"> купить </v-button>
+    <v-button v-else @click="add">
+      <CartSVG width="16" fill="#fff" class="mr-2" /> купить
+    </v-button>
   </template>
 </template>
 

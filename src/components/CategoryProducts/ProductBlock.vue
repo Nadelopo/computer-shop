@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ButtonCart from '../ButtonCart.vue'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
-// import CartButton from '../UI/CartButton.vue'
+import Rating from '@/components/Rating.vue'
 
 defineProps<{
   item: ProductWithSpecifications
@@ -11,15 +11,12 @@ defineProps<{
 <template>
   <div class="card__wrapper">
     <div class="img__wrapper"><img :src="item.img" alt="" /></div>
-
     <div>
       <div class="cart__link">
         <div class="mb-4 text-lg flex items-center gap-4">
           <div>{{ item.name }}</div>
-          <div v-if="item.rating" class="flex items-center">
-            <div class="rating"><label /></div>
-            <div>{{ item.rating }}</div>
-          </div>
+
+          <Rating :rating="item.rating" />
         </div>
         <div
           v-for="specification in item.specifications"

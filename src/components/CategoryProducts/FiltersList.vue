@@ -212,7 +212,7 @@ const cancel = () => {
           />
         </template>
         <template v-else>
-          <div>{{ specifications[i].title }}</div>
+          <div class="text-center">{{ specifications[i].title }}</div>
           <div
             v-for="variant in specifications[i].variantsValues"
             :key="variant"
