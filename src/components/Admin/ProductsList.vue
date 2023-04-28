@@ -19,7 +19,7 @@ const categoryId = Number(useRoute().params.id)
 const setTable = (id: number) => {
   if (!products.value.length) {
     setProducts(id)
-  } else if (products.value[0].categoryId !== id) {
+  } else if (products.value[0].categoryId.id !== id) {
     products.value = []
     setProducts(id)
   }
@@ -76,7 +76,7 @@ watch(useRoute(), (cur) => {
                     name: 'EditProducts',
                     params: {
                       category: $route.params.category,
-                      categoryId: product.categoryId,
+                      categoryId: product.categoryId.id,
                       id: product.id
                     }
                   }"

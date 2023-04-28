@@ -21,12 +21,14 @@ import type {
 import type {
   ProductRead,
   ProductCreate,
-  ProductUpdate
+  ProductUpdate,
+  ProductReadWithDetails
 } from '@/types/tables/products.types'
 import type {
   SpecificationRead,
   SpecificationCreate,
-  SpecificationUpdate
+  SpecificationUpdate,
+  SpecificationReadWithDetails
 } from '@/types/tables/specifications.types'
 import type {
   UserRead,
@@ -94,12 +96,19 @@ export type CreateManyParams<T> = T extends ProductRead
 
 export type resultType =
   | ProductRead
+  | ProductReadWithDetails
   | CategoryRead
   | ManufacturerRead
   | UserRead
   | CategorySpecificationRead
   | SpecificationRead
+  | SpecificationReadWithDetails
   | CartRead
+
+export type resultUpdateType = Exclude<
+  resultType,
+  ProductReadWithDetails | SpecificationReadWithDetails
+>
 
 export type UpdateOneParams<T> = T extends ProductRead
   ? ProductUpdate

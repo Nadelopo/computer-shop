@@ -1,4 +1,6 @@
-export type SpecificationRead = {
+export type SpecificationRead = Required<SpecificationCreate>
+
+export type SpecificationReadWithDetails = {
   categorySpecificationsId: {
     id: number
     title: string

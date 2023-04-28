@@ -4,11 +4,13 @@ import { defineStore } from 'pinia'
 import type {
   SpecificationCreate,
   SpecificationRead,
+  SpecificationReadWithDetails,
   SpecificationUpdate
 } from '@/types/tables/specifications.types'
 import type {
   ProductCreate,
   ProductRead,
+  ProductReadWithDetails,
   ProductWithSpecifications
 } from '@/types/tables/products.types'
 import type { ProductUpdate } from '@/types/tables/products.types'
@@ -50,7 +52,7 @@ export const useProductsStore = defineStore('products', () => {
     products.value = []
     const newProducts = ref<ProductWithSpecifications[]>([])
 
-    const data = await getAllByColumns<ProductRead>(
+    const data = await getAllByColumns<ProductReadWithDetails>(
       'products',
       [
         {
@@ -59,7 +61,7 @@ export const useProductsStore = defineStore('products', () => {
         }
       ],
       {
-        select: '*, manufacturerId(id, title)',
+        select: '*, categoryId(id, enTitle), manufacturerId(id, title)',
         order,
         search: {
           column: 'name',
@@ -69,19 +71,20 @@ export const useProductsStore = defineStore('products', () => {
     )
     if (data?.length) {
       for (const product of data) {
-        const specifications = await getAllByColumns<SpecificationRead>(
-          'specifications',
-          [
+        const specifications =
+          await getAllByColumns<SpecificationReadWithDetails>(
+            'specifications',
+            [
+              {
+                column: 'productId',
+                value: product.id
+              }
+            ],
             {
-              column: 'productId',
-              value: product.id
+              select: '*,  categorySpecificationsId(id, title, units, visible)',
+              order: 'categorySpecificationsId'
             }
-          ],
-          {
-            select: '*,  categorySpecificationsId(id, title, units, visible)',
-            order: 'categorySpecificationsId'
-          }
-        )
+          )
 
         if (specifications) {
           const newProduct: ProductWithSpecifications = {
@@ -100,25 +103,26 @@ export const useProductsStore = defineStore('products', () => {
     productId: number
   ): Promise<Ref<ProductWithSpecifications | null>> {
     const product = ref<ProductWithSpecifications | null>(null)
-    const data = await getOneById<ProductRead>(
+    const data = await getOneById<ProductReadWithDetails>(
       'products',
       productId,
-      '*, manufacturerId(id, title)'
+      '*, categoryId(id, enTitle), manufacturerId(id, title)'
     )
 
     if (data) {
-      const specifications = await getAllByColumns<SpecificationRead>(
-        'specifications',
-        [
+      const specifications =
+        await getAllByColumns<SpecificationReadWithDetails>(
+          'specifications',
+          [
+            {
+              column: 'productId',
+              value: productId
+            }
+          ],
           {
-            column: 'productId',
-            value: productId
+            select: '*, categorySpecificationsId(id, title, units, visible)'
           }
-        ],
-        {
-          select: '*, categorySpecificationsId(id, title, units, visible)'
-        }
-      )
+        )
       if (specifications) {
         product.value = { ...data, specifications }
       }

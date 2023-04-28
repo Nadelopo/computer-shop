@@ -15,18 +15,21 @@ import type {
   SpecificationRead,
   SpecificationUpdate
 } from '@/types/tables/specifications.types'
-import type { ProductRead, ProductUpdate } from '@/types/tables/products.types'
+import type {
+  ProductReadWithDetails,
+  ProductUpdate
+} from '@/types/tables/products.types'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import { getAllByColumns, getOneById } from '@/utils/queries/db'
 
 type ProductSpecificationOnEdit = SpecificationRead & {
   categorySpecificationsId: Omit<
     CategorySpecificationRead,
-    'created_at' | 'categoryId'
+    'created_at' | 'categoryId' | 'enTitle'
   >
 }
 
-type ProductWithSpecificationsOnEdit = ProductRead & {
+type ProductWithSpecificationsOnEdit = ProductReadWithDetails & {
   specifications: ProductSpecificationOnEdit[]
 }
 
@@ -48,10 +51,10 @@ const img = ref('')
 const manufacturerSelect = ref(0)
 const loader = ref<'loading' | 'success'>('loading')
 
-const productData = await getOneById<ProductRead>(
+const productData = await getOneById<ProductReadWithDetails>(
   'products',
   id,
-  '*, manufacturerId(id, title)'
+  '*, manufacturerId(id, title), categoryId(id, enTitle)'
 )
 const specifications = await getAllByColumns<ProductSpecificationOnEdit>(
   'specifications',
@@ -63,7 +66,7 @@ const specifications = await getAllByColumns<ProductSpecificationOnEdit>(
   ],
   {
     select:
-      '*, categorySpecificationsId(id, title,  visible, units, type, step, min, max, variantsValues)',
+      '*, categorySpecificationsId(id, title, visible, units, type, step, min, max, variantsValues)',
     order: 'categorySpecificationsId'
   }
 )

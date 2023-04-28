@@ -1,7 +1,12 @@
-import type { SpecificationRead } from './specifications.types'
+import type { SpecificationReadWithDetails } from './specifications.types'
 
-export type ProductRead = {
-  categoryId: number
+export type ProductRead = Required<ProductCreate>
+
+export type ProductReadWithDetails = {
+  categoryId: {
+    id: number
+    enTitle: string
+  }
   countReviews: number
   created_at: string
   description: string
@@ -41,6 +46,6 @@ export type ProductCreate = {
 
 export type ProductUpdate = Partial<ProductCreate>
 
-export type ProductWithSpecifications = ProductRead & {
-  specifications: SpecificationRead[]
+export type ProductWithSpecifications = ProductReadWithDetails & {
+  specifications: SpecificationReadWithDetails[]
 }

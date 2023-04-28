@@ -9,6 +9,7 @@ import type {
   UpdateOneParams,
   getAllParams,
   resultType,
+  resultUpdateType,
   updateType
 } from './types'
 
@@ -105,7 +106,7 @@ export async function updateOne<T extends resultType>(
   return data
 }
 
-export const updateMany = async <T extends resultType>(
+export const updateMany = async <T extends resultUpdateType>(
   table: TableType<T>,
   params: UpdateManyParams<T>[]
 ): Promise<T[]> => {
