@@ -67,7 +67,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div v-if="modelValue">
+  <div v-if="modelValue !== undefined">
     <span class="wrapper">
       <input
         ref="input"
