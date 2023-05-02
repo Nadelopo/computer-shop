@@ -1,3 +1,8 @@
+<script setup lang="ts">
+const props = defineProps<{ color?: string }>()
+const color = props.color ?? 'var(--color-main)'
+</script>
+
 <template>
   <svg class="spinner" viewBox="0 0 50 50">
     <circle
@@ -18,7 +23,7 @@
   margin: 0 auto;
   width: 50px;
   & .path {
-    stroke: #26a69a;
+    stroke: v-bind(color);
     stroke-linecap: round;
     animation: dash 1.5s ease-in-out infinite;
   }

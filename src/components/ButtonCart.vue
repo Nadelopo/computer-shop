@@ -32,14 +32,14 @@ const add = async () => {
 <template>
   <template v-if="loader">
     <v-button>
-      <v-loader height="24px" />
+      <v-loader color="#9fe7e0" height="24px" />
     </v-button>
   </template>
   <template v-else>
-    <v-button v-if="state" @click="$router.push({ name: 'Cart' })">
+    <v-button v-if="state" @click.prevent="$router.push({ name: 'Cart' })">
       в корзину
     </v-button>
-    <v-button v-else @click="add">
+    <v-button v-else @click.prevent="add">
       <CartSVG width="16" fill="#fff" class="mr-2" /> купить
     </v-button>
   </template>
