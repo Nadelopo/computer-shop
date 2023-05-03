@@ -9,40 +9,51 @@ defineProps<{
 </script>
 
 <template>
-  <div class="card__wrapper">
-    <div class="img__wrapper"><img :src="item.img" alt="" /></div>
-    <div>
-      <div class="cart__link">
-        <div class="mb-4 text-lg flex items-center gap-4">
-          <div>{{ item.name }}</div>
+  <router-link
+    :to="{
+      name: 'Product',
+      params: {
+        categoryId: item.categoryId.id,
+        category: item.categoryId.enTitle,
+        productId: item.id
+      }
+    }"
+  >
+    <div class="card__wrapper">
+      <div class="img__wrapper"><img :src="item.img" alt="" /></div>
+      <div>
+        <div class="cart__link">
+          <div class="mb-4 text-lg flex items-center gap-4">
+            <div>{{ item.name }}</div>
 
-          <Rating :rating="item.rating" />
-        </div>
-        <div
-          v-for="specification in item.specifications"
-          :key="specification.categorySpecificationsId.id"
-          class="flex flex-col gap-2"
-        >
+            <Rating :rating="item.rating" />
+          </div>
           <div
-            v-if="specification.categorySpecificationsId.visible"
-            class="flex gap-2"
+            v-for="specification in item.specifications"
+            :key="specification.categorySpecificationsId.id"
+            class="flex flex-col gap-2"
           >
-            <div>{{ specification.categorySpecificationsId.title }}:</div>
-            <div>
-              {{ specification.valueNumber ?? specification.valueString }}
-              {{ specification.categorySpecificationsId.units }}
+            <div
+              v-if="specification.categorySpecificationsId.visible"
+              class="flex gap-2"
+            >
+              <div>{{ specification.categorySpecificationsId.title }}:</div>
+              <div>
+                {{ specification.valueNumber ?? specification.valueString }}
+                {{ specification.categorySpecificationsId.units }}
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="flex flex-col gap-y-3">
-      <div class="text-center">{{ item.price }} ₽</div>
-      <div>
-        <button-cart :product-id="item.id" />
+      <div class="flex flex-col gap-y-3">
+        <div class="text-center">{{ item.price }} ₽</div>
+        <div>
+          <button-cart :product-id="item.id" />
+        </div>
       </div>
     </div>
-  </div>
+  </router-link>
 </template>
 
 <style scoped lang="sass">
