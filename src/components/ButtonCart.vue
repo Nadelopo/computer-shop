@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
 import VButton from './UI/VButton.vue'
@@ -8,6 +8,7 @@ import CartSVG from '@/assets/icons/cartInButton.svg?component'
 
 type Props = {
   productId: number
+  width?: number
 }
 
 const loader = ref(false)
@@ -16,6 +17,10 @@ const { addToCart } = useCartStore()
 const { cartItems } = storeToRefs(useCartStore())
 
 const props = defineProps<Props>()
+
+const width = computed(() => {
+  return props.width ? props.width + 'px' : 'auto'
+})
 
 const product = cartItems.value.find((e) => e.productId === props.productId)
 
@@ -31,18 +36,25 @@ const add = async () => {
 
 <template>
   <template v-if="loader">
-    <v-button>
+    <v-button class="button">
       <v-loader color="#9fe7e0" height="24px" />
     </v-button>
   </template>
   <template v-else>
-    <v-button v-if="state" @click.prevent="$router.push({ name: 'Cart' })">
+    <v-button
+      v-if="state"
+      class="button"
+      @click.prevent="$router.push({ name: 'Cart' })"
+    >
       в корзину
     </v-button>
-    <v-button v-else @click.prevent="add">
+    <v-button v-else class="button" @click.prevent="add">
       <CartSVG width="16" fill="#fff" class="mr-2" /> купить
     </v-button>
   </template>
 </template>
 
-<style scoped lang="sass"></style>
+<style scoped lang="sass">
+.button
+  width: v-bind(width)
+</style>
