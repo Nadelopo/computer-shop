@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
-import ArrowSVG from '@/assets/icons/arrow.svg?component'
 import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
+import ArrowSVG from '@/assets/icons/arrow.svg?component'
 
 type Props = {
   modelValue: string | number | null

@@ -1,34 +1,50 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue'
+import { onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProductsStore } from '@/stores/productsStore'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
+import { getAllByColumns } from '@/utils/queries/db'
+import { formatPrice } from '@/utils/formatPrice'
 import Rating from '@/components/Rating.vue'
 import ButtonCart from '@/components/ButtonCart.vue'
 import VButton from '@/components/UI/VButton.vue'
 import FavouritesSVG from '@/assets/icons/favourites.svg?component'
 import ComparisonSVG from '@/assets/icons/comparison.svg?component'
 import type { ManufacturerRead } from '@/types/tables/manufacturers.types'
-import type { ProductWithSpecifications } from '@/types/tables/products.types'
+import type {
+  ProductRead,
+  ProductWithSpecifications
+} from '@/types/tables/products.types'
 
 const { getProduct } = useProductsStore()
 const { getManufacturer } = useManufacturersStore()
 
-const id = Number(useRoute().params.productId)
+const route = useRoute()
+
+const id = ref(Number(route.params.productId))
+const categoryId = Number(route.params.categoryId)
+const categoryName = route.params.category
 
 const product = ref<ProductWithSpecifications>()
 const productPrice = ref('')
 const manufacturer = ref<ManufacturerRead>()
+const similarProducts = ref<ProductRead[]>([])
 
-onBeforeMount(async () => {
-  const data = await getProduct(id)
+const loadData = async () => {
+  const data = await getProduct(id.value)
   if (data.value) {
-    data.value.specifications = data.value.specifications.map((e) => {
-      const title = e.categorySpecificationsId.title
-      e.categorySpecificationsId.title =
-        title.charAt(0).toUpperCase() + title.slice(1)
-      return e
-    })
+    data.value.specifications = data.value.specifications
+      .map((e) => {
+        const title = e.categorySpecificationsId.title
+        e.categorySpecificationsId.title =
+          title.charAt(0).toUpperCase() + title.slice(1)
+        return e
+      })
+      .sort((a, b) =>
+        a.categorySpecificationsId.title.localeCompare(
+          b.categorySpecificationsId.title
+        )
+      )
     product.value = data.value
 
     const manufacturerData = await getManufacturer(data.value.manufacturerId.id)
@@ -36,17 +52,45 @@ onBeforeMount(async () => {
       manufacturer.value = manufacturerData
     }
 
-    const price = String(product.value.price).split('')
-    const result = []
-    for (let i = price.length - 1; i >= 0; i--) {
-      if ((price.length - i - 1) % 3 === 0) {
-        result.unshift(' ')
+    const similar = await getAllByColumns<ProductRead>(
+      'products',
+      [
+        {
+          column: 'categoryId',
+          value: categoryId
+        }
+      ],
+      {
+        between: {
+          column: 'price',
+          begin: data.value.price - 5000,
+          end: data.value.price + 5000
+        },
+        limit: 4,
+        neq: {
+          column: 'id',
+          value: product.value.id
+        }
       }
-      result.unshift(price[i])
+    )
+    if (similar) {
+      similarProducts.value = similar
     }
-    productPrice.value = result.join('') + ' ₽'
+
+    productPrice.value = formatPrice(product.value.price)
   }
-})
+}
+
+onBeforeMount(loadData)
+
+watch(
+  () => route.params,
+  (cur) => {
+    id.value = Number(cur.productId)
+    loadData()
+    window.scroll(0, 0)
+  }
+)
 </script>
 
 <template>
@@ -78,11 +122,11 @@ onBeforeMount(async () => {
       </div>
     </div>
     <div class="wrapper grid">
-      <div class="wrapper__title">Описание</div>
+      <div>Описание</div>
       <div class="text-xl leading-9">{{ product.description }}</div>
     </div>
     <div class="wrapper grid">
-      <div class="wrapper__title">Характеристики</div>
+      <div>Характеристики</div>
       <div>
         <div
           v-for="specification in product.specifications"
@@ -97,6 +141,38 @@ onBeforeMount(async () => {
             {{ specification.categorySpecificationsId.units }}
           </div>
         </div>
+        <div class="specification">
+          <div class="specification__title">Производитель</div>
+          <div class="flex items-end">{{ product.manufacturerId.title }}</div>
+        </div>
+        <div class="specification">
+          <div class="specification__title">Гарантия</div>
+          <div class="flex items-end">{{ product.warranty }} мес</div>
+        </div>
+      </div>
+    </div>
+    <div class="wrapper grid">
+      <div>Похожие товары</div>
+      <div class="similar__products">
+        <div
+          v-for="similarProduct in similarProducts"
+          :key="similarProduct.id"
+          class="similar"
+        >
+          <img :src="similarProduct.img" alt="" />
+          <router-link
+            :to="{
+              name: 'Product',
+              params: {
+                category: categoryName,
+                categoryId,
+                productId: similarProduct.id
+              }
+            }"
+          >
+            {{ similarProduct.name }}
+          </router-link>
+        </div>
       </div>
     </div>
   </div>
@@ -109,11 +185,12 @@ onBeforeMount(async () => {
   border: 1px solid #d9d9d9
   padding: 30px
   margin-bottom: 20px
-  &__title
-    font-size: 30px
   &.grid
     display: grid
-    grid-template-columns: 18% 1fr
+    grid-template-columns: 250px 1fr
+    & > div:first-child
+      font-size: 30px
+
 .product__top
   display: grid
   grid-template-columns: 1fr 1fr
@@ -136,8 +213,25 @@ onBeforeMount(async () => {
   font-size: 18px
   margin-bottom: 14px
   display: grid
-  grid-template-columns: 60% auto
+  grid-template-columns: 90% auto
   gap: 20px
   .specification__title
     border-bottom: 1px dotted #5e5e5e
+
+.similar__products
+  display: grid
+  grid-template-columns: repeat(4, 1fr)
+  gap: 20px
+  .similar
+    height: 230px
+    display: grid
+    grid-template-rows: 80% 1fr
+    justify-items: center
+    img
+      max-width: 160px
+      max-height: 150px
+    a
+      transition: .2s
+      &:hover
+        color: var(--color-text)
 </style>

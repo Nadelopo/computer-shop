@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
 import { ref } from 'vue'
+import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
 
 const activeRef = ref()
 const isOpen = onClickOutsideClose(activeRef)
