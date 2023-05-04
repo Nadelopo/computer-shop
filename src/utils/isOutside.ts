@@ -1,3 +1,5 @@
-export const isOutside = (ref: HTMLElement, e: Event) => {
-  return ref && !e.composedPath().includes(ref)
+import type { Ref } from 'vue'
+
+export const isOutside = (ref: Ref<HTMLElement | undefined>, e: Event) => {
+  return ref.value && !e.composedPath().includes(ref.value)
 }
