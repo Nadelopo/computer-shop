@@ -19,7 +19,7 @@ const loader = ref(true)
 
 onBeforeMount(async () => {
   const cartItems = await setCartItems()
-  setCartItemsWithDetails(cartItems)
+  await setCartItemsWithDetails(cartItems)
   loader.value = false
 })
 </script>
