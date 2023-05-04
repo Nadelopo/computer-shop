@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import { isOutside } from '@/utils/isOutside'
+import { ref } from 'vue'
+import { onClickOutside } from '@/utils/onClickOutside'
 
 defineProps<{
   isOpen: boolean
@@ -9,23 +9,11 @@ defineProps<{
 const emit = defineEmits(['update:isOpen'])
 
 const sidebarRef = ref()
-const isMounted = ref(false)
-
 const closeSidebar = () => {
   emit('update:isOpen', false)
 }
 
-const checkClick = (event: MouseEvent) => {
-  if (isOutside(sidebarRef.value, event) && isMounted.value) {
-    closeSidebar()
-  }
-  isMounted.value = true
-}
-
-onMounted(() => {
-  addEventListener('click', checkClick)
-})
-onUnmounted(() => removeEventListener('click', checkClick))
+onClickOutside(sidebarRef, closeSidebar)
 </script>
 
 <template>

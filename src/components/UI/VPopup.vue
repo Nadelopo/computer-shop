@@ -1,17 +1,9 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
+import { ref } from 'vue'
 
-const isOpen = ref(false)
 const activeRef = ref()
-const clickOutside = (event: MouseEvent): void => {
-  if (activeRef.value && !event.composedPath().includes(activeRef.value)) {
-    isOpen.value = false
-  }
-}
-watch(isOpen, () => {
-  if (isOpen.value) addEventListener('click', clickOutside)
-  else removeEventListener('click', clickOutside)
-})
+const isOpen = onClickOutsideClose(activeRef)
 </script>
 
 <template>

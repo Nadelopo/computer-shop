@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
-import { isOutside } from '@/utils/isOutside'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
+import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
 
 type Props = {
   modelValue: string | number | null
@@ -15,8 +15,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['update:modelValue'])
 
-const active = ref(false)
-const btn = ref<HTMLElement | null>(null)
+const btn = ref<HTMLElement>()
+const active = onClickOutsideClose(btn)
 const selected = ref('')
 const optionsRefs = ref<HTMLButtonElement[]>([])
 
@@ -72,14 +72,6 @@ const onOptionDown = (i: number) => {
   }
 }
 
-const clickOutside = (e: Event) => {
-  if (btn.value) {
-    if (isOutside(btn.value, e)) {
-      active.value = false
-    }
-  }
-}
-
 const stopScrollDocument = (e: KeyboardEvent) => {
   if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
     e.preventDefault()
@@ -110,8 +102,6 @@ const onFocus = () => {
 }
 
 watchEffect(() => {
-  const eventType = active.value ? 'addEventListener' : 'removeEventListener'
-  window[eventType]('click', clickOutside)
   if (active.value) {
     addEventListener('keydown', stopScrollDocument)
   } else {
@@ -120,7 +110,6 @@ watchEffect(() => {
 })
 
 onUnmounted(() => {
-  removeEventListener('click', clickOutside)
   removeEventListener('keydown', stopScrollDocument)
 })
 
