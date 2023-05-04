@@ -62,6 +62,16 @@ export type GetAllByColumnsParams<T> = {
     column: keyof T
     value?: string
   }
+  between?: {
+    column: keyof T
+    begin: number
+    end: number
+  }
+  limit?: number
+  neq?: {
+    column: keyof T
+    value: T[keyof T] | null
+  }
 }
 
 export type CreateParams<T> = T extends ProductRead

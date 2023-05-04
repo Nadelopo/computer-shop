@@ -61,12 +61,30 @@ export const getAllByColumns = async <T extends resultType>(
       query = query.eq(value.column, value.value)
     }
   }
-  if (search && search.value) {
+  if (search?.value) {
     {
       query = query.textSearch(search.column, search.value, {
         config: 'russian',
         type: 'websearch'
       })
+    }
+  }
+  if (params?.between) {
+    const between = params.between
+    {
+      query = query.gt(between.column, between.begin)
+      query = query.lt(between.column, between.end)
+    }
+  }
+  if (params?.limit) {
+    {
+      query = query.limit(params.limit)
+    }
+  }
+  if (params?.neq) {
+    {
+      const neq = params.neq
+      query = query.neq(neq.column, neq.value)
     }
   }
   const { data, error } = await query
