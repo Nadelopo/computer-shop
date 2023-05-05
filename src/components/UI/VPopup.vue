@@ -32,6 +32,7 @@ const isOpen = onClickOutsideClose(activeRef)
     box-shadow: 0 0 6px 4px rgba(0,0,0, .15)
     border-radius: 4px
     color: #000
+    z-index: 100
     div, a
       min-width: 100px
       font-size: 18px
