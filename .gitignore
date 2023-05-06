@@ -9,9 +9,7 @@ lerna-debug.log*
 
 node_modules
 .env
-firebase.json
 hosting*
-.firebaserc
 .DS_Store
 dist
 dist-ssr

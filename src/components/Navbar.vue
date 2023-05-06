@@ -7,8 +7,9 @@ import { useUserStore } from '../stores/userStore'
 import { supabase } from '@/supabase'
 import VPopup from './UI/VPopup.vue'
 import Sidebar from './Sidebar.vue'
-import UserSvg from '@/assets/icons/user.svg?component'
+import UserSvg from '@/assets/icons/avatar.svg?component'
 import FavouritesSVG from '@/assets/icons/favourites.svg?component'
+import CartSVG from '@/assets/icons/cart.svg?component'
 
 const { user, userId } = storeToRefs(useUserStore())
 
@@ -118,7 +119,8 @@ const open = ref(false)
           </div>
           <div>
             <router-link :to="{ name: 'Cart' }">
-              <img src="@/assets/img/shopCart.png" class="cart__icon" alt="" />
+              <!-- <img src="@/assets/img/shopCart.png" class="cart__icon" alt="" /> -->
+              <CartSVG height="27" />
             </router-link>
           </div>
         </div>
