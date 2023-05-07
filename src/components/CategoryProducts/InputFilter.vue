@@ -98,7 +98,7 @@ defineExpose({
   outline: none
   transition: 0.3s
   &:focus
-    border-color: #26a69a
+    border-color: var(--color-main)
     transition: 0.3s
 .line
   border: 1px solid #000

@@ -59,10 +59,10 @@ defineExpose({
   margin-bottom: 0
   input:checked
     & + .checkbox
-      border-color: #26a69a
+      border-color: var(--color-main)
       svg
         path
-          fill: #26a69a
+          fill: var(--color-main)
         polyline
           stroke-dashoffset: 0
   &:hover
@@ -85,7 +85,7 @@ defineExpose({
       left: -2px
       path
         fill: none
-        stroke: #26a69a
+        stroke: var(--color-main)
         stroke-width: 2
         stroke-linecap: round
         stroke-linejoin: round

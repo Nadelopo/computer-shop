@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { supabase } from './supabase'
 import { useUserStore } from './stores/userStore'
@@ -12,38 +12,26 @@ const { setUserData } = useUserStore()
 const { setCartItems } = useCartStore()
 setCartItems()
 
-onBeforeMount(async () => {
-  const token = JSON.parse(localStorage.getItem('supabase.auth.token') || '{}')
-    ?.currentSession?.access_token
-  if (token) {
-    const { user, error } = await supabase.auth.api.getUser(token)
-    if (user) {
-      setUserData(user.id)
-    }
-    if (error) console.log(error)
-  }
-})
-
 const eventValue = ref('')
 supabase.auth.onAuthStateChange(async (event, session) => {
   if (eventValue.value !== event) {
-    if (session?.user) {
-      setUserData(session.user.id)
-    } else {
-      setUserData('')
-    }
+    setUserData(session?.user?.id)
     eventValue.value = event
   }
 })
 
-const isNeed = computed((): boolean => {
+const pathMissing = (path: string) => {
   const href = useRoute().fullPath
-  return !href.includes('admin') && !href.includes('auth')
+  return !href.includes(path)
+}
+
+const showNavbar = computed((): boolean => {
+  return pathMissing('admin') && pathMissing('auth')
 })
 </script>
 
 <template>
-  <Navbar v-if="isNeed" />
+  <Navbar v-if="showNavbar" />
   <main>
     <router-view v-slot="{ Component }">
       <suspense timeout="0">
