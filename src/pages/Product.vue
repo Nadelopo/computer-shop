@@ -15,6 +15,7 @@ const route = useRoute()
 const product = ref<ProductWithSpecifications>()
 
 const loadData = async () => {
+  window.scroll(0, 0)
   const productId = Number(route.params.productId)
   const data = await getProduct(productId)
   if (data.value) {
@@ -36,13 +37,22 @@ const loadData = async () => {
 
 loadData()
 
-watch(
-  () => route.params.productId,
-  () => {
-    loadData()
-    window.scroll(0, 0)
+watch(() => route.params.productId, loadData)
+
+export type UpdateProductRating = {
+  countReviews: number
+  rating: number
+}
+
+const updateProductRating = (newData: UpdateProductRating) => {
+  if (product.value) {
+    product.value = {
+      ...product.value,
+      rating: newData.rating,
+      countReviews: newData.countReviews
+    }
   }
-)
+}
 </script>
 
 <template>
@@ -56,7 +66,12 @@ watch(
     </div>
     <ProductSpecifications :product="product" />
     <SimilarProducts :product-price="product.price" :product-id="product.id" />
-    <ProductReviews :product-id="product.id" />
+    <ProductReviews
+      :product-id="product.id"
+      :count-reviews="product.countReviews"
+      :product-rating="product.rating"
+      @update-product-rating="updateProductRating"
+    />
   </div>
 </template>
 

@@ -2,12 +2,16 @@
 import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import Swal from 'sweetalert2'
-import { createOne, getAllByColumns } from '@/utils/queries/db'
+import { createOne, getAllByColumns, updateOne } from '@/utils/queries/db'
 import { useUserStore } from '@/stores/userStore'
 import RatingStars from '../RatingStars.vue'
 import VButton from '@/components/UI/VButton.vue'
 import AvatarSvg from '@/assets/icons/avatar.svg?component'
+// import ArrowSVG from '@/assets/icons/arrow.svg?component'
 import type { ReviewCreateRating, ReviewRead } from '@/types/tables/reviews'
+import type { ProductRead } from '@/types/tables/products.types'
+import type { UpdateProductRating } from '@/pages/Product.vue'
+
 // import { useRoute } from 'vue-router'
 
 type ReviewFormCreate = {
@@ -19,6 +23,12 @@ type ReviewFormCreate = {
 
 const props = defineProps<{
   productId: number
+  countReviews: number
+  productRating: number
+}>()
+
+const emit = defineEmits<{
+  (e: 'updateProductRating', data: UpdateProductRating): void
 }>()
 
 const { user } = storeToRefs(useUserStore())
@@ -73,6 +83,24 @@ const createReview = async () => {
       reviews.value.unshift(data)
       form.value = { ...copyForm }
       showReviewForm.value = false
+
+      const newProductRating =
+        (props.productRating * props.countReviews + data.rating) /
+        (props.countReviews + 1)
+      const productData = await updateOne<ProductRead>(
+        'products',
+        props.productId,
+        {
+          countReviews: props.countReviews + 1,
+          rating: newProductRating
+        }
+      )
+      if (productData) {
+        emit('updateProductRating', {
+          countReviews: productData.countReviews,
+          rating: productData.rating
+        })
+      }
     }
   }
 }
@@ -187,9 +215,11 @@ watch(() => props.productId, loadReviews)
 
 .reviews
   margin-top: 50px
+  display: flex
+  flex-direction: column
+  gap: 50px
   .review
     background: #f6f6f6
     border-radius: 8px
     padding: 8px 16px
-    margin-bottom: 50px
 </style>

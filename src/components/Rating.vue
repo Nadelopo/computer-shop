@@ -8,7 +8,7 @@ defineProps<{ rating: number }>()
       <label />
     </div>
     <div>
-      {{ rating || 'нет отзывов' }}
+      {{ Number(rating.toFixed(2)) || 'нет отзывов' }}
     </div>
   </div>
 </template>
