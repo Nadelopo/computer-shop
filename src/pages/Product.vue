@@ -56,7 +56,7 @@ watch(
     </div>
     <ProductSpecifications :product="product" />
     <SimilarProducts :product-price="product.price" :product-id="product.id" />
-    <ProductReviews />
+    <ProductReviews :product-id="product.id" />
   </div>
 </template>
 

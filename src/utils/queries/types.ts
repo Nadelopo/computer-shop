@@ -25,6 +25,11 @@ import type {
   ProductReadWithDetails
 } from '@/types/tables/products.types'
 import type {
+  ReviewCreate,
+  ReviewRead,
+  ReviewUpdate
+} from '@/types/tables/reviews'
+import type {
   SpecificationRead,
   SpecificationCreate,
   SpecificationUpdate,
@@ -44,6 +49,7 @@ export type Table =
   | 'specifications'
   | 'users'
   | 'cart'
+  | 'reviews'
 
 type GetParams<T> = {
   order?: keyof T
@@ -88,6 +94,8 @@ export type CreateParams<T> = T extends ProductRead
   ? CategorySpecificationCreate
   : T extends CartRead
   ? CartCreate
+  : T extends ReviewRead
+  ? ReviewCreate
   : {}
 
 export type CreateManyParams<T> = T extends ProductRead
@@ -114,6 +122,7 @@ export type resultType =
   | SpecificationRead
   | SpecificationReadWithDetails
   | CartRead
+  | ReviewRead
 
 export type resultUpdateType = Exclude<
   resultType,
@@ -152,6 +161,8 @@ export type UpdateManyParams<T> = T extends ProductRead
   ? UpdateMany<CategorySpecificationUpdate>
   : T extends CartRead
   ? UpdateMany<CartUpdate>
+  : T extends ReviewRead
+  ? UpdateMany<ReviewUpdate>
   : {}
 
 export type getAllParams<T> = T extends ProductRead
@@ -184,6 +195,8 @@ export type TableType<T> = T extends ProductRead
   ? 'cart'
   : T extends CategorySpecificationRead
   ? 'category_specifications'
+  : T extends ReviewRead
+  ? 'reviews'
   : Table
 
 export type updateType =
