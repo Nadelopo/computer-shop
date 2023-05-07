@@ -11,7 +11,7 @@ import UserSvg from '@/assets/icons/avatar.svg?component'
 import FavouritesSVG from '@/assets/icons/favourites.svg?component'
 import CartSVG from '@/assets/icons/cart.svg?component'
 
-const { user, userId } = storeToRefs(useUserStore())
+const { user } = storeToRefs(useUserStore())
 
 const logout = async () => {
   const { error } = await supabase.auth.signOut()
@@ -19,7 +19,7 @@ const logout = async () => {
 }
 
 const checkAuth = () => {
-  if (!userId.value) {
+  if (!user.value) {
     Swal.fire({
       icon: 'error',
       title: 'Необходимо авторизироваться!',
@@ -106,7 +106,7 @@ const open = ref(false)
                 <router-link v-if="user?.role == 0" :to="{ name: 'AdminHome' }">
                   admin
                 </router-link>
-                <div v-if="userId" @click="logout">выйти</div>
+                <div v-if="user" @click="logout">выйти</div>
                 <router-link v-else :to="{ name: 'Auth' }">войти</router-link>
                 <router-link :to="{ name: 'Home' }" @click="checkAuth">
                   профиль
