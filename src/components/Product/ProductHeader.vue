@@ -39,7 +39,7 @@ watch(() => props.product.id, loadManufacturer)
     <div class="w-full">
       <div class="product__title">
         <div class="text-3xl">{{ product.name }}</div>
-        <div>
+        <div class="ml-auto">
           <img class="max-h-14" :src="manufacturer?.img" />
         </div>
       </div>
@@ -71,7 +71,8 @@ watch(() => props.product.id, loadManufacturer)
   min-height: 350px
   align-items: center
   .product__title
-    display: flex
+    display: grid
+    grid-template-columns: 1fr 120px
     justify-content: space-between
     gap: 16px
     min-height: 56px

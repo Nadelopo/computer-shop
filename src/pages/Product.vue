@@ -8,6 +8,11 @@ import SimilarProducts from '@/components/Product/SimilarProducts.vue'
 import ProductReviews from '@/components/Product/ProductReviews.vue'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 
+export type UpdateProductRating = {
+  countReviews: number
+  rating: number
+}
+
 const { getProduct } = useProductsStore()
 
 const route = useRoute()
@@ -38,11 +43,6 @@ const loadData = async () => {
 loadData()
 
 watch(() => route.params.productId, loadData)
-
-export type UpdateProductRating = {
-  countReviews: number
-  rating: number
-}
 
 const updateProductRating = (newData: UpdateProductRating) => {
   if (product.value) {
