@@ -26,7 +26,10 @@ onBeforeMount(async () => {
 
 const setSearch = debounce(500, async () => {
   let searchQueryValue = ''
-  if (!search.value) return setProducts(categoryId, '')
+  if (!search.value)
+    return setProducts(categoryId, {
+      search: ''
+    })
   names.value.every((n) => {
     let arr = n.split(' ')
     for (let value of arr) {
@@ -40,7 +43,9 @@ const setSearch = debounce(500, async () => {
     }
     return true
   })
-  setProducts(categoryId, searchQueryValue)
+  setProducts(categoryId, {
+    search: searchQueryValue
+  })
 })
 </script>
 

@@ -67,7 +67,9 @@ const specifications = await getAllByColumns<ProductSpecificationOnEdit>(
   {
     select:
       '*, categorySpecificationsId(id, title, visible, units, type, step, min, max, variantsValues)',
-    order: 'categorySpecificationsId'
+    order: {
+      value: 'categorySpecificationsId'
+    }
   }
 )
 

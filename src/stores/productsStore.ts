@@ -45,8 +45,13 @@ export const useProductsStore = defineStore('products', () => {
 
   async function setProducts(
     categoryId: number,
-    search?: string,
-    order?: string
+    params?: {
+      search?: string
+      order?: {
+        value: string
+        ascending?: boolean
+      }
+    }
   ): Promise<void> {
     loader.value = 'loading'
     products.value = []
@@ -62,10 +67,13 @@ export const useProductsStore = defineStore('products', () => {
       ],
       {
         select: '*, categoryId(id, enTitle), manufacturerId(id, title)',
-        order,
+        order: {
+          value: params?.order?.value,
+          ascending: params?.order?.ascending
+        },
         search: {
           column: 'name',
-          value: search
+          value: params?.search
         }
       }
     )
@@ -82,7 +90,9 @@ export const useProductsStore = defineStore('products', () => {
             ],
             {
               select: '*,  categorySpecificationsId(id, title, units, visible)',
-              order: 'categorySpecificationsId'
+              order: {
+                value: 'categorySpecificationsId'
+              }
             }
           )
 

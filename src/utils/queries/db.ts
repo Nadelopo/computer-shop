@@ -51,10 +51,13 @@ export const getAllByColumns = async <T extends resultType>(
   params?: GetAllByColumnsParams<T>
 ): Promise<T[] | null> => {
   const search = params?.search
+  const order = params?.order?.value ?? 'id'
   let query = supabase
     .from(table)
     .select(params?.select)
-    .order(params?.order ?? 'id')
+    .order(order, {
+      ascending: params?.order?.ascending ?? true
+    })
 
   for (const value of eq) {
     if (value.value) {

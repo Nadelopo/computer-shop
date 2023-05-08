@@ -63,7 +63,10 @@ export type Eq<T> = {
 
 export type GetAllByColumnsParams<T> = {
   select?: string
-  order?: string
+  order?: {
+    value: string | undefined
+    ascending?: boolean
+  }
   search?: {
     column: keyof T
     value?: string
