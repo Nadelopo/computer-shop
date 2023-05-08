@@ -4,8 +4,8 @@ import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
 
 type Props = {
-  modelValue: string | number | null
-  options: { title: string; value: string | number }[]
+  modelValue: string | number | boolean | null
+  options: { title: string; value: string | number | boolean }[]
   required?: boolean
 }
 
@@ -44,7 +44,7 @@ if (findSelectedValue) {
   selected.value = 'выберите значение'
 }
 
-const onOptionClick = (selectValue: string | number, i: number) => {
+const onOptionClick = (selectValue: string | number | boolean, i: number) => {
   selected.value = props.options[i].title
   emit('update:modelValue', selectValue)
   if (color.value === '#a9a9a9') {

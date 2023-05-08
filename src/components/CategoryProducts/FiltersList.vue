@@ -42,6 +42,21 @@ type VariantsValues = {
   variants: string[]
 }
 
+type inputDefineExpose = {
+  apply: () => void
+  resetValue: () => void
+}
+
+type checkboxDefineExpose = {
+  apply: () =>
+    | {
+        id: number
+        title: string
+      }
+    | undefined
+  resetValue: () => void
+}
+
 const { getCategorySpecifications } = useCategoriesStore()
 
 const { getProduct } = useProductsStore()
@@ -76,21 +91,6 @@ onBeforeMount(async () => {
       .sort((a, b) => Number(b.type) - Number(a.type))
   }
 })
-
-type inputDefineExpose = {
-  apply: () => void
-  resetValue: () => void
-}
-
-type checkboxDefineExpose = {
-  apply: () =>
-    | {
-        id: number
-        title: string
-      }
-    | undefined
-  resetValue: () => void
-}
 
 const inputRef = ref<inputDefineExpose[]>([])
 const checkboxRef = ref<checkboxDefineExpose[]>([])

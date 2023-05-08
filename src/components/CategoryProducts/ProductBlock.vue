@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ButtonCart from '../ButtonCart.vue'
-import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import RatingStars from '../RatingStars.vue'
+import type { ProductWithSpecifications } from '@/types/tables/products.types'
 
 defineProps<{
   item: ProductWithSpecifications
