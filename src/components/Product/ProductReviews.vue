@@ -7,8 +7,12 @@ import { useUserStore } from '@/stores/userStore'
 import RatingStars from '../RatingStars.vue'
 import VButton from '@/components/UI/VButton.vue'
 import AvatarSvg from '@/assets/icons/avatar.svg?component'
-// import ArrowSVG from '@/assets/icons/arrow.svg?component'
-import type { ReviewCreateRating, ReviewRead } from '@/types/tables/reviews'
+import ArrowSVG from '@/assets/icons/arrow.svg?component'
+import type {
+  ReviewCreateRating,
+  ReviewRead,
+  UsersRated
+} from '@/types/tables/reviews'
 import type { ProductRead } from '@/types/tables/products.types'
 import type { UpdateProductRating } from '@/pages/Product.vue'
 
@@ -105,6 +109,99 @@ const createReview = async () => {
   }
 }
 
+const userAlreadyRated = (review: ReviewRead): boolean | null => {
+  for (const rated of review.usersRated) {
+    if (rated.userId === user.value?.id) {
+      return rated.evaluation
+    }
+  }
+  return null
+}
+
+const evaluationReview = async (review: ReviewRead, evaluation: boolean) => {
+  if (!user.value) {
+    Swal.fire(
+      '',
+      'Только авторизованные пользователи могут ставить оценки',
+      'warning'
+    )
+    return
+  }
+  const value = evaluation ? 'likes' : 'dislikes'
+
+  let newUsersRated: UsersRated[] = review.usersRated
+  let quantity: { likes?: number; dislikes?: number } = {}
+  console.log(userAlreadyRated(review))
+  if (userAlreadyRated(review) === null) {
+    newUsersRated.push({
+      userId: user.value.id,
+      evaluation
+    })
+    quantity = {
+      [value]: review[value] + 1
+    }
+  } else {
+    if (userAlreadyRated(review) === true && value === 'likes') {
+      newUsersRated = newUsersRated.filter((e) => e.userId !== user.value?.id)
+      quantity = {
+        likes: review.likes - 1
+      }
+    }
+    if (userAlreadyRated(review) === true && value === 'dislikes') {
+      quantity = {
+        likes: review.likes - 1,
+        dislikes: review.dislikes + 1
+      }
+      newUsersRated = newUsersRated.map((e) =>
+        e.userId === user.value?.id ? { ...e, evaluation: false } : e
+      )
+    }
+    if (userAlreadyRated(review) === false && value === 'likes') {
+      quantity = {
+        likes: review.likes + 1,
+        dislikes: review.dislikes - 1
+      }
+      newUsersRated = newUsersRated.map((e) =>
+        e.userId === user.value?.id ? { ...e, evaluation: true } : e
+      )
+    }
+    if (userAlreadyRated(review) === false && value === 'dislikes') {
+      newUsersRated = newUsersRated.filter((e) => e.userId !== user.value?.id)
+
+      quantity = {
+        dislikes: review.dislikes - 1
+      }
+    }
+  }
+
+  const newValues = {
+    ...quantity,
+    usersRated: newUsersRated
+  }
+  console.log(newValues)
+  const data = await updateOne<ReviewRead>('reviews', review.id, newValues)
+  if (data) {
+    reviews.value = reviews.value.map((e) =>
+      review.id === e.id ? { ...e, ...newValues } : e
+    )
+  }
+}
+
+const ratingBtns = (review: ReviewRead) => {
+  return [
+    {
+      type: true,
+      action: 'like',
+      value: review.likes
+    },
+    {
+      type: false,
+      action: 'dislike',
+      value: review.dislikes
+    }
+  ]
+}
+
 watch(() => props.productId, loadReviews)
 </script>
 
@@ -168,6 +265,27 @@ watch(() => props.productId, loadReviews)
             <div class="title">Комментарий</div>
             <div>{{ review.comment }}</div>
           </div>
+          <button>asdaasdads</button>
+          <div class="flex gap-x-6">
+            <div
+              v-for="(el, i) in ratingBtns(review)"
+              :key="i"
+              class="flex gap-x-2"
+            >
+              <button
+                class="review__arrow"
+                @click="evaluationReview(review, el.type)"
+              >
+                <ArrowSVG
+                  :class="[
+                    el.action,
+                    userAlreadyRated(review) === el.type && 'coloured'
+                  ]"
+                />
+              </button>
+              <span>{{ el.value }}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -222,4 +340,19 @@ watch(() => props.productId, loadReviews)
     background: #f6f6f6
     border-radius: 8px
     padding: 8px 16px
+    &__arrow
+      cursor: pointer
+      &:hover .like
+        fill: var(--color-main)
+      &:hover .dislike
+        fill: #f44336
+      svg
+        width: 16px
+        transition: .1s
+        &.dislike
+          transform: rotate(180deg)
+          &.coloured
+            fill: #f44336
+        &.like.coloured
+          fill: var(--color-main)
 </style>

@@ -143,6 +143,8 @@ export type UpdateOneParams<T> = T extends ProductRead
   ? CategorySpecificationUpdate
   : T extends CartRead
   ? CartUpdate
+  : T extends ReviewRead
+  ? ReviewUpdate
   : {}
 
 export type UpdateMany<T> = T & Required<Pick<T, keyof T & 'id'>>
