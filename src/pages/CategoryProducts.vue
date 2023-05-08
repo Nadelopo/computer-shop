@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { nextTick, onUnmounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/productsStore'
 import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
@@ -10,11 +9,6 @@ import FiltersList from '@/components/CategoryProducts/FiltersList.vue'
 import Skeleton from '@/components/CategoryProducts/SkeletonProducts.vue'
 
 const { products, loader } = storeToRefs(useProductsStore())
-const { setProducts } = useProductsStore()
-
-const categoryId = Number(useRoute().params.id)
-
-setProducts(categoryId)
 
 onUnmounted(() => {
   products.value = []
