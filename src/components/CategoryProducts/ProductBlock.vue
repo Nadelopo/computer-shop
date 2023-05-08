@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ButtonCart from '../ButtonCart.vue'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
-import Rating from '@/components/Rating.vue'
+import RatingStars from '../RatingStars.vue'
 
 defineProps<{
   item: ProductWithSpecifications
@@ -25,8 +25,7 @@ defineProps<{
         <div class="cart__link">
           <div class="mb-4 text-lg flex items-center gap-4">
             <div>{{ item.name }}</div>
-
-            <Rating :rating="item.rating" />
+            <RatingStars :model-value="item.rating" />
           </div>
           <div
             v-for="specification in item.specifications"

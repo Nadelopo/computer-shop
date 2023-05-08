@@ -2,13 +2,13 @@
 import { computed, ref, watch } from 'vue'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { formatPrice } from '@/utils/formatPrice'
-import Rating from '@/components/Rating.vue'
 import VButton from '@/components/UI/VButton.vue'
 import ButtonCart from '@/components/ButtonCart.vue'
 import FavouritesSVG from '@/assets/icons/favourites.svg?component'
 import ComparisonSVG from '@/assets/icons/comparison.svg?component'
 import type { ManufacturerRead } from '@/types/tables/manufacturers.types'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
+import RatingStars from '../RatingStars.vue'
 
 const props = defineProps<{
   product: ProductWithSpecifications
@@ -43,7 +43,8 @@ watch(() => props.product.id, loadManufacturer)
           <img class="max-h-14" :src="manufacturer?.img" />
         </div>
       </div>
-      <Rating :rating="product.rating" />
+
+      <RatingStars :model-value="product.rating" />
       <div class="text-4xl mb-4 mt-6">{{ productPrice }}</div>
       <div>
         <button-cart :width="400" :product-id="product.id" />

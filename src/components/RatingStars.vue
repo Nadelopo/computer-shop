@@ -23,16 +23,29 @@ const arr = [5, 4, 3, 2, 1]
 </script>
 
 <template>
-  <div v-if="static">
-    <label
-      v-for="i in arr"
-      :key="i"
-      :title="`Оценка «${i}»`"
-      class="rating__static"
-      :class="[modelValue + 1 > i ? 'coloured' : 'colourless']"
-    />
+  <div v-if="static" class="flex items-center">
+    <template v-if="modelValue">
+      <div>
+        <label
+          v-for="i in arr"
+          :key="i"
+          :title="`Оценка «${i}»`"
+          class="rating__static"
+          :class="[Math.round(modelValue) + 1 > i ? 'coloured' : 'colourless']"
+        />
+      </div>
+      <div>
+        {{ modelValue.toFixed(2) }}
+      </div>
+    </template>
+    <template v-else>
+      <div class="rating">
+        <label />
+      </div>
+      нет отзывов
+    </template>
   </div>
-  <div v-else class="rating">
+  <div v-else class="rating area">
     <template v-for="i in arr" :key="i">
       <input
         :id="'star-' + i"
@@ -50,7 +63,8 @@ const arr = [5, 4, 3, 2, 1]
 
 .rating
   overflow: hidden
-  width: 210px
+  &.area
+    width: 210px
   &:not(:checked)
     >
       input

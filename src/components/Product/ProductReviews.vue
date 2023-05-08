@@ -131,7 +131,7 @@ const evaluationReview = async (review: ReviewRead, evaluation: boolean) => {
 
   let newUsersRated: UsersRated[] = review.usersRated
   let quantity: { likes?: number; dislikes?: number } = {}
-  console.log(userAlreadyRated(review))
+
   if (userAlreadyRated(review) === null) {
     newUsersRated.push({
       userId: user.value.id,
@@ -178,7 +178,7 @@ const evaluationReview = async (review: ReviewRead, evaluation: boolean) => {
     ...quantity,
     usersRated: newUsersRated
   }
-  console.log(newValues)
+
   const data = await updateOne<ReviewRead>('reviews', review.id, newValues)
   if (data) {
     reviews.value = reviews.value.map((e) =>
@@ -247,7 +247,6 @@ watch(() => props.productId, loadReviews)
             <div class="flex items-center">{{ review.name }}</div>
             <div class="flex gap-x-2 items-center">
               <RatingStars :model-value="review.rating" />
-              <span>{{ review.rating }}</span>
             </div>
             <div class="ml-auto">
               {{ new Date(review.created_at).toLocaleDateString() }}
