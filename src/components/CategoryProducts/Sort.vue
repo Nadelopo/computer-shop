@@ -8,7 +8,7 @@ import ArrowSVG from '@/assets/icons/arrow.svg'
 const route = useRoute()
 const router = useRouter()
 
-type SortType = 'price' | 'countReviews' | 'discount' | 'popularity' | 'rating'
+type SortType = keyof typeof sortAscents
 
 const { setProducts } = useProductsStore()
 
@@ -26,17 +26,11 @@ const querySort =
   typeof route.query.sort === 'string' ? route.query.sort.split('_') : null
 
 if (querySort) {
-  const querySortTitle = querySort[0]
+  const querySortTitle = querySort[0] as SortType
   const querySortValue = JSON.parse(querySort[1])
-  if (
-    querySortTitle === 'price' ||
-    querySortTitle === 'countReviews' ||
-    querySortTitle === 'discount' ||
-    querySortTitle === 'popularity' ||
-    querySortTitle === 'rating'
-  ) {
-    sortAscents[querySortTitle] = querySortValue
 
+  if (querySortTitle in sortAscents) {
+    sortAscents[querySortTitle] = querySortValue
     setProducts(categoryId, {
       order: {
         value: querySortTitle,
