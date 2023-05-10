@@ -1,4 +1,5 @@
 import { supabase } from '@/supabase'
+import { formatSearch } from '../formatSearch'
 import type {
   CreateManyParams,
   CreateParams,
@@ -66,10 +67,7 @@ export const getAllByColumns = async <T extends resultType>(
   }
   if (search?.value) {
     {
-      query = query.textSearch(search.column, search.value, {
-        config: 'russian',
-        type: 'websearch'
-      })
+      query = query.ilike(search.column, formatSearch(search.value))
     }
   }
   if (params?.between) {
@@ -158,7 +156,7 @@ export const deleteOne = async <T extends resultType>(
   if (eq) {
     for (const value of eq) {
       if (value.value) {
-        query = query.eq(value.column, value.value)
+        query = query.eq(value.column as keyof T, value.value)
       }
     }
   }

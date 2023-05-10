@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useProductsStore } from '@/stores/productsStore'
+import { storeToRefs } from 'pinia'
+import { useFilterStore } from '@/stores/filterStore'
 import VButton from '../UI/VButton.vue'
 import ArrowSVG from '@/assets/icons/arrow.svg'
 
@@ -10,45 +11,34 @@ const router = useRouter()
 
 type SortType = keyof typeof sortAscents
 
-const { setProducts } = useProductsStore()
-
 const categoryId = Number(route.params.id)
 
-const sortAscents = reactive({
-  price: true,
-  countReviews: false,
-  discount: true,
-  popularity: false,
-  rating: false
-})
+const { sortAscents, setFilteredProducts } = useFilterStore()
+const { specificationsValues, sortColumn } = storeToRefs(useFilterStore())
 
 const querySort =
   typeof route.query.sort === 'string' ? route.query.sort.split('_') : null
 
-if (querySort) {
-  const querySortTitle = querySort[0] as SortType
-  const querySortValue = JSON.parse(querySort[1])
+const watcher = watch(specificationsValues, () => {
+  if (querySort) {
+    const querySortTitle = querySort[0] as SortType
+    const querySortValue = JSON.parse(querySort[1])
 
-  if (querySortTitle in sortAscents) {
-    sortAscents[querySortTitle] = querySortValue
-    setProducts(categoryId, {
-      order: {
-        value: querySortTitle,
-        ascending: !querySortValue
-      }
-    })
+    if (querySortTitle in sortAscents) {
+      sortAscents[querySortTitle] = querySortValue
+      sortColumn.value = querySortTitle
+      setFilteredProducts(categoryId)
+    }
+  } else {
+    setFilteredProducts(categoryId)
   }
-} else {
-  setProducts(categoryId)
-}
+  watcher()
+})
 
 const sort = async (type: SortType) => {
-  setProducts(categoryId, {
-    order: {
-      value: type,
-      ascending: sortAscents[type]
-    }
-  })
+  sortColumn.value = type
+  setFilteredProducts(categoryId)
+
   sortAscents[type] = !sortAscents[type]
   router.push({
     ...route.query,

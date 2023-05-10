@@ -57,7 +57,7 @@ type GetParams<T> = {
 }
 
 export type Eq<T> = {
-  column: keyof T
+  column: string
   value: T[keyof T] | null
 }
 
@@ -68,7 +68,7 @@ export type GetAllByColumnsParams<T> = {
     ascending?: boolean
   }
   search?: {
-    column: keyof T
+    column: string
     value?: string
   }
   between?: {

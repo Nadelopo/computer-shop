@@ -26,7 +26,6 @@ import type { UpdateMany } from '@/utils/queries/types'
 
 export const useProductsStore = defineStore('products', () => {
   const products = ref<ProductWithSpecifications[]>([])
-  const searchProducts = ref('')
   const loader = ref<'loading' | 'success' | 'empty'>('loading')
 
   async function createProduct(
@@ -172,7 +171,6 @@ export const useProductsStore = defineStore('products', () => {
     getProduct,
     updateProduct,
     updateProductSpecifications,
-    searchProducts,
     loader
   }
 })
