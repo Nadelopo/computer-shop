@@ -31,32 +31,23 @@ export const useProductsStore = defineStore('products', () => {
   async function createProduct(
     params: ProductCreate
   ): Promise<ProductRead | null> {
-    const data = await createOne<ProductRead>('products', params)
+    const data = await createOne('products', params)
     return data
   }
 
   async function createSpecifications(
     params: SpecificationCreate[]
   ): Promise<SpecificationRead[] | null> {
-    const data = await createMany<SpecificationRead>('specifications', params)
+    const data = await createMany('specifications', params)
     return data
   }
 
-  async function setProducts(
-    categoryId: number,
-    params?: {
-      search?: string
-      order?: {
-        value: string
-        ascending?: boolean
-      }
-    }
-  ): Promise<void> {
+  async function setProducts(categoryId: number): Promise<void> {
     loader.value = 'loading'
     products.value = []
     const newProducts = ref<ProductWithSpecifications[]>([])
 
-    const data = await getAllByColumns<ProductReadWithDetails>(
+    const data = await getAllByColumns<'products', ProductReadWithDetails>(
       'products',
       [
         {
@@ -65,35 +56,29 @@ export const useProductsStore = defineStore('products', () => {
         }
       ],
       {
-        select: '*, categoryId(id, enTitle), manufacturerId(id, title)',
-        order: {
-          value: params?.order?.value,
-          ascending: params?.order?.ascending
-        },
-        search: {
-          column: 'name',
-          value: params?.search
-        }
+        select: '*, categoryId(id, enTitle), manufacturerId(id, title)'
       }
     )
     if (data?.length) {
       for (const product of data) {
-        const specifications =
-          await getAllByColumns<SpecificationReadWithDetails>(
-            'specifications',
-            [
-              {
-                column: 'productId',
-                value: product.id
-              }
-            ],
+        const specifications = await getAllByColumns<
+          'specifications',
+          SpecificationReadWithDetails
+        >(
+          'specifications',
+          [
             {
-              select: '*,  categorySpecificationsId(id, title, units, visible)',
-              order: {
-                value: 'categorySpecificationsId'
-              }
+              column: 'productId',
+              value: product.id
             }
-          )
+          ],
+          {
+            select: '*,  categorySpecificationsId(id, title, units, visible)',
+            order: {
+              value: 'categorySpecificationsId'
+            }
+          }
+        )
 
         if (specifications) {
           const newProduct: ProductWithSpecifications = {
@@ -112,26 +97,30 @@ export const useProductsStore = defineStore('products', () => {
     productId: number
   ): Promise<Ref<ProductWithSpecifications | null>> {
     const product = ref<ProductWithSpecifications | null>(null)
-    const data = await getOneById<ProductReadWithDetails>(
+    const data = await getOneById<'products', ProductReadWithDetails>(
       'products',
       productId,
-      '*, categoryId(id, enTitle), manufacturerId(id, title)'
+      {
+        select: '*, categoryId(id, enTitle), manufacturerId(id, title)'
+      }
     )
 
     if (data) {
-      const specifications =
-        await getAllByColumns<SpecificationReadWithDetails>(
-          'specifications',
-          [
-            {
-              column: 'productId',
-              value: productId
-            }
-          ],
+      const specifications = await getAllByColumns<
+        'specifications',
+        SpecificationReadWithDetails
+      >(
+        'specifications',
+        [
           {
-            select: '*, categorySpecificationsId(id, title, units, visible)'
+            column: 'productId',
+            value: productId
           }
-        )
+        ],
+        {
+          select: '*, categorySpecificationsId(id, title, units, visible)'
+        }
+      )
       if (specifications) {
         product.value = { ...data, specifications }
       }
@@ -143,7 +132,7 @@ export const useProductsStore = defineStore('products', () => {
     id: number,
     params: ProductUpdate
   ): Promise<ProductRead | null> {
-    const data = await updateOne<ProductRead>('products', id, params)
+    const data = await updateOne('products', id, params)
     if (data) {
       const product = await getProduct(data.id)
       products.value = products.value.map((prod) =>
@@ -156,10 +145,7 @@ export const useProductsStore = defineStore('products', () => {
   async function updateProductSpecifications(
     specifications: UpdateMany<SpecificationUpdate>[]
   ) {
-    const data = await updateMany<SpecificationRead>(
-      'specifications',
-      specifications
-    )
+    const data = await updateMany('specifications', specifications)
     return data
   }
 

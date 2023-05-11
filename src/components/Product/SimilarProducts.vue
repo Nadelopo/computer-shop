@@ -17,7 +17,7 @@ const props = defineProps<{
 const similarProducts = ref<ProductRead[]>([])
 
 const loadSimilarProducts = async () => {
-  const similar = await getAllByColumns<ProductRead>(
+  const similar = await getAllByColumns(
     'products',
     [
       {

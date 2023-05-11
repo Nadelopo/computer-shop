@@ -21,7 +21,7 @@ export const useCategoriesStore = defineStore('categories', () => {
   const categorySpecifications = ref<CategorySpecificationRead[]>([])
 
   async function setCategories(): Promise<void> {
-    const data = await getAll<CategoryRead>('categories', { order: 'id' })
+    const data = await getAll('categories', { order: 'id' })
     if (data) {
       categories.value = data
     }
@@ -30,7 +30,7 @@ export const useCategoriesStore = defineStore('categories', () => {
   async function createCategory(
     params: CategoryCreate
   ): Promise<CategoryRead | null> {
-    const data = await createOne<CategoryRead>('categories', params)
+    const data = await createOne('categories', params)
     if (data) {
       categories.value.push(data)
     }
@@ -41,11 +41,7 @@ export const useCategoriesStore = defineStore('categories', () => {
     category: CategoryUpdate
   ): Promise<CategoryRead | null> {
     if (category.id) {
-      const data = await updateOne<CategoryRead>(
-        'categories',
-        category.id,
-        category
-      )
+      const data = await updateOne('categories', category.id, category)
       if (data) {
         categories.value = categories.value.map((e) =>
           e.id === category.id ? { ...e, ...category } : e
@@ -59,10 +55,7 @@ export const useCategoriesStore = defineStore('categories', () => {
   async function createCategorySpecifications(
     form: CategorySpecificationCreate
   ): Promise<CategorySpecificationRead | null> {
-    const data = await createOne<CategorySpecificationRead>(
-      'category_specifications',
-      form
-    )
+    const data = await createOne('category_specifications', form)
     if (data) {
       categorySpecifications.value.push(data)
     }
@@ -72,15 +65,15 @@ export const useCategoriesStore = defineStore('categories', () => {
   async function getCategorySpecifications(
     categoryId: number
   ): Promise<CategorySpecificationRead[] | null> {
-    const data = await getAllByColumns<CategorySpecificationRead>(
+    const data = await getAllByColumns<
       'category_specifications',
-      [
-        {
-          column: 'categoryId',
-          value: categoryId
-        }
-      ]
-    )
+      CategorySpecificationRead
+    >('category_specifications', [
+      {
+        column: 'categoryId',
+        value: categoryId
+      }
+    ])
     return data
   }
 

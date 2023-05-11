@@ -10,11 +10,9 @@ import AvatarSvg from '@/assets/icons/avatar.svg?component'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
 import type {
   ReviewCreateRating,
-  ReviewRead,
   ReviewReadWithDetails,
   UsersRated
 } from '@/types/tables/reviews'
-import type { ProductRead } from '@/types/tables/products.types'
 import type { UpdateProductRating } from '@/pages/Product.vue'
 
 // import { useRoute } from 'vue-router'
@@ -42,7 +40,7 @@ const reviews = ref<ReviewReadWithDetails[]>([])
 const showReviewForm = ref(false)
 
 const loadReviews = async () => {
-  const data = await getAllByColumns<ReviewReadWithDetails>(
+  const data = await getAllByColumns<'reviews', ReviewReadWithDetails>(
     'reviews',
     [
       {
@@ -82,7 +80,7 @@ const createReview = async () => {
   } else if (form.value.rating === 0) {
     Swal.fire('', 'Укажите оценку', 'warning')
   } else {
-    const data = await createOne<ReviewReadWithDetails>(
+    const data = await createOne<'reviews', ReviewReadWithDetails>(
       'reviews',
       {
         userId: user.value.id,
@@ -105,14 +103,10 @@ const createReview = async () => {
       const newProductRating =
         (props.productRating * props.countReviews + data.rating) /
         (props.countReviews + 1)
-      const productData = await updateOne<ProductRead>(
-        'products',
-        props.productId,
-        {
-          countReviews: props.countReviews + 1,
-          rating: newProductRating
-        }
-      )
+      const productData = await updateOne('products', props.productId, {
+        countReviews: props.countReviews + 1,
+        rating: newProductRating
+      })
       if (productData) {
         emit('updateProductRating', {
           countReviews: productData.countReviews,
@@ -196,7 +190,7 @@ const evaluationReview = async (
     usersRated: newUsersRated
   }
 
-  const data = await updateOne<ReviewRead>('reviews', review.id, newValues)
+  const data = await updateOne('reviews', review.id, newValues)
   if (data) {
     reviews.value = reviews.value.map((e) =>
       review.id === e.id ? { ...e, ...newValues } : e

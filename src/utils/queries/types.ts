@@ -21,8 +21,7 @@ import type {
 import type {
   ProductRead,
   ProductCreate,
-  ProductUpdate,
-  ProductReadWithDetails
+  ProductUpdate
 } from '@/types/tables/products.types'
 import type {
   ReviewCreate,
@@ -32,8 +31,7 @@ import type {
 import type {
   SpecificationRead,
   SpecificationCreate,
-  SpecificationUpdate,
-  SpecificationReadWithDetails
+  SpecificationUpdate
 } from '@/types/tables/specifications.types'
 import type {
   UserRead,
@@ -51,20 +49,15 @@ export type Table =
   | 'cart'
   | 'reviews'
 
-type GetParams<T> = {
-  order?: keyof T
-  select?: string
-}
-
-export type Eq<T> = {
+export type Eq = {
   column: string
-  value: T[keyof T] | null
+  value: string | number | null
 }
 
-export type GetAllByColumnsParams<T> = {
+export type GetAllByColumnsParams = {
   select?: string
   order?: {
-    value: string | undefined
+    value: string
     ascending?: boolean
   }
   search?: {
@@ -72,143 +65,55 @@ export type GetAllByColumnsParams<T> = {
     value?: string
   }
   between?: {
-    column: keyof T
+    column: string
     begin: number
     end: number
   }
   limit?: number
   neq?: {
-    column: keyof T
-    value: T[keyof T] | null
+    column: string
+    value: number | string
   }
 }
 
-export type CreateParams<T> = T extends ProductRead
-  ? ProductCreate
-  : T extends CategoryRead
-  ? CategoryCreate
-  : T extends SpecificationRead
-  ? SpecificationCreate
-  : T extends ManufacturerRead
-  ? ManufacturerCreate
-  : T extends UserRead
-  ? UserCreate
-  : T extends CategorySpecificationRead
-  ? CategorySpecificationCreate
-  : T extends CartRead
-  ? CartCreate
-  : T extends ReviewRead
-  ? ReviewCreate
-  : {}
+export type getParams = {
+  order?: string
+  select?: string
+}
 
-export type CreateManyParams<T> = T extends ProductRead
-  ? ProductCreate[]
-  : T extends CategoryRead
-  ? CategoryCreate[]
-  : T extends SpecificationRead
-  ? SpecificationCreate[]
-  : T extends ManufacturerRead
-  ? ManufacturerCreate[]
-  : T extends UserRead
-  ? UserCreate[]
-  : T extends CategorySpecificationRead
-  ? CategorySpecificationCreate[]
-  : {}
+export type UpdateData = {
+  manufacturers: ManufacturerUpdate
+  products: ProductUpdate
+  categories: CategoryUpdate
+  specifications: SpecificationUpdate
+  category_specifications: CategorySpecificationUpdate
+  users: UserUpdate
+  cart: CartUpdate
+  reviews: ReviewUpdate
+}
 
-export type resultType =
-  | ProductRead
-  | ProductReadWithDetails
-  | CategoryRead
-  | ManufacturerRead
-  | UserRead
-  | CategorySpecificationRead
-  | SpecificationRead
-  | SpecificationReadWithDetails
-  | CartRead
-  | ReviewRead
+export type CreateData = {
+  manufacturers: ManufacturerCreate
+  products: ProductCreate
+  categories: CategoryCreate
+  specifications: SpecificationCreate
+  category_specifications: CategorySpecificationCreate
+  users: UserCreate
+  cart: CartCreate
+  reviews: ReviewCreate
+}
 
-export type resultUpdateType = Exclude<
-  resultType,
-  ProductReadWithDetails | SpecificationReadWithDetails
->
+export type ResultData = {
+  manufacturers: ManufacturerRead
+  products: ProductRead
+  categories: CategoryRead
+  specifications: SpecificationRead
+  category_specifications: CategorySpecificationRead
+  users: UserRead
+  cart: CartRead
+  reviews: ReviewRead
+}
 
-export type UpdateOneParams<T> = T extends ProductRead
-  ? ProductUpdate
-  : T extends CategoryRead
-  ? CategoryUpdate
-  : T extends SpecificationRead
-  ? SpecificationUpdate
-  : T extends ManufacturerRead
-  ? ManufacturerUpdate
-  : T extends UserRead
-  ? UserUpdate
-  : T extends CategorySpecificationRead
-  ? CategorySpecificationUpdate
-  : T extends CartRead
-  ? CartUpdate
-  : T extends ReviewRead
-  ? ReviewUpdate
-  : {}
+export type ResultType<T extends Table, R> = R extends null ? ResultData[T] : R
 
 export type UpdateMany<T> = T & Required<Pick<T, keyof T & 'id'>>
-
-export type UpdateManyParams<T> = T extends ProductRead
-  ? UpdateMany<ProductUpdate>
-  : T extends CategoryRead
-  ? UpdateMany<CategoryUpdate>
-  : T extends SpecificationRead
-  ? UpdateMany<SpecificationUpdate>
-  : T extends ManufacturerRead
-  ? UpdateMany<ManufacturerUpdate>
-  : T extends UserRead
-  ? UpdateMany<UserUpdate>
-  : T extends CategorySpecificationRead
-  ? UpdateMany<CategorySpecificationUpdate>
-  : T extends CartRead
-  ? UpdateMany<CartUpdate>
-  : T extends ReviewRead
-  ? UpdateMany<ReviewUpdate>
-  : {}
-
-export type getAllParams<T> = T extends ProductRead
-  ? GetParams<ProductRead>
-  : T extends CategoryRead
-  ? GetParams<CategoryRead>
-  : T extends ManufacturerRead
-  ? GetParams<ManufacturerRead>
-  : T extends SpecificationRead
-  ? GetParams<SpecificationRead>
-  : T extends UserRead
-  ? GetParams<UserRead>
-  : T extends CategorySpecificationRead
-  ? GetParams<CategorySpecificationRead>
-  : T extends CartRead
-  ? GetParams<CartRead>
-  : GetParams<T>
-
-export type TableType<T> = T extends ProductRead
-  ? 'products'
-  : T extends CategoryRead
-  ? 'categories'
-  : T extends SpecificationRead
-  ? 'specifications'
-  : T extends ManufacturerRead
-  ? 'manufacturers'
-  : T extends UserRead
-  ? 'users'
-  : T extends CartRead
-  ? 'cart'
-  : T extends CategorySpecificationRead
-  ? 'category_specifications'
-  : T extends ReviewRead
-  ? 'reviews'
-  : Table
-
-export type updateType =
-  | ProductUpdate
-  | UserUpdate
-  | SpecificationUpdate
-  | CategoryUpdate
-  | CategorySpecificationUpdate
-  | ManufacturerUpdate
-  | CartUpdate

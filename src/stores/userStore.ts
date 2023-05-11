@@ -8,7 +8,7 @@ export const useUserStore = defineStore('user', () => {
 
   async function setUserData(id: string | undefined): Promise<void> {
     if (id) {
-      const data = await getOneById<UserRead>('users', id)
+      const data = await getOneById('users', id)
       user.value = data
     } else {
       user.value = null

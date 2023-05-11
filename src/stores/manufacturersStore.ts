@@ -13,7 +13,7 @@ export const useManufacturersStore = defineStore('manufacturers', () => {
   async function createManufacturer(
     params: ManufacturerCreate
   ): Promise<ManufacturerRead | null> {
-    const data = await createOne<ManufacturerRead>('manufacturers', params)
+    const data = await createOne('manufacturers', params)
     if (data) {
       manufacturers.value.push(data)
     }
@@ -21,20 +21,19 @@ export const useManufacturersStore = defineStore('manufacturers', () => {
   }
 
   async function setManufacturers(): Promise<void> {
-    const data = await getAll<ManufacturerRead>('manufacturers')
+    const data = await getAll('manufacturers')
     if (data) manufacturers.value = data
   }
 
   async function getManufacturer(id: number): Promise<ManufacturerRead | null> {
-    const data = await getOneById<ManufacturerRead>('manufacturers', id)
-    return data
+    return getOneById('manufacturers', id)
   }
 
   async function updateManufacturer(
     id: number,
     params: ManufacturerUpdate
   ): Promise<ManufacturerRead | null> {
-    const data = await updateOne<ManufacturerRead>('manufacturers', id, params)
+    const data = await updateOne('manufacturers', id, params)
     if (data) {
       manufacturers.value = manufacturers.value.map((e) =>
         e.id === id ? data : e

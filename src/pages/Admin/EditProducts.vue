@@ -51,12 +51,17 @@ const img = ref('')
 const manufacturerSelect = ref(0)
 const loader = ref<'loading' | 'success'>('loading')
 
-const productData = await getOneById<ProductReadWithDetails>(
+const productData = await getOneById<'products', ProductReadWithDetails>(
   'products',
   id,
-  '*, manufacturerId(id, title), categoryId(id, enTitle)'
+  {
+    select: '*, manufacturerId(id, title), categoryId(id, enTitle)'
+  }
 )
-const specifications = await getAllByColumns<ProductSpecificationOnEdit>(
+const specifications = await getAllByColumns<
+  'specifications',
+  ProductSpecificationOnEdit
+>(
   'specifications',
   [
     {

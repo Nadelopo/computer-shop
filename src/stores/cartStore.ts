@@ -36,10 +36,10 @@ export const useCartStore = defineStore('cart', () => {
   async function addToCart(productId: number) {
     const user = supabase.auth.user()
     let data: CartRead | null = null
-    const product = await getOneById<ProductRead>('products', productId)
+    const product = await getOneById('products', productId)
 
     if (user) {
-      const productCart = await getAllByColumns<CartRead>('cart', [
+      const productCart = await getAllByColumns('cart', [
         {
           column: 'userId',
           value: user.id
@@ -51,14 +51,14 @@ export const useCartStore = defineStore('cart', () => {
       ])
 
       if (productCart?.length && product) {
-        data = await updateOne<CartRead>('cart', productCart[0].id, {
+        data = await updateOne('cart', productCart[0].id, {
           count: productCart[0].count + 1
         })
         cartItems.value = cartItems.value.map((e) =>
           data && e.productId === productId ? data : e
         )
       } else {
-        data = await createOne<CartRead>('cart', {
+        data = await createOne('cart', {
           userId: user.id,
           productId,
           count: 1
@@ -90,7 +90,7 @@ export const useCartStore = defineStore('cart', () => {
   async function setCartItems() {
     const user = supabase.auth.user()
     if (user) {
-      const data = await getAllByColumns<CartRead>('cart', [
+      const data = await getAllByColumns('cart', [
         { column: 'userId', value: user.id }
       ])
       if (data) {
@@ -108,10 +108,12 @@ export const useCartStore = defineStore('cart', () => {
   async function setCartItemsWithDetails(cartItems: ProductInStorage[]) {
     const newProducts = []
     for (const [i, el] of cartItems.entries()) {
-      const product = await getOneById<QueryProduct>(
+      const product = await getOneById<'products', QueryProduct>(
         'products',
         el.productId,
-        'categoryId, discount, id, img, name, price, quantity, rating'
+        {
+          select: 'categoryId, discount, id, img, name, price, quantity, rating'
+        }
       )
       if (product) {
         newProducts.push({ ...product, count: el.count, cartItemId: el.id })
@@ -127,7 +129,7 @@ export const useCartStore = defineStore('cart', () => {
     let data: CartRead | ProductInStorage[] | null = null
     if (user) {
       if (product.cartItemId) {
-        data = await updateOne<CartRead>('cart', product.cartItemId, {
+        data = await updateOne('cart', product.cartItemId, {
           count: product.count + 1
         })
       }
@@ -153,16 +155,11 @@ export const useCartStore = defineStore('cart', () => {
     if (user) {
       if (product.cartItemId) {
         if (product.count > 1) {
-          data = await updateOne<CartRead>('cart', product.cartItemId, {
+          data = await updateOne('cart', product.cartItemId, {
             count: product.count - 1
           })
         } else {
-          data = await deleteOne<CartRead>('cart', product.cartItemId, [
-            {
-              column: 'userId',
-              value: user.id
-            }
-          ])
+          data = await deleteOne('cart', product.cartItemId)
         }
       }
     } else {
@@ -195,7 +192,7 @@ export const useCartStore = defineStore('cart', () => {
     const user = supabase.auth.user()
     let data: CartRead | ProductInStorage[] | null = null
     if (user) {
-      const productCart = await getAllByColumns<CartRead>('cart', [
+      const productCart = await getAllByColumns('cart', [
         {
           column: 'userId',
           value: user.id
@@ -206,7 +203,7 @@ export const useCartStore = defineStore('cart', () => {
         }
       ])
       if (productCart) {
-        data = await deleteOne<CartRead>('cart', productCart[0].id)
+        data = await deleteOne('cart', productCart[0].id)
       }
     } else {
       data = localStorageGet<ProductInStorage[]>('products')
