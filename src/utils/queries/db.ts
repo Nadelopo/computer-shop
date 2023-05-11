@@ -95,9 +95,18 @@ export const getAllByColumns = async <T extends resultType>(
 
 export const createOne = async <T extends resultType>(
   table: TableType<T>,
-  params: CreateParams<T>
+  fields: CreateParams<T>,
+  params?: {
+    select?: string
+  }
 ): Promise<T | null> => {
-  const { data, error } = await supabase.from(table).insert(params).single()
+  let query = supabase.from(table).insert(fields)
+  if (params?.select) {
+    {
+      query = query.select(params.select)
+    }
+  }
+  const { data, error } = await query.single()
   if (error) console.log(error)
   return data
 }

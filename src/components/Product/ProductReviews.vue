@@ -11,6 +11,7 @@ import ArrowSVG from '@/assets/icons/arrow.svg?component'
 import type {
   ReviewCreateRating,
   ReviewRead,
+  ReviewReadWithDetails,
   UsersRated
 } from '@/types/tables/reviews'
 import type { ProductRead } from '@/types/tables/products.types'
@@ -37,16 +38,23 @@ const emit = defineEmits<{
 
 const { user } = storeToRefs(useUserStore())
 
-const reviews = ref<ReviewRead[]>([])
+const reviews = ref<ReviewReadWithDetails[]>([])
 const showReviewForm = ref(false)
 
 const loadReviews = async () => {
-  const data = await getAllByColumns<ReviewRead>('reviews', [
+  const data = await getAllByColumns<ReviewReadWithDetails>(
+    'reviews',
+    [
+      {
+        column: 'productId',
+        value: props.productId
+      }
+    ],
     {
-      column: 'productId',
-      value: props.productId
+      select: '*, users(name)'
     }
-  ])
+  )
+
   if (data) {
     reviews.value = data
   }
@@ -74,15 +82,21 @@ const createReview = async () => {
   } else if (form.value.rating === 0) {
     Swal.fire('', 'Укажите оценку', 'warning')
   } else {
-    const data = await createOne<ReviewRead>('reviews', {
-      userId: user.value.id,
-      productId: props.productId,
-      dignities: form.value.dignities || null,
-      disadvantages: form.value.disadvantages || null,
-      comment: form.value.comment || null,
-      rating: form.value.rating,
-      name: user.value.name
-    })
+    const data = await createOne<ReviewReadWithDetails>(
+      'reviews',
+      {
+        userId: user.value.id,
+        productId: props.productId,
+        dignities: form.value.dignities || null,
+        disadvantages: form.value.disadvantages || null,
+        comment: form.value.comment || null,
+        rating: form.value.rating
+      },
+      {
+        select: '*, users(name)'
+      }
+    )
+    console.log(data)
     if (data) {
       reviews.value.unshift(data)
       form.value = { ...copyForm }
@@ -109,7 +123,7 @@ const createReview = async () => {
   }
 }
 
-const userAlreadyRated = (review: ReviewRead): boolean | null => {
+const userAlreadyRated = (review: ReviewReadWithDetails): boolean | null => {
   for (const rated of review.usersRated) {
     if (rated.userId === user.value?.id) {
       return rated.evaluation
@@ -118,7 +132,10 @@ const userAlreadyRated = (review: ReviewRead): boolean | null => {
   return null
 }
 
-const evaluationReview = async (review: ReviewRead, evaluation: boolean) => {
+const evaluationReview = async (
+  review: ReviewReadWithDetails,
+  evaluation: boolean
+) => {
   if (!user.value) {
     Swal.fire(
       '',
@@ -187,7 +204,7 @@ const evaluationReview = async (review: ReviewRead, evaluation: boolean) => {
   }
 }
 
-const ratingBtns = (review: ReviewRead) => {
+const ratingBtns = (review: ReviewReadWithDetails) => {
   return [
     {
       type: true,
@@ -244,7 +261,7 @@ watch(() => props.productId, loadReviews)
         <div v-for="review in reviews" :key="review.id" class="review">
           <div class="flex gap-x-6">
             <AvatarSvg width="40" fill="#cdcdcd" />
-            <div class="flex items-center">{{ review.name }}</div>
+            <div class="flex items-center">{{ review.users.name }}</div>
             <div class="flex gap-x-2 items-center">
               <RatingStars :model-value="review.rating" />
             </div>
