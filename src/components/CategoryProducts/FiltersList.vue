@@ -95,7 +95,10 @@ const cancel = () => {
 
 <template>
   <div>
-    <div v-if="specifications && specificationsValues" class="filters">
+    <div
+      v-if="specifications.length && specificationsValues.length"
+      class="filters"
+    >
       <InputFilter
         ref="inputRef"
         :max="300000"
