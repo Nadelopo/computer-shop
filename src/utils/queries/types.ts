@@ -39,6 +39,39 @@ import type {
   UserUpdate
 } from '@/types/tables/users.types'
 
+export type UpdateData = {
+  manufacturers: ManufacturerUpdate
+  products: ProductUpdate
+  categories: CategoryUpdate
+  specifications: SpecificationUpdate
+  category_specifications: CategorySpecificationUpdate
+  users: UserUpdate
+  cart: CartUpdate
+  reviews: ReviewUpdate
+}
+
+export type CreateData = {
+  manufacturers: ManufacturerCreate
+  products: ProductCreate
+  categories: CategoryCreate
+  specifications: SpecificationCreate
+  category_specifications: CategorySpecificationCreate
+  users: UserCreate
+  cart: CartCreate
+  reviews: ReviewCreate
+}
+
+export type ResultData = {
+  manufacturers: ManufacturerRead
+  products: ProductRead
+  categories: CategoryRead
+  specifications: SpecificationRead
+  category_specifications: CategorySpecificationRead
+  users: UserRead
+  cart: CartRead
+  reviews: ReviewRead
+}
+
 export type Table =
   | 'categories'
   | 'category_specifications'
@@ -79,39 +112,6 @@ export type GetAllByColumnsParams = {
 export type getParams = {
   order?: string
   select?: string
-}
-
-export type UpdateData = {
-  manufacturers: ManufacturerUpdate
-  products: ProductUpdate
-  categories: CategoryUpdate
-  specifications: SpecificationUpdate
-  category_specifications: CategorySpecificationUpdate
-  users: UserUpdate
-  cart: CartUpdate
-  reviews: ReviewUpdate
-}
-
-export type CreateData = {
-  manufacturers: ManufacturerCreate
-  products: ProductCreate
-  categories: CategoryCreate
-  specifications: SpecificationCreate
-  category_specifications: CategorySpecificationCreate
-  users: UserCreate
-  cart: CartCreate
-  reviews: ReviewCreate
-}
-
-export type ResultData = {
-  manufacturers: ManufacturerRead
-  products: ProductRead
-  categories: CategoryRead
-  specifications: SpecificationRead
-  category_specifications: CategorySpecificationRead
-  users: UserRead
-  cart: CartRead
-  reviews: ReviewRead
 }
 
 export type ResultType<T extends Table, R> = R extends null ? ResultData[T] : R

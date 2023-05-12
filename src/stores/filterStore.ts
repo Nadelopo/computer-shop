@@ -13,21 +13,18 @@ export type SpecificationsValues =
       minValue: number
       maxValue: number
       type: true
+      enTitle: string
     }
   | {
       id: number
       variantsValues: string[]
       type: false
+      enTitle: string
     }
 
 export type CheckboxData = {
   id: number
   title: string
-}
-
-type VariantsValues = {
-  id: number
-  variants: string[]
 }
 
 type QueryData = {
@@ -45,7 +42,7 @@ export const useFilterStore = defineStore('filter', () => {
   const { loader, products } = storeToRefs(useProductsStore())
   type SortType = keyof typeof sortAscents
   const specificationsValues = ref<SpecificationsValues[]>([])
-  const checkboxData = ref<CheckboxData[]>([])
+
   const sortAscents = reactive({
     price: true,
     countReviews: false,
@@ -59,18 +56,6 @@ export const useFilterStore = defineStore('filter', () => {
   async function setFilteredProducts(categoryId: number) {
     loader.value = 'loading'
     products.value = []
-
-    let variantsValues: VariantsValues[] = []
-    for (const el of checkboxData.value) {
-      const variantExists = variantsValues.find((e) => e.id === el.id)
-      if (variantExists) {
-        variantsValues = variantsValues.map((e) =>
-          e.id === el.id ? { ...e, variants: [...e.variants, el.title] } : e
-        )
-      } else {
-        variantsValues.push({ id: el.id, variants: [el.title] })
-      }
-    }
 
     const arrayPoructId: number[][] = []
 
@@ -89,17 +74,11 @@ export const useFilterStore = defineStore('filter', () => {
       arrayPoructId.push([])
 
       if (spec.type) {
-        {
-          query = query.gte('valueNumber', spec.minValue)
-          query = query.lte('valueNumber', spec.maxValue)
-        }
+        query = query.gte('valueNumber', spec.minValue)
+        query = query.lte('valueNumber', spec.maxValue)
       } else {
-        for (const variant of variantsValues) {
-          if (spec.id == variant.id) {
-            {
-              query = query.in('valueString', variant.variants)
-            }
-          }
+        if (spec.variantsValues.length) {
+          query = query.in('valueString', spec.variantsValues)
         }
       }
       const { data, error }: PostgrestResponse<QueryData> = await query
@@ -128,7 +107,13 @@ export const useFilterStore = defineStore('filter', () => {
 
     if (queryProducts && specData) {
       products.value = queryProducts.map((p) => {
-        const specifications = specData.filter((s) => p.id === s.productId)
+        const specifications = specData
+          .filter((s) => p.id === s.productId)
+          .sort((a, b) =>
+            a.categorySpecificationsId.title.localeCompare(
+              b.categorySpecificationsId.title
+            )
+          )
         return { ...p, specifications }
       })
     }
@@ -141,7 +126,6 @@ export const useFilterStore = defineStore('filter', () => {
     search,
     sortAscents,
     specificationsValues,
-    checkboxData,
     sortColumn
   }
 })

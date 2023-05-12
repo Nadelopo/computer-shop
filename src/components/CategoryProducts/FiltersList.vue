@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useFilterStore } from '@/stores/filterStore'
@@ -28,9 +28,12 @@ type checkboxDefineExpose = {
 const { getCategorySpecifications } = useCategoriesStore()
 
 const { setFilteredProducts } = useFilterStore()
-const { specificationsValues, checkboxData } = storeToRefs(useFilterStore())
+const { specificationsValues } = storeToRefs(useFilterStore())
 
-const categoryId = Number(useRoute().params.id)
+const route = useRoute()
+const router = useRouter()
+
+const categoryId = Number(route.params.id)
 
 const specifications = ref<CategorySpecificationRead[]>([])
 
@@ -45,13 +48,15 @@ onBeforeMount(async () => {
             id: e.id,
             minValue: Number(e.min),
             maxValue: Number(e.max),
-            type: e.type
+            type: e.type,
+            enTitle: e.enTitle
           }
         } else {
           return {
             id: e.id,
-            variantsValues: e.variantsValues,
-            type: e.type
+            variantsValues: [],
+            type: e.type,
+            enTitle: e.enTitle
           }
         }
       })
@@ -63,16 +68,25 @@ const inputRef = ref<inputDefineExpose[]>([])
 const checkboxRef = ref<checkboxDefineExpose[]>([])
 
 const filter = async () => {
-  for (let input of inputRef.value) {
-    input.apply()
-  }
-
-  for (let checkbox of checkboxRef.value) {
-    const checkboxResult = checkbox.apply()
-    if (checkboxResult) {
-      checkboxData.value.push(checkboxResult)
+  inputRef.value.forEach((e) => e.apply())
+  checkboxRef.value.forEach((e) => e.apply())
+  setTimeout(() => {
+    let query: any = {}
+    for (const value of specificationsValues.value) {
+      if (!value.type) {
+        query[value.enTitle] = value.variantsValues
+        console.log(query)
+      } else {
+        query[value.enTitle] = `${value.minValue}_${value.maxValue}`
+      }
     }
-  }
+    router.push({
+      query: {
+        ...route.query,
+        ...query
+      }
+    })
+  })
 
   setFilteredProducts(categoryId)
 }
@@ -130,6 +144,7 @@ const cancel = () => {
               <checkbox-filter
                 :id="specifications[i].id"
                 ref="checkboxRef"
+                v-model="value.variantsValues"
                 :title="variant"
                 :en-title="specifications[i].enTitle"
               />

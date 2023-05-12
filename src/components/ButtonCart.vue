@@ -11,12 +11,12 @@ type Props = {
   width?: number
 }
 
+const props = defineProps<Props>()
+
 const loader = ref(false)
 
 const { addToCart } = useCartStore()
 const { cartItems } = storeToRefs(useCartStore())
-
-const props = defineProps<Props>()
 
 const width = computed(() => {
   return props.width ? props.width + 'px' : 'auto'

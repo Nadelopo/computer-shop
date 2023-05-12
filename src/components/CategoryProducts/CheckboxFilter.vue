@@ -6,21 +6,40 @@ type Props = {
   title: string
   enTitle: string
   units?: string
+  modelValue: string[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
   units: ''
 })
 
+const emit = defineEmits(['update:modelValue'])
+
 const value = ref(false)
 
 defineExpose({
   apply: () => {
     if (value.value) {
+      setTimeout(() => {
+        if (!props.modelValue.includes(props.title)) {
+          emit('update:modelValue', [...props.modelValue, props.title])
+        }
+      })
+
       return { id: props.id, title: props.title }
+    } else {
+      setTimeout(() => {
+        if (props.modelValue.includes(props.title)) {
+          emit(
+            'update:modelValue',
+            props.modelValue.filter((item) => item !== props.title)
+          )
+        }
+      })
     }
   },
   resetValue: () => {
+    emit('update:modelValue', [])
     value.value = false
   }
 })

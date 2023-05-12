@@ -41,8 +41,8 @@ const sort = async (type: SortType) => {
 
   sortAscents[type] = !sortAscents[type]
   router.push({
-    ...route.query,
     query: {
+      ...route.query,
       sort: type + '_' + sortAscents[type]
     }
   })
