@@ -1,4 +1,5 @@
 import { reactive, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { defineStore, storeToRefs } from 'pinia'
 import { supabase } from '@/supabase'
 import { useProductsStore } from './productsStore'
@@ -7,20 +8,25 @@ import type { PostgrestResponse } from '@supabase/supabase-js'
 import type { ProductReadWithDetails } from '@/types/tables/products.types'
 import type { SpecificationReadWithDetails } from '@/types/tables/specifications.types'
 
-export type SpecificationsValues =
+type SpecificationsValues = {
+  id: number
+  enTitle: string
+  title: string
+} & (
   | {
-      id: number
+      min: number
+      max: number
+      step: number
       minValue: number
       maxValue: number
       type: true
-      enTitle: string
     }
   | {
-      id: number
       variantsValues: string[]
+      values: string[]
       type: false
-      enTitle: string
     }
+)
 
 export type CheckboxData = {
   id: number
@@ -39,6 +45,9 @@ type QueryData = {
 }
 
 export const useFilterStore = defineStore('filter', () => {
+  const route = useRoute()
+  const router = useRouter()
+
   const { loader, products } = storeToRefs(useProductsStore())
   type SortType = keyof typeof sortAscents
   const specificationsValues = ref<SpecificationsValues[]>([])
@@ -54,6 +63,24 @@ export const useFilterStore = defineStore('filter', () => {
   const search = ref('')
 
   async function setFilteredProducts(categoryId: number) {
+    const query: {
+      q: string
+      [key: string]: string | string[]
+    } = { q: search.value }
+    for (const value of specificationsValues.value) {
+      if (value.type) {
+        query[value.enTitle] = `${value.minValue}_${value.maxValue}`
+      } else {
+        query[value.enTitle] = value.values
+      }
+    }
+    router.push({
+      query: {
+        ...route.query,
+        ...query
+      }
+    })
+
     loader.value = 'loading'
     products.value = []
 
@@ -77,8 +104,8 @@ export const useFilterStore = defineStore('filter', () => {
         query = query.gte('valueNumber', spec.minValue)
         query = query.lte('valueNumber', spec.maxValue)
       } else {
-        if (spec.variantsValues.length) {
-          query = query.in('valueString', spec.variantsValues)
+        if (spec.values.length) {
+          query = query.in('valueString', spec.values)
         }
       }
       const { data, error }: PostgrestResponse<QueryData> = await query

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { onBeforeMount } from 'vue'
+import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useFilterStore } from '@/stores/filterStore'
@@ -8,22 +8,6 @@ import InputFilter from '@/components/CategoryProducts/InputFilter.vue'
 import CheckboxFilter from '@/components/CategoryProducts/CheckboxFilter.vue'
 import VButton from '../UI/VButton.vue'
 import SkeletonFiltersVue from './SkeletonFilters.vue'
-import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
-
-type inputDefineExpose = {
-  apply: () => void
-  resetValue: () => void
-}
-
-type checkboxDefineExpose = {
-  apply: () =>
-    | {
-        id: number
-        title: string
-      }
-    | undefined
-  resetValue: () => void
-}
 
 const { getCategorySpecifications } = useCategoriesStore()
 
@@ -31,129 +15,105 @@ const { setFilteredProducts } = useFilterStore()
 const { specificationsValues } = storeToRefs(useFilterStore())
 
 const route = useRoute()
-const router = useRouter()
 
 const categoryId = Number(route.params.id)
-
-const specifications = ref<CategorySpecificationRead[]>([])
 
 onBeforeMount(async () => {
   const data = await getCategorySpecifications(categoryId)
   if (data) {
-    specifications.value = data.sort((a, b) => Number(b.type) - Number(a.type))
     specificationsValues.value = data
       .map((e) => {
+        const { id, enTitle, title } = e
         if (e.type) {
+          const { min, max, step } = e
           return {
-            id: e.id,
-            minValue: Number(e.min),
-            maxValue: Number(e.max),
+            id,
+            enTitle,
+            title,
             type: e.type,
-            enTitle: e.enTitle
+            min,
+            max,
+            minValue: min,
+            maxValue: max,
+            step
           }
         } else {
           return {
-            id: e.id,
-            variantsValues: [],
+            id,
+            enTitle,
+            title,
             type: e.type,
-            enTitle: e.enTitle
+            variantsValues: e.variantsValues,
+            values: []
           }
         }
       })
       .sort((a, b) => Number(b.type) - Number(a.type))
   }
+  const query = route.query
+  for (const value of specificationsValues.value) {
+    const field = query[value.enTitle]
+    if (field && value.type && typeof field === 'string') {
+      const [min, max] = field.split('_').map(Number)
+      value.minValue = min
+      value.maxValue = max
+    }
+    if (field && !value.type) {
+      value.values = [...(Array.isArray(field) ? field : [field])].map(String)
+    }
+  }
 })
 
-const inputRef = ref<inputDefineExpose[]>([])
-const checkboxRef = ref<checkboxDefineExpose[]>([])
-
-const filter = async () => {
-  inputRef.value.forEach((e) => e.apply())
-  checkboxRef.value.forEach((e) => e.apply())
-  setTimeout(() => {
-    let query: any = {}
-    for (const value of specificationsValues.value) {
-      if (!value.type) {
-        query[value.enTitle] = value.variantsValues
-        console.log(query)
-      } else {
-        query[value.enTitle] = `${value.minValue}_${value.maxValue}`
-      }
-    }
-    router.push({
-      query: {
-        ...route.query,
-        ...query
-      }
-    })
-  })
-
-  setFilteredProducts(categoryId)
-}
-
 const cancel = () => {
-  specifications.value.forEach((spec, i) => {
-    const specificationValue = specificationsValues.value[i]
-    if (spec.type && specificationValue.type) {
-      specificationValue.minValue = spec.min
-      specificationValue.maxValue = spec.max
+  specificationsValues.value.forEach((spec) => {
+    if (spec.type) {
+      spec.minValue = spec.min
+      spec.maxValue = spec.max
+    }
+    if (!spec.type && !spec.type) {
+      spec.values = []
     }
   })
-
-  inputRef.value.forEach((e) => e.resetValue())
-  checkboxRef.value.forEach((e) => e.resetValue())
-
-  filter()
+  setFilteredProducts(categoryId)
 }
 </script>
 
 <template>
   <div>
-    <div
-      v-if="specifications.length && specificationsValues.length"
-      class="filters"
-    >
-      <InputFilter
-        ref="inputRef"
-        :max="300000"
-        :step="500"
-        title="цена"
-        class="mb-6"
-      />
+    <div v-if="specificationsValues.length" class="filters">
+      <input-filter :max="300000" :step="500" title="цена" class="mb-6" />
 
-      <template v-for="(value, i) in specificationsValues" :key="value.id">
+      <template v-for="value in specificationsValues" :key="value.id">
         <template v-if="value.type">
-          <InputFilter
-            ref="inputRef"
+          <input-filter
             v-model:min-value="value.minValue"
             v-model:max-value="value.maxValue"
-            :max="Number(specifications[i].max)"
-            :min="Number(specifications[i].min)"
-            :step="Number(specifications[i].step)"
-            :title="specifications[i].title"
+            :max="value.max"
+            :min="value.min"
+            :step="value.step"
+            :title="value.title"
             class="mb-6"
           />
         </template>
         <template v-else>
-          <div class="text-center">{{ specifications[i].title }}</div>
-          <div
-            v-for="variant in specifications[i].variantsValues"
-            :key="variant"
-          >
+          <div class="text-center">{{ value.title }}</div>
+          <div v-for="variant in value.variantsValues" :key="variant">
             <div>
               <checkbox-filter
-                :id="specifications[i].id"
-                ref="checkboxRef"
-                v-model="value.variantsValues"
+                :id="value.id"
+                v-model="value.values"
                 :title="variant"
-                :en-title="specifications[i].enTitle"
+                :en-title="value.enTitle"
               />
             </div>
           </div>
         </template>
       </template>
       <div>
-        <v-button class="mx-auto my-4 w-full" @click="filter">
+        <v-button
+          class="mx-auto my-4 w-full"
+          @click="setFilteredProducts(categoryId)"
+        >
           применить
         </v-button>
         <v-button class="mx-auto w-full" @click="cancel"> сбросить </v-button>

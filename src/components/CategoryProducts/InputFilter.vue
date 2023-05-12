@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-
 type Props = {
   min?: number
   max: number
@@ -8,44 +6,27 @@ type Props = {
   title?: string
 }
 
+const minValue = defineModel<number>('minValue', { required: true })
+const maxValue = defineModel<number>('maxValue', { required: true })
+
 const props = withDefaults(defineProps<Props>(), {
   min: 0,
   step: 1,
   title: ''
 })
 
-const emit = defineEmits(['update:minValue', 'update:maxValue'])
-
-const minDefault = String(props.min)
-const maxDefault = String(props.max)
-
-const min = ref(props.min)
-const max = ref(props.max)
-
 const onChange = () => {
-  const prevMin = min.value
-  const prevMax = max.value
-
-  if (min.value > Number(maxDefault)) {
-    min.value = Number(maxDefault)
+  const prevMin = minValue.value
+  const prevMax = maxValue.value
+  if (minValue.value > Number(props.max)) {
+    minValue.value = Number(props.max)
   }
 
-  if (min.value > max.value) {
-    max.value = prevMin
-    min.value = prevMax
+  if (minValue.value > maxValue.value) {
+    maxValue.value = prevMin
+    minValue.value = prevMax
   }
 }
-
-defineExpose({
-  apply: () => {
-    emit('update:minValue', min.value)
-    emit('update:maxValue', max.value)
-  },
-  resetValue: () => {
-    min.value = props.min
-    max.value = props.max
-  }
-})
 </script>
 
 <template>
@@ -55,10 +36,10 @@ defineExpose({
       <div>
         <input
           ref="minRef"
-          v-model.number="min"
+          v-model.number="minValue"
           :step="step"
-          :min="minDefault"
-          :max="maxDefault"
+          :min="props.min"
+          :max="props.max"
           class="filter_price"
           placeholder="0"
           type="number"
@@ -69,12 +50,12 @@ defineExpose({
       <div class="text-end">
         <input
           ref="maxRef"
-          v-model.number="max"
+          v-model.number="maxValue"
           :step="step"
-          :min="minDefault"
-          :nax="maxDefault"
+          :min="props.min"
+          :max="props.max"
           class="filter_price"
-          :placeholder="maxDefault"
+          :placeholder="String(props.max)"
           type="number"
           @input="onChange"
         />
