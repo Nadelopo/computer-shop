@@ -15,9 +15,16 @@ const props = withDefaults(defineProps<Props>(), {
   title: ''
 })
 
-const onChange = () => {
-  const prevMin = minValue.value
+const onChange = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  const inputValue = target?.value
+  if (inputValue[0] === '0') {
+    target.value = String(minValue.value)
+  }
+
+  const prevMin = minValue.value > props.max ? props.max : minValue.value
   const prevMax = maxValue.value
+
   if (minValue.value > Number(props.max)) {
     minValue.value = Number(props.max)
   }
@@ -25,6 +32,10 @@ const onChange = () => {
   if (minValue.value > maxValue.value) {
     maxValue.value = prevMin
     minValue.value = prevMax
+  }
+
+  if (maxValue.value > props.max) {
+    maxValue.value = props.max
   }
 }
 </script>
@@ -43,7 +54,7 @@ const onChange = () => {
           class="filter_price"
           placeholder="0"
           type="number"
-          @input="onChange"
+          @change="onChange"
         />
       </div>
       <div class="line"></div>
@@ -57,7 +68,7 @@ const onChange = () => {
           class="filter_price"
           :placeholder="String(props.max)"
           type="number"
-          @input="onChange"
+          @change="onChange"
         />
       </div>
     </div>
