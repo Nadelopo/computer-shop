@@ -108,7 +108,7 @@ const open = ref(false)
                 </router-link>
                 <div v-if="user" @click="logout">выйти</div>
                 <router-link v-else :to="{ name: 'Auth' }">войти</router-link>
-                <router-link :to="{ name: 'Home' }" @click="checkAuth">
+                <router-link :to="{ name: 'ProfileMain' }" @click="checkAuth">
                   профиль
                 </router-link>
               </template>
@@ -119,7 +119,6 @@ const open = ref(false)
           </div>
           <div>
             <router-link :to="{ name: 'Cart' }">
-              <!-- <img src="@/assets/img/shopCart.png" class="cart__icon" alt="" /> -->
               <CartSVG height="27" />
             </router-link>
           </div>

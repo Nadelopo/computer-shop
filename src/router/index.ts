@@ -77,6 +77,19 @@ const router = createRouter({
       path: '/products/:category/:categoryId/:productId',
       name: 'Product',
       component: () => import('@/pages/Product.vue')
+    },
+    {
+      path: '/profile',
+      name: 'Profile',
+      component: () => import('@/pages/Profile/Profile.vue'),
+      meta: { auth: true },
+      children: [
+        {
+          path: '',
+          name: 'ProfileMain',
+          component: () => import('@/pages/Profile/Main.vue')
+        }
+      ]
     }
   ]
 })
