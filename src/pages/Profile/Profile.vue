@@ -3,15 +3,15 @@ import { onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import { getAllByColumns } from '@/utils/queries/db'
-import type { ReviewReadWithDetails } from '@/types/tables/reviews'
+import type { ReviewWithDetails } from '@/types/tables/reviews'
 
 const { user } = storeToRefs(useUserStore())
 
-const reviews = ref<ReviewReadWithDetails[]>([])
+const reviews = ref<ReviewWithDetails[]>([])
 
 onBeforeMount(async () => {
   if (user.value) {
-    const data = await getAllByColumns<'reviews', ReviewReadWithDetails>(
+    const data = await getAllByColumns<'reviews', ReviewWithDetails>(
       'reviews',
       [
         {
@@ -20,7 +20,11 @@ onBeforeMount(async () => {
         }
       ],
       {
-        select: '*, users(name)'
+        select: '*, users(name), categories(id, enTitle)',
+        order: {
+          value: 'created_at',
+          ascending: false
+        }
       }
     )
     if (data) {
@@ -45,7 +49,7 @@ onBeforeMount(async () => {
         </router-link>
       </div>
       <div>
-        <router-view />
+        <router-view :reviews="reviews" />
       </div>
     </div>
   </div>

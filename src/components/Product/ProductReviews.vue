@@ -6,7 +6,6 @@ import { createOne, getAllByColumns, updateOne } from '@/utils/queries/db'
 import { useUserStore } from '@/stores/userStore'
 import RatingStars from '../RatingStars.vue'
 import VButton from '@/components/UI/VButton.vue'
-import AvatarSvg from '@/assets/icons/avatar.svg?component'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
 import type {
   ReviewCreateRating,
@@ -14,8 +13,8 @@ import type {
   UsersRated
 } from '@/types/tables/reviews'
 import type { UpdateProductRating } from '@/pages/Product.vue'
-
-// import { useRoute } from 'vue-router'
+import ReviewsBlock from './ReviewsBlock.vue'
+import { useRoute } from 'vue-router'
 
 type ReviewFormCreate = {
   dignities: string
@@ -36,6 +35,8 @@ const emit = defineEmits<{
 
 const { user } = storeToRefs(useUserStore())
 
+const categoryId = Number(useRoute().params.categoryId)
+
 const reviews = ref<ReviewReadWithDetails[]>([])
 const showReviewForm = ref(false)
 
@@ -49,7 +50,11 @@ const loadReviews = async () => {
       }
     ],
     {
-      select: '*, users(name)'
+      select: '*, users(name)',
+      order: {
+        value: 'created_at',
+        ascending: false
+      }
     }
   )
 
@@ -88,13 +93,13 @@ const createReview = async () => {
         dignities: form.value.dignities || null,
         disadvantages: form.value.disadvantages || null,
         comment: form.value.comment || null,
-        rating: form.value.rating
+        rating: form.value.rating,
+        categoryId
       },
       {
         select: '*, users(name)'
       }
     )
-    console.log(data)
     if (data) {
       reviews.value.unshift(data)
       form.value = { ...copyForm }
@@ -252,7 +257,31 @@ watch(() => props.productId, loadReviews)
         </form>
       </Transition>
       <div class="reviews">
-        <div v-for="review in reviews" :key="review.id" class="review">
+        <template v-for="review in reviews" :key="review.id">
+          <reviews-block :review="review">
+            <div class="flex gap-x-6 mt-4">
+              <div
+                v-for="(el, i) in ratingBtns(review)"
+                :key="i"
+                class="flex gap-x-2"
+              >
+                <button
+                  class="reviews__arrow"
+                  @click="evaluationReview(review, el.type)"
+                >
+                  <ArrowSVG
+                    :class="[
+                      el.action,
+                      userAlreadyRated(review) === el.type && 'coloured'
+                    ]"
+                  />
+                </button>
+                <span>{{ el.value }}</span>
+              </div>
+            </div>
+          </reviews-block>
+        </template>
+        <!-- <div v-for="review in reviews" :key="review.id" class="review">
           <div class="flex gap-x-6">
             <AvatarSvg width="40" fill="#cdcdcd" />
             <div class="flex items-center">{{ review.users.name }}</div>
@@ -275,8 +304,7 @@ watch(() => props.productId, loadReviews)
             <div class="title">Комментарий</div>
             <div>{{ review.comment }}</div>
           </div>
-          <button>asdaasdads</button>
-          <div class="flex gap-x-6">
+          <div class="flex gap-x-6 mt-4">
             <div
               v-for="(el, i) in ratingBtns(review)"
               :key="i"
@@ -296,7 +324,7 @@ watch(() => props.productId, loadReviews)
               <span>{{ el.value }}</span>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -324,11 +352,6 @@ watch(() => props.productId, loadReviews)
     transition: box-shadow .6s
     font-weight: 300
 
-.title
-  font-size: 20px
-  font-weight: 500
-  margin-bottom: 10px
-
 .review__form-move,
 .review__form-enter-active,
 .review__form-leave-active
@@ -346,23 +369,19 @@ watch(() => props.productId, loadReviews)
   display: flex
   flex-direction: column
   gap: 50px
-  .review
-    background: #f6f6f6
-    border-radius: 8px
-    padding: 8px 16px
-    &__arrow
-      cursor: pointer
-      &:hover .like
-        fill: var(--color-main)
-      &:hover .dislike
-        fill: #f44336
-      svg
-        width: 16px
-        transition: .1s
-        &.dislike
-          transform: rotate(180deg)
-          &.coloured
-            fill: #f44336
-        &.like.coloured
-          fill: var(--color-main)
+  &__arrow
+    cursor: pointer
+    &:hover .like
+      fill: var(--color-text)
+    &:hover .dislike
+      fill: #f44336
+    svg
+      width: 16px
+      transition: .1s
+      &.dislike
+        transform: rotate(180deg)
+        &.coloured
+          fill: #f44336
+      &.like.coloured
+        fill: var(--color-text)
 </style>
