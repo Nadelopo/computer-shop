@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import Swal from 'sweetalert2'
 import { createOne, getAllByColumns, updateOne } from '@/utils/queries/db'
 import { useUserStore } from '@/stores/userStore'
 import RatingStars from '../RatingStars.vue'
+import ReviewsBlock from './ReviewsBlock.vue'
 import VButton from '@/components/UI/VButton.vue'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
 import type {
@@ -13,8 +15,6 @@ import type {
   UsersRated
 } from '@/types/tables/reviews'
 import type { UpdateProductRating } from '@/pages/Product.vue'
-import ReviewsBlock from './ReviewsBlock.vue'
-import { useRoute } from 'vue-router'
 
 type ReviewFormCreate = {
   dignities: string
@@ -36,6 +36,7 @@ const emit = defineEmits<{
 const { user } = storeToRefs(useUserStore())
 
 const categoryId = Number(useRoute().params.categoryId)
+const commId = String(useRoute().query.comm_id)
 
 const reviews = ref<ReviewReadWithDetails[]>([])
 const showReviewForm = ref(false)
@@ -60,6 +61,14 @@ const loadReviews = async () => {
 
   if (data) {
     reviews.value = data
+    await nextTick()
+    const el = document.getElementById(commId)
+
+    if (el) {
+      setTimeout(() => {
+        el.scrollIntoView()
+      }, 100)
+    }
   }
 }
 loadReviews()
@@ -258,7 +267,11 @@ watch(() => props.productId, loadReviews)
       </Transition>
       <div class="reviews">
         <template v-for="review in reviews" :key="review.id">
-          <reviews-block :review="review">
+          <reviews-block
+            :id="review.id"
+            :review="review"
+            :class="{ active: commId === String(review.id) }"
+          >
             <div class="flex gap-x-6 mt-4">
               <div
                 v-for="(el, i) in ratingBtns(review)"
@@ -281,50 +294,6 @@ watch(() => props.productId, loadReviews)
             </div>
           </reviews-block>
         </template>
-        <!-- <div v-for="review in reviews" :key="review.id" class="review">
-          <div class="flex gap-x-6">
-            <AvatarSvg width="40" fill="#cdcdcd" />
-            <div class="flex items-center">{{ review.users.name }}</div>
-            <div class="flex gap-x-2 items-center">
-              <RatingStars :model-value="review.rating" />
-            </div>
-            <div class="ml-auto">
-              {{ new Date(review.created_at).toLocaleDateString() }}
-            </div>
-          </div>
-          <div v-if="review.dignities" class="mb-4 mt-6">
-            <div class="title">Достоинства</div>
-            <div>{{ review.dignities }}</div>
-          </div>
-          <div v-if="review.disadvantages" class="mb-4">
-            <div class="title">Недостатки</div>
-            <div>{{ review.disadvantages }}</div>
-          </div>
-          <div v-if="review.comment" class="mb-4">
-            <div class="title">Комментарий</div>
-            <div>{{ review.comment }}</div>
-          </div>
-          <div class="flex gap-x-6 mt-4">
-            <div
-              v-for="(el, i) in ratingBtns(review)"
-              :key="i"
-              class="flex gap-x-2"
-            >
-              <button
-                class="review__arrow"
-                @click="evaluationReview(review, el.type)"
-              >
-                <ArrowSVG
-                  :class="[
-                    el.action,
-                    userAlreadyRated(review) === el.type && 'coloured'
-                  ]"
-                />
-              </button>
-              <span>{{ el.value }}</span>
-            </div>
-          </div>
-        </div> -->
       </div>
     </div>
   </div>
@@ -369,6 +338,8 @@ watch(() => props.productId, loadReviews)
   display: flex
   flex-direction: column
   gap: 50px
+  .active
+    box-shadow: 0 0 3px 0px #51c7bd
   &__arrow
     cursor: pointer
     &:hover .like

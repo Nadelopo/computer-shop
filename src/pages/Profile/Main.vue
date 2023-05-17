@@ -44,6 +44,9 @@ const { user } = storeToRefs(useUserStore())
               categoryId: review.categories.id,
               category: review.categories.enTitle,
               productId: review.productId
+            },
+            query: {
+              comm_id: review.id
             }
           }"
         >
