@@ -3,9 +3,12 @@ import RatingStars from '../RatingStars.vue'
 import AvatarSvg from '@/assets/icons/avatar.svg?component'
 import type { ReviewReadWithDetails } from '@/types/tables/reviews'
 
-defineProps<{
+const props = defineProps<{
   review: ReviewReadWithDetails
+  color?: string
 }>()
+
+const color = props.color ?? '#f6f6f6'
 </script>
 
 <template>
@@ -39,7 +42,7 @@ defineProps<{
 <style scoped lang="sass">
 
 .review__root
-  background: #f6f6f6
+  background: v-bind(color)
   border-radius: 8px
   padding: 8px 16px
   .title

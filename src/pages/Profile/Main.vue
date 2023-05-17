@@ -30,8 +30,11 @@ const { user } = storeToRefs(useUserStore())
     <div class="reviews__grid">
       <div>
         <div class="text-3xl font-bold">Отзывы</div>
-        <router-link :to="{ name: 'ProfileMain' }" class="text-xl color-text">
-          Посмотреть все →
+        <router-link
+          :to="{ name: 'ProfileReviews' }"
+          class="text-xl color-text"
+        >
+          Посмотреть все
         </router-link>
       </div>
       <div v-if="reviews.length" class="last__reviews">
@@ -50,7 +53,7 @@ const { user } = storeToRefs(useUserStore())
             }
           }"
         >
-          <reviews-block :review="review" />
+          <reviews-block :review="review" color="#fff" />
         </router-link>
       </div>
     </div>

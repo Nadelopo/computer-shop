@@ -39,8 +39,8 @@ onBeforeMount(async () => {
     <div class="grid">
       <div class="sidebar">
         <router-link :to="{ name: 'ProfileMain' }"> Мой профиль </router-link>
-        <router-link :to="{ name: 'ProfileMain' }"> Заказы </router-link>
-        <router-link :to="{ name: 'ProfileMain' }"> Доставка </router-link>
+        <router-link :to="{ name: 'ProfileOrders' }"> Заказы </router-link>
+        <router-link :to="{ name: 'ProfileDelivery' }"> Доставка </router-link>
         <router-link :to="{ name: 'ProfileMain' }">
           Гарантийный отдел
         </router-link>

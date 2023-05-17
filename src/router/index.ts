@@ -88,6 +88,21 @@ const router = createRouter({
           path: '',
           name: 'ProfileMain',
           component: () => import('@/pages/Profile/Main.vue')
+        },
+        {
+          path: 'reviews',
+          name: 'ProfileReviews',
+          component: () => import('@/pages/Profile/Reviews.vue')
+        },
+        {
+          path: 'orders',
+          name: 'ProfileOrders',
+          component: () => import('@/pages/Profile/Orders.vue')
+        },
+        {
+          path: 'delivery',
+          name: 'ProfileDelivery',
+          component: () => import('@/pages/Profile/Delivery.vue')
         }
       ]
     }
