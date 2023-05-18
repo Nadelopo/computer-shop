@@ -11,6 +11,13 @@ const router = useRouter()
 
 type SortType = keyof typeof sortAscents
 
+function isSortType(key: string): key is SortType {
+  if (key in sortAscents) {
+    return true
+  }
+  return false
+}
+
 const categoryId = Number(route.params.id)
 
 const { sortAscents, setFilteredProducts } = useFilterStore()
@@ -21,10 +28,10 @@ const querySort =
 
 const watcher = watch(specificationsValues, () => {
   if (querySort) {
-    const querySortTitle = querySort[0] as SortType
-    const querySortValue = JSON.parse(querySort[1])
+    const querySortTitle = querySort[0]
+    const querySortValue: boolean = JSON.parse(querySort[1])
 
-    if (querySortTitle in sortAscents) {
+    if (isSortType(querySortTitle)) {
       sortAscents[querySortTitle] = querySortValue
       sortColumn.value = querySortTitle
       setFilteredProducts(categoryId)

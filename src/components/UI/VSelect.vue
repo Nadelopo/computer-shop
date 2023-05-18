@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
+import { computed, onUnmounted, ref, watchEffect } from 'vue'
 import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
 
@@ -21,16 +21,6 @@ const selected = ref('')
 const optionsRefs = ref<HTMLButtonElement[]>([])
 
 const color = ref('#a9a9a9')
-
-watch(
-  () => props.modelValue,
-  (cur) => {
-    const find = props.options.find((e) => e.value === cur)
-    if (!find) {
-      selected.value = String(cur)
-    }
-  }
-)
 
 const findSelectedValue = props.options.find(
   (e) => e.value === props.modelValue
