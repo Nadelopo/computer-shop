@@ -29,7 +29,7 @@ export async function getOneById<T extends Table, R = null>(
   table: T,
   id: string | number,
   params?: getParams
-): Promise<R extends null ? ResultData[T] : R | null> {
+): Promise<(R extends null ? ResultData[T] : R) | null> {
   const { data, error } = await supabase
     .from(table)
     .select(params?.select)
