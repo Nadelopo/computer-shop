@@ -106,22 +106,33 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   async function setCartItemsWithDetails(cartItems: ProductInStorage[]) {
-    const newProducts = []
-    for (const [i, el] of cartItems.entries()) {
-      const product = await getOneById<'products', QueryProduct>(
-        'products',
-        el.productId,
-        {
-          select: 'categoryId, discount, id, img, name, price, quantity, rating'
-        }
-      )
-      if (product) {
-        newProducts.push({ ...product, count: el.count, cartItemId: el.id })
-      }
-      if (i === cartItems.length - 1) {
-        cartItemsWithDetails.value = newProducts
+    const idList: number[] = cartItems.map((e) => e.productId)
+
+    const { data } = await supabase
+      .from<QueryProduct>('products')
+      .select('categoryId, discount, id, img, name, price, quantity, rating')
+      .in('id', idList)
+
+    const modifiedData: ProductCart[] = []
+    for (const product of data || []) {
+      const item = cartItems.find((i) => i.productId === product.id)
+      if (item) {
+        modifiedData.push({
+          ...product,
+          count: item.count,
+          cartItemId: item.id
+        })
       }
     }
+
+    const orderedData = []
+    for (const id of idList) {
+      const item = modifiedData.find((i) => i.id === id)
+      if (item) {
+        orderedData.push(item)
+      }
+    }
+    cartItemsWithDetails.value = orderedData
   }
 
   async function increaseItemCount(product: ProductCart) {

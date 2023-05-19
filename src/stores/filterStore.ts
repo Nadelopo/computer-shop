@@ -84,10 +84,9 @@ export const useFilterStore = defineStore('filter', () => {
     loader.value = 'loading'
     products.value = []
 
-    const arrayPoructId: number[][] = []
-
+    const promises = []
     for (const spec of specificationsValues.value) {
-      let query = supabase
+      const query = supabase
         .from('specifications')
         .select(
           'categorySpecificationsId!inner(id, enTitle), productId!inner(id, categoryId)'
@@ -98,28 +97,27 @@ export const useFilterStore = defineStore('filter', () => {
         })
         .ilike('productId.name', formatSearch(search.value))
 
-      arrayPoructId.push([])
-
       if (spec.type) {
-        query = query.gte('valueNumber', spec.minValue)
-        query = query.lte('valueNumber', spec.maxValue)
+        query
+          .gte('valueNumber', spec.minValue)
+          .lte('valueNumber', spec.maxValue)
       } else {
         if (spec.values.length) {
-          query = query.in('valueString', spec.values)
+          query.in('valueString', spec.values)
         }
       }
-      const { data, error }: PostgrestResponse<QueryData> = await query
-      if (error) console.log(error)
-      if (data) {
-        for (const el of data) {
-          arrayPoructId.at(-1)?.push(el.productId.id)
-        }
-      }
+      promises.push(query)
     }
+    const results: PostgrestResponse<QueryData>[] = await Promise.all(promises)
+    const data = results
+      .map((e) => e.data)
+      .filter((e): e is QueryData[] => e !== null)
 
-    const filteredProductsId = arrayPoructId[0].filter((value) => {
-      return arrayPoructId.every((arr) => arr.includes(value))
-    })
+    const idList = data.map((e) => e.map((e) => e.productId.id))
+
+    const filteredProductsId = idList.reduce((a, b) =>
+      a.filter((c) => b.includes(c))
+    )
 
     const { data: queryProducts } = await supabase
       .from<ProductReadWithDetails>('products')
