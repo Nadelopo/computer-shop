@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useFilterStore } from '@/stores/filterStore'
 import VButton from '../UI/VButton.vue'
-import ArrowSVG from '@/assets/icons/arrow.svg'
+import ArrowSVG from '@/assets/icons/arrow.svg?component'
 
 const route = useRoute()
 const router = useRouter()
@@ -58,8 +58,8 @@ const sort = async (type: SortType) => {
 
 <template>
   <div class="sort">
-    <div>соритровка по:</div>
-    <v-button @click="sort('price')">
+    <div class="font-medium">соритровка по:</div>
+    <v-button min-width="auto" @click="sort('price')">
       <span class="mr-3">цене</span>
       <ArrowSVG :class="!sortAscents.price && 'down'" />
     </v-button>
