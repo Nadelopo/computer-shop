@@ -119,20 +119,20 @@ export const useFilterStore = defineStore('filter', () => {
       a.filter((c) => b.includes(c))
     )
 
-    const { data: queryProducts } = await supabase
+    const { data: productsData } = await supabase
       .from<ProductReadWithDetails>('products')
       .select('*, categoryId(id, enTitle), manufacturerId(id, title)')
       .in('id', filteredProductsId)
       .order(sortColumn.value, { ascending: sortAscents[sortColumn.value] })
 
-    const { data: specData } = await supabase
+    const { data: specificationsData } = await supabase
       .from<SpecificationReadWithDetails>('specifications')
       .select('*, categorySpecificationsId(id, title, units, visible)')
       .in('productId', filteredProductsId)
 
-    if (queryProducts && specData) {
-      products.value = queryProducts.map((p) => {
-        const specifications = specData
+    if (productsData && specificationsData) {
+      products.value = productsData.map((p) => {
+        const specifications = specificationsData
           .filter((s) => p.id === s.productId)
           .sort((a, b) =>
             a.categorySpecificationsId.title.localeCompare(

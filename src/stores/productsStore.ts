@@ -145,8 +145,7 @@ export const useProductsStore = defineStore('products', () => {
   async function updateProductSpecifications(
     specifications: UpdateMany<SpecificationUpdate>[]
   ) {
-    const data = await updateMany('specifications', specifications)
-    return data
+    return await updateMany('specifications', specifications)
   }
 
   return {
