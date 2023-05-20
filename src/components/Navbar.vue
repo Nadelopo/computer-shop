@@ -114,9 +114,9 @@ const open = ref(false)
               </template>
             </v-popup>
           </div>
-          <div>
+          <router-link :to="{ name: 'Favourites' }">
             <FavouritesSVG fill="#fff" width="25" class="cursor-pointer" />
-          </div>
+          </router-link>
           <div>
             <router-link :to="{ name: 'Cart' }">
               <CartSVG height="27" />

@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { formatPrice } from '@/utils/formatPrice'
 import ButtonCart from '../ButtonCart.vue'
 import RatingStars from '../RatingStars.vue'
+import ButtonFavourite from '../ButtonFavourite.vue'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 
 defineProps<{
@@ -45,10 +47,15 @@ defineProps<{
           </div>
         </div>
       </div>
-      <div class="flex flex-col gap-y-3">
-        <div class="text-center">{{ item.price }} ₽</div>
+      <div class="flex justify-around items-end flex-col h-full">
         <div>
-          <button-cart :product-id="item.id" />
+          <button-favourite :product-id="item.id" />
+        </div>
+        <div>
+          <div class="text-end mb-2">{{ formatPrice(item.price) }} </div>
+          <div>
+            <button-cart :product-id="item.id" />
+          </div>
         </div>
       </div>
     </div>

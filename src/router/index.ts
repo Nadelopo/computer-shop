@@ -105,6 +105,11 @@ const router = createRouter({
           component: () => import('@/pages/Profile/Delivery.vue')
         }
       ]
+    },
+    {
+      path: '/favourites',
+      name: 'Favourites',
+      component: () => import('@/pages/Favourites.vue')
     }
   ]
 })
