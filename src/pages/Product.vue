@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { updateOne } from '@/utils/queries/db'
 import { useProductsStore } from '@/stores/productsStore'
 import ProductHeader from '@/components/Product/ProductHeader.vue'
 import ProductSpecifications from '@/components/Product/ProductSpecifications.vue'
 import SimilarProducts from '@/components/Product/SimilarProducts.vue'
 import ProductReviews from '@/components/Product/ProductReviews.vue'
-import { updateOne } from '@/utils/queries/db'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 
 export type UpdateProductRating = {

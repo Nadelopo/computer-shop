@@ -24,26 +24,18 @@ const arr = [5, 4, 3, 2, 1]
 
 <template>
   <div v-if="static" class="flex items-center">
-    <template v-if="modelValue">
-      <div>
-        <label
-          v-for="i in arr"
-          :key="i"
-          :title="`Оценка «${i}»`"
-          class="rating__static"
-          :class="[Math.round(modelValue) + 1 > i ? 'coloured' : 'colourless']"
-        />
-      </div>
-      <div>
-        {{ modelValue.toFixed(2) }}
-      </div>
-    </template>
-    <template v-else>
-      <div class="rating">
-        <label />
-      </div>
-      нет отзывов
-    </template>
+    <div>
+      <label
+        v-for="i in arr"
+        :key="i"
+        :title="`Оценка «${i}»`"
+        class="rating__static"
+        :class="[Math.round(modelValue) + 1 > i ? 'coloured' : 'colourless']"
+      />
+    </div>
+    <div>
+      {{ modelValue ? modelValue.toFixed(2) : 'нет отзывов' }}
+    </div>
   </div>
   <div v-else class="rating area">
     <template v-for="i in arr" :key="i">
