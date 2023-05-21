@@ -23,7 +23,7 @@ const arr = [5, 4, 3, 2, 1]
 </script>
 
 <template>
-  <div v-if="static" class="flex items-center">
+  <div v-if="static" class="flex">
     <div>
       <label
         v-for="i in arr"
@@ -33,7 +33,7 @@ const arr = [5, 4, 3, 2, 1]
         :class="[Math.round(modelValue) + 1 > i ? 'coloured' : 'colourless']"
       />
     </div>
-    <div>
+    <div class="self-center">
       {{ modelValue ? modelValue.toFixed(2) : 'нет отзывов' }}
     </div>
   </div>

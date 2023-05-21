@@ -24,10 +24,12 @@ defineProps<{
     <div class="card__wrapper">
       <div class="img__wrapper"><img :src="item.img" alt="" /></div>
       <div>
-        <div class="cart__link">
-          <div class="mb-4 text-lg flex items-center gap-4">
-            <div>{{ item.name }}</div>
-            <RatingStars :model-value="item.rating" />
+        <div class="card__link">
+          <div class="card__head">
+            <div class="card__title">{{ item.name }}</div>
+            <div>
+              <RatingStars :model-value="item.rating" />
+            </div>
           </div>
           <div
             v-for="specification in item.specifications"
@@ -52,7 +54,9 @@ defineProps<{
           <button-favourite :product-id="item.id" />
         </div>
         <div>
-          <div class="text-end mb-2">{{ formatPrice(item.price) }} </div>
+          <div class="text-end mb-2 text-xl font-medium">
+            {{ formatPrice(item.price) }}
+          </div>
           <div>
             <button-cart :product-id="item.id" />
           </div>
@@ -83,10 +87,19 @@ defineProps<{
     img
       max-height: 220px
 
-.cart__link
+.card__link
   cursor: pointer
   transition: 1s
   &:hover
     transition: .3s
     color: var(--color-text)
+  .card__head
+    display: grid
+    grid-template-columns: auto 1fr
+    gap: 16px
+    align-items: center
+    margin-bottom: 16px
+    font-size: 18px
+    .card__title
+      max-width: 370px
 </style>
