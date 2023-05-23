@@ -22,7 +22,9 @@ defineProps<{
     }"
   >
     <div class="card__wrapper">
-      <div class="img__wrapper"><img :src="item.img" alt="" /></div>
+      <div class="img__wrapper">
+        <img :src="item.img" alt="" />
+      </div>
       <div>
         <div class="card__link">
           <div class="card__head">

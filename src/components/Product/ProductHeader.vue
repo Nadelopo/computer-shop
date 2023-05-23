@@ -9,6 +9,7 @@ import FavouritesSVG from '@/assets/icons/favourites.svg?component'
 import ComparisonSVG from '@/assets/icons/comparison.svg?component'
 import type { ManufacturerRead } from '@/types/tables/manufacturers.types'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
+import ProductButtonFavourite from './ProductButtonFavourite.vue'
 
 const props = defineProps<{
   product: ProductWithSpecifications
@@ -49,11 +50,11 @@ watch(() => props.product.id, loadManufacturer)
       <div>
         <button-cart :width="400" :product-id="product.id" />
         <div class="list__btns">
-          <v-button>
-            <!-- #60efe1 -->
+          <!-- <v-button>
             <FavouritesSVG />
             <span>в избранное</span>
-          </v-button>
+          </v-button> -->
+          <product-button-favourite :product-id="product.id" />
           <v-button>
             <ComparisonSVG />
             <span>в сравнение</span>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
-import FavouriteSVG from '@/assets/icons/favourites.svg'
-import { ref } from 'vue'
-import { getOneById, updateOne } from '@/utils/queries/db'
+import { useAddToFavourites } from '@/utils/useAddToFavourites'
+import FavouriteSVG from '@/assets/icons/favourites.svg?component'
 
 const props = defineProps<{
   productId: number
@@ -15,48 +15,12 @@ const productId = user.value?.favourites.find((e) => e === props.productId)
 
 const state = ref(productId ? true : false)
 
-const fill = ref(productId ? 'var(--color-main)' : 'var(--gray)')
+const fill = computed(() => (state.value ? 'var(--color-main)' : 'var(--gray)'))
 
-const add = async () => {
-  if (user.value) {
-    const favourites =
-      (await getOneById('users', user.value.id, { select: 'favourites' }))
-        ?.favourites || []
-
-    const isFavourite = favourites.includes(props.productId)
-
-    if (state.value) {
-      if (isFavourite) {
-        const data = await updateOne('users', user.value.id, {
-          favourites: user.value.favourites.filter((e) => e !== props.productId)
-        })
-        if (data) {
-          user.value.favourites = data.favourites
-          fill.value = 'var(--gray)'
-          state.value = false
-        }
-      } else {
-        user.value.favourites = favourites
-        fill.value = 'var(--gray)'
-        state.value = false
-      }
-    } else {
-      if (isFavourite) {
-        user.value.favourites = favourites
-        fill.value = 'var(--color-main)'
-        state.value = true
-      } else {
-        const data = await updateOne('users', user.value.id, {
-          favourites: [...user.value.favourites, props.productId]
-        })
-        if (data) {
-          user.value.favourites = data.favourites
-          fill.value = 'var(--color-main)'
-          state.value = true
-        }
-      }
-    }
-  }
+const add = () => {
+  useAddToFavourites(props.productId, state.value, () => {
+    state.value = !state.value
+  })
 }
 </script>
 
