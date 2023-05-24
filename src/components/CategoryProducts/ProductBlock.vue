@@ -2,7 +2,7 @@
 import { formatPrice } from '@/utils/formatPrice'
 import ButtonCart from '../ButtonCart.vue'
 import RatingStars from '../RatingStars.vue'
-import ButtonFavourite from '../ButtonFavourite.vue'
+import IconBtnFavouritesComparison from '../IconButtonFavouritesComparison.vue'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 
 defineProps<{
@@ -52,8 +52,15 @@ defineProps<{
         </div>
       </div>
       <div class="flex justify-around items-end flex-col h-full">
-        <div>
-          <button-favourite :product-id="item.id" />
+        <div class="flex gap-4">
+          <icon-btn-favourites-comparison
+            list-title="comparison"
+            :product-id="item.id"
+          />
+          <icon-btn-favourites-comparison
+            list-title="favourites"
+            :product-id="item.id"
+          />
         </div>
         <div>
           <div class="text-end mb-2 text-xl font-medium">

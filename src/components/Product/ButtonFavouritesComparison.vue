@@ -1,0 +1,68 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useUserStore } from '@/stores/userStore'
+import { useAddFavouritesAndComparison } from '@/utils/useAddFavouritesAndComparison'
+import VButton from '../UI/VButton.vue'
+import VLoader from '../UI/Vloader.vue'
+import FavouriteSVG from '@/assets/icons/favourites.svg?component'
+import ComparisonSVG from '@/assets/icons/comparison.svg?component'
+const props = defineProps<{
+  productId: number
+  listTitle: 'favourites' | 'comparison'
+}>()
+
+const { user } = storeToRefs(useUserStore())
+
+const productId = user.value?.[props.listTitle].find(
+  (e) => e === props.productId
+)
+
+const state = ref(productId ? true : false)
+const loading = ref(false)
+const add = async () => {
+  loading.value = true
+  await useAddFavouritesAndComparison(
+    props.listTitle,
+    props.productId,
+    state.value,
+    () => {
+      state.value = !state.value
+    }
+  )
+  loading.value = false
+}
+const Icon = props.listTitle === 'favourites' ? FavouriteSVG : ComparisonSVG
+const notInListTitle =
+  props.listTitle === 'favourites' ? 'в избранное' : 'в сравнение'
+const inListTitle =
+  props.listTitle === 'favourites' ? 'в избранном' : 'в сравнении'
+</script>
+
+<template>
+  <template v-if="loading">
+    <v-button>
+      <v-loader color="#9fe7e0" height="24px" />
+    </v-button>
+  </template>
+  <template v-else>
+    <v-button v-if="!state" class="product__button" @click="add">
+      <Icon />
+      {{ notInListTitle }}
+    </v-button>
+    <v-button
+      v-else
+      class="product__button"
+      @click="$router.push({ name: 'Favourites' })"
+    >
+      <Icon fill="#60efe1" />
+      {{ inListTitle }}
+    </v-button>
+  </template>
+</template>
+
+<style scoped lang="sass">
+.product__button
+  display: flex
+  gap: 8px
+</style>

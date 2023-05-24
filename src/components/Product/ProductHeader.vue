@@ -2,14 +2,11 @@
 import { computed, ref, watch } from 'vue'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { formatPrice } from '@/utils/formatPrice'
-import VButton from '@/components/UI/VButton.vue'
 import ButtonCart from '@/components/ButtonCart.vue'
 import RatingStars from '../RatingStars.vue'
-import FavouritesSVG from '@/assets/icons/favourites.svg?component'
-import ComparisonSVG from '@/assets/icons/comparison.svg?component'
+import ButtonFavouritesComparison from './ButtonFavouritesComparison.vue'
 import type { ManufacturerRead } from '@/types/tables/manufacturers.types'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
-import ProductButtonFavourite from './ProductButtonFavourite.vue'
 
 const props = defineProps<{
   product: ProductWithSpecifications
@@ -54,11 +51,14 @@ watch(() => props.product.id, loadManufacturer)
             <FavouritesSVG />
             <span>в избранное</span>
           </v-button> -->
-          <product-button-favourite :product-id="product.id" />
-          <v-button>
-            <ComparisonSVG />
-            <span>в сравнение</span>
-          </v-button>
+          <button-favourites-comparison
+            list-title="favourites"
+            :product-id="product.id"
+          />
+          <button-favourites-comparison
+            list-title="comparison"
+            :product-id="product.id"
+          />
         </div>
       </div>
     </div>
