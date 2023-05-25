@@ -12,7 +12,7 @@ defineProps<{
     <div class="text-3xl font-bold mb-8">Отзывы</div>
     <div class="flex flex-col gap-8">
       <router-link
-        v-for="review in reviews.slice(0, 3)"
+        v-for="review in reviews"
         :key="review.id"
         :to="{
           name: 'Product',
