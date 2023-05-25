@@ -110,10 +110,13 @@ export const useCartStore = defineStore('cart', () => {
   async function setCartItemsWithDetails(cartItems: ProductInStorage[]) {
     const idList: number[] = cartItems.map((e) => e.productId)
 
-    const { data } = await supabase
-      .from<QueryProduct>('products')
-      .select('categoryId, discount, id, img, name, price, quantity, rating')
-      .in('id', idList)
+    const data = await getAll<'products', QueryProduct>('products', {
+      select: 'categoryId, discount, id, img, name, price, quantity, rating',
+      in: {
+        column: 'id',
+        value: idList
+      }
+    })
 
     const modifiedData: ProductCart[] = []
     for (const product of data || []) {

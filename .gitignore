@@ -9,7 +9,7 @@ lerna-debug.log*
 
 node_modules
 .env
-ideas.txt
+tasks.txt
 hosting*
 .DS_Store
 dist

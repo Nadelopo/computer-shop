@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import { supabase } from '@/supabase'
-import { updateOne } from '@/utils/queries/db'
+import { getAll, updateOne } from '@/utils/queries/db'
 import { useUserStore } from '@/stores/userStore'
 import { formatPrice } from '@/utils/formatPrice'
 import ButtonCart from '@/components/ButtonCart.vue'
@@ -29,10 +28,13 @@ const watcher = watch(
   async () => {
     if (user.value) {
       loader.value = 'loading'
-      const { data } = await supabase
-        .from('products')
-        .select('*, categoryId(id, enTitle)')
-        .in('id', user.value.favourites)
+      const data = await getAll<'products', ProductCard>('products', {
+        select: '*, categoryId(id, enTitle)',
+        in: {
+          column: 'id',
+          value: user.value.favourites
+        }
+      })
       favourites.value = data || []
       loader.value = favourites.value.length ? 'success' : 'empty'
       watcher()
