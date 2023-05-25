@@ -52,7 +52,6 @@ const setCategorySpecifications = async () => {
       if (e.type) {
         return {
           categorySpecificationsId: e.id,
-          value: '',
           productId: null,
           valueString: null,
           valueNumber: 0
@@ -60,7 +59,6 @@ const setCategorySpecifications = async () => {
       } else {
         return {
           categorySpecificationsId: e.id,
-          value: '',
           productId: null,
           valueString: '',
           valueNumber: null
@@ -104,10 +102,14 @@ const create = async () => {
     product.value = { ...copyForm }
     setProducts(data.categoryId)
     categoryFormSpecifications.value = categoryFormSpecifications.value.map(
-      (e) => ({
-        ...e,
-        value: ''
-      })
+      (e, i) => {
+        const specificationsValue = categorySpecifications.value[i]
+        if (specificationsValue.type) {
+          return { ...e, valueNumber: specificationsValue.min }
+        } else {
+          return { ...e, valueString: '' }
+        }
+      }
     )
   }
 }
