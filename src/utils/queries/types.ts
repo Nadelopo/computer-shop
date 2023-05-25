@@ -82,12 +82,17 @@ export type Table =
   | 'cart'
   | 'reviews'
 
-export type Eq = {
+type Eq = {
   column: string
   value: string | number | null
 }
 
-export type GetAllByColumnsParams = {
+export type GetAllParams = {
+  eq?: Eq[]
+  in?: {
+    column: string
+    value: (number | string)[]
+  }
   select?: string
   order?: {
     value: string

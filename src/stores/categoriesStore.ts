@@ -9,19 +9,14 @@ import type {
   CategorySpecificationCreate,
   CategorySpecificationRead
 } from '@/types/tables/categorySpecifications.types'
-import {
-  createOne,
-  getAll,
-  getAllByColumns,
-  updateOne
-} from '@/utils/queries/db'
+import { createOne, getAll, updateOne } from '@/utils/queries/db'
 
 export const useCategoriesStore = defineStore('categories', () => {
   const categories = ref<CategoryRead[]>([])
   const categorySpecifications = ref<CategorySpecificationRead[]>([])
 
   async function setCategories(): Promise<void> {
-    const data = await getAll('categories', { order: 'id' })
+    const data = await getAll('categories')
     if (data) {
       categories.value = data
     }
@@ -65,15 +60,17 @@ export const useCategoriesStore = defineStore('categories', () => {
   async function getCategorySpecifications(
     categoryId: number
   ): Promise<CategorySpecificationRead[] | null> {
-    const data = await getAllByColumns<
+    const data = await getAll<
       'category_specifications',
       CategorySpecificationRead
-    >('category_specifications', [
-      {
-        column: 'categoryId',
-        value: categoryId
-      }
-    ])
+    >('category_specifications', {
+      eq: [
+        {
+          column: 'categoryId',
+          value: categoryId
+        }
+      ]
+    })
     return data
   }
 

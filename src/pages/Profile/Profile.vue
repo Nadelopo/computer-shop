@@ -2,7 +2,7 @@
 import { onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
-import { getAllByColumns } from '@/utils/queries/db'
+import { getAll } from '@/utils/queries/db'
 import type { ReviewWithDetails } from '@/types/tables/reviews'
 
 const { user } = storeToRefs(useUserStore())
@@ -11,22 +11,20 @@ const reviews = ref<ReviewWithDetails[]>([])
 
 onBeforeMount(async () => {
   if (user.value) {
-    const data = await getAllByColumns<'reviews', ReviewWithDetails>(
-      'reviews',
-      [
+    const data = await getAll<'reviews', ReviewWithDetails>('reviews', {
+      eq: [
         {
           column: 'userId',
           value: user.value.id
         }
       ],
-      {
-        select: '*, users(name), categories(id, enTitle)',
-        order: {
-          value: 'created_at',
-          ascending: false
-        }
+      select: '*, users(name), categories(id, enTitle)',
+      order: {
+        value: 'created_at',
+        ascending: false
       }
-    )
+    })
+    console.log(data)
     if (data) {
       reviews.value = data
     }

@@ -2,8 +2,7 @@ import { supabase } from '@/supabase'
 import { formatSearch } from '../formatSearch'
 import type {
   CreateData,
-  Eq,
-  GetAllByColumnsParams,
+  GetAllParams,
   ResultData,
   ResultType,
   Table,
@@ -11,19 +10,6 @@ import type {
   UpdateMany,
   getParams
 } from './types'
-
-export async function getAll<T extends Table>(
-  table: T,
-  params?: getParams
-): Promise<ResultData[T][] | null> {
-  const order = params?.order ?? 'id'
-  const { data, error } = await supabase
-    .from(table)
-    .select(params?.select)
-    .order(order)
-  if (error) console.log(error)
-  return data
-}
 
 export async function getOneById<T extends Table, R = null>(
   table: T,
@@ -40,10 +26,9 @@ export async function getOneById<T extends Table, R = null>(
   return data
 }
 
-export const getAllByColumns = async <T extends Table, R = null>(
+export const getAll = async <T extends Table, R = null>(
   table: T,
-  eq: Eq[],
-  params?: GetAllByColumnsParams
+  params?: GetAllParams
 ): Promise<ResultType<T, R>[] | null> => {
   const search = params?.search
   const order = params?.order?.value ?? 'id'
@@ -54,34 +39,36 @@ export const getAllByColumns = async <T extends Table, R = null>(
       ascending: params?.order?.ascending ?? true
     })
 
+  const eq = params?.eq || []
   for (const value of eq) {
     if (value.value) {
       query = query.eq(value.column, value.value)
     }
   }
-  if (search?.value) {
-    {
-      query = query.ilike(search.column, formatSearch(search.value))
-    }
+
+  if (params?.in) {
+    query = query.in(params.in.column, params.in.value)
   }
+
+  if (search?.value) {
+    query = query.ilike(search.column, formatSearch(search.value))
+  }
+
   if (params?.between) {
     const between = params.between
-    {
-      query = query.gt(between.column, between.begin)
-      query = query.lt(between.column, between.end)
-    }
+    query = query.gt(between.column, between.begin)
+    query = query.lt(between.column, between.end)
   }
+
   if (params?.limit) {
-    {
-      query = query.limit(params.limit)
-    }
+    query = query.limit(params.limit)
   }
+
   if (params?.neq) {
-    {
-      const neq = params.neq
-      query = query.neq(neq.column, neq.value)
-    }
+    const neq = params.neq
+    query = query.neq(neq.column, neq.value)
   }
+
   const { data, error } = await query
   if (error) console.log(error)
   return data
@@ -96,9 +83,7 @@ export const createOne = async <T extends Table, R = null>(
 ): Promise<ResultType<T, R> | null> => {
   let query = supabase.from(table).insert(fields)
   if (params?.select) {
-    {
-      query = query.select(params.select)
-    }
+    query = query.select(params.select)
   }
   const { data, error } = await query.single()
   if (error) console.log(error)

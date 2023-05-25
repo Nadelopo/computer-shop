@@ -3,7 +3,7 @@ import { ref, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import Swal from 'sweetalert2'
-import { createOne, getAllByColumns, updateOne } from '@/utils/queries/db'
+import { createOne, getAll, updateOne } from '@/utils/queries/db'
 import { useUserStore } from '@/stores/userStore'
 import RatingStars from '../RatingStars.vue'
 import ReviewsBlock from './ReviewsBlock.vue'
@@ -42,22 +42,19 @@ const reviews = ref<ReviewReadWithDetails[]>([])
 const showReviewForm = ref(false)
 
 const loadReviews = async () => {
-  const data = await getAllByColumns<'reviews', ReviewReadWithDetails>(
-    'reviews',
-    [
+  const data = await getAll<'reviews', ReviewReadWithDetails>('reviews', {
+    eq: [
       {
         column: 'productId',
         value: props.productId
       }
     ],
-    {
-      select: '*, users(name)',
-      order: {
-        value: 'created_at',
-        ascending: false
-      }
+    select: '*, users(name)',
+    order: {
+      value: 'created_at',
+      ascending: false
     }
-  )
+  })
 
   if (data) {
     reviews.value = data

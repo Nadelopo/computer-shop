@@ -4,7 +4,7 @@ import { supabase } from '@/supabase'
 import {
   createOne,
   deleteOne,
-  getAllByColumns,
+  getAll,
   getOneById,
   updateOne
 } from '@/utils/queries/db'
@@ -39,16 +39,18 @@ export const useCartStore = defineStore('cart', () => {
     const product = await getOneById('products', productId)
 
     if (user) {
-      const productCart = await getAllByColumns('cart', [
-        {
-          column: 'userId',
-          value: user.id
-        },
-        {
-          column: 'productId',
-          value: productId
-        }
-      ])
+      const productCart = await getAll('cart', {
+        eq: [
+          {
+            column: 'userId',
+            value: user.id
+          },
+          {
+            column: 'productId',
+            value: productId
+          }
+        ]
+      })
 
       if (productCart?.length && product) {
         data = await updateOne('cart', productCart[0].id, {
@@ -90,9 +92,9 @@ export const useCartStore = defineStore('cart', () => {
   async function setCartItems() {
     const user = supabase.auth.user()
     if (user) {
-      const data = await getAllByColumns('cart', [
-        { column: 'userId', value: user.id }
-      ])
+      const data = await getAll('cart', {
+        eq: [{ column: 'userId', value: user.id }]
+      })
       if (data) {
         cartItems.value = data
       }
@@ -203,16 +205,18 @@ export const useCartStore = defineStore('cart', () => {
     const user = supabase.auth.user()
     let data: CartRead | ProductInStorage[] | null = null
     if (user) {
-      const productCart = await getAllByColumns('cart', [
-        {
-          column: 'userId',
-          value: user.id
-        },
-        {
-          column: 'productId',
-          value: productId
-        }
-      ])
+      const productCart = await getAll('cart', {
+        eq: [
+          {
+            column: 'userId',
+            value: user.id
+          },
+          {
+            column: 'productId',
+            value: productId
+          }
+        ]
+      })
       if (productCart) {
         data = await deleteOne('cart', productCart[0].id)
       }

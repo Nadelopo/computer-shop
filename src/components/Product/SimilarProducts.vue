@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { getAllByColumns } from '@/utils/queries/db'
+import { getAll } from '@/utils/queries/db'
 import type { ProductRead } from '@/types/tables/products.types'
 
 const route = useRoute()
@@ -17,27 +17,24 @@ const props = defineProps<{
 const similarProducts = ref<ProductRead[]>([])
 
 const loadSimilarProducts = async () => {
-  const similar = await getAllByColumns(
-    'products',
-    [
+  const similar = await getAll('products', {
+    eq: [
       {
         column: 'categoryId',
         value: categoryId
       }
     ],
-    {
-      between: {
-        column: 'price',
-        begin: props.productPrice - 5000,
-        end: props.productPrice + 5000
-      },
-      limit: 4,
-      neq: {
-        column: 'id',
-        value: props.productId
-      }
+    between: {
+      column: 'price',
+      begin: props.productPrice - 5000,
+      end: props.productPrice + 5000
+    },
+    limit: 4,
+    neq: {
+      column: 'id',
+      value: props.productId
     }
-  )
+  })
   if (similar) {
     similarProducts.value = similar
   }

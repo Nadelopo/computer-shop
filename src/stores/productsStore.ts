@@ -17,7 +17,7 @@ import type { ProductUpdate } from '@/types/tables/products.types'
 import {
   createMany,
   createOne,
-  getAllByColumns,
+  getAll,
   getOneById,
   updateMany,
   updateOne
@@ -46,38 +46,36 @@ export const useProductsStore = defineStore('products', () => {
     products.value = []
     const newProducts = ref<ProductWithSpecifications[]>([])
 
-    const data = await getAllByColumns<'products', ProductReadWithDetails>(
+    const data = await getAll<'products', ProductReadWithDetails>(
       'products',
-      [
-        {
-          column: 'categoryId',
-          value: categoryId
-        }
-      ],
+
       {
+        eq: [
+          {
+            column: 'categoryId',
+            value: categoryId
+          }
+        ],
         select: '*, categoryId(id, enTitle), manufacturerId(id, title)'
       }
     )
     if (data?.length) {
       for (const product of data) {
-        const specifications = await getAllByColumns<
+        const specifications = await getAll<
           'specifications',
           SpecificationReadWithDetails
-        >(
-          'specifications',
-          [
+        >('specifications', {
+          eq: [
             {
               column: 'productId',
               value: product.id
             }
           ],
-          {
-            select: '*,  categorySpecificationsId(id, title, units, visible)',
-            order: {
-              value: 'categorySpecificationsId'
-            }
+          select: '*,  categorySpecificationsId(id, title, units, visible)',
+          order: {
+            value: 'categorySpecificationsId'
           }
-        )
+        })
 
         if (specifications) {
           const newProduct: ProductWithSpecifications = {
@@ -105,21 +103,18 @@ export const useProductsStore = defineStore('products', () => {
     )
 
     if (data) {
-      const specifications = await getAllByColumns<
+      const specifications = await getAll<
         'specifications',
         SpecificationReadWithDetails
-      >(
-        'specifications',
-        [
+      >('specifications', {
+        eq: [
           {
             column: 'productId',
             value: productId
           }
         ],
-        {
-          select: '*, categorySpecificationsId(id, title, units, visible)'
-        }
-      )
+        select: '*, categorySpecificationsId(id, title, units, visible)'
+      })
       if (specifications) {
         product.value = { ...data, specifications }
       }

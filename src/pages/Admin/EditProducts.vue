@@ -20,7 +20,7 @@ import type {
   ProductUpdate
 } from '@/types/tables/products.types'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
-import { getAllByColumns, getOneById } from '@/utils/queries/db'
+import { getAll, getOneById } from '@/utils/queries/db'
 
 type ProductSpecificationOnEdit = SpecificationRead & {
   categorySpecificationsId: Omit<
@@ -58,25 +58,22 @@ const productData = await getOneById<'products', ProductReadWithDetails>(
     select: '*, manufacturerId(id, title), categoryId(id, enTitle)'
   }
 )
-const specifications = await getAllByColumns<
+const specifications = await getAll<
   'specifications',
   ProductSpecificationOnEdit
->(
-  'specifications',
-  [
+>('specifications', {
+  eq: [
     {
       column: 'productId',
       value: id
     }
   ],
-  {
-    select:
-      '*, categorySpecificationsId(id, title, visible, units, type, step, min, max, variantsValues)',
-    order: {
-      value: 'categorySpecificationsId'
-    }
+  select:
+    '*, categorySpecificationsId(id, title, visible, units, type, step, min, max, variantsValues)',
+  order: {
+    value: 'categorySpecificationsId'
   }
-)
+})
 
 if (productData && specifications) {
   img.value = productData.img
