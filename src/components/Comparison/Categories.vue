@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, ref, watch } from 'vue'
+import { nextTick, ref, watch, type ComponentPublicInstance } from 'vue'
 import type { Category } from '@/types'
 
 const props = defineProps<{
@@ -8,10 +8,10 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', id: number): void
+  'update:modelValue': [id: number]
 }>()
 
-const categoriesRefs = ref<any[]>([])
+const categoriesRefs = ref<ComponentPublicInstance[]>([])
 
 const categoryLineStyles = ref({
   width: '0px',

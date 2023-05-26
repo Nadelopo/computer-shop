@@ -10,6 +10,6 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(VWave, {
-  initialOpacity: 0.3,
+  initialOpacity: 0.3
 })
 app.mount('#app')

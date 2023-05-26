@@ -30,10 +30,7 @@ const watcher = watch(
       loader.value = 'loading'
       const data = await getAll<'products', ProductCard>('products', {
         select: '*, categoryId(id, enTitle)',
-        in: {
-          column: 'id',
-          value: user.value.favourites
-        }
+        in: ['id', user.value.favourites]
       })
       favourites.value = data || []
       loader.value = favourites.value.length ? 'success' : 'empty'

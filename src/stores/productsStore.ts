@@ -50,12 +50,7 @@ export const useProductsStore = defineStore('products', () => {
       'products',
 
       {
-        eq: [
-          {
-            column: 'categoryId',
-            value: categoryId
-          }
-        ],
+        eq: [['categoryId', categoryId]],
         select: '*, categoryId(id, enTitle), manufacturerId(id, title)'
       }
     )
@@ -65,12 +60,7 @@ export const useProductsStore = defineStore('products', () => {
           'specifications',
           SpecificationReadWithDetails
         >('specifications', {
-          eq: [
-            {
-              column: 'productId',
-              value: product.id
-            }
-          ],
+          eq: [['productId', product.id]],
           select: '*,  categorySpecificationsId(id, title, units, visible)',
           order: {
             value: 'categorySpecificationsId'
@@ -107,12 +97,7 @@ export const useProductsStore = defineStore('products', () => {
         'specifications',
         SpecificationReadWithDetails
       >('specifications', {
-        eq: [
-          {
-            column: 'productId',
-            value: productId
-          }
-        ],
+        eq: [['productId', productId]],
         select: '*, categorySpecificationsId(id, title, units, visible)'
       })
       if (specifications) {

@@ -32,7 +32,7 @@ export const getAll = async <T extends Table, R = null>(
 ): Promise<ResultType<T, R>[] | null> => {
   const search = params?.search
   const order = params?.order?.value ?? 'id'
-  let query = supabase
+  const query = supabase
     .from(table)
     .select(params?.select)
     .order(order, {
@@ -41,32 +41,32 @@ export const getAll = async <T extends Table, R = null>(
 
   const eq = params?.eq || []
   for (const value of eq) {
-    if (value.value) {
-      query = query.eq(value.column, value.value)
+    if (value[1]) {
+      query.eq(value[0], value[1])
     }
   }
 
   if (params?.in) {
-    query = query.in(params.in.column, params.in.value)
+    query.in(params.in[0], params.in[1])
   }
 
   if (search?.value) {
-    query = query.ilike(search.column, formatSearch(search.value))
+    query.ilike(search.column, formatSearch(search.value))
   }
 
   if (params?.between) {
     const between = params.between
-    query = query.gt(between.column, between.begin)
-    query = query.lt(between.column, between.end)
+    query.gt(between.column, between.begin)
+    query.lt(between.column, between.end)
   }
 
   if (params?.limit) {
-    query = query.limit(params.limit)
+    query.limit(params.limit)
   }
 
   if (params?.neq) {
     const neq = params.neq
-    query = query.neq(neq.column, neq.value)
+    query.neq(neq[0], neq[1])
   }
 
   const { data, error } = await query

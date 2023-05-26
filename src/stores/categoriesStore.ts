@@ -64,12 +64,7 @@ export const useCategoriesStore = defineStore('categories', () => {
       'category_specifications',
       CategorySpecificationRead
     >('category_specifications', {
-      eq: [
-        {
-          column: 'categoryId',
-          value: categoryId
-        }
-      ]
+      eq: [['categoryId', categoryId]]
     })
     return data
   }

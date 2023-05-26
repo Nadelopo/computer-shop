@@ -48,10 +48,7 @@ const watcher = watch(
 
       const productData = await getAll<'products', Product>('products', {
         select: '*, categoryId(id, enTitle, title)',
-        in: {
-          column: 'id',
-          value: user.value.comparison
-        }
+        in: ['id', user.value.comparison]
       })
 
       const specificationsData = await getAll<
@@ -59,10 +56,7 @@ const watcher = watch(
         SpecificationReadWithDetails
       >('specifications', {
         select: '*, categorySpecificationsId(id, title, visible, units)',
-        in: {
-          column: 'productId',
-          value: user.value.comparison
-        }
+        in: ['productId', user.value.comparison]
       })
       const modifiedProducts: ComparisonProduct[] = []
       if (productData && specificationsData) {
@@ -115,7 +109,7 @@ watch(
   <div class="container">
     <Categories v-model="currentCategoryId" :categories="categories" />
     <div class="comparison">
-      <div v-for="product in categoryProducts" :key="product.id">
+      <div v-for="product in categoryProducts" :key="product.id" class="cell">
         <div>{{ product.name }}</div>
         <div>{{ product.warranty }}</div>
       </div>
@@ -126,6 +120,13 @@ watch(
 <style scoped lang="sass">
 
 .comparison
-  display: grid
-  grid-template-columns: 1fr 1fr 1fr 1fr
+  // display: grid
+  // grid-template-columns: repeat(auto-fit, 400px)
+  // grid-auto-flow: column
+  // overflow: hidden
+  display: flex
+  .cell
+    width: 235px
+    min-width: 235px
+    padding: 10px 35px 10px 0px
 </style>

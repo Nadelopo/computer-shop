@@ -43,12 +43,7 @@ const showReviewForm = ref(false)
 
 const loadReviews = async () => {
   const data = await getAll<'reviews', ReviewReadWithDetails>('reviews', {
-    eq: [
-      {
-        column: 'productId',
-        value: props.productId
-      }
-    ],
+    eq: [['productId', props.productId]],
     select: '*, users(name)',
     order: {
       value: 'created_at',

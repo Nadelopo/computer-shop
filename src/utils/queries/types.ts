@@ -82,17 +82,9 @@ export type Table =
   | 'cart'
   | 'reviews'
 
-type Eq = {
-  column: string
-  value: string | number | null
-}
-
 export type GetAllParams = {
-  eq?: Eq[]
-  in?: {
-    column: string
-    value: (number | string)[]
-  }
+  eq?: [column: string, value: string | number | null][]
+  in?: [column: string, values: (number | string)[]]
   select?: string
   order?: {
     value: string
@@ -108,10 +100,7 @@ export type GetAllParams = {
     end: number
   }
   limit?: number
-  neq?: {
-    column: string
-    value: number | string
-  }
+  neq?: [column: string, value: number | string]
 }
 
 export type getParams = {

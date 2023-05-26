@@ -62,12 +62,7 @@ const specifications = await getAll<
   'specifications',
   ProductSpecificationOnEdit
 >('specifications', {
-  eq: [
-    {
-      column: 'productId',
-      value: id
-    }
-  ],
+  eq: [['productId', id]],
   select:
     '*, categorySpecificationsId(id, title, visible, units, type, step, min, max, variantsValues)',
   order: {

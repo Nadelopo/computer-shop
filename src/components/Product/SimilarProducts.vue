@@ -18,22 +18,14 @@ const similarProducts = ref<ProductRead[]>([])
 
 const loadSimilarProducts = async () => {
   const similar = await getAll('products', {
-    eq: [
-      {
-        column: 'categoryId',
-        value: categoryId
-      }
-    ],
+    eq: [['categoryId', categoryId]],
     between: {
       column: 'price',
       begin: props.productPrice - 5000,
       end: props.productPrice + 5000
     },
     limit: 4,
-    neq: {
-      column: 'id',
-      value: props.productId
-    }
+    neq: ['id', props.productId]
   })
   if (similar) {
     similarProducts.value = similar

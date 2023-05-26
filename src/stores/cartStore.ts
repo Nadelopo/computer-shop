@@ -41,14 +41,8 @@ export const useCartStore = defineStore('cart', () => {
     if (user) {
       const productCart = await getAll('cart', {
         eq: [
-          {
-            column: 'userId',
-            value: user.id
-          },
-          {
-            column: 'productId',
-            value: productId
-          }
+          ['userId', user.id],
+          ['productId', productId]
         ]
       })
 
@@ -93,7 +87,7 @@ export const useCartStore = defineStore('cart', () => {
     const user = supabase.auth.user()
     if (user) {
       const data = await getAll('cart', {
-        eq: [{ column: 'userId', value: user.id }]
+        eq: [['userId', user.id]]
       })
       if (data) {
         cartItems.value = data
@@ -112,10 +106,7 @@ export const useCartStore = defineStore('cart', () => {
 
     const data = await getAll<'products', QueryProduct>('products', {
       select: 'categoryId, discount, id, img, name, price, quantity, rating',
-      in: {
-        column: 'id',
-        value: idList
-      }
+      in: ['id', idList]
     })
 
     const modifiedData: ProductCart[] = []
@@ -210,14 +201,8 @@ export const useCartStore = defineStore('cart', () => {
     if (user) {
       const productCart = await getAll('cart', {
         eq: [
-          {
-            column: 'userId',
-            value: user.id
-          },
-          {
-            column: 'productId',
-            value: productId
-          }
+          ['userId', user.id],
+          ['productId', productId]
         ]
       })
       if (productCart) {
