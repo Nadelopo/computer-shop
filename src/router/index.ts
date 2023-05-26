@@ -110,6 +110,11 @@ const router = createRouter({
       path: '/favourites',
       name: 'Favourites',
       component: () => import('@/pages/Favourites.vue')
+    },
+    {
+      path: '/comparison',
+      name: 'Comparison',
+      component: () => import('@/pages/Comparison.vue')
     }
   ]
 })

@@ -10,6 +10,7 @@ import Sidebar from './Sidebar.vue'
 import UserSvg from '@/assets/icons/avatar.svg?component'
 import FavouritesSVG from '@/assets/icons/favourites.svg?component'
 import CartSVG from '@/assets/icons/cart.svg?component'
+import ComparisonSVG from '@/assets/icons/comparison.svg?component'
 
 const { user } = storeToRefs(useUserStore())
 
@@ -117,11 +118,12 @@ const open = ref(false)
           <router-link :to="{ name: 'Favourites' }">
             <FavouritesSVG fill="#fff" width="25" class="cursor-pointer" />
           </router-link>
-          <div>
-            <router-link :to="{ name: 'Cart' }">
-              <CartSVG height="27" />
-            </router-link>
-          </div>
+          <router-link :to="{ name: 'Comparison' }">
+            <ComparisonSVG width="25" />
+          </router-link>
+          <router-link :to="{ name: 'Cart' }">
+            <CartSVG height="25" />
+          </router-link>
         </div>
       </div>
     </div>
@@ -152,7 +154,7 @@ header
 .root
   color: #fff
   display: grid
-  grid-template-columns:  180px 1fr 180px
+  grid-template-columns:  240px 1fr 240px
   align-items: center
   height: 60px
   @media (max-width: 1023px)
@@ -210,7 +212,7 @@ header
 
 .nav__rigth
   display: grid
-  grid-template-columns: repeat(3, 60px)
+  grid-template-columns: repeat(4, 60px)
   align-items: center
   justify-items: end
 

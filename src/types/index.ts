@@ -5,3 +5,9 @@ export type ProductInStorage = {
   productId: number
   count: number
 }
+
+export type Category = {
+  id: number
+  title: string
+  count: number
+}
