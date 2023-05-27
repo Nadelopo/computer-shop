@@ -1,5 +1,6 @@
 import { supabase } from '@/supabase'
 import { formatSearch } from '../formatSearch'
+import type { PostgrestSingleResponse } from '@supabase/supabase-js'
 import type {
   CreateData,
   GetAllParams,
@@ -117,17 +118,15 @@ export async function updateMany<T extends Table, R = null>(
   table: T,
   fields: UpdateMany<UpdateData[T]>[]
 ): Promise<ResultType<T, R>[]> {
-  const data = []
+  const promises = []
   for (const item of fields) {
-    const { data: result, error } = await supabase
-      .from(table)
-      .update(item)
-      .eq('id', item.id)
-      .single()
-    if (error) console.log(error)
-    if (result) data.push(result)
+    promises.push(supabase.from(table).update(item).eq('id', item.id).single())
   }
-
+  const results: PostgrestSingleResponse<ResultType<T, R>>[] =
+    await Promise.all(promises)
+  const data = results
+    .map((e) => e.data)
+    .filter((e): e is ResultType<T, R> => e !== null)
   return data
 }
 
