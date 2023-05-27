@@ -190,7 +190,12 @@ const back = async () => {
         </div>
         <div>
           <label>скидка</label>
-          <v-input-text v-model.number="product.discount" type="number" />
+          <v-input-text
+            v-model.number="product.discount"
+            type="number"
+            min="0"
+            max="100"
+          />
         </div>
 
         <div>

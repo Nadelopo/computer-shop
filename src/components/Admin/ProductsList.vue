@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/productsStore'
@@ -16,22 +15,11 @@ const { setProducts } = useProductsStore()
 
 const categoryId = Number(useRoute().params.id)
 
-const setTable = (id: number) => {
-  if (!products.value.length) {
-    setProducts(id)
-  } else if (products.value[0].categoryId.id !== id) {
-    products.value = []
-    setProducts(id)
-  }
+if (!products.value.length) {
+  setProducts(categoryId)
+} else if (products.value[0].categoryId.id !== categoryId) {
+  setProducts(categoryId)
 }
-
-setTable(categoryId)
-
-watch(useRoute(), (cur) => {
-  if (cur.params.id) {
-    setTable(Number(cur.params.id))
-  }
-})
 </script>
 
 <template>
