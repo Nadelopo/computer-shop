@@ -134,7 +134,11 @@ export const deleteOne = async <T extends Table, R = null>(
   table: T,
   id: number
 ): Promise<ResultType<T, R> | null> => {
-  const { data, error } = await supabase.from(table).delete().eq('id', id)
+  const { data, error } = await supabase
+    .from(table)
+    .delete()
+    .eq('id', id)
+    .single()
 
   if (error) console.log(error)
   return data as ResultType<T, R> | null

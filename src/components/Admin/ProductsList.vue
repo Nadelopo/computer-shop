@@ -1,14 +1,37 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import Swal from 'sweetalert2'
 import { useProductsStore } from '@/stores/productsStore'
+import { removeFromStorage } from '@/utils/queries/storage'
+import { getImgName } from '@/utils/getImgName'
 import VButton from '@/components/UI/VButton.vue'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
+import { deleteOne } from '@/utils/queries/db'
 
 defineProps<{
   specifications: CategorySpecificationRead[]
 }>()
 
 const { products, loader } = storeToRefs(useProductsStore())
+
+const delteProduct = (id: number, img: string) => {
+  Swal.fire({
+    icon: 'question',
+    title: 'Вы хотите удалить товар?',
+    text: '',
+    showDenyButton: true,
+    confirmButtonText: 'Да',
+    denyButtonText: `Оставить`
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      const data = await deleteOne('products', id)
+      if (data) {
+        products.value = products.value.filter((e) => e.id !== data.id)
+        await removeFromStorage('products', getImgName(img))
+      }
+    }
+  })
+}
 </script>
 
 <template>
@@ -59,6 +82,12 @@ const { products, loader } = storeToRefs(useProductsStore())
               >
                 <v-button class="w-full"> изменить </v-button>
               </router-link>
+              <v-button
+                class="btn__dunger"
+                @click="delteProduct(product.id, product.img)"
+              >
+                удалить
+              </v-button>
             </div>
           </td>
         </tr>

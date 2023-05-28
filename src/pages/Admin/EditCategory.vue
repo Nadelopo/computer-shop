@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { removeFromStorage } from '@/utils/queries/storage'
+import { getImgName } from '@/utils/getImgName'
 import VInputText from '@/components/UI/VInputText.vue'
 import VInputFile from '@/components/UI/VInputFile.vue'
 import VLoader from '@/components/UI/Vloader.vue'
@@ -52,8 +53,7 @@ watch(
   () => newCategory.value,
   (cur) => {
     if (!oldImg && cur?.title && cur?.img) {
-      const path = cur.img.split('/')
-      oldImg = path.at(-1)
+      oldImg = getImgName(cur.img)
     }
     if (cur?.title) {
       loader.value = true

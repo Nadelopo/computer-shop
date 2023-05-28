@@ -2,6 +2,9 @@
 import { computed, onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { getAll, getOneById } from '@/utils/queries/db'
+import { getImgName } from '@/utils/getImgName'
+import { removeFromStorage } from '@/utils/queries/storage'
 import { useProductsStore } from '@/stores/productsStore'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import VInputText from '@/components/UI/VInputText.vue'
@@ -10,7 +13,6 @@ import VButton from '@/components/UI/VButton.vue'
 import VSelect from '@/components/UI/VSelect.vue'
 import VLoader from '@/components/UI/Vloader.vue'
 import VDoubleButtons from '@/components/UI/VDoubleButtons.vue'
-import { removeFromStorage } from '@/utils/queries/storage'
 import type {
   SpecificationRead,
   SpecificationUpdate
@@ -20,7 +22,6 @@ import type {
   ProductUpdate
 } from '@/types/tables/products.types'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
-import { getAll, getOneById } from '@/utils/queries/db'
 
 type ProductSpecificationOnEdit = SpecificationRead & {
   categorySpecificationsId: Omit<
@@ -78,8 +79,6 @@ onBeforeMount(async () => {
     loader.value = 'success'
   }
 })
-
-const getImgName = (url: string) => url.split('/').reverse()[0]
 
 const save = async () => {
   if (product.value) {
