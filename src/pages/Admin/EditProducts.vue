@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/productsStore'
@@ -51,31 +51,33 @@ const img = ref('')
 const manufacturerSelect = ref(0)
 const loader = ref<'loading' | 'success'>('loading')
 
-const productData = await getOneById<'products', ProductReadWithDetails>(
-  'products',
-  id,
-  {
-    select: '*, manufacturerId(id, title), categoryId(id, enTitle)'
-  }
-)
-const specifications = await getAll<
-  'specifications',
-  ProductSpecificationOnEdit
->('specifications', {
-  eq: [['productId', id]],
-  select:
-    '*, categorySpecificationsId(id, title, visible, units, type, step, min, max, variantsValues)',
-  order: {
-    value: 'categorySpecificationsId'
+onBeforeMount(async () => {
+  const productData = await getOneById<'products', ProductReadWithDetails>(
+    'products',
+    id,
+    {
+      select: '*, manufacturerId(id, title), categoryId(id, enTitle)'
+    }
+  )
+  const specifications = await getAll<
+    'specifications',
+    ProductSpecificationOnEdit
+  >('specifications', {
+    eq: [['productId', id]],
+    select:
+      '*, categorySpecificationsId(id, title, visible, units, type, step, min, max, variantsValues)',
+    order: {
+      value: 'categorySpecificationsId'
+    }
+  })
+
+  if (productData && specifications) {
+    img.value = productData.img
+    manufacturerSelect.value = productData.manufacturerId.id
+    product.value = { ...productData, specifications }
+    loader.value = 'success'
   }
 })
-
-if (productData && specifications) {
-  img.value = productData.img
-  manufacturerSelect.value = productData.manufacturerId.id
-  product.value = { ...productData, specifications: specifications }
-  loader.value = 'success'
-}
 
 const getImgName = (url: string) => url.split('/').reverse()[0]
 

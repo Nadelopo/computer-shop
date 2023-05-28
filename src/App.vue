@@ -5,7 +5,6 @@ import { supabase } from './supabase'
 import { useUserStore } from './stores/userStore'
 import { useCartStore } from './stores/cartStore'
 import Navbar from './components/Navbar.vue'
-import VLoader from './components/UI/Vloader.vue'
 
 const { setUserData } = useUserStore()
 
@@ -33,17 +32,6 @@ const showNavbar = computed((): boolean => {
 <template>
   <Navbar v-if="showNavbar" />
   <main>
-    <router-view v-slot="{ Component }">
-      <suspense timeout="0">
-        <template v-if="Component" #default>
-          <component :is="Component" />
-        </template>
-        <template #fallback>
-          <div class="min-h-screen flex items-center">
-            <v-loader />
-          </div>
-        </template>
-      </suspense>
-    </router-view>
+    <router-view />
   </main>
 </template>

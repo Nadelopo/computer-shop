@@ -1,30 +1,36 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useManufacturersStore } from '@/stores/manufacturersStore'
 import VInputText from '@/components/UI/VInputText.vue'
 import VInputFile from '@/components/UI/VInputFile.vue'
 import VButton from '@/components/UI/VButton.vue'
-import { useManufacturersStore } from '@/stores/manufacturersStore'
+import VLoader from '@/components/UI/Vloader.vue'
 import type { ManufacturerUpdate } from '@/types/tables/manufacturers.types'
 
 const { getManufacturer, updateManufacturer } = useManufacturersStore()
 
 const manufactuerId = Number(useRoute().params.id)
-
-const data = await getManufacturer(manufactuerId)
 const manufacturer = ref<ManufacturerUpdate | null>(null)
 
-if (data) {
-  manufacturer.value = {
-    title: data.title,
-    description: data.description,
-    img: data.img
+const loader = ref<'success' | 'loading'>('loading')
+
+onMounted(async () => {
+  const data = await getManufacturer(manufactuerId)
+  if (data) {
+    manufacturer.value = {
+      title: data.title,
+      description: data.description,
+      img: data.img
+    }
   }
-}
+  loader.value = 'success'
+})
 
 const router = useRouter()
 const update = async () => {
   if (manufacturer.value) {
+    loader.value = 'loading'
     await updateManufacturer(manufactuerId, manufacturer.value)
     router.push({
       name: 'AdminManufacturers'
@@ -35,7 +41,7 @@ const update = async () => {
 
 <template>
   <div>
-    <div class="container">
+    <div v-if="loader === 'success'" class="container">
       <form
         v-if="manufacturer"
         class="list__form pt-10"
@@ -76,6 +82,9 @@ const update = async () => {
           назад
         </v-button>
       </div>
+    </div>
+    <div v-else class="h-screen flex justify-center item-center">
+      <v-loader />
     </div>
   </div>
 </template>
