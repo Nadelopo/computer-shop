@@ -4,11 +4,7 @@ import type { Category } from '@/types'
 
 const props = defineProps<{
   categories: Category[]
-  modelValue: number | null
-}>()
-
-const emit = defineEmits<{
-  'update:modelValue': [id: number]
+  currentCategoryId: number | null
 }>()
 
 const categoriesRefs = ref<ComponentPublicInstance[]>([])
@@ -18,10 +14,12 @@ const categoryLineStyles = ref({
   marginLeft: '0px'
 })
 
-const setCategory = async (caegoryId: number, i: number) => {
+const setCategory = async () => {
   await nextTick()
-  emit('update:modelValue', caegoryId)
-  const el = categoriesRefs.value[i].$el
+  const categoryIndex = props.categories.findIndex(
+    (e) => e.id === props.currentCategoryId
+  )
+  const el = categoriesRefs.value[categoryIndex].$el
   if (el.offsetLeft > parseInt(categoryLineStyles.value.marginLeft)) {
     categoryLineStyles.value.width = `${
       el.scrollWidth +
@@ -42,34 +40,20 @@ const setCategory = async (caegoryId: number, i: number) => {
   }, 200)
 }
 
-const initCategory = () => {
-  const categoryId = props.modelValue ?? props.categories[0].id
-  const categiryIndex =
-    props.categories.findIndex((e) => e.id === categoryId) || 0
-  setCategory(categoryId, categiryIndex)
-}
-
-const watcher = watch(
-  () => categoriesRefs.value.length,
-  () => {
-    initCategory()
-    watcher()
-  }
-)
-
-watch(() => props.modelValue, initCategory)
+watch(() => props.currentCategoryId, setCategory, {
+  immediate: true
+})
 </script>
 
 <template>
   <div class="categories">
     <router-link
-      v-for="(category, i) in categories"
+      v-for="category in categories"
       :key="category.id"
       ref="categoriesRefs"
       :to="{ query: { category_id: category.id } }"
       class="tab"
-      :class="{ active: category.id === modelValue }"
-      @click="setCategory(category.id, i)"
+      :class="{ active: category.id === currentCategoryId }"
     >
       <div class="link">
         {{ category.title }} <span class="ml-2">{{ category.count }}</span>
