@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
@@ -24,6 +24,7 @@ const route = useRoute()
 const { manufacturers } = storeToRefs(useManufacturersStore())
 const { getCategorySpecifications } = useCategoriesStore()
 const { createProduct, createSpecifications, setProducts } = useProductsStore()
+const { loader } = storeToRefs(useProductsStore())
 
 const manufacturerSelect = ref<number | string>('')
 const categoryId = ref<number>(Number(route.params.id))
@@ -48,7 +49,7 @@ const setCategorySpecifications = async () => {
   const data = await getCategorySpecifications(categoryId.value)
   if (data) {
     categorySpecifications.value = data
-    const mapData = data.map((e) => {
+    categoryFormSpecifications.value = data.map((e) => {
       if (e.type) {
         return {
           categorySpecificationsId: e.id,
@@ -65,13 +66,8 @@ const setCategorySpecifications = async () => {
         }
       }
     })
-    categoryFormSpecifications.value = mapData
   } else categoryFormSpecifications.value = []
 }
-
-onBeforeMount(async () => {
-  setCategorySpecifications()
-})
 
 watch(
   () => route.params.id,
@@ -81,8 +77,10 @@ watch(
       categoryId.value = Number(cur)
       setCategorySpecifications()
       product.value.categoryId = categoryId.value
+      setProducts(categoryId.value)
     }
-  }
+  },
+  { immediate: true }
 )
 
 watch(manufacturerSelect, (cur) => {
@@ -116,7 +114,7 @@ const create = async () => {
 </script>
 
 <template>
-  <div v-if="categorySpecifications.length">
+  <div v-if="categorySpecifications.length && loader === 'success'">
     <form class="list__form mb-8" @submit.prevent="create">
       <div
         v-for="(specification, i) in categorySpecifications"

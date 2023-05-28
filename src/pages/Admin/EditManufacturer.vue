@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import VInputText from '@/components/UI/VInputText.vue'
@@ -15,7 +15,7 @@ const manufacturer = ref<ManufacturerUpdate | null>(null)
 
 const loader = ref<'success' | 'loading'>('loading')
 
-onMounted(async () => {
+onBeforeMount(async () => {
   const data = await getManufacturer(manufactuerId)
   if (data) {
     manufacturer.value = {
