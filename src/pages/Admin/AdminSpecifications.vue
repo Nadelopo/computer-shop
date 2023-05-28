@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import { createMany, getAll } from '@/utils/queries/db'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import VDoubleButtons from '@/components/UI/VDoubleButtons.vue'
 import VInputText from '@/components/UI/VInputText.vue'
 import VButton from '@/components/UI/VButton.vue'
 import VSelect from '@/components/UI/VSelect.vue'
 import type { CategorySpecificationCreate } from '@/types/tables/categorySpecifications.types'
+import type { SpecificationCreate } from '@/types/tables/specifications.types'
 
 const { categories } = storeToRefs(useCategoriesStore())
 const { createCategorySpecifications } = useCategoriesStore()
@@ -26,6 +28,8 @@ const form = ref<CategorySpecificationCreate>({
   variantsValues: null
 })
 
+const setInitialSpecificationValue = ref(false)
+
 watch(select, (cur) => {
   if (typeof cur === 'number') {
     form.value.categoryId = cur
@@ -34,7 +38,24 @@ watch(select, (cur) => {
 
 const create = async () => {
   const data = await createCategorySpecifications(form.value)
+
   if (data) {
+    const products = await getAll('products', {
+      eq: [['categoryId', data.categoryId]]
+    })
+
+    const initialSpecificationsValue: SpecificationCreate[] = []
+    for (const product of products || []) {
+      initialSpecificationsValue.push({
+        productId: product.id,
+        categorySpecificationsId: data.id,
+        valueNumber: data.type ? 0 : null,
+        valueString: data.type ? null : data.variantsValues[0]
+      })
+    }
+
+    createMany('specifications', initialSpecificationsValue)
+
     form.value = {
       categoryId: 0,
       title: '',
@@ -99,15 +120,15 @@ watch(
     </div>
     <div>
       <label>наименование</label>
-      <v-input-text v-model="form.title" />
+      <v-input-text v-model.trim="form.title" />
     </div>
     <div>
       <label>наименование на английском</label>
-      <v-input-text v-model="form.enTitle" />
+      <v-input-text v-model.trim="form.enTitle" />
     </div>
     <div>
       <label>единицы измерения</label>
-      <v-input-text v-model="form.units" :required="false" />
+      <v-input-text v-model.trim="form.units" :required="false" />
     </div>
     <div>
       <label>тип поля</label>
@@ -135,7 +156,7 @@ watch(
     <div v-else-if="form.variantsValues">
       <label>вартианты значений</label>
       <div v-for="(_, i) in form.variantsValues.length" :key="i">
-        <v-input-text v-model="form.variantsValues[i]" />
+        <v-input-text v-model.trim="form.variantsValues[i]" />
       </div>
       <div class="flex gap-4">
         <v-button class="mt-4" type="button" @click="addVarianValues">
@@ -156,7 +177,15 @@ watch(
         text-second="нет"
       />
     </div>
-
+    <div>
+      <label>задать значение по умолчанию для товаров</label>
+      <v-double-buttons
+        v-model="setInitialSpecificationValue"
+        class="mt-2"
+        text-first="да"
+        text-second="нет"
+      />
+    </div>
     <div>
       <v-button class="mt-4">создать характеристику</v-button>
     </div>
