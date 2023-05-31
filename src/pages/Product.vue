@@ -25,18 +25,12 @@ const loadData = async () => {
   const productId = Number(route.params.productId)
   const data = await getProduct(productId)
   if (data.value) {
-    data.value.specifications = data.value.specifications
-      .map((e) => {
-        const title = e.categorySpecificationsId.title
-        e.categorySpecificationsId.title =
-          title.charAt(0).toUpperCase() + title.slice(1)
-        return e
-      })
-      .sort((a, b) =>
-        a.categorySpecificationsId.title.localeCompare(
-          b.categorySpecificationsId.title
-        )
-      )
+    data.value.specifications = data.value.specifications.map((e) => {
+      const title = e.categorySpecificationsId.title
+      e.categorySpecificationsId.title =
+        title.charAt(0).toUpperCase() + title.slice(1)
+      return e
+    })
     product.value = data.value
     updateOne('products', product.value.id, {
       popularity: product.value.popularity + 1

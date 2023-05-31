@@ -5,11 +5,15 @@ import { storeToRefs } from 'pinia'
 import { getAll } from '@/utils/queries/db'
 import { useUserStore } from '@/stores/userStore'
 import Categories from '@/components/Comparison/Categories.vue'
-import ProductsList from '@/components/Comparison/ProductsList.vue'
+import ComparisonList from '@/components/Comparison/ComparisonList.vue'
 import Vloader from '@/components/UI/Vloader.vue'
 import type { ProductRead } from '@/types/tables/products.types'
-import type { SpecificationReadWithDetails } from '@/types/tables/specifications.types'
-import type { Category, ComparisonProduct } from '@/types'
+import type {
+  Category,
+  CategorySpecifications,
+  ComparisonProduct,
+  CurrentCategory
+} from '@/components/Comparison/types'
 
 type Product = ProductRead & {
   categoryId: {
@@ -22,9 +26,14 @@ type Product = ProductRead & {
 const { user } = storeToRefs(useUserStore())
 
 const categories = ref<Category[]>([])
-const currentCategoryId = computed(() => {
+const currentCategory = computed((): CurrentCategory => {
   const idFromQuery = useRoute().query.category_id
-  return idFromQuery ? Number(idFromQuery) : products.value[0]?.categoryId.id
+  const id = idFromQuery
+    ? Number(idFromQuery)
+    : products.value[0]?.categoryId.id
+  const specifications =
+    categories.value.find((e) => e.id === id)?.specifications || []
+  return { id, specifications }
 })
 
 const products = ref<ComparisonProduct[]>([])
@@ -42,12 +51,11 @@ const watcher = watch(
         in: ['id', user.value.comparison]
       })
 
-      const specificationsData = await getAll<
-        'specifications',
-        SpecificationReadWithDetails
-      >('specifications', {
-        select: '*, categorySpecificationsId(id, title, visible, units)',
-        in: ['productId', user.value.comparison]
+      const specificationsData = await getAll('specifications', {
+        in: ['productId', user.value.comparison],
+        order: {
+          value: 'categorySpecificationsId'
+        }
       })
       const modifiedProducts: ComparisonProduct[] = []
       if (productData && specificationsData) {
@@ -63,7 +71,8 @@ const watcher = watch(
             categories.value.push({
               id: product.categoryId.id,
               title: product.categoryId.title,
-              count: 1
+              count: 1,
+              specifications: []
             })
           } else {
             categories.value = categories.value.map((e) =>
@@ -71,7 +80,25 @@ const watcher = watch(
             )
           }
         }
+
         products.value = modifiedProducts
+        const categoriesSpecifications = await getAll<
+          'category_specifications',
+          CategorySpecifications
+        >('category_specifications', {
+          in: [
+            'categoryId',
+            [...new Set(products.value.map((e) => e.categoryId.id))]
+          ]
+        })
+        for (const category of categories.value) {
+          const categorySpecifications = categoriesSpecifications?.filter(
+            (e) => e.categoryId === category.id
+          )
+          if (categorySpecifications) {
+            category.specifications = categorySpecifications
+          }
+        }
       }
 
       loader.value = products.value.length ? 'success' : 'empty'
@@ -87,14 +114,15 @@ const watcher = watch(
 
 <template>
   <div class="container">
-    <template v-if="loader === 'success'">
+    <template v-if="loader === 'success' && currentCategory !== undefined">
       <Categories
-        :current-category-id="currentCategoryId"
+        :current-category="currentCategory"
         :categories="categories"
       />
-      <ProductsList
-        :current-category-id="currentCategoryId"
+      <ComparisonList
+        :current-category="currentCategory"
         :products="products"
+        :categories="categories"
       />
     </template>
     <div v-else-if="loader === 'loading'">

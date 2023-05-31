@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import type { ComparisonProduct } from '@/types'
+import type { Category, ComparisonProduct, CurrentCategory } from './types'
 
 const props = defineProps<{
   products: ComparisonProduct[]
-  currentCategoryId: number | null
+  currentCategory: CurrentCategory
+  categories: Category[]
 }>()
 const categoryProducts = computed((): ComparisonProduct[] => {
   return props.products.filter(
-    (e) => e.categoryId.id === props.currentCategoryId
+    (e) => e.categoryId.id === props.currentCategory.id
   )
 })
 const comparisonRef = ref<HTMLElement>()
@@ -26,18 +27,18 @@ onMounted(() => {
 })
 
 const updateItemsList = (action: 'prev' | 'next') => {
-  if (action === 'prev') {
+  if (action === 'next') {
     firstCellMargin.value = firstCellMargin.value - widthCell
   }
-  if (action === 'next') {
+  if (action === 'prev') {
     firstCellMargin.value = firstCellMargin.value + widthCell
   }
 }
 
-const showNextBtn = computed(() => {
+const showPrevBtn = computed(() => {
   return firstCellMargin.value !== 0
 })
-const showPrevBtn = computed(() => {
+const showNextBtn = computed(() => {
   const outsideItemsCount = categoryProducts.value.length - countitems.value
   return outsideItemsCount * widthCell !== Math.abs(firstCellMargin.value)
 })
@@ -46,7 +47,13 @@ const showPrevBtn = computed(() => {
 <template>
   <div ref="comparisonRef" class="comparison">
     <div class="cell" :style="{ marginRight: titleCellMargin }">
-      <div>Наименование</div>
+      <div class="mb-8">Наименование</div>
+      <div
+        v-for="specification in currentCategory.specifications"
+        :key="specification.title"
+      >
+        {{ specification.title }}
+      </div>
     </div>
     <div class="cells">
       <button
@@ -70,6 +77,12 @@ const showPrevBtn = computed(() => {
         :style="{ marginLeft: (i === 0 ? firstCellMargin : 0) + 'px' }"
       >
         <div class="mb-8">{{ product.name }}</div>
+        <div
+          v-for="specification in product.specifications"
+          :key="specification.id"
+        >
+          {{ specification.valueNumber }} {{ specification.valueString }}
+        </div>
         <div>{{ product.warranty }}</div>
       </div>
     </div>

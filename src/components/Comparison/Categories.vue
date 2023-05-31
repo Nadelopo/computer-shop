@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { nextTick, ref, watch, type ComponentPublicInstance } from 'vue'
-import type { Category } from '@/types'
+import type { Category, CurrentCategory } from './types'
 
 const props = defineProps<{
   categories: Category[]
-  currentCategoryId: number | null
+  currentCategory: CurrentCategory
 }>()
 
 const categoriesRefs = ref<ComponentPublicInstance[]>([])
@@ -17,7 +17,7 @@ const categoryLineStyles = ref({
 const setCategory = async () => {
   await nextTick()
   const categoryIndex = props.categories.findIndex(
-    (e) => e.id === props.currentCategoryId
+    (e) => e.id === props.currentCategory.id
   )
   const el = categoriesRefs.value[categoryIndex].$el
   if (el.offsetLeft > parseInt(categoryLineStyles.value.marginLeft)) {
@@ -40,7 +40,7 @@ const setCategory = async () => {
   }, 200)
 }
 
-watch(() => props.currentCategoryId, setCategory, {
+watch(() => props.currentCategory, setCategory, {
   immediate: true
 })
 </script>
@@ -53,7 +53,7 @@ watch(() => props.currentCategoryId, setCategory, {
       ref="categoriesRefs"
       :to="{ query: { category_id: category.id } }"
       class="tab"
-      :class="{ active: category.id === currentCategoryId }"
+      :class="{ active: category.id === currentCategory.id }"
     >
       <div class="link">
         {{ category.title }} <span class="ml-2">{{ category.count }}</span>

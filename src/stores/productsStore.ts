@@ -104,7 +104,10 @@ export const useProductsStore = defineStore('products', () => {
         SpecificationReadWithDetails
       >('specifications', {
         eq: [['productId', productId]],
-        select: '*, categorySpecificationsId(id, title, units, visible)'
+        select: '*, categorySpecificationsId(id, title, units, visible)',
+        order: {
+          value: 'categorySpecificationsId'
+        }
       })
       if (specifications) {
         product.value = { ...data, specifications }
