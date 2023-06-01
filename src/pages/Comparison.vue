@@ -21,6 +21,10 @@ type Product = ProductRead & {
     enTitle: string
     title: string
   }
+  manufacturerId: {
+    id: number
+    title: string
+  }
 }
 
 const { user } = storeToRefs(useUserStore())
@@ -47,7 +51,7 @@ const watcher = watch(
       loader.value = 'loading'
 
       const productData = await getAll<'products', Product>('products', {
-        select: '*, categoryId(id, enTitle, title)',
+        select: '*, categoryId(id, enTitle, title), manufacturerId(id, title)',
         in: ['id', user.value.comparison]
       })
 
@@ -89,14 +93,18 @@ const watcher = watch(
           in: [
             'categoryId',
             [...new Set(products.value.map((e) => e.categoryId.id))]
-          ]
+          ],
+          select: 'categoryId, title, units'
         })
         for (const category of categories.value) {
           const categorySpecifications = categoriesSpecifications?.filter(
             (e) => e.categoryId === category.id
           )
           if (categorySpecifications) {
-            category.specifications = categorySpecifications
+            category.specifications = categorySpecifications.map((e) => {
+              e.title = e.title[0].toUpperCase() + e.title.slice(1)
+              return e
+            })
           }
         }
       }

@@ -88,6 +88,9 @@ watch(() => props.currentCategory, setCategory, {
       padding-bottom: 12px
       cursor: pointer
       z-index: 1
+      transition: color .3s
+      &:hover
+        color: var(--color-text)
       &.active
         color: var(--color-text)
         font-weight: 700

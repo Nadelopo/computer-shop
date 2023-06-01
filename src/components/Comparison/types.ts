@@ -4,6 +4,7 @@ import type { SpecificationRead } from '@/types/tables/specifications.types'
 export type CategorySpecifications = {
   title: string
   categoryId: number
+  units: string
 }
 
 export type Category = {
@@ -20,8 +21,7 @@ export type CurrentCategory = {
 
 export type ComparisonProduct = Omit<
   ProductWithSpecifications,
-  'manufacturerId' | 'specifications'
+  'specifications'
 > & {
-  manufacturerId: number
   specifications: SpecificationRead[]
 }
