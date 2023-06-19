@@ -4,7 +4,7 @@ export const localStorageSet = (key: string, value: unknown) => {
 
 export const localStorageGet = <T>(key: string) => {
   const data = localStorage.getItem(key)
-  if (data) {
+  if (data !== null) {
     const parsed: T = JSON.parse(data)
     return parsed
   } else {

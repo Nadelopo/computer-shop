@@ -12,7 +12,7 @@ import SkeletonFiltersVue from './SkeletonFilters.vue'
 const { getCategorySpecifications } = useCategoriesStore()
 
 const { setFilteredProducts } = useFilterStore()
-const { specificationsValues } = storeToRefs(useFilterStore())
+const { specificationsValues, productsPrice } = storeToRefs(useFilterStore())
 
 const route = useRoute()
 
@@ -51,6 +51,14 @@ onBeforeMount(async () => {
       .sort((a, b) => Number(b.type) - Number(a.type))
   }
   const query = route.query
+  const price = route.query.price
+  if (typeof price === 'string') {
+    const [min, max] = price.split('_').map(Number)
+    productsPrice.value = {
+      min,
+      max
+    }
+  }
   for (const value of specificationsValues.value) {
     const field = query[value.enTitle]
     if (field && value.type && typeof field === 'string') {
@@ -74,6 +82,10 @@ const cancel = () => {
       spec.values = []
     }
   })
+  productsPrice.value = {
+    min: 0,
+    max: 300000
+  }
   setFilteredProducts(categoryId)
 }
 </script>
@@ -81,7 +93,14 @@ const cancel = () => {
 <template>
   <div>
     <div v-if="specificationsValues.length" class="filters">
-      <input-filter :max="300000" :step="500" title="цена" class="mb-6" />
+      <input-filter
+        v-model:min-value="productsPrice.min"
+        v-model:max-value="productsPrice.max"
+        :max="300000"
+        :step="500"
+        title="цена"
+        class="mb-6"
+      />
 
       <template v-for="value in specificationsValues" :key="value.id">
         <template v-if="value.type">

@@ -61,6 +61,10 @@ export const useFilterStore = defineStore('filter', () => {
   })
   const sortColumn = ref<SortType>('popularity')
   const search = ref('')
+  const productsPrice = ref<{ min: number; max: number }>({
+    min: 0,
+    max: 300000
+  })
 
   async function setFilteredProducts(categoryId: number) {
     const query: {
@@ -77,7 +81,8 @@ export const useFilterStore = defineStore('filter', () => {
     router.push({
       query: {
         ...route.query,
-        ...query
+        ...query,
+        price: `${productsPrice.value.min}_${productsPrice.value.max}`
       }
     })
 
@@ -85,6 +90,7 @@ export const useFilterStore = defineStore('filter', () => {
     products.value = []
 
     const promises = []
+
     for (const spec of specificationsValues.value) {
       const query = supabase
         .from('specifications')
@@ -124,11 +130,13 @@ export const useFilterStore = defineStore('filter', () => {
       .select('*, categoryId(id, enTitle), manufacturerId(id, title)')
       .in('id', filteredProductsId)
       .order(sortColumn.value, { ascending: sortAscents[sortColumn.value] })
+      .lte('price', productsPrice.value.max)
+      .gte('price', productsPrice.value.min)
 
     const { data: specificationsData } = await supabase
       .from<SpecificationReadWithDetails>('specifications')
       .select('*, categorySpecificationsId(id, title, units, visible)')
-      .in('productId', filteredProductsId)
+      .in('productId', productsData?.map((e) => e.id) || [])
 
     if (productsData && specificationsData) {
       products.value = productsData.map((p) => {
@@ -151,6 +159,7 @@ export const useFilterStore = defineStore('filter', () => {
     search,
     sortAscents,
     specificationsValues,
-    sortColumn
+    sortColumn,
+    productsPrice
   }
 })
