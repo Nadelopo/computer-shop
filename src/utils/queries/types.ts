@@ -27,7 +27,7 @@ import type {
   ReviewCreate,
   ReviewRead,
   ReviewUpdate
-} from '@/types/tables/reviews'
+} from '@/types/tables/reviews.types'
 import type {
   SpecificationRead,
   SpecificationCreate,

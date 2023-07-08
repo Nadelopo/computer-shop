@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import RatingStars from '../RatingStars.vue'
 import AvatarSvg from '@/assets/icons/avatar.svg?component'
-import type { ReviewReadWithDetails } from '@/types/tables/reviews'
+import type { ReviewReadWithDetails } from '@/types/tables/reviews.types'
 
 const props = defineProps<{
   review: ReviewReadWithDetails

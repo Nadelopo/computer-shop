@@ -80,8 +80,10 @@ watch(
 .card__active
   transform: scale(1)
   opacity: 1
+  transition: .3s
 
 .card__disable
-  transform: scale(0.7)
+  transform: scale(0.6)
   opacity: 0
+  transition: .3s
 </style>

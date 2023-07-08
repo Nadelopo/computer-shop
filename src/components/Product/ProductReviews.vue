@@ -13,7 +13,7 @@ import type {
   ReviewCreateRating,
   ReviewReadWithDetails,
   UsersRated
-} from '@/types/tables/reviews'
+} from '@/types/tables/reviews.types'
 import type { UpdateProductRating } from '@/pages/Product.vue'
 
 type ReviewFormCreate = {
@@ -63,7 +63,6 @@ const loadReviews = async () => {
     }
   }
 }
-loadReviews()
 
 const copyForm: ReviewFormCreate = {
   dignities: '',
@@ -219,7 +218,9 @@ const ratingBtns = (review: ReviewReadWithDetails) => {
   ]
 }
 
-watch(() => props.productId, loadReviews)
+watch(() => props.productId, loadReviews, {
+  immediate: true
+})
 </script>
 
 <template>

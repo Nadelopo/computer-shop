@@ -2,7 +2,7 @@
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import ReviewsBlock from '@/components/Product/ReviewsBlock.vue'
-import type { ReviewWithDetails } from '@/types/tables/reviews'
+import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 
 defineProps<{
   reviews: ReviewWithDetails[]

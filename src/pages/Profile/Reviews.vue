@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ReviewsBlock from '@/components/Product/ReviewsBlock.vue'
-import type { ReviewWithDetails } from '@/types/tables/reviews'
+import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 
 defineProps<{
   reviews: ReviewWithDetails[]

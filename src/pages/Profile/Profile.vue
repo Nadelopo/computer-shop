@@ -3,7 +3,7 @@ import { onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import { getAll } from '@/utils/queries/db'
-import type { ReviewWithDetails } from '@/types/tables/reviews'
+import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 
 const { user } = storeToRefs(useUserStore())
 

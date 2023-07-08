@@ -1,4 +1,4 @@
-export const formatPrice = (value: number) => {
+export const formatPrice = (value: number): string => {
   const price = String(value).split('')
   const result = []
   for (let i = price.length - 1; i >= 0; i--) {
