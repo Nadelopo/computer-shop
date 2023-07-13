@@ -26,8 +26,8 @@ const loadData = async () => {
   const data = await getProduct(productId)
   if (data.value) {
     data.value.specifications = data.value.specifications.map((e) => {
-      const title = e.categorySpecificationsId.title
-      e.categorySpecificationsId.title =
+      const title = e.category_specifications.title
+      e.category_specifications.title =
         title.charAt(0).toUpperCase() + title.slice(1)
       return e
     })

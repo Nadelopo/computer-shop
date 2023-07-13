@@ -34,11 +34,11 @@ export type CheckboxData = {
 }
 
 type QueryData = {
-  categorySpecificationsId: {
+  category_specifications: {
     id: number
     enTitle: string
   }
-  productId: {
+  products: {
     categoryId: number
     id: number
   }
@@ -95,13 +95,13 @@ export const useFilterStore = defineStore('filter', () => {
       const query = supabase
         .from('specifications')
         .select(
-          'categorySpecificationsId!inner(id, enTitle), productId!inner(id, categoryId)'
+          'category_specifications!inner(id, enTitle), products!inner(id, categoryId)'
         )
         .match({
-          'productId.categoryId': categoryId,
-          'categorySpecificationsId.id': spec.id
+          'products.categoryId': categoryId,
+          'category_specifications.id': spec.id
         })
-        .ilike('productId.name', formatSearch(search.value))
+        .ilike('products.name', formatSearch(search.value))
 
       if (spec.type) {
         query
@@ -115,11 +115,12 @@ export const useFilterStore = defineStore('filter', () => {
       promises.push(query)
     }
     const results: PostgrestResponse<QueryData>[] = await Promise.all(promises)
+
     const data = results
       .map((e) => e.data)
       .filter((e): e is QueryData[] => e !== null)
 
-    const idList = data.map((e) => e.map((e) => e.productId.id))
+    const idList = data.map((e) => e.map((e) => e.products.id))
 
     const filteredProductsId = idList.reduce((a, b) =>
       a.filter((c) => b.includes(c))
@@ -127,7 +128,7 @@ export const useFilterStore = defineStore('filter', () => {
 
     const { data: productsData } = await supabase
       .from<ProductReadWithDetails>('products')
-      .select('*, categoryId(id, enTitle), manufacturerId(id, title)')
+      .select('*, categories(id, enTitle), manufacturers(id, title)')
       .in('id', filteredProductsId)
       .order(sortColumn.value, { ascending: sortAscents[sortColumn.value] })
       .lte('price', productsPrice.value.max)
@@ -135,7 +136,7 @@ export const useFilterStore = defineStore('filter', () => {
 
     const { data: specificationsData } = await supabase
       .from<SpecificationReadWithDetails>('specifications')
-      .select('*, categorySpecificationsId(id, title, units, visible)')
+      .select('*, category_specifications(id, title, units, visible)')
       .in('productId', productsData?.map((e) => e.id) || [])
 
     if (productsData && specificationsData) {
@@ -143,8 +144,8 @@ export const useFilterStore = defineStore('filter', () => {
         const specifications = specificationsData
           .filter((s) => p.id === s.productId)
           .sort((a, b) =>
-            a.categorySpecificationsId.title.localeCompare(
-              b.categorySpecificationsId.title
+            a.category_specifications.title.localeCompare(
+              b.category_specifications.title
             )
           )
         return { ...p, specifications }

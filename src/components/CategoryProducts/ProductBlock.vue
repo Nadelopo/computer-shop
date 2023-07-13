@@ -15,8 +15,8 @@ defineProps<{
     :to="{
       name: 'Product',
       params: {
-        categoryId: item.categoryId.id,
-        category: item.categoryId.enTitle,
+        categoryId: item.categories.id,
+        category: item.categories.enTitle,
         productId: item.id
       }
     }"
@@ -35,17 +35,17 @@ defineProps<{
           </div>
           <div
             v-for="specification in item.specifications"
-            :key="specification.categorySpecificationsId.id"
+            :key="specification.category_specifications.id"
             class="flex flex-col gap-2"
           >
             <div
-              v-if="specification.categorySpecificationsId.visible"
+              v-if="specification.category_specifications.visible"
               class="flex gap-2"
             >
-              <div>{{ specification.categorySpecificationsId.title }}:</div>
+              <div>{{ specification.category_specifications.title }}:</div>
               <div>
                 {{ specification.valueNumber ?? specification.valueString }}
-                {{ specification.categorySpecificationsId.units }}
+                {{ specification.category_specifications.units }}
               </div>
             </div>
           </div>

@@ -48,7 +48,7 @@ export const useProductsStore = defineStore('products', () => {
 
     const data = await getAll<ProductReadWithDetails>('products', {
       eq: [['categoryId', categoryId]],
-      select: '*, categoryId(id, enTitle), manufacturerId(id, title)'
+      select: '*, categories(id, enTitle), manufacturers(id, title)'
     })
 
     if (data?.length) {
@@ -57,7 +57,7 @@ export const useProductsStore = defineStore('products', () => {
         promises.push(
           getAll<SpecificationReadWithDetails>('specifications', {
             eq: [['productId', product.id]],
-            select: '*,  categorySpecificationsId(id, title, units, visible)',
+            select: '*,  category_specifications(id, title, units, visible)',
             order: {
               value: 'categorySpecificationsId'
             }
@@ -91,7 +91,7 @@ export const useProductsStore = defineStore('products', () => {
       'products',
       productId,
       {
-        select: '*, categoryId(id, enTitle), manufacturerId(id, title)'
+        select: '*, categories(id, enTitle), manufacturers(id, title)'
       }
     )
 
@@ -100,7 +100,7 @@ export const useProductsStore = defineStore('products', () => {
         'specifications',
         {
           eq: [['productId', productId]],
-          select: '*, categorySpecificationsId(id, title, units, visible)',
+          select: '*, category_specifications(id, title, units, visible)',
           order: {
             value: 'categorySpecificationsId'
           }
@@ -121,7 +121,7 @@ export const useProductsStore = defineStore('products', () => {
     if (data) {
       const product = await getProduct(data.id)
       product.value?.specifications.sort(
-        (a, b) => a.categorySpecificationsId.id - b.categorySpecificationsId.id
+        (a, b) => a.category_specifications.id - b.category_specifications.id
       )
       console.log(product)
       products.value = products.value.map((prod) =>

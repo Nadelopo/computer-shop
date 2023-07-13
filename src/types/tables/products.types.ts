@@ -3,20 +3,22 @@ import type { SpecificationReadWithDetails } from './specifications.types'
 export type ProductRead = Required<ProductCreate>
 
 export type ProductReadWithDetails = {
-  categoryId: {
+  categories: {
     id: number
     enTitle: string
   }
+  categoryId: number
   countReviews: number
   created_at: string
   description: string
   discount: number
   id: number
   img: string
-  manufacturerId: {
+  manufacturers: {
     id: number
     title: string
   }
+  manufacturerId: number
   name: string
   popularity: number
   price: number

@@ -17,7 +17,7 @@ const { getManufacturer } = useManufacturersStore()
 const manufacturer = ref<ManufacturerRead>()
 
 const loadManufacturer = async () => {
-  const data = await getManufacturer(props.product.manufacturerId.id)
+  const data = await getManufacturer(props.product.manufacturers.id)
   if (data) {
     manufacturer.value = data
   }

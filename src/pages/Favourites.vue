@@ -11,7 +11,7 @@ import CrossSVG from '@/assets/icons/cross.svg?component'
 import type { ProductRead } from '@/types/tables/products.types'
 
 type ProductCard = ProductRead & {
-  categoryId: {
+  categories: {
     id: number
     enTitle: string
   }
@@ -29,7 +29,7 @@ const watcher = watch(
     if (user.value) {
       lodaing.value = 'loading'
       const data = await getAll<ProductCard>('products', {
-        select: '*, categoryId(id, enTitle)',
+        select: '*, categories(id, enTitle)',
         in: ['id', user.value.favourites]
       })
       favourites.value = data || []
@@ -100,8 +100,8 @@ const deleteItem = async (id: number) => {
               :to="{
                 name: 'Product',
                 params: {
-                  category: item.categoryId.enTitle,
-                  categoryId: item.categoryId.id,
+                  category: item.categories.enTitle,
+                  categoryId: item.categories.id,
                   productId: item.id
                 }
               }"

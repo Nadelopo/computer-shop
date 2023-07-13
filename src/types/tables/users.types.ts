@@ -6,7 +6,7 @@ export type UserCreate = {
   id: string
   name: string
   phone?: number | null
-  role?: 1 | 0
+  role?: (typeof Role)[keyof typeof Role]
   favourites?: number[]
   comparison?: number[]
 }

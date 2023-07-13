@@ -24,7 +24,7 @@ import type {
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 
 type ProductSpecificationOnEdit = SpecificationRead & {
-  categorySpecificationsId: Omit<
+  category_specifications: Omit<
     CategorySpecificationRead,
     'created_at' | 'categoryId' | 'enTitle'
   >
@@ -54,23 +54,22 @@ const loading = ref<'loading' | 'success'>('loading')
 
 onBeforeMount(async () => {
   const productData = await getOneById<ProductReadWithDetails>('products', id, {
-    select: '*, manufacturerId(id, title), categoryId(id, enTitle)'
+    select: '*, manufacturers(id, title), categories(id, enTitle)'
   })
   const specifications = await getAll<ProductSpecificationOnEdit>(
     'specifications',
     {
       eq: [['productId', id]],
       select:
-        '*, categorySpecificationsId(id, title, visible, units, type, step, min, max, variantsValues)',
+        '*, category_specifications(id, title, visible, units, type, step, min, max, variantsValues)',
       order: {
         value: 'categorySpecificationsId'
       }
     }
   )
-
   if (productData && specifications) {
     img.value = productData.img
-    manufacturerSelect.value = productData.manufacturerId.id
+    manufacturerSelect.value = productData.manufacturers.id
     product.value = { ...productData, specifications }
     loading.value = 'success'
   }
@@ -117,7 +116,7 @@ const save = async () => {
 const specificationsVariantsValues = (i: number) => {
   let arr: { value: string; title: string }[] = []
   const varinsValues =
-    product.value?.specifications[i].categorySpecificationsId.variantsValues
+    product.value?.specifications[i].category_specifications.variantsValues
   if (varinsValues) {
     arr = varinsValues.map((e) => ({
       value: e,
@@ -154,17 +153,17 @@ const back = async () => {
       <form class="list__form pt-10" @submit.prevent="save">
         <div
           v-for="(specification, i) in product.specifications"
-          :key="specification.categorySpecificationsId.id"
+          :key="specification.category_specifications.id"
         >
           <label>
-            {{ specification.categorySpecificationsId.title }}
+            {{ specification.category_specifications.title }}
           </label>
-          <template v-if="specification.categorySpecificationsId.type">
+          <template v-if="specification.category_specifications.type">
             <v-input-text
               v-model="specification.valueNumber"
-              :step="Number(specification.categorySpecificationsId.step)"
-              :min="Number(specification.categorySpecificationsId.min)"
-              :max="Number(specification.categorySpecificationsId.max)"
+              :step="Number(specification.category_specifications.step)"
+              :min="Number(specification.category_specifications.min)"
+              :max="Number(specification.category_specifications.max)"
               type="number"
             />
           </template>

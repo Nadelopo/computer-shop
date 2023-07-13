@@ -13,7 +13,6 @@ import { createOne, getAll, updateOne } from '@/utils/queries/db'
 
 export const useCategoriesStore = defineStore('categories', () => {
   const categories = ref<CategoryRead[]>([])
-  const categorySpecifications = ref<CategorySpecificationRead[]>([])
 
   async function setCategories(): Promise<void> {
     const data = await getAll('categories')
@@ -51,9 +50,6 @@ export const useCategoriesStore = defineStore('categories', () => {
     form: CategorySpecificationCreate
   ): Promise<CategorySpecificationRead | null> {
     const data = await createOne('category_specifications', form)
-    if (data) {
-      categorySpecifications.value.push(data)
-    }
     return data
   }
 
@@ -73,7 +69,6 @@ export const useCategoriesStore = defineStore('categories', () => {
 
   return {
     categories,
-    categorySpecifications,
     setCategories,
     createCategory,
     createCategorySpecifications,

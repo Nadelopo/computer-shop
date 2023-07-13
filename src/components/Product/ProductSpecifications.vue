@@ -16,16 +16,16 @@ defineProps<{
         class="specification"
       >
         <div class="specification__title">
-          {{ specification.categorySpecificationsId.title }}
+          {{ specification.category_specifications.title }}
         </div>
         <div class="flex items-end">
           {{ specification.valueNumber ?? specification.valueString }}
-          {{ specification.categorySpecificationsId.units }}
+          {{ specification.category_specifications.units }}
         </div>
       </div>
       <div class="specification">
         <div class="specification__title">Производитель</div>
-        <div class="flex items-end">{{ product.manufacturerId.title }}</div>
+        <div class="flex items-end">{{ product.manufacturers.title }}</div>
       </div>
       <div class="specification">
         <div class="specification__title">Гарантия</div>

@@ -9,9 +9,7 @@ const props = defineProps<{
 }>()
 
 const categoryProducts = computed((): ComparisonProduct[] => {
-  return props.products.filter(
-    (e) => e.categoryId.id === props.currentCategory.id
-  )
+  return props.products.filter((e) => e.categoryId === props.currentCategory.id)
 })
 const comparisonRef = ref<HTMLElement>()
 const titleCellPadding = ref('0px')
@@ -34,9 +32,7 @@ onMounted(() => {
 
 const productData = computed(() => {
   const titles = categoryProducts.value.map((e) => e.name)
-  const manufacturers = categoryProducts.value.map(
-    (e) => e.manufacturerId.title
-  )
+  const manufacturers = categoryProducts.value.map((e) => e.manufacturers.title)
   const warranties = categoryProducts.value.map((e) => e.warranty)
   return { titles, manufacturers, warranties }
 })

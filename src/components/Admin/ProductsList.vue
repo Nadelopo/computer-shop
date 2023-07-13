@@ -56,12 +56,12 @@ const delteProduct = (id: number, img: string) => {
           <td>{{ product.name }}</td>
           <td
             v-for="specification in product.specifications"
-            :key="specification.categorySpecificationsId.id"
+            :key="specification.category_specifications.id"
           >
             {{ specification.valueNumber ?? specification.valueString }}
-            {{ specification.categorySpecificationsId.units }}
+            {{ specification.category_specifications.units }}
           </td>
-          <td>{{ product.manufacturerId.title }}</td>
+          <td>{{ product.manufacturers.title }}</td>
           <td>
             <img :src="product.img" alt="" />
           </td>
@@ -75,7 +75,7 @@ const delteProduct = (id: number, img: string) => {
                   name: 'EditProducts',
                   params: {
                     category: $route.params.category,
-                    categoryId: product.categoryId.id,
+                    categoryId: product.categoryId,
                     id: product.id
                   }
                 }"

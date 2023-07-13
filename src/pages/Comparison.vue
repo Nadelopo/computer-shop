@@ -16,12 +16,12 @@ import type {
 } from '@/components/Comparison/types'
 
 type Product = ProductRead & {
-  categoryId: {
+  categories: {
     id: number
     enTitle: string
     title: string
   }
-  manufacturerId: {
+  manufacturers: {
     id: number
     title: string
   }
@@ -32,9 +32,7 @@ const { user } = storeToRefs(useUserStore())
 const categories = ref<Category[]>([])
 const currentCategory = computed((): CurrentCategory => {
   const idFromQuery = useRoute().query.category_id
-  const id = idFromQuery
-    ? Number(idFromQuery)
-    : products.value[0]?.categoryId.id
+  const id = idFromQuery ? Number(idFromQuery) : products.value[0]?.categoryId
   const specifications =
     categories.value.find((e) => e.id === id)?.specifications || []
   return { id, specifications }
@@ -51,7 +49,7 @@ const watcher = watch(
       loading.value = 'loading'
 
       const productData = await getAll<Product>('products', {
-        select: '*, categoryId(id, enTitle, title), manufacturerId(id, title)',
+        select: '*, categories(id, enTitle, title), manufacturers(id, title)',
         in: ['id', user.value.comparison]
       })
 
@@ -71,16 +69,16 @@ const watcher = watch(
             )
           })
 
-          if (!categories.value.some((e) => e.id === product.categoryId.id)) {
+          if (!categories.value.some((e) => e.id === product.categoryId)) {
             categories.value.push({
-              id: product.categoryId.id,
-              title: product.categoryId.title,
+              id: product.categoryId,
+              title: product.categories.title,
               count: 1,
               specifications: []
             })
           } else {
             categories.value = categories.value.map((e) =>
-              e.id === product.categoryId.id ? { ...e, count: e.count + 1 } : e
+              e.id === product.categoryId ? { ...e, count: e.count + 1 } : e
             )
           }
         }
@@ -91,7 +89,7 @@ const watcher = watch(
           {
             in: [
               'categoryId',
-              [...new Set(products.value.map((e) => e.categoryId.id))]
+              [...new Set(products.value.map((e) => e.categoryId))]
             ],
             select: 'categoryId, title, units'
           }

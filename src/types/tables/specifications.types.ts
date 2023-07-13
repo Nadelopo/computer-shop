@@ -1,7 +1,8 @@
 export type SpecificationRead = Required<SpecificationCreate>
 
 export type SpecificationReadWithDetails = {
-  categorySpecificationsId: {
+  categorySpecificationsId: number
+  category_specifications: {
     id: number
     title: string
     visible: boolean
