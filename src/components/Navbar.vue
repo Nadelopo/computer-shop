@@ -11,6 +11,7 @@ import UserSvg from '@/assets/icons/avatar.svg?component'
 import FavouritesSVG from '@/assets/icons/favourites.svg?component'
 import CartSVG from '@/assets/icons/cart.svg?component'
 import ComparisonSVG from '@/assets/icons/comparison.svg?component'
+import { Role } from '@/types/tables/users.types'
 
 const { user } = storeToRefs(useUserStore())
 
@@ -99,7 +100,10 @@ const open = ref(false)
                 <UserSvg width="25" class="user__svg" />
               </template>
               <template #content>
-                <router-link v-if="user?.role == 0" :to="{ name: 'AdminHome' }">
+                <router-link
+                  v-if="user?.role == Role.ADMIN"
+                  :to="{ name: 'AdminHome' }"
+                >
                   admin
                 </router-link>
                 <div v-if="user" @click="logout">выйти</div>

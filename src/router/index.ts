@@ -3,6 +3,7 @@ import Auth from '@/pages/Auth.vue'
 import Home from '@/pages/Home.vue'
 import { supabase } from '@/supabase'
 import { getOneById } from '@/utils/queries/db'
+import { Role, type UserRead } from '@/types/tables/users.types'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,7 +27,7 @@ const router = createRouter({
       path: '/admin',
       name: 'AdminHome',
       component: () => import('@/pages/Admin/AdminHome.vue'),
-      meta: { auth: true },
+      meta: { auth: true, admin: true },
       children: [
         {
           path: 'categories',
@@ -54,19 +55,19 @@ const router = createRouter({
       path: '/admin/edit/:category/:categoryId/:id',
       name: 'EditProducts',
       component: () => import('@/pages/Admin/EditProducts.vue'),
-      meta: { auth: true }
+      meta: { auth: true, admin: true }
     },
     {
       path: '/admin/edit/category/:id',
       name: 'EditCategory',
       component: () => import('@/pages/Admin/EditCategory.vue'),
-      meta: { auth: true }
+      meta: { auth: true, admin: true }
     },
     {
       path: '/admin/edit/manufacturer/:id',
       name: 'EditManufacturer',
       component: () => import('@/pages/Admin/EditManufacturer.vue'),
-      meta: { auth: true }
+      meta: { auth: true, admin: true }
     },
     {
       path: '/cart',
@@ -110,35 +111,37 @@ const router = createRouter({
     {
       path: '/favourites',
       name: 'Favourites',
+      meta: { auth: true },
       component: () => import('@/pages/Favourites.vue')
     },
     {
       path: '/comparison',
       name: 'Comparison',
       component: () => import('@/pages/Comparison.vue')
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: () => import('@/pages/NotFound.vue')
     }
   ]
 })
 
-// role 1 - user, 0 - admin
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, from) => {
   const requireAuth = to.matched.some((record) => record.meta.auth)
-  if (!requireAuth) return next()
-  else {
-    const user = supabase.auth.user()
-    let role = 1
-    if (user) {
-      const data = await getOneById<{ role: number }>('users', user.id, {
-        select: 'role'
-      })
-      if (data) role = data.role
-    }
-    if (role !== 0) {
-      next('/')
-    } else {
-      next()
-    }
+  if (!requireAuth) return true
+  const user = supabase.auth.user()
+  if (!user) {
+    if (!from.name) return { name: 'Home' }
+    else return false
   }
+  const data = await getOneById<{ role: UserRead['role'] }>('users', user.id, {
+    select: 'role'
+  })
+  if (!data) return false
+  const requireAdmin = to.matched.some((record) => record.meta.admin)
+  if (requireAdmin && data.role !== Role.ADMIN) return { name: 'Home' }
+  return true
 })
 
 export default router

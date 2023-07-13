@@ -6,9 +6,14 @@ export type UserCreate = {
   id: string
   name: string
   phone?: number | null
-  role?: number
+  role?: 1 | 0
   favourites?: number[]
   comparison?: number[]
 }
 
 export type UserUpdate = Partial<UserCreate>
+
+export const Role = {
+  ADMIN: 0,
+  USER: 1
+} as const
