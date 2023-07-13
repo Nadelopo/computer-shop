@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { getAll } from '@/utils/queries/db'
 import { useUserStore } from '@/stores/userStore'
-import Categories from '@/components/Comparison/Categories.vue'
+import VTabs from '@/components/UI/VTabs.vue'
 import ComparisonList from '@/components/Comparison/ComparisonList.vue'
 import Vloader from '@/components/UI/Vloader.vue'
 import type { ProductRead } from '@/types/tables/products.types'
@@ -27,15 +27,18 @@ type Product = ProductRead & {
   }
 }
 
+const route = useRoute()
+
 const { user } = storeToRefs(useUserStore())
 
 const categories = ref<Category[]>([])
+
+const currentCategoryId = ref<number | null>(null)
 const currentCategory = computed((): CurrentCategory => {
-  const idFromQuery = useRoute().query.category_id
-  const id = idFromQuery ? Number(idFromQuery) : products.value[0]?.categoryId
   const specifications =
-    categories.value.find((e) => e.id === id)?.specifications || []
-  return { id, specifications }
+    categories.value.find((e) => e.id === currentCategoryId.value)
+      ?.specifications || []
+  return { id: currentCategoryId.value, specifications }
 })
 
 const products = ref<ComparisonProduct[]>([])
@@ -83,6 +86,13 @@ const watcher = watch(
           }
         }
 
+        const categoryId = route.query.category_id
+        if (categoryId) {
+          currentCategoryId.value = Number(categoryId)
+        } else {
+          currentCategoryId.value = categories.value[0].id
+        }
+
         products.value = modifiedProducts
         const categoriesSpecifications = await getAll<CategorySpecifications>(
           'category_specifications',
@@ -116,14 +126,30 @@ const watcher = watch(
     immediate: true
   }
 )
+
+watch(
+  () => route.query.category_id,
+  (categoryId) => {
+    if (categoryId) {
+      currentCategoryId.value = Number(categoryId)
+    }
+  }
+)
 </script>
 
 <template>
   <div class="container">
-    <template v-if="loading === 'success' && currentCategory !== undefined">
-      <Categories
-        :current-category="currentCategory"
-        :categories="categories"
+    <template v-if="loading === 'success'">
+      <v-tabs
+        v-model="currentCategoryId"
+        :options="
+          categories.map((e) => ({
+            title: e.title,
+            value: e.id,
+            count: e.count
+          }))
+        "
+        query-param-name="category_id"
       />
       <ComparisonList
         :current-category="currentCategory"

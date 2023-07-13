@@ -15,7 +15,7 @@ export type Category = {
 }
 
 export type CurrentCategory = {
-  id: number | undefined
+  id: number | null
   specifications: CategorySpecifications[]
 }
 
