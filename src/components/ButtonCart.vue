@@ -13,7 +13,7 @@ type Props = {
 
 const props = defineProps<Props>()
 
-const loader = ref(false)
+const loading = ref(false)
 
 const { addToCart } = useCartStore()
 const { cartItems } = storeToRefs(useCartStore())
@@ -27,15 +27,15 @@ const product = cartItems.value.find((e) => e.productId === props.productId)
 const state = ref(product ? true : false)
 
 const add = async () => {
-  loader.value = true
+  loading.value = true
   await addToCart(props.productId)
-  loader.value = false
+  loading.value = false
   state.value = true
 }
 </script>
 
 <template>
-  <template v-if="loader">
+  <template v-if="loading">
     <v-button class="button">
       <v-loader color="#9fe7e0" height="24px" />
     </v-button>

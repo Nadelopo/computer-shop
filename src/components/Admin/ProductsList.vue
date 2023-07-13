@@ -12,7 +12,7 @@ defineProps<{
   specifications: CategorySpecificationRead[]
 }>()
 
-const { products, loader } = storeToRefs(useProductsStore())
+const { products, loading } = storeToRefs(useProductsStore())
 
 const delteProduct = (id: number, img: string) => {
   Swal.fire({
@@ -94,7 +94,7 @@ const delteProduct = (id: number, img: string) => {
       </tbody>
     </table>
     <div
-      v-if="loader === 'empty'"
+      v-if="loading === 'empty'"
       class="text-2xl text-center font-normal mt-16"
     >
       товары отсутствуют

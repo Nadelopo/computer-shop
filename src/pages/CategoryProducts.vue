@@ -8,7 +8,7 @@ import Sort from '@/components/CategoryProducts/Sort.vue'
 import FiltersList from '@/components/CategoryProducts/FiltersList.vue'
 import Skeleton from '@/components/CategoryProducts/SkeletonProducts.vue'
 
-const { products, loader } = storeToRefs(useProductsStore())
+const { products, loading } = storeToRefs(useProductsStore())
 
 onUnmounted(() => {
   products.value = []
@@ -36,7 +36,7 @@ watch(
       <div>
         <Search />
         <Sort />
-        <template v-if="loader === 'success'">
+        <template v-if="loading === 'success'">
           <div class="product__list">
             <transition-group name="list">
               <ProductBlock
@@ -48,7 +48,7 @@ watch(
             </transition-group>
           </div>
         </template>
-        <div v-else-if="loader === 'loading'">
+        <div v-else-if="loading === 'loading'">
           <template v-for="_ in 10" :key="_">
             <Skeleton />
           </template>

@@ -5,18 +5,21 @@ import type {
   CreateData,
   GetAllParams,
   ResultData,
-  ResultType,
   Table,
   UpdateData,
   UpdateMany,
-  getParams
+  getParams,
+  Result
 } from './types'
 
-export async function getOneById<T extends Table, R = null>(
+export async function getOneById<
+  Z extends object = never,
+  T extends Table = Table
+>(
   table: T,
   id: string | number,
   params?: getParams
-): Promise<(R extends null ? ResultData[T] : R) | null> {
+): Promise<Result<T, Z> | null> {
   const { data, error } = await supabase
     .from(table)
     .select(params?.select)
@@ -27,10 +30,10 @@ export async function getOneById<T extends Table, R = null>(
   return data
 }
 
-export const getAll = async <T extends Table, R = null>(
+export const getAll = async <Z extends object = never, T extends Table = Table>(
   table: T,
   params?: GetAllParams
-): Promise<ResultType<T, R>[] | null> => {
+): Promise<Result<T, Z>[] | null> => {
   const search = params?.search
   const order = params?.order?.value ?? 'id'
   const query = supabase
@@ -75,13 +78,16 @@ export const getAll = async <T extends Table, R = null>(
   return data
 }
 
-export const createOne = async <T extends Table, R = null>(
+export const createOne = async <
+  Z extends object = never,
+  T extends Table = Table
+>(
   table: T,
   fields: CreateData[T],
   params?: {
     select?: string
   }
-): Promise<ResultType<T, R> | null> => {
+): Promise<Result<T, Z> | null> => {
   let query = supabase.from(table).insert(fields)
   if (params?.select) {
     query = query.select(params.select)
@@ -100,11 +106,14 @@ export const createMany = async <T extends Table>(
   return data
 }
 
-export async function updateOne<T extends Table, R = null>(
+export async function updateOne<
+  Z extends object = never,
+  T extends Table = Table
+>(
   table: T,
   id: number | string,
   fields: UpdateData[T]
-): Promise<ResultType<T, R> | null> {
+): Promise<Result<T, Z> | null> {
   const { data, error } = await supabase
     .from(table)
     .update(fields)
@@ -114,26 +123,33 @@ export async function updateOne<T extends Table, R = null>(
   return data
 }
 
-export async function updateMany<T extends Table, R = null>(
-  table: T,
-  fields: UpdateMany<UpdateData[T]>[]
-): Promise<ResultType<T, R>[]> {
+export async function updateMany<
+  Z extends object = never,
+  T extends Table = Table
+>(table: T, fields: UpdateMany<UpdateData[T]>[]): Promise<Result<T, Z>[]> {
   const promises = []
   for (const item of fields) {
     promises.push(supabase.from(table).update(item).eq('id', item.id).single())
   }
-  const results: PostgrestSingleResponse<ResultType<T, R>>[] =
-    await Promise.all(promises)
-  const data = results
+
+  const results: PostgrestSingleResponse<Result<T, Z>>[] = await Promise.all(
+    promises
+  )
+
+  const data: Result<T, Z>[] = results
     .map((e) => e.data)
-    .filter((e): e is ResultType<T, R> => e !== null)
+    .filter((e): e is never => e !== null)
+
   return data
 }
 
-export const deleteOne = async <T extends Table, R = null>(
+export const deleteOne = async <
+  Z extends object = never,
+  T extends Table = Table
+>(
   table: T,
   id: number
-): Promise<ResultType<T, R> | null> => {
+): Promise<Result<T, Z> | null> => {
   const { data, error } = await supabase
     .from(table)
     .delete()
@@ -141,5 +157,5 @@ export const deleteOne = async <T extends Table, R = null>(
     .single()
 
   if (error) console.log(error)
-  return data as ResultType<T, R> | null
+  return data
 }

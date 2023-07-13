@@ -22,11 +22,7 @@ onClickOutside(sidebarRef, closeSidebar)
       <div class="grid grid-cols-2 items-center">
         <div>
           <router-link :to="{ name: 'Home' }" @click="closeSidebar">
-            <img
-              src="@/assets/img/logoChangeWhiteSizeFnew.png"
-              width="95"
-              alt=""
-            />
+            <img src="/img/logoChangeWhiteSizeFnew.png" width="95" alt="" />
           </router-link>
         </div>
         <div class="text-end">

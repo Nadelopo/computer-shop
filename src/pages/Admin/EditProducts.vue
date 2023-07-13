@@ -50,39 +50,35 @@ const categoryTitle = route.params.category
 const product = ref<ProductWithSpecificationsOnEdit | null>(null)
 const img = ref('')
 const manufacturerSelect = ref(0)
-const loader = ref<'loading' | 'success'>('loading')
+const loading = ref<'loading' | 'success'>('loading')
 
 onBeforeMount(async () => {
-  const productData = await getOneById<'products', ProductReadWithDetails>(
-    'products',
-    id,
+  const productData = await getOneById<ProductReadWithDetails>('products', id, {
+    select: '*, manufacturerId(id, title), categoryId(id, enTitle)'
+  })
+  const specifications = await getAll<ProductSpecificationOnEdit>(
+    'specifications',
     {
-      select: '*, manufacturerId(id, title), categoryId(id, enTitle)'
+      eq: [['productId', id]],
+      select:
+        '*, categorySpecificationsId(id, title, visible, units, type, step, min, max, variantsValues)',
+      order: {
+        value: 'categorySpecificationsId'
+      }
     }
   )
-  const specifications = await getAll<
-    'specifications',
-    ProductSpecificationOnEdit
-  >('specifications', {
-    eq: [['productId', id]],
-    select:
-      '*, categorySpecificationsId(id, title, visible, units, type, step, min, max, variantsValues)',
-    order: {
-      value: 'categorySpecificationsId'
-    }
-  })
 
   if (productData && specifications) {
     img.value = productData.img
     manufacturerSelect.value = productData.manufacturerId.id
     product.value = { ...productData, specifications }
-    loader.value = 'success'
+    loading.value = 'success'
   }
 })
 
 const save = async () => {
   if (product.value) {
-    loader.value = 'loading'
+    loading.value = 'loading'
     const imgName = getImgName(img.value)
     if (imgName !== getImgName(product.value.img)) {
       await removeFromStorage('products', imgName)
@@ -138,7 +134,7 @@ const manufacturersSelect = computed(() => {
 })
 
 const back = async () => {
-  loader.value = 'loading'
+  loading.value = 'loading'
   if (product.value) {
     const imgName = getImgName(img.value)
     if (imgName !== getImgName(product.value.img)) {
@@ -154,7 +150,7 @@ const back = async () => {
 
 <template>
   <div class="root">
-    <div v-if="product && loader === 'success'" class="container">
+    <div v-if="product && loading === 'success'" class="container">
       <form class="list__form pt-10" @submit.prevent="save">
         <div
           v-for="(specification, i) in product.specifications"

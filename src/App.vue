@@ -7,7 +7,6 @@ import { useCartStore } from './stores/cartStore'
 import Navbar from './components/Navbar.vue'
 
 const { setUserData } = useUserStore()
-
 const { setCartItems } = useCartStore()
 setCartItems()
 

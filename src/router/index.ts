@@ -71,7 +71,8 @@ const router = createRouter({
     {
       path: '/cart',
       name: 'Cart',
-      component: () => import('@/pages/Cart.vue')
+      component: () => import('@/pages/Cart.vue'),
+      meta: { auth: true }
     },
     {
       path: '/products/:category/:categoryId/:productId',
@@ -127,13 +128,9 @@ router.beforeEach(async (to, from, next) => {
     const user = supabase.auth.user()
     let role = 1
     if (user) {
-      const data = await getOneById<'users', { role: number }>(
-        'users',
-        user.id,
-        {
-          select: 'role'
-        }
-      )
+      const data = await getOneById<{ role: number }>('users', user.id, {
+        select: 'role'
+      })
       if (data) role = data.role
     }
     if (role !== 0) {

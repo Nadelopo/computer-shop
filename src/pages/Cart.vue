@@ -15,18 +15,18 @@ const {
 } = useCartStore()
 const { cartItemsWithDetails } = storeToRefs(useCartStore())
 
-const loader = ref(true)
+const loading = ref(true)
 
 onBeforeMount(async () => {
   const cartItems = await setCartItems()
   await setCartItemsWithDetails(cartItems)
-  loader.value = false
+  loading.value = false
 })
 </script>
 
 <template>
   <div class="container">
-    <div v-if="loader" class="h-screen flex items-center">
+    <div v-if="loading" class="h-screen flex items-center">
       <v-loader />
     </div>
     <div v-else class="cart">

@@ -2,9 +2,9 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { supabase } from '@/supabase'
 import Swal from 'sweetalert2'
 import { useUserStore } from '../stores/userStore'
-import { supabase } from '@/supabase'
 import VPopup from './UI/VPopup.vue'
 import Sidebar from './Sidebar.vue'
 import UserSvg from '@/assets/icons/avatar.svg?component'
@@ -14,9 +14,12 @@ import ComparisonSVG from '@/assets/icons/comparison.svg?component'
 
 const { user } = storeToRefs(useUserStore())
 
+const router = useRouter()
+
 const logout = async () => {
   const { error } = await supabase.auth.signOut()
   if (error) console.log(error)
+  router.push({ name: 'Home' })
 }
 
 const checkAuth = () => {
@@ -30,7 +33,7 @@ const checkAuth = () => {
       denyButtonText: `Ок`
     }).then((result) => {
       if (result.isConfirmed) {
-        useRouter().push({ name: 'Auth' })
+        router.push({ name: 'Auth' })
       }
     })
   }
@@ -52,22 +55,14 @@ const open = ref(false)
         </div>
         <div class="flex justify-end">
           <router-link :to="{ name: 'Home' }">
-            <img
-              src="@/assets/img/logoChangeWhiteSizeFnew.png"
-              width="95"
-              alt=""
-            />
+            <img src="/img/logoChangeWhiteSizeFnew.png" width="95" alt="" />
           </router-link>
         </div>
       </div>
       <div class="root">
         <div class="logo">
           <router-link :to="{ name: 'Home' }">
-            <img
-              src="@/assets/img/logoChangeWhiteSizeFnew.png"
-              width="95"
-              alt=""
-            />
+            <img src="/img/logoChangeWhiteSizeFnew.png" width="95" alt="" />
           </router-link>
         </div>
         <div class="nav">

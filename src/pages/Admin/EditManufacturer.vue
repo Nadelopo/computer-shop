@@ -13,7 +13,7 @@ const { getManufacturer, updateManufacturer } = useManufacturersStore()
 const manufactuerId = Number(useRoute().params.id)
 const manufacturer = ref<ManufacturerUpdate | null>(null)
 
-const loader = ref<'success' | 'loading'>('loading')
+const loading = ref<'success' | 'loading'>('loading')
 
 onBeforeMount(async () => {
   const data = await getManufacturer(manufactuerId)
@@ -24,13 +24,13 @@ onBeforeMount(async () => {
       img: data.img
     }
   }
-  loader.value = 'success'
+  loading.value = 'success'
 })
 
 const router = useRouter()
 const update = async () => {
   if (manufacturer.value) {
-    loader.value = 'loading'
+    loading.value = 'loading'
     await updateManufacturer(manufactuerId, manufacturer.value)
     router.push({
       name: 'AdminManufacturers'
@@ -41,7 +41,7 @@ const update = async () => {
 
 <template>
   <div>
-    <div v-if="loader === 'success'" class="container">
+    <div v-if="loading === 'success'" class="container">
       <form
         v-if="manufacturer"
         class="list__form pt-10"

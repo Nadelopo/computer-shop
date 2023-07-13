@@ -48,7 +48,7 @@ export const useFilterStore = defineStore('filter', () => {
   const route = useRoute()
   const router = useRouter()
 
-  const { loader, products } = storeToRefs(useProductsStore())
+  const { loading, products } = storeToRefs(useProductsStore())
   type SortType = keyof typeof sortAscents
   const specificationsValues = ref<SpecificationsValues[]>([])
 
@@ -86,7 +86,7 @@ export const useFilterStore = defineStore('filter', () => {
       }
     })
 
-    loader.value = 'loading'
+    loading.value = 'loading'
     products.value = []
 
     const promises = []
@@ -151,7 +151,7 @@ export const useFilterStore = defineStore('filter', () => {
       })
     }
 
-    loader.value = 'success'
+    loading.value = 'success'
   }
 
   return {

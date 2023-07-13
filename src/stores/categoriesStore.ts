@@ -60,12 +60,12 @@ export const useCategoriesStore = defineStore('categories', () => {
   async function getCategorySpecifications(
     categoryId: number
   ): Promise<CategorySpecificationRead[] | null> {
-    const data = await getAll<
+    const data = await getAll<CategorySpecificationRead>(
       'category_specifications',
-      CategorySpecificationRead
-    >('category_specifications', {
-      eq: [['categoryId', categoryId]]
-    })
+      {
+        eq: [['categoryId', categoryId]]
+      }
+    )
     return data
   }
 

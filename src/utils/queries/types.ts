@@ -108,6 +108,7 @@ export type getParams = {
   select?: string
 }
 
-export type ResultType<T extends Table, R> = R extends null ? ResultData[T] : R
-
 export type UpdateMany<T> = T & Required<Pick<T, keyof T & 'id'>>
+
+type DefinitionType<T> = T extends Table ? ResultData[T] : T
+export type Result<T, Z> = DefinitionType<[Z] extends [never] ? T : Z>

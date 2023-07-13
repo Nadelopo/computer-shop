@@ -24,7 +24,7 @@ const route = useRoute()
 const { manufacturers } = storeToRefs(useManufacturersStore())
 const { getCategorySpecifications } = useCategoriesStore()
 const { createProduct, createSpecifications, setProducts } = useProductsStore()
-const { loader } = storeToRefs(useProductsStore())
+const { loading } = storeToRefs(useProductsStore())
 
 const manufacturerSelect = ref<number | string>('')
 const categoryId = ref<number>(Number(route.params.id))
@@ -114,7 +114,7 @@ const create = async () => {
 </script>
 
 <template>
-  <div v-if="categorySpecifications.length && loader === 'success'">
+  <div v-if="categorySpecifications.length && loading === 'success'">
     <form class="list__form mb-8" @submit.prevent="create">
       <div
         v-for="(specification, i) in categorySpecifications"

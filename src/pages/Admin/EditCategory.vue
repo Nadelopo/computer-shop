@@ -19,7 +19,7 @@ const { updateCategory } = useCategoriesStore()
 const categoryId = Number(useRoute().params.id)
 const router = useRouter()
 
-const loader = ref(false)
+const loading = ref(false)
 let oldImg: string | undefined = undefined
 const newCategory = ref<CategoryUpdate | null>(null)
 
@@ -56,7 +56,7 @@ watch(
       oldImg = getImgName(cur.img)
     }
     if (cur?.title) {
-      loader.value = true
+      loading.value = true
     }
   }
 )
@@ -70,7 +70,7 @@ const save = async () => {
       img: '',
       title: ''
     }
-    setTimeout(() => (loader.value = false))
+    setTimeout(() => (loading.value = false))
     if (oldImg) {
       const data = await removeFromStorage('categories', oldImg)
       if (data) {
@@ -86,7 +86,7 @@ const save = async () => {
 <template>
   <div class="container">
     <form
-      v-if="loader && newCategory"
+      v-if="loading && newCategory"
       class="list__form mt-16"
       @submit.prevent="save"
     >

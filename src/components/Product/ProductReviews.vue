@@ -42,7 +42,7 @@ const reviews = ref<ReviewReadWithDetails[]>([])
 const showReviewForm = ref(false)
 
 const loadReviews = async () => {
-  const data = await getAll<'reviews', ReviewReadWithDetails>('reviews', {
+  const data = await getAll<ReviewReadWithDetails>('reviews', {
     eq: [['productId', props.productId]],
     select: '*, users(name)',
     order: {
@@ -85,7 +85,7 @@ const createReview = async () => {
   } else if (form.value.rating === 0) {
     Swal.fire('', 'Укажите оценку', 'warning')
   } else {
-    const data = await createOne<'reviews', ReviewReadWithDetails>(
+    const data = await createOne<ReviewReadWithDetails>(
       'reviews',
       {
         userId: user.value.id,

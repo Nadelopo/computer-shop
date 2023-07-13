@@ -26,7 +26,7 @@ import type { UpdateMany } from '@/utils/queries/types'
 
 export const useProductsStore = defineStore('products', () => {
   const products = ref<ProductWithSpecifications[]>([])
-  const loader = ref<'loading' | 'success' | 'empty'>('loading')
+  const loading = ref<'loading' | 'success' | 'empty'>('loading')
 
   async function createProduct(
     params: ProductCreate
@@ -42,11 +42,11 @@ export const useProductsStore = defineStore('products', () => {
   }
 
   async function setProducts(categoryId: number): Promise<void> {
-    loader.value = 'loading'
+    loading.value = 'loading'
     products.value = []
     const newProducts = ref<ProductWithSpecifications[]>([])
 
-    const data = await getAll<'products', ProductReadWithDetails>('products', {
+    const data = await getAll<ProductReadWithDetails>('products', {
       eq: [['categoryId', categoryId]],
       select: '*, categoryId(id, enTitle), manufacturerId(id, title)'
     })
@@ -55,16 +55,13 @@ export const useProductsStore = defineStore('products', () => {
       const promises = []
       for (const product of data) {
         promises.push(
-          getAll<'specifications', SpecificationReadWithDetails>(
-            'specifications',
-            {
-              eq: [['productId', product.id]],
-              select: '*,  categorySpecificationsId(id, title, units, visible)',
-              order: {
-                value: 'categorySpecificationsId'
-              }
+          getAll<SpecificationReadWithDetails>('specifications', {
+            eq: [['productId', product.id]],
+            select: '*,  categorySpecificationsId(id, title, units, visible)',
+            order: {
+              value: 'categorySpecificationsId'
             }
-          )
+          })
         )
       }
 
@@ -81,16 +78,16 @@ export const useProductsStore = defineStore('products', () => {
           newProducts.value.push(newProduct)
         }
       }
-    } else loader.value = 'empty'
+    } else loading.value = 'empty'
     products.value = newProducts.value
-    loader.value = 'success'
+    loading.value = 'success'
   }
 
   async function getProduct(
     productId: number
   ): Promise<Ref<ProductWithSpecifications | null>> {
     const product = ref<ProductWithSpecifications | null>(null)
-    const data = await getOneById<'products', ProductReadWithDetails>(
+    const data = await getOneById<ProductReadWithDetails>(
       'products',
       productId,
       {
@@ -99,16 +96,16 @@ export const useProductsStore = defineStore('products', () => {
     )
 
     if (data) {
-      const specifications = await getAll<
+      const specifications = await getAll<SpecificationReadWithDetails>(
         'specifications',
-        SpecificationReadWithDetails
-      >('specifications', {
-        eq: [['productId', productId]],
-        select: '*, categorySpecificationsId(id, title, units, visible)',
-        order: {
-          value: 'categorySpecificationsId'
+        {
+          eq: [['productId', productId]],
+          select: '*, categorySpecificationsId(id, title, units, visible)',
+          order: {
+            value: 'categorySpecificationsId'
+          }
         }
-      })
+      )
       if (specifications) {
         product.value = { ...data, specifications }
       }
@@ -154,6 +151,6 @@ export const useProductsStore = defineStore('products', () => {
     getProduct,
     updateProduct,
     updateProductSpecifications,
-    loader
+    loading
   }
 })

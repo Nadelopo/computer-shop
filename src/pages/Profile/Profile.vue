@@ -11,7 +11,7 @@ const reviews = ref<ReviewWithDetails[]>([])
 
 onBeforeMount(async () => {
   if (user.value) {
-    const data = await getAll<'reviews', ReviewWithDetails>('reviews', {
+    const data = await getAll<ReviewWithDetails>('reviews', {
       eq: [['userId', user.value.id]],
       select: '*, users(name), categories(id, enTitle)',
       order: {

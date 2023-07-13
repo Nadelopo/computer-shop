@@ -14,7 +14,7 @@ const { categories } = storeToRefs(useCategoriesStore())
     <div class="mb-6 flex justify-between items-center">
       <h1><router-link :to="{ name: 'AdminHome' }">Главная</router-link></h1>
       <router-link :to="{ name: 'Home' }">
-        <img src="@/assets/img/logoChangeWhiteSizeFnew.png" width="95" alt="" />
+        <img src="/img/logoChangeWhiteSizeFnew.png" width="95" alt="" />
       </router-link>
     </div>
     <div class="list">

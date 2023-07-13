@@ -104,7 +104,7 @@ export const useCartStore = defineStore('cart', () => {
   async function setCartItemsWithDetails(cartItems: ProductInStorage[]) {
     const idList: number[] = cartItems.map((e) => e.productId)
 
-    const data = await getAll<'products', QueryProduct>('products', {
+    const data = await getAll<QueryProduct>('products', {
       select: 'categoryId, discount, id, img, name, price, quantity, rating',
       in: ['id', idList]
     })

@@ -42,15 +42,15 @@ const currentCategory = computed((): CurrentCategory => {
 
 const products = ref<ComparisonProduct[]>([])
 
-const loader = ref<'loading' | 'empty' | 'success'>('loading')
+const loading = ref<'loading' | 'empty' | 'success'>('loading')
 
 const watcher = watch(
   () => user.value?.comparison.length,
   async () => {
     if (user.value) {
-      loader.value = 'loading'
+      loading.value = 'loading'
 
-      const productData = await getAll<'products', Product>('products', {
+      const productData = await getAll<Product>('products', {
         select: '*, categoryId(id, enTitle, title), manufacturerId(id, title)',
         in: ['id', user.value.comparison]
       })
@@ -86,16 +86,16 @@ const watcher = watch(
         }
 
         products.value = modifiedProducts
-        const categoriesSpecifications = await getAll<
+        const categoriesSpecifications = await getAll<CategorySpecifications>(
           'category_specifications',
-          CategorySpecifications
-        >('category_specifications', {
-          in: [
-            'categoryId',
-            [...new Set(products.value.map((e) => e.categoryId.id))]
-          ],
-          select: 'categoryId, title, units'
-        })
+          {
+            in: [
+              'categoryId',
+              [...new Set(products.value.map((e) => e.categoryId.id))]
+            ],
+            select: 'categoryId, title, units'
+          }
+        )
         for (const category of categories.value) {
           const categorySpecifications = categoriesSpecifications?.filter(
             (e) => e.categoryId === category.id
@@ -109,7 +109,7 @@ const watcher = watch(
         }
       }
 
-      loader.value = products.value.length ? 'success' : 'empty'
+      loading.value = products.value.length ? 'success' : 'empty'
 
       watcher()
     }
@@ -122,7 +122,7 @@ const watcher = watch(
 
 <template>
   <div class="container">
-    <template v-if="loader === 'success' && currentCategory !== undefined">
+    <template v-if="loading === 'success' && currentCategory !== undefined">
       <Categories
         :current-category="currentCategory"
         :categories="categories"
@@ -133,7 +133,7 @@ const watcher = watch(
         :categories="categories"
       />
     </template>
-    <div v-else-if="loader === 'loading'">
+    <div v-else-if="loading === 'loading'">
       <Vloader />
     </div>
   </div>

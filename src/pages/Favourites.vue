@@ -21,19 +21,19 @@ const { user } = storeToRefs(useUserStore())
 
 const favourites = ref<ProductCard[]>([])
 
-const loader = ref<'loading' | 'empty' | 'success'>('loading')
+const lodaing = ref<'loading' | 'empty' | 'success'>('loading')
 
 const watcher = watch(
   () => user.value?.favourites.length,
   async () => {
     if (user.value) {
-      loader.value = 'loading'
-      const data = await getAll<'products', ProductCard>('products', {
+      lodaing.value = 'loading'
+      const data = await getAll<ProductCard>('products', {
         select: '*, categoryId(id, enTitle)',
         in: ['id', user.value.favourites]
       })
       favourites.value = data || []
-      loader.value = favourites.value.length ? 'success' : 'empty'
+      lodaing.value = favourites.value.length ? 'success' : 'empty'
       watcher()
     }
   },
@@ -50,7 +50,7 @@ const clear = async () => {
     if (data) {
       user.value.favourites = []
       favourites.value = []
-      loader.value = 'empty'
+      lodaing.value = 'empty'
     }
   }
 }
@@ -66,7 +66,7 @@ const deleteItem = async (id: number) => {
       user.value.favourites = data.favourites
       favourites.value = favourites.value.filter((e) => e.id !== id)
       if (favourites.value.length === 0) {
-        loader.value = 'empty'
+        lodaing.value = 'empty'
       }
     }
   }
@@ -78,20 +78,20 @@ const deleteItem = async (id: number) => {
     <div class="favourites">
       <div class="sidebar">
         <div class="text-3xl font-bold mb-8">Избранное</div>
-        <v-loader v-if="loader === 'loading'" />
+        <v-loader v-if="lodaing === 'loading'" />
         <v-button
-          v-else-if="loader === 'success'"
+          v-else-if="lodaing === 'success'"
           class="btn__noactive"
           @click="clear"
         >
           очистить список
         </v-button>
-        <div v-else-if="loader === 'empty'">
+        <div v-else-if="lodaing === 'empty'">
           В списке желаемых покупок нет товаров
         </div>
       </div>
       <div>
-        <div v-if="loader === 'loading'" class="mt-40">
+        <div v-if="lodaing === 'loading'" class="mt-40">
           <v-loader />
         </div>
         <div v-else class="cards">
