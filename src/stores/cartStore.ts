@@ -9,7 +9,6 @@ import {
   updateOne
 } from '@/utils/queries/db'
 import { localStorageGet, localStorageSet } from '@/utils/localStorage'
-import type { ProductInStorage } from '@/types'
 import type { CartRead } from '@/types/tables/cart.types'
 import type { ProductRead } from '@/types/tables/products.types'
 
@@ -27,6 +26,14 @@ type QueryProduct = Omit<
 type ProductCart = QueryProduct & {
   count: number
   cartItemId?: number
+}
+
+type ProductInStorage = {
+  id?: number
+  created_at?: string
+  userId?: string
+  productId: number
+  count: number
 }
 
 export const useCartStore = defineStore('cart', () => {

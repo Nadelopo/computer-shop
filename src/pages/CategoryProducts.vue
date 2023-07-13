@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { nextTick, onUnmounted, ref, watch } from 'vue'
+import { useFilterStore } from '@/stores/filterStore'
 import { storeToRefs } from 'pinia'
-import { useProductsStore } from '@/stores/productsStore'
 import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
 import Search from '@/components/CategoryProducts/Search.vue'
 import Sort from '@/components/CategoryProducts/Sort.vue'
 import FiltersList from '@/components/CategoryProducts/FiltersList.vue'
 import Skeleton from '@/components/CategoryProducts/SkeletonProducts.vue'
 
-const { products, loading } = storeToRefs(useProductsStore())
+const { products, loading } = storeToRefs(useFilterStore())
+
+const styles = ref('card__disable')
 
 onUnmounted(() => {
   products.value = []
 })
-
-const styles = ref('card__disable')
 
 watch(
   () => products.value.length,

@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
+import { inject, ref } from 'vue'
 import Swal from 'sweetalert2'
-import { useProductsStore } from '@/stores/productsStore'
 import { removeFromStorage } from '@/utils/queries/storage'
 import { getImgName } from '@/utils/getImgName'
-import VButton from '@/components/UI/VButton.vue'
-import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import { deleteOne } from '@/utils/queries/db'
+import VButton from '@/components/UI/VButton.vue'
+import { loadingKey, productsKey } from '@/pages/Admin/types'
+import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 
 defineProps<{
   specifications: CategorySpecificationRead[]
 }>()
 
-const { products, loading } = storeToRefs(useProductsStore())
+const products = inject(productsKey, ref([]))
+const loading = inject(loadingKey)
 
 const delteProduct = (id: number, img: string) => {
   Swal.fire({

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, inject, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
@@ -11,6 +11,7 @@ import ProdctsList from '@/components/Admin/ProductsList.vue'
 import VLoader from '@/components/UI/Vloader.vue'
 import VButton from '@/components/UI/VButton.vue'
 import VSelect from '@/components/UI/VSelect.vue'
+import { loadingKey, setProductsKey } from './types'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import type { SpecificationCreate } from '@/types/tables/specifications.types'
 import type { ProductCreate } from '@/types/tables/products.types'
@@ -21,13 +22,15 @@ type ProductSpecificationForm = Omit<SpecificationCreate, 'productId'> & {
 
 const route = useRoute()
 
+const setProducts = inject(setProductsKey, () => {})
+const loading = inject(loadingKey)
+
 const { manufacturers } = storeToRefs(useManufacturersStore())
 const { getCategorySpecifications } = useCategoriesStore()
-const { createProduct, createSpecifications, setProducts } = useProductsStore()
-const { loading } = storeToRefs(useProductsStore())
+const { createProduct, createSpecifications } = useProductsStore()
 
 const manufacturerSelect = ref<number | string>('')
-const categoryId = ref<number>(Number(route.params.id))
+const categoryId = computed(() => Number(route.params.id))
 const categorySpecifications = ref<CategorySpecificationRead[]>([])
 const categoryFormSpecifications = ref<ProductSpecificationForm[]>([])
 
@@ -74,10 +77,9 @@ watch(
   (cur) => {
     if (cur) {
       categorySpecifications.value = []
-      categoryId.value = Number(cur)
       setCategorySpecifications()
       product.value.categoryId = categoryId.value
-      setProducts(categoryId.value)
+      setProducts()
     }
   },
   { immediate: true }
@@ -95,10 +97,9 @@ const create = async () => {
     const productSpecifications = categoryFormSpecifications.value.map((e) => {
       return { ...e, productId: data.id }
     })
-
-    createSpecifications(productSpecifications)
+    await createSpecifications(productSpecifications)
+    setProducts()
     product.value = { ...copyForm }
-    setProducts(data.categoryId)
     categoryFormSpecifications.value = categoryFormSpecifications.value.map(
       (e, i) => {
         const specificationsValue = categorySpecifications.value[i]

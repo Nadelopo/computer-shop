@@ -25,9 +25,6 @@ import {
 import type { UpdateMany } from '@/utils/queries/types'
 
 export const useProductsStore = defineStore('products', () => {
-  const products = ref<ProductWithSpecifications[]>([])
-  const loading = ref<'loading' | 'success' | 'empty'>('loading')
-
   async function createProduct(
     params: ProductCreate
   ): Promise<ProductRead | null> {
@@ -41,9 +38,9 @@ export const useProductsStore = defineStore('products', () => {
     return await createMany('specifications', params)
   }
 
-  async function setProducts(categoryId: number): Promise<void> {
-    loading.value = 'loading'
-    products.value = []
+  async function getProducts(
+    categoryId: number
+  ): Promise<ProductWithSpecifications[]> {
     const newProducts = ref<ProductWithSpecifications[]>([])
 
     const data = await getAll<ProductReadWithDetails>('products', {
@@ -78,9 +75,8 @@ export const useProductsStore = defineStore('products', () => {
           newProducts.value.push(newProduct)
         }
       }
-    } else loading.value = 'empty'
-    products.value = newProducts.value
-    loading.value = 'success'
+    }
+    return newProducts.value
   }
 
   async function getProduct(
@@ -123,10 +119,6 @@ export const useProductsStore = defineStore('products', () => {
       product.value?.specifications.sort(
         (a, b) => a.category_specifications.id - b.category_specifications.id
       )
-      console.log(product)
-      products.value = products.value.map((prod) =>
-        prod.id === data.id ? product.value ?? prod : prod
-      )
     }
     return data
   }
@@ -144,13 +136,11 @@ export const useProductsStore = defineStore('products', () => {
   }
 
   return {
-    products,
     createProduct,
     createSpecifications,
-    setProducts,
+    getProducts,
     getProduct,
     updateProduct,
-    updateProductSpecifications,
-    loading
+    updateProductSpecifications
   }
 })

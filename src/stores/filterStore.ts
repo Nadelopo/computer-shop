@@ -1,12 +1,15 @@
 import { reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { defineStore, storeToRefs } from 'pinia'
+import { defineStore } from 'pinia'
 import { supabase } from '@/supabase'
-import { useProductsStore } from './productsStore'
 import { formatSearch } from '@/utils/formatSearch'
 import type { PostgrestResponse } from '@supabase/supabase-js'
-import type { ProductReadWithDetails } from '@/types/tables/products.types'
+import type {
+  ProductReadWithDetails,
+  ProductWithSpecifications
+} from '@/types/tables/products.types'
 import type { SpecificationReadWithDetails } from '@/types/tables/specifications.types'
+import type { Loading } from '@/types'
 
 type SpecificationsValues = {
   id: number
@@ -48,7 +51,6 @@ export const useFilterStore = defineStore('filter', () => {
   const route = useRoute()
   const router = useRouter()
 
-  const { loading, products } = storeToRefs(useProductsStore())
   type SortType = keyof typeof sortAscents
   const specificationsValues = ref<SpecificationsValues[]>([])
 
@@ -65,6 +67,9 @@ export const useFilterStore = defineStore('filter', () => {
     min: 0,
     max: 300000
   })
+
+  const products = ref<ProductWithSpecifications[]>([])
+  const loading = ref<Loading>('loading')
 
   async function setFilteredProducts(categoryId: number) {
     const query: {
@@ -90,7 +95,6 @@ export const useFilterStore = defineStore('filter', () => {
     products.value = []
 
     const promises = []
-
     for (const spec of specificationsValues.value) {
       const query = supabase
         .from('specifications')
@@ -151,11 +155,14 @@ export const useFilterStore = defineStore('filter', () => {
         return { ...p, specifications }
       })
     }
+    console.log('success')
 
     loading.value = 'success'
   }
 
   return {
+    products,
+    loading,
     setFilteredProducts,
     search,
     sortAscents,

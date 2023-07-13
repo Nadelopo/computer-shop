@@ -12,7 +12,9 @@ import SkeletonFiltersVue from './SkeletonFilters.vue'
 const { getCategorySpecifications } = useCategoriesStore()
 
 const { setFilteredProducts } = useFilterStore()
-const { specificationsValues, productsPrice } = storeToRefs(useFilterStore())
+const { specificationsValues, productsPrice, search } = storeToRefs(
+  useFilterStore()
+)
 
 const route = useRoute()
 
@@ -86,6 +88,7 @@ const cancel = () => {
     min: 0,
     max: 300000
   }
+  search.value = ''
   setFilteredProducts(categoryId)
 }
 </script>

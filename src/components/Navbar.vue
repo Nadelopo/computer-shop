@@ -102,7 +102,7 @@ const open = ref(false)
               <template #content>
                 <router-link
                   v-if="user?.role == Role.ADMIN"
-                  :to="{ name: 'AdminHome' }"
+                  :to="{ name: 'Admin' }"
                 >
                   admin
                 </router-link>
