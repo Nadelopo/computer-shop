@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
+import { useElementSize } from '@vueuse/core'
+import ArrowSVG from '@/assets/icons/arrow.svg?component'
 import type { Category, ComparisonProduct, CurrentCategory } from './types'
 
 const props = defineProps<{
@@ -12,22 +14,33 @@ const categoryProducts = computed((): ComparisonProduct[] => {
   return props.products.filter((e) => e.categoryId === props.currentCategory.id)
 })
 const comparisonRef = ref<HTMLElement>()
-const titleCellPadding = ref('0px')
+const { width: comparisonWidth } = useElementSize(comparisonRef)
 const firstCellMargin = ref(0)
-const widthCell = 235
-const paddingCell = '10px'
-const countitems = ref(0)
+const widthCell = ref('235px')
+const horizontalPaddingCell = '10px'
+const countItems = ref(0)
+const widthCells = ref('0px')
 
-onMounted(() => {
-  if (comparisonRef.value) {
-    const widthContainer = comparisonRef.value.scrollWidth - widthCell
-    countitems.value = Math.floor(widthContainer / widthCell)
-    titleCellPadding.value =
-      widthContainer -
-      countitems.value * widthCell -
-      parseInt(paddingCell) +
-      'px'
+const calculateWidths = () => {
+  if (!comparisonRef.value) return
+
+  let widthContainer = 0
+  if (comparisonWidth.value <= 616) {
+    widthCell.value = comparisonWidth.value / 2 + 'px'
+    widthContainer = comparisonWidth.value
+  } else {
+    widthCell.value = '235px'
+    widthContainer = comparisonWidth.value - parseInt(widthCell.value)
   }
+
+  countItems.value = Math.floor(widthContainer / parseInt(widthCell.value))
+  widthCells.value = countItems.value * parseInt(widthCell.value) + 'px'
+}
+
+watch(comparisonWidth, () => {
+  calculateWidths()
+  firstCellMargin.value = 0
+  firstCellIndex.value = 1
 })
 
 const productData = computed(() => {
@@ -37,12 +50,15 @@ const productData = computed(() => {
   return { titles, manufacturers, warranties }
 })
 
+const firstCellIndex = ref(1)
 const updateItemsList = (action: 'prev' | 'next') => {
   if (action === 'next') {
-    firstCellMargin.value = firstCellMargin.value - widthCell
+    firstCellIndex.value++
+    firstCellMargin.value -= parseInt(widthCell.value)
   }
   if (action === 'prev') {
-    firstCellMargin.value = firstCellMargin.value + widthCell
+    firstCellIndex.value--
+    firstCellMargin.value += parseInt(widthCell.value)
   }
 }
 
@@ -52,13 +68,16 @@ const showPrevBtn = computed(() => {
 })
 const showNextBtn = computed(() => {
   if (categoryProducts.value.length === 1) return false
-  const outsideItemsCount = categoryProducts.value.length - countitems.value
-  return outsideItemsCount * widthCell !== Math.abs(firstCellMargin.value)
+  const outsideItemsCount = categoryProducts.value.length - countItems.value
+  return (
+    outsideItemsCount * parseInt(widthCell.value) !==
+    Math.abs(firstCellMargin.value)
+  )
 })
 
-const prevBtnStyleLef = computed(() => {
-  const left =
-    parseInt(titleCellPadding.value) + parseInt(paddingCell) * 2 + widthCell
+const prevBtnStyleLeft = computed(() => {
+  if (comparisonWidth.value <= 616) return horizontalPaddingCell
+  const left = parseInt(horizontalPaddingCell) * 3 + parseInt(widthCell.value)
   return left + 'px'
 })
 
@@ -66,45 +85,89 @@ watch(
   () => props.currentCategory.id,
   () => {
     firstCellMargin.value = 0
+    firstCellIndex.value = 1
   }
 )
+
+const setRowColor = (e: Event, value: 'add' | 'remove') => {
+  const target = e.target as HTMLElement
+  if (value === 'add') {
+    target.style.background = 'var(--light)'
+  }
+  if (value === 'remove') {
+    target.style.background = 'unset'
+  }
+}
+
+const onChildRow = (e: Event, value: 'add' | 'remove') => {
+  const target = e.target as HTMLElement
+  const parent = target.parentElement
+  if (!parent) return
+  if (value === 'add') {
+    parent.style.background = 'unset'
+  }
+  if (value === 'remove') {
+    parent.style.background = 'var(--light)'
+  }
+}
 </script>
 
 <template>
   <div ref="comparisonRef" class="comparison">
     <div class="overflow-hidden">
-      <div class="flex relative mb-4">
+      <div
+        class="relative mb-4 row"
+        @mouseenter="setRowColor($event, 'add')"
+        @mouseleave="setRowColor($event, 'remove')"
+      >
         <div class="cell__title"> Наименование</div>
-        <div
-          v-for="(title, i) in productData.titles"
-          :key="title"
-          class="cell"
-          :style="{ marginLeft: i === 0 ? firstCellMargin + 'px' : '' }"
-        >
-          {{ title }}
+
+        <div class="cells">
+          <div
+            v-for="(title, i) in productData.titles"
+            :key="title"
+            class="cell"
+            :style="{ marginLeft: i === 0 ? firstCellMargin + 'px' : '' }"
+          >
+            <div
+              v-if="i === firstCellIndex - 1 && comparisonWidth <= 616"
+              class="font-medium"
+            >
+              Наименование
+            </div>
+            {{ title }}
+          </div>
         </div>
+
         <button
           v-if="showPrevBtn"
           class="control__btn prev"
           :style="{
-            left: prevBtnStyleLef
+            left: prevBtnStyleLeft
           }"
           @click="updateItemsList('prev')"
+          @mouseenter="onChildRow($event, 'add')"
+          @mouseleave="onChildRow($event, 'remove')"
         >
-          назад
+          <ArrowSVG transform="rotate(-90)" />
         </button>
         <button
           v-if="showNextBtn"
           class="control__btn next"
           @click="updateItemsList('next')"
+          @mouseenter="onChildRow($event, 'add')"
+          @mouseleave="onChildRow($event, 'remove')"
         >
-          вперед
+          <ArrowSVG transform="rotate(90)" />
         </button>
       </div>
+
       <div
         v-for="i in categoryProducts[0].specifications.length"
         :key="categoryProducts[0].specifications[i - 1].id"
-        class="flex"
+        class="row"
+        @mouseenter="setRowColor($event, 'add')"
+        @mouseleave="setRowColor($event, 'remove')"
       >
         <div class="cell__title">
           {{ currentCategory.specifications[i - 1].title }}
@@ -116,6 +179,12 @@ watch(
             class="cell"
             :style="{ marginLeft: j === 1 ? firstCellMargin + 'px' : '' }"
           >
+            <div
+              v-if="j === firstCellIndex && comparisonWidth <= 616"
+              class="font-medium"
+            >
+              {{ currentCategory.specifications[i - 1].title }}
+            </div>
             {{ categoryProducts[j - 1].specifications[i - 1].valueNumber }}
             {{ categoryProducts[j - 1].specifications[i - 1].valueString }}
             {{ currentCategory.specifications[i - 1].units }}
@@ -123,56 +192,76 @@ watch(
         </div>
       </div>
 
-      <div class="flex">
-        <div class="cell__title"> Производитель </div>
+      <template
+        v-for="(el, i) in [productData.manufacturers, productData.warranties]"
+        :key="i"
+      >
         <div
-          v-for="(manufacturer, i) in productData.manufacturers"
-          :key="manufacturer"
-          class="cell"
-          :style="{ marginLeft: i === 0 ? firstCellMargin + 'px' : '' }"
+          class="row"
+          @mouseenter="setRowColor($event, 'add')"
+          @mouseleave="setRowColor($event, 'remove')"
         >
-          {{ manufacturer }}
+          <div class="cell__title"> Производитель </div>
+          <div class="cells">
+            <div
+              v-for="(subEl, j) in el"
+              :key="j"
+              class="cell"
+              :style="{ marginLeft: j === 0 ? firstCellMargin + 'px' : '' }"
+            >
+              <div
+                v-if="j === firstCellIndex - 1 && comparisonWidth <= 616"
+                class="font-medium"
+              >
+                {{ i == 0 ? 'Производитель' : 'Гарантия' }}
+              </div>
+              {{ subEl }} {{ typeof subEl === 'number' ? 'мес' : '' }}
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="flex">
-        <div class="cell__title">Гарантия</div>
-        <div
-          v-for="(warranty, i) in productData.warranties"
-          :key="warranty"
-          class="cell"
-          :style="{ marginLeft: i === 0 ? firstCellMargin + 'px' : '' }"
-        >
-          {{ warranty }} мес
-        </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
 
 <style scoped lang="sass">
-
 .comparison
   display: flex
+  user-select: none
+  .row
+    display: flex
+    border-radius: 6px
+    transition: .3s linear
   .cells
     display: flex
-    // overflow: hidden
+    overflow: hidden
     position: relative
+    width: v-bind(widthCells)
+    @media (width <= 767px)
+      overflow: visible
+      width: auto
   .control__btn
     position: absolute
     bottom: -20px
     z-index: 100
+    background: #e5e5e5
+    border-radius: 20px
+    padding: 8px
+    transition: .2s
+    &:hover
+      background: var(--color-main)
+      fill: #fff
     &.next
       right: 0
   .cell, .cell__title
-    width: 235px
-    min-width: 235px
-    padding: v-bind(paddingCell)
-    transition: .3s
+    width: v-bind(widthCell)
+    padding: 20px v-bind(horizontalPaddingCell)
+    transition: margin .3s
+    @media (width > 500px)
+        min-width: 235px
   .cell__title
-    background: var(--body-back)
     z-index: 10
     box-sizing: content-box
-    padding-right: v-bind(titleCellPadding)
     @media(max-width: 767px)
       display: none
 </style>

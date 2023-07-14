@@ -7,7 +7,9 @@ import ProductHeader from '@/components/Product/ProductHeader.vue'
 import ProductSpecifications from '@/components/Product/ProductSpecifications.vue'
 import SimilarProducts from '@/components/Product/SimilarProducts.vue'
 import ProductReviews from '@/components/Product/ProductReviews.vue'
+import VLoader from '@/components/UI/Vloader.vue'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
+import type { Loading } from '@/types'
 
 export type UpdateProductRating = {
   countReviews: number
@@ -19,10 +21,12 @@ const { getProduct } = useProductsStore()
 const route = useRoute()
 
 const product = ref<ProductWithSpecifications>()
+const loading = ref<Loading>('loading')
 
 const loadData = async () => {
   window.scroll(0, 0)
   const productId = Number(route.params.productId)
+  loading.value = 'loading'
   const data = await getProduct(productId)
   if (data.value) {
     data.value.specifications = data.value.specifications.map((e) => {
@@ -32,6 +36,7 @@ const loadData = async () => {
       return e
     })
     product.value = data.value
+    loading.value = 'success'
     updateOne('products', product.value.id, {
       popularity: product.value.popularity + 1
     })
@@ -54,22 +59,28 @@ const updateProductRating = (newData: UpdateProductRating) => {
 </script>
 
 <template>
-  <div v-if="product" class="container">
-    <ProductHeader :product="product" />
-    <div class="wrapper grid">
-      <div>Описание</div>
-      <div class="text-xl text-justify leading-9">
-        {{ product.description }}
+  <div class="container">
+    <div v-if="product && loading === 'success'">
+      <ProductHeader :product="product" />
+      <div class="wrapper grid">
+        <div>Описание</div>
+        <div class="text-xl text-justify leading-9">
+          {{ product.description }}
+        </div>
       </div>
+      <ProductSpecifications :product="product" />
+      <SimilarProducts
+        :product-price="product.price"
+        :product-id="product.id"
+      />
+      <ProductReviews
+        :product-id="product.id"
+        :count-reviews="product.countReviews"
+        :product-rating="product.rating"
+        @update-product-rating="updateProductRating"
+      />
     </div>
-    <ProductSpecifications :product="product" />
-    <SimilarProducts :product-price="product.price" :product-id="product.id" />
-    <ProductReviews
-      :product-id="product.id"
-      :count-reviews="product.countReviews"
-      :product-rating="product.rating"
-      @update-product-rating="updateProductRating"
-    />
+    <v-loader v-else class="h-[75vh]" />
   </div>
 </template>
 
