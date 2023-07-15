@@ -133,12 +133,13 @@ const cancel = () => {
       </template>
       <div>
         <v-button
-          class="mx-auto my-4 w-full"
+          class="my-4"
+          width="100%"
           @click="setFilteredProducts(categoryId)"
         >
           применить
         </v-button>
-        <v-button class="mx-auto w-full" @click="cancel"> сбросить </v-button>
+        <v-button width="100%" @click="cancel"> сбросить </v-button>
       </div>
     </div>
     <div v-else>

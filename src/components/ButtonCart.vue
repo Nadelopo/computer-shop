@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
 import VButton from './UI/VButton.vue'
@@ -28,6 +28,8 @@ const add = async () => {
   loading.value = false
   state.value = true
 }
+
+const width = computed(() => props.width + 'px')
 </script>
 
 <template>

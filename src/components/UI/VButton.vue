@@ -2,7 +2,7 @@
 type Props = {
   minWidth?: number | 'auto'
   variant?: 'primary' | 'danger' | 'noactive'
-  width?: number | 'auto'
+  width?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -16,7 +16,7 @@ let width = 'auto'
 if (props.width === 'auto') {
   width = 'auto'
 } else {
-  width = props.width + 'px'
+  width = props.width
 }
 
 if (props.minWidth) {
