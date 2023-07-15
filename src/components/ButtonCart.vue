@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
 import VButton from './UI/VButton.vue'
-// import VLoader from './UI/VLoader.vue'
+import VLoader from './UI/VLoader.vue'
 import CartSVG from '@/assets/icons/cartInButton.svg?component'
 
 type Props = {
@@ -35,7 +35,7 @@ const width = computed(() => props.width + 'px')
 <template>
   <template v-if="loading">
     <v-button :width="width">
-      <!-- <v-loader color="#9fe7e0" height="24px" /> -->
+      <v-loader color="#9fe7e0" height="24px" />
     </v-button>
   </template>
   <template v-else>
