@@ -7,7 +7,7 @@ import ProductHeader from '@/components/Product/ProductHeader.vue'
 import ProductSpecifications from '@/components/Product/ProductSpecifications.vue'
 import SimilarProducts from '@/components/Product/SimilarProducts.vue'
 import ProductReviews from '@/components/Product/ProductReviews.vue'
-import VLoader from '@/components/UI/VLoader.vue'
+// import VLoader from '@/components/UI/VLoader.vue'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
 
@@ -80,7 +80,7 @@ const updateProductRating = (newData: UpdateProductRating) => {
         @update-product-rating="updateProductRating"
       />
     </div>
-    <v-loader v-else class="h-[75vh]" />
+    <!-- <v-loader v-else class="h-[75vh]" /> -->
   </div>
 </template>
 

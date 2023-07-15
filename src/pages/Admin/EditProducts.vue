@@ -11,7 +11,7 @@ import VInputText from '@/components/UI/VInputText.vue'
 import VInputFile from '@/components/UI/VInputFile.vue'
 import VButton from '@/components/UI/VButton.vue'
 import VSelect from '@/components/UI/VSelect.vue'
-import VLoader from '@/components/UI/VLoader.vue'
+// import VLoader from '@/components/UI/VLoader.vue'
 import VDoubleButtons from '@/components/UI/VDoubleButtons.vue'
 import type {
   SpecificationRead,
@@ -235,7 +235,7 @@ const back = async () => {
       <v-button class="mt-8" @click="back"> назад </v-button>
     </div>
     <div v-else class="h-screen flex items-center">
-      <v-loader />
+      <!-- <v-loader /> -->
     </div>
   </div>
 </template>
