@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import { useAddFavouritesAndComparison } from '@/utils/useAddFavouritesAndComparison'
+import { localStorageGet } from '@/utils/localStorage'
 import VButton from '../UI/VButton.vue'
 import VLoader from '../UI/VLoader.vue'
 import FavouriteSVG from '@/assets/icons/favourites.svg?component'
@@ -15,9 +16,14 @@ const props = defineProps<{
 
 const { user } = storeToRefs(useUserStore())
 
-const productId = user.value?.[props.listTitle].find(
-  (e) => e === props.productId
-)
+let productId
+
+if (user.value) {
+  productId = user.value?.[props.listTitle].find((e) => e === props.productId)
+} else if (props.listTitle === 'comparison') {
+  const storageProductids = localStorageGet<number[]>('compareList')
+  productId = storageProductids?.find((e) => e === props.productId)
+}
 
 const state = ref(productId ? true : false)
 const loading = ref(false)
@@ -38,6 +44,9 @@ const notInListTitle =
   props.listTitle === 'favourites' ? 'в избранное' : 'в сравнение'
 const inListTitle =
   props.listTitle === 'favourites' ? 'в избранном' : 'в сравнении'
+
+const routerTitle =
+  props.listTitle === 'favourites' ? 'Favourites' : 'Comparison'
 </script>
 
 <template>
@@ -54,7 +63,7 @@ const inListTitle =
     <v-button
       v-else
       class="product__button"
-      @click="$router.push({ name: 'Favourites' })"
+      @click="$router.push({ name: routerTitle })"
     >
       <Icon fill="#60efe1" />
       {{ inListTitle }}

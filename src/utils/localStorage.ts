@@ -1,8 +1,10 @@
-export const localStorageSet = (key: string, value: unknown): void => {
+type Key = 'products' | 'compareList'
+
+export const localStorageSet = (key: Key, value: unknown): void => {
   localStorage.setItem(key, JSON.stringify(value))
 }
 
-export const localStorageGet = <T>(key: string): T | null => {
+export const localStorageGet = <T>(key: Key): T | null => {
   const data = localStorage.getItem(key)
   if (data === null) return null
 

@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import { useAddFavouritesAndComparison } from '@/utils/useAddFavouritesAndComparison'
+import { localStorageGet } from '@/utils/localStorage'
 import FavouriteSVG from '@/assets/icons/favourites.svg?component'
 import ComparisonSVG from '@/assets/icons/comparison.svg?component'
 
@@ -13,9 +14,14 @@ const props = defineProps<{
 
 const { user } = storeToRefs(useUserStore())
 
-const productId = user.value?.[props.listTitle].find(
-  (e) => e === props.productId
-)
+let productId
+
+if (user.value) {
+  productId = user.value?.[props.listTitle].find((e) => e === props.productId)
+} else if (props.listTitle === 'comparison') {
+  const storageProductids = localStorageGet<number[]>('compareList')
+  productId = storageProductids?.find((e) => e === props.productId)
+}
 
 const state = ref(productId ? true : false)
 

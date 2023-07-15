@@ -63,11 +63,11 @@ const updateItemsList = (action: 'prev' | 'next') => {
 }
 
 const showPrevBtn = computed(() => {
-  if (categoryProducts.value.length === 1) return false
+  if (categoryProducts.value.length < countItems.value) return false
   return firstCellMargin.value !== 0
 })
 const showNextBtn = computed(() => {
-  if (categoryProducts.value.length === 1) return false
+  if (categoryProducts.value.length < countItems.value) return false
   const outsideItemsCount = categoryProducts.value.length - countItems.value
   return (
     outsideItemsCount * parseInt(widthCell.value) !==
