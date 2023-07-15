@@ -293,7 +293,7 @@ watch(() => props.productId, loadReviews, {
   overflow: hidden
   padding-left: 8px
   margin-top: 30px
-  height: 750px
+  height: 700px
   textarea
     padding: 10px
     background: #f2f2f2

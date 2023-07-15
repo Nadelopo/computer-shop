@@ -4,15 +4,12 @@ import { useUserStore } from '@/stores/userStore'
 
 const { user } = storeToRefs(useUserStore())
 
-let loading = true
 export const useAddFavouritesAndComparison = async (
   listTitle: 'favourites' | 'comparison',
   productId: number,
   state: boolean,
   callbackOnAction: () => void
 ) => {
-  if (!loading) return
-  loading = false
   if (user.value) {
     const items =
       (await getOneById('users', user.value.id, { select: listTitle }))?.[
@@ -43,5 +40,4 @@ export const useAddFavouritesAndComparison = async (
       callbackOnAction()
     }
   }
-  loading = true
 }
