@@ -7,7 +7,7 @@ import { removeFromStorage } from '@/utils/queries/storage'
 import { getImgName } from '@/utils/getImgName'
 import VInputText from '@/components/UI/VInputText.vue'
 import VInputFile from '@/components/UI/VInputFile.vue'
-import VLoader from '@/components/UI/Vloader.vue'
+import VLoader from '@/components/UI/VLoader.vue'
 import VButton from '@/components/UI/VButton.vue'
 import type {
   CategoryRead,

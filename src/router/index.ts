@@ -6,6 +6,7 @@ import { getOneById } from '@/utils/queries/db'
 import { Role, type UserRead } from '@/types/tables/users.types'
 import { adminRoutes } from './admin'
 import { profileRoutes } from './profile'
+import { useToast } from 'vue-toastification'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -63,6 +64,7 @@ router.beforeEach(async (to, from) => {
   if (!requireAuth) return true
   const user = supabase.auth.user()
   if (!user) {
+    useToast().warning('Необходима авторизация')
     if (!from.name) return { name: 'Home' }
     else return false
   }

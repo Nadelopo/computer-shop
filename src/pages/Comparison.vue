@@ -6,7 +6,7 @@ import { getAll } from '@/utils/queries/db'
 import { useUserStore } from '@/stores/userStore'
 import VTabs from '@/components/UI/VTabs.vue'
 import ComparisonList from '@/components/Comparison/ComparisonList.vue'
-import Vloader from '@/components/UI/Vloader.vue'
+import Vloader from '@/components/UI/VLoader.vue'
 import type { ProductRead } from '@/types/tables/products.types'
 import type {
   Category,

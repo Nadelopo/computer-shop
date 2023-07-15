@@ -155,7 +155,6 @@ export const useFilterStore = defineStore('filter', () => {
         return { ...p, specifications }
       })
     }
-    console.log('success')
 
     loading.value = 'success'
   }

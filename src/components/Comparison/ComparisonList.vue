@@ -262,6 +262,7 @@ const onChildRow = (e: Event, value: 'add' | 'remove') => {
   .cell__title
     z-index: 10
     box-sizing: content-box
+    font-weight: 500
     @media(max-width: 767px)
       display: none
 </style>

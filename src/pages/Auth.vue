@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import Swal from 'sweetalert2'
 import { supabase } from '@/supabase'
+import { useToast } from 'vue-toastification'
 import VButton from '@/components/UI/VButton.vue'
 import type { UserCreate } from '@/types/tables/users.types'
 
@@ -13,6 +13,8 @@ const email = ref('')
 const password = ref('')
 const name = ref('')
 
+const toast = useToast()
+
 const signIn = async () => {
   if (email.value && password.value) {
     const { user, error } = await supabase.auth.signIn({
@@ -22,7 +24,7 @@ const signIn = async () => {
     if (error) console.log(error)
     if (user) router.push({ name: 'Home' })
   } else {
-    Swal.fire('Заполните данные', '', 'warning')
+    toast.warning('Не все поля заполнены')
   }
 }
 
@@ -45,7 +47,7 @@ const signUp = async () => {
       if (insertData) router.push({ name: 'Home' })
     }
   } else {
-    Swal.fire('Заполните данные', '', 'warning')
+    toast.warning('Не все поля заполнены')
   }
 }
 </script>
@@ -81,7 +83,7 @@ const signUp = async () => {
         <label class="label" for="">ПАРОЛЬ</label>
         <input v-model="password" class="input" type="password" />
       </div>
-      <div class="my-12">
+      <div class="my-10">
         <v-button class="btnn">
           {{ active ? 'Войти' : 'Зарегистрироваться' }}
         </v-button>
@@ -113,7 +115,7 @@ const signUp = async () => {
 .main
   display: flex
   flex-direction: column
-  min-height: 520px
+  min-height: 500px
   max-width: 400px
   width: 100%
   background:  linear-gradient( rgba(38, 166, 154, .8), rgb(32, 95, 109, .8))

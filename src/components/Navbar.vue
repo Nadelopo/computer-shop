@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/supabase'
-import Swal from 'sweetalert2'
 import { useUserStore } from '../stores/userStore'
 import VPopup from './UI/VPopup.vue'
 import Sidebar from './Sidebar.vue'
@@ -21,23 +20,6 @@ const logout = async () => {
   const { error } = await supabase.auth.signOut()
   if (error) console.log(error)
   router.push({ name: 'Home' })
-}
-
-const checkAuth = () => {
-  if (!user.value) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Необходимо авторизироваться!',
-      text: '',
-      showDenyButton: true,
-      confirmButtonText: 'Войти',
-      denyButtonText: `Ок`
-    }).then((result) => {
-      if (result.isConfirmed) {
-        router.push({ name: 'Auth' })
-      }
-    })
-  }
 }
 
 const open = ref(false)
@@ -108,7 +90,7 @@ const open = ref(false)
                 </router-link>
                 <div v-if="user" @click="logout">выйти</div>
                 <router-link v-else :to="{ name: 'Auth' }">войти</router-link>
-                <router-link :to="{ name: 'ProfileMain' }" @click="checkAuth">
+                <router-link :to="{ name: 'ProfileMain' }">
                   профиль
                 </router-link>
               </template>

@@ -21,6 +21,7 @@ module.exports = {
     'vue/max-attributes-per-line': 'off',
     'vue/html-self-closing': 'off',
     'vue/html-indent': 'off',
-    'vue/require-explicit-emits': 'off'
+    'vue/require-explicit-emits': 'off',
+    'vue/require-default-prop': 'off'
   }
 }

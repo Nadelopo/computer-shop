@@ -8,7 +8,7 @@ import { useManufacturersStore } from '@/stores/manufacturersStore'
 import VInputText from '@/components/UI/VInputText.vue'
 import VInputFile from '@/components/UI/VInputFile.vue'
 import ProdctsList from '@/components/Admin/ProductsList.vue'
-import VLoader from '@/components/UI/Vloader.vue'
+import VLoader from '@/components/UI/VLoader.vue'
 import VButton from '@/components/UI/VButton.vue'
 import VSelect from '@/components/UI/VSelect.vue'
 import { loadingKey, setProductsKey } from './types'
@@ -162,12 +162,16 @@ const create = async () => {
         </div>
 
         <div>
-          <v-select
-            v-model="manufacturerSelect"
-            :options="
-              manufacturers.map((e) => ({ value: e.id, title: e.title }))
-            "
-          />
+          <label>производитель</label>
+          <div>
+            <v-select
+              v-model="manufacturerSelect"
+              :options="
+                manufacturers.map((e) => ({ value: e.id, title: e.title }))
+              "
+              class="mt-4"
+            />
+          </div>
         </div>
         <div>
           <label>гарантия</label>

@@ -47,10 +47,6 @@ watch(() => props.product.id, loadManufacturer)
       <div>
         <button-cart :width="400" :product-id="product.id" />
         <div class="list__btns">
-          <!-- <v-button>
-            <FavouritesSVG />
-            <span>в избранное</span>
-          </v-button> -->
           <button-favourites-comparison
             list-title="favourites"
             :product-id="product.id"

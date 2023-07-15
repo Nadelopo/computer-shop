@@ -5,7 +5,7 @@ import { useManufacturersStore } from '@/stores/manufacturersStore'
 import VInputText from '@/components/UI/VInputText.vue'
 import VInputFile from '@/components/UI/VInputFile.vue'
 import VButton from '@/components/UI/VButton.vue'
-import VLoader from '@/components/UI/Vloader.vue'
+import VLoader from '@/components/UI/VLoader.vue'
 import type { ManufacturerUpdate } from '@/types/tables/manufacturers.types'
 
 const { getManufacturer, updateManufacturer } = useManufacturersStore()

@@ -4,9 +4,10 @@ import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import { useAddFavouritesAndComparison } from '@/utils/useAddFavouritesAndComparison'
 import VButton from '../UI/VButton.vue'
-import VLoader from '../UI/Vloader.vue'
+import VLoader from '../UI/VLoader.vue'
 import FavouriteSVG from '@/assets/icons/favourites.svg?component'
 import ComparisonSVG from '@/assets/icons/comparison.svg?component'
+
 const props = defineProps<{
   productId: number
   listTitle: 'favourites' | 'comparison'

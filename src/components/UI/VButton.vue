@@ -1,23 +1,49 @@
 <script setup lang="ts">
-const props = defineProps<{
+type Props = {
   minWidth?: number | 'auto'
-}>()
-let minWidth = '200px'
-if (props.minWidth === 'auto') {
-  minWidth = 'auto'
-} else if (props.minWidth) {
-  minWidth = props.minWidth + 'px'
+  variant?: 'primary' | 'danger' | 'noactive'
+  width?: number | 'auto'
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  variant: 'primary',
+  width: 'auto'
+})
+
+let minWidth = '100px'
+let width = 'auto'
+
+if (props.width === 'auto') {
+  width = 'auto'
 } else {
-  minWidth = '100px'
+  width = props.width + 'px'
+}
+
+if (props.minWidth) {
+  if (props.minWidth == 'auto') {
+    minWidth = 'auto'
+  } else {
+    minWidth = props.minWidth + 'px'
+  }
 }
 </script>
 
 <template>
-  <button v-wave class="btn"><slot></slot></button>
+  <button
+    v-wave
+    class="btn"
+    :class="{
+      danger: variant === 'danger',
+      noactive: variant === 'noactive'
+    }"
+  >
+    <slot></slot>
+  </button>
 </template>
 
 <style scoped lang="sass">
 @import '@/styles/buttons'
 .btn
   min-width: v-bind(minWidth)
+  width: v-bind(width)
 </style>

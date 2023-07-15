@@ -4,13 +4,10 @@ import VButton from '@/components/UI/VButton.vue'
 type Props = {
   textFirst: string
   textSecond: string
-  type?: string
   modelValue: boolean
 }
 
-withDefaults(defineProps<Props>(), {
-  type: 'button'
-})
+defineProps<Props>()
 
 defineEmits(['update:modelValue'])
 </script>
@@ -19,14 +16,14 @@ defineEmits(['update:modelValue'])
   <div class="wrap">
     <v-button
       type="button"
-      :class="!modelValue && 'btn__noactive'"
+      :class="!modelValue && 'noactive'"
       @click="$emit('update:modelValue', true)"
     >
       {{ textFirst }}
     </v-button>
     <v-button
-      :type="type"
-      :class="modelValue && 'btn__noactive'"
+      type="button"
+      :class="modelValue && 'noactive'"
       @click="$emit('update:modelValue', false)"
     >
       {{ textSecond }}

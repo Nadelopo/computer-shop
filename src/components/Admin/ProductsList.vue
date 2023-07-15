@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue'
-import Swal from 'sweetalert2'
 import { removeFromStorage } from '@/utils/queries/storage'
 import { getImgName } from '@/utils/getImgName'
 import { deleteOne } from '@/utils/queries/db'
-import VButton from '@/components/UI/VButton.vue'
 import { loadingKey, productsKey } from '@/pages/Admin/types'
+import VButton from '@/components/UI/VButton.vue'
+import VConfirm from '../UI/VConfirm.vue'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 
 defineProps<{
@@ -15,23 +15,15 @@ defineProps<{
 const products = inject(productsKey, ref([]))
 const loading = inject(loadingKey)
 
-const delteProduct = (id: number, img: string) => {
-  Swal.fire({
-    icon: 'question',
-    title: 'Вы хотите удалить товар?',
-    text: '',
-    showDenyButton: true,
-    confirmButtonText: 'Да',
-    denyButtonText: `Оставить`
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      const data = await deleteOne('products', id)
-      if (data) {
-        products.value = products.value.filter((e) => e.id !== data.id)
-        await removeFromStorage('products', getImgName(img))
-      }
-    }
-  })
+const showModal = ref(false)
+
+const deleteProduct = async (id: number, img: string) => {
+  showModal.value = true
+  const data = await deleteOne('products', id)
+  if (data) {
+    products.value = products.value.filter((e) => e.id !== data.id)
+    await removeFromStorage('products', getImgName(img))
+  }
 }
 </script>
 
@@ -83,12 +75,14 @@ const delteProduct = (id: number, img: string) => {
               >
                 <v-button class="w-full"> изменить </v-button>
               </router-link>
-              <v-button
-                class="btn__dunger"
-                @click="delteProduct(product.id, product.img)"
-              >
-                удалить
-              </v-button>
+              <v-confirm
+                label="удалить"
+                title="Подтвердите действие"
+                :message="`Вы хотите удалить товар - ${product.name}?`"
+                class="w-full"
+                type="danger"
+                @ok="deleteProduct(product.id, product.img)"
+              />
             </div>
           </td>
         </tr>

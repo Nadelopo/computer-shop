@@ -11,7 +11,7 @@ import VInputText from '@/components/UI/VInputText.vue'
 import VInputFile from '@/components/UI/VInputFile.vue'
 import VButton from '@/components/UI/VButton.vue'
 import VSelect from '@/components/UI/VSelect.vue'
-import VLoader from '@/components/UI/Vloader.vue'
+import VLoader from '@/components/UI/VLoader.vue'
 import VDoubleButtons from '@/components/UI/VDoubleButtons.vue'
 import type {
   SpecificationRead,
@@ -216,7 +216,6 @@ const back = async () => {
           <label>продажи</label>
           <v-double-buttons
             v-model="product.sell"
-            type="button"
             text-first="продавать"
             text-second="остановить продажи"
           />

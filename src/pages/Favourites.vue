@@ -6,7 +6,7 @@ import { useUserStore } from '@/stores/userStore'
 import { formatPrice } from '@/utils/formatPrice'
 import ButtonCart from '@/components/ButtonCart.vue'
 import VButton from '@/components/UI/VButton.vue'
-import VLoader from '@/components/UI/Vloader.vue'
+import VLoader from '@/components/UI/VLoader.vue'
 import CrossSVG from '@/assets/icons/cross.svg?component'
 import type { ProductRead } from '@/types/tables/products.types'
 
@@ -81,7 +81,7 @@ const deleteItem = async (id: number) => {
         <v-loader v-if="lodaing === 'loading'" />
         <v-button
           v-else-if="lodaing === 'success'"
-          class="btn__noactive"
+          class="noactive"
           @click="clear"
         >
           очистить список

@@ -2,7 +2,7 @@
 import { ref, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import Swal from 'sweetalert2'
+import { useToast } from 'vue-toastification'
 import { createOne, getAll, updateOne } from '@/utils/queries/db'
 import { useUserStore } from '@/stores/userStore'
 import RatingStars from '../RatingStars.vue'
@@ -22,6 +22,8 @@ type ReviewFormCreate = {
   comment: string
   rating: ReviewCreateRating | 0
 }
+
+const toast = useToast()
 
 const props = defineProps<{
   productId: number
@@ -77,13 +79,9 @@ const form = ref<ReviewFormCreate>({
 
 const createReview = async () => {
   if (!user.value) {
-    Swal.fire(
-      '',
-      'Только авторизованные пользователи могут оставлять отзывы.',
-      'warning'
-    )
+    toast.warning('Только авторизованные пользователи\n могут оставлять отзывы')
   } else if (form.value.rating === 0) {
-    Swal.fire('', 'Укажите оценку', 'warning')
+    toast.warning('Укажите оценку')
   } else {
     const data = await createOne<ReviewReadWithDetails>(
       'reviews',
@@ -136,11 +134,9 @@ const evaluationReview = async (
   evaluation: boolean
 ) => {
   if (!user.value) {
-    Swal.fire(
-      '',
-      'Только авторизованные пользователи могут ставить оценки',
-      'warning'
-    )
+    toast.warning('Только авторизованные пользователи\n могут ставить оценки', {
+      timeout: 3000
+    })
     return
   }
   const value = evaluation ? 'likes' : 'dislikes'
