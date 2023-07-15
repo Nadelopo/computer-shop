@@ -7,7 +7,7 @@ import { removeFromStorage } from '@/utils/queries/storage'
 import { getImgName } from '@/utils/getImgName'
 import VInputText from '@/components/UI/VInputText.vue'
 import VInputFile from '@/components/UI/VInputFile.vue'
-// import VLoader from '@/components/UI/VLoader.vue'
+import VLoader from '@/components/UI/VLoader.vue'
 import VButton from '@/components/UI/VButton.vue'
 import type {
   CategoryRead,
@@ -111,7 +111,7 @@ const save = async () => {
       </div>
     </form>
     <div v-else class="min-h-screen flex justify-center items-center">
-      <!-- <v-loader /> -->
+      <v-loader />
     </div>
     <v-button class="mt-6" @click="$router.push({ name: 'AdminCategories' })">
       назад

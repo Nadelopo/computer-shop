@@ -6,7 +6,7 @@ import { useUserStore } from '@/stores/userStore'
 import { formatPrice } from '@/utils/formatPrice'
 import ButtonCart from '@/components/ButtonCart.vue'
 import VButton from '@/components/UI/VButton.vue'
-// import VLoader from '@/components/UI/VLoader.vue'
+import VLoader from '@/components/UI/VLoader.vue'
 import CrossSVG from '@/assets/icons/cross.svg?component'
 import type { ProductRead } from '@/types/tables/products.types'
 
@@ -92,7 +92,7 @@ const deleteItem = async (id: number) => {
       </div>
       <div>
         <div v-if="lodaing === 'loading'" class="mt-40">
-          <!-- <v-loader /> -->
+          <v-loader />
         </div>
         <div v-else class="cards">
           <div v-for="item in favourites" :key="item.id">

@@ -5,7 +5,7 @@ import { useUserStore } from '@/stores/userStore'
 import { useAddFavouritesAndComparison } from '@/utils/useAddFavouritesAndComparison'
 import { localStorageGet } from '@/utils/localStorage'
 import VButton from '../UI/VButton.vue'
-// import VLoader from '../UI/VLoader.vue'
+import VLoader from '../UI/VLoader.vue'
 import FavouriteSVG from '@/assets/icons/favourites.svg?component'
 import ComparisonSVG from '@/assets/icons/comparison.svg?component'
 
@@ -52,7 +52,7 @@ const routerTitle =
 <template>
   <template v-if="loading">
     <v-button>
-      <!-- <v-loader color="#9fe7e0" height="24px" /> -->
+      <v-loader color="#9fe7e0" height="24px" />
     </v-button>
   </template>
   <template v-else>
