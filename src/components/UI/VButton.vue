@@ -11,13 +11,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 let minWidth = '100px'
-let width = 'auto'
-
-if (props.width === 'auto') {
-  width = 'auto'
-} else {
-  width = props.width
-}
+let width = props.width ?? 'auto'
 
 if (props.minWidth) {
   if (props.minWidth == 'auto') {

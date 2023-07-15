@@ -8,7 +8,6 @@ import { useUserStore } from '@/stores/userStore'
 import RatingStars from '../RatingStars.vue'
 import ReviewsBlock from './ReviewsBlock.vue'
 import VButton from '@/components/UI/VButton.vue'
-import ArrowSVG from '@/assets/icons/arrow.svg?component'
 import type {
   ReviewCreateRating,
   ReviewReadWithDetails,
@@ -199,21 +198,6 @@ const evaluationReview = async (
   }
 }
 
-const ratingBtns = (review: ReviewReadWithDetails) => {
-  return [
-    {
-      type: true,
-      action: 'like',
-      value: review.likes
-    },
-    {
-      type: false,
-      action: 'dislike',
-      value: review.dislikes
-    }
-  ]
-}
-
 watch(() => props.productId, loadReviews, {
   immediate: true
 })
@@ -260,28 +244,10 @@ watch(() => props.productId, loadReviews, {
             :id="review.id"
             :review="review"
             :class="{ active: commId === String(review.id) }"
-          >
-            <div class="flex gap-x-6 mt-4">
-              <div
-                v-for="(el, i) in ratingBtns(review)"
-                :key="i"
-                class="flex gap-x-2"
-              >
-                <button
-                  class="reviews__arrow"
-                  @click="evaluationReview(review, el.type)"
-                >
-                  <ArrowSVG
-                    :class="[
-                      el.action,
-                      userAlreadyRated(review) === el.type && 'coloured'
-                    ]"
-                  />
-                </button>
-                <span>{{ el.value }}</span>
-              </div>
-            </div>
-          </reviews-block>
+            :user-already-rated="userAlreadyRated"
+            :static="false"
+            @on-click="evaluationReview"
+          />
         </template>
       </div>
     </div>
@@ -329,19 +295,4 @@ watch(() => props.productId, loadReviews, {
   gap: 50px
   .active
     box-shadow: 0 0 3px 0px #51c7bd
-  &__arrow
-    cursor: pointer
-    &:hover .like
-      fill: var(--color-text)
-    &:hover .dislike
-      fill: #f44336
-    svg
-      width: 16px
-      transition: .1s
-      &.dislike
-        transform: rotate(180deg)
-        &.coloured
-          fill: #f44336
-      &.like.coloured
-        fill: var(--color-text)
 </style>

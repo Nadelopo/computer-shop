@@ -1,14 +1,58 @@
 <script setup lang="ts">
 import RatingStars from '../RatingStars.vue'
 import AvatarSvg from '@/assets/icons/avatar.svg?component'
+import ArrowSVG from '@/assets/icons/arrow.svg?component'
 import type { ReviewReadWithDetails } from '@/types/tables/reviews.types'
 
-const props = defineProps<{
+type Props = {
   review: ReviewReadWithDetails
   color?: string
+  static?: boolean
+  userAlreadyRated?: (
+    review: ReviewReadWithDetails,
+    type: boolean
+  ) => boolean | null
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  static: true
+})
+
+const emit = defineEmits<{
+  onClick: [review: ReviewReadWithDetails, type: boolean]
 }>()
 
 const color = props.color ?? '#f6f6f6'
+
+const ratingBtns = (review: ReviewReadWithDetails) => {
+  return [
+    {
+      type: true,
+      action: 'like',
+      value: review.likes
+    },
+    {
+      type: false,
+      action: 'dislike',
+      value: review.dislikes
+    }
+  ]
+}
+
+const onClick = (review: ReviewReadWithDetails, type: boolean) => {
+  emit('onClick', review, type)
+}
+
+const arrowSvgClasse = (review: ReviewReadWithDetails, type: boolean) => {
+  let typeClass = type ? 'like' : 'dislike'
+  if (props.static) {
+    return typeClass + ' coloured'
+  } else {
+    const isColoured =
+      props.userAlreadyRated?.(review, type) === type ? ' coloured' : ''
+    return typeClass + isColoured
+  }
+}
 </script>
 
 <template>
@@ -35,7 +79,14 @@ const color = props.color ?? '#f6f6f6'
       <div class="title">Комментарий</div>
       <div>{{ review.comment }}</div>
     </div>
-    <slot></slot>
+    <div class="flex gap-x-6 mt-4">
+      <div v-for="(el, i) in ratingBtns(review)" :key="i" class="flex gap-x-2">
+        <button class="review__root__arrow" @click="onClick(review, el.type)">
+          <ArrowSVG :class="arrowSvgClasse(review, el.type)" />
+        </button>
+        <span>{{ el.value }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -49,4 +100,19 @@ const color = props.color ?? '#f6f6f6'
     font-size: 20px
     font-weight: 500
     margin-bottom: 10px
+  &__arrow
+    cursor: pointer
+    &:hover .like
+      fill: var(--color-text)
+    &:hover .dislike
+      fill: var(--danger-light)
+    svg
+      width: 16px
+      transition: .1s
+      &.dislike
+        transform: rotate(180deg)
+        &.coloured
+          fill: var(--danger-light)
+      &.like.coloured
+        fill: var(--color-text)
 </style>
