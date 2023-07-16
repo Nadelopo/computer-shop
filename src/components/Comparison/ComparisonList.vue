@@ -2,7 +2,12 @@
 import { ref, computed, watch } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
-import type { Category, ComparisonProduct, CurrentCategory } from './types'
+import type {
+  Category,
+  ComparisonProduct,
+  CurrentCategory,
+  BasicProductData
+} from './types'
 
 const props = defineProps<{
   products: ComparisonProduct[]
@@ -81,19 +86,24 @@ watch(comparisonWidth, () => {
 const titles = computed(() => categoryProducts.value.map((e) => e.name))
 
 const productData = computed(() => {
-  const data: { title: string; value: (string | number)[] }[] = []
+  const data: BasicProductData[] = []
 
   const products = categoryProducts.value
 
-  const manufacturers = products.map((e) => e.manufacturers.title)
-  const warranty = products.map((e) => e.warranty)
+  const manufacturers: BasicProductData = {
+    title: 'Производитель',
+    value: products.map((e) => e.manufacturers.title),
+    units: ''
+  }
+  const warranty: BasicProductData = {
+    title: 'Гарантия',
+    value: products.map((e) => e.warranty),
+    units: 'мес'
+  }
 
-  if (!props.showDifferences || categoryProducts.value.length <= 1) {
-    data.push({
-      title: 'Производитель',
-      value: manufacturers
-    })
-    data.push({ title: 'Гарантия', value: warranty })
+  if (!props.showDifferences || products.length <= 1) {
+    data.push(manufacturers)
+    data.push(warranty)
   } else {
     const isManufacturersDifferent = !products.every(
       (e) => e.manufacturers.title === products[0].manufacturers.title
@@ -102,13 +112,10 @@ const productData = computed(() => {
       (e) => e.warranty === products[0].warranty
     )
     if (isManufacturersDifferent) {
-      data.push({
-        title: 'Производитель',
-        value: manufacturers
-      })
+      data.push(manufacturers)
     }
     if (isWarrantiesDifferent) {
-      data.push({ title: 'Гарантия', value: warranty })
+      data.push(warranty)
     }
   }
 
@@ -276,7 +283,7 @@ const onChildRow = (e: Event, value: 'add' | 'remove') => {
                 class="font-medium"
               >
               </div>
-              {{ subEl }} {{ typeof subEl === 'number' ? 'мес' : '' }}
+              {{ subEl }} {{ el.units }}
             </div>
           </div>
         </div>

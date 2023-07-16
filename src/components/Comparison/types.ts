@@ -25,3 +25,9 @@ export type ComparisonProduct = Omit<
 > & {
   specifications: SpecificationRead[]
 }
+
+export type BasicProductData = {
+  title: string
+  value: (string | number)[]
+  units: string
+}
