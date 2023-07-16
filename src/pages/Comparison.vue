@@ -5,8 +5,9 @@ import { storeToRefs } from 'pinia'
 import { getAll, updateOne } from '@/utils/queries/db'
 import { localStorageGet, localStorageSet } from '@/utils/localStorage'
 import { useUserStore } from '@/stores/userStore'
-import VTabs from '@/components/UI/VTabs.vue'
 import ComparisonList from '@/components/Comparison/ComparisonList.vue'
+import VTabs from '@/components/UI/VTabs.vue'
+import Checkbox from '@/components/UI/Checkbox.vue'
 import VLoader from '@/components/UI/VLoader.vue'
 import VButton from '@/components/UI/VButton.vue'
 import TrashSVG from '@/assets/icons/trash.svg?component'
@@ -44,15 +45,15 @@ const currentCategory = computed((): CurrentCategory => {
   const specifications =
     categories.value.find((e) => e.id === currentCategoryId.value)
       ?.specifications || []
-  console.log(currentCategoryId.value)
   return { id: currentCategoryId.value, specifications }
 })
 
 const products = ref<ComparisonProduct[]>([])
+const showDifferences = ref(false)
 
 const loading = ref<Loading>('loading')
 
-watch(
+const watcher = watch(
   () => user.value?.comparison.length,
   async () => {
     const isUser = supabase.auth.user()
@@ -141,6 +142,13 @@ watch(
     }
 
     loading.value = products.value.length ? 'success' : 'empty'
+    if (!isUser) {
+      watcher()
+    } else {
+      if ((user.value?.comparison.length ?? 0) > 0) {
+        watcher()
+      }
+    }
   },
   { immediate: true }
 )
@@ -204,11 +212,17 @@ watch(
           <TrashSVG />
           очистить список
         </v-button>
+        <Checkbox
+          :id="1"
+          v-model="showDifferences"
+          title="Показывать только отличия"
+        />
       </div>
       <ComparisonList
         :current-category="currentCategory"
         :products="products"
         :categories="categories"
+        :show-differences="showDifferences"
       />
     </template>
     <div v-else-if="loading === 'loading'">

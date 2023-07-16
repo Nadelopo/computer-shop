@@ -1,10 +1,9 @@
 <script setup lang="ts">
-const modelValue = defineModel<string | string[]>()
+const modelValue = defineModel<string | string[] | boolean>()
 
 type Props = {
   id: number
   title: string
-  enTitle: string
   units?: string
 }
 

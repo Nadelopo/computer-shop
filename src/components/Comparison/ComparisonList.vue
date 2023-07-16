@@ -8,11 +8,46 @@ const props = defineProps<{
   products: ComparisonProduct[]
   currentCategory: CurrentCategory
   categories: Category[]
+  showDifferences: boolean
 }>()
 
+const getSpecificationValue = (
+  products: ComparisonProduct[],
+  i: number,
+  j: number
+) => {
+  const specification = products[i].specifications[j]
+  const value = specification.valueNumber ?? specification.valueString
+  return value
+}
+
 const categoryProducts = computed((): ComparisonProduct[] => {
-  return props.products.filter((e) => e.categoryId === props.currentCategory.id)
+  const products = props.products.filter(
+    (e) => e.categoryId === props.currentCategory.id
+  )
+  if (!props.showDifferences || products.length <= 1) return products
+  else {
+    let filteredProducts: ComparisonProduct[] = products.map((e) => ({
+      ...e,
+      specifications: []
+    }))
+    const specificationsCount = products[0].specifications.length
+    for (let i = 0; i < specificationsCount; i++) {
+      const firstSpecificationValue = getSpecificationValue(products, 0, i)
+      const isSpecificationsDiefferent = !products.every(
+        (_, j) =>
+          getSpecificationValue(products, j, i) === firstSpecificationValue
+      )
+      if (isSpecificationsDiefferent) {
+        filteredProducts.forEach((p, index) =>
+          p.specifications.push(products[index].specifications[i])
+        )
+      }
+    }
+    return filteredProducts
+  }
 })
+
 const comparisonRef = ref<HTMLElement>()
 const { width: comparisonWidth } = useElementSize(comparisonRef)
 const firstCellMargin = ref(0)
@@ -43,11 +78,41 @@ watch(comparisonWidth, () => {
   firstCellIndex.value = 1
 })
 
+const titles = computed(() => categoryProducts.value.map((e) => e.name))
+
 const productData = computed(() => {
-  const titles = categoryProducts.value.map((e) => e.name)
-  const manufacturers = categoryProducts.value.map((e) => e.manufacturers.title)
-  const warranties = categoryProducts.value.map((e) => e.warranty)
-  return { titles, manufacturers, warranties }
+  const data: { title: string; value: (string | number)[] }[] = []
+
+  const products = categoryProducts.value
+
+  const manufacturers = products.map((e) => e.manufacturers.title)
+  const warranty = products.map((e) => e.warranty)
+
+  if (!props.showDifferences || categoryProducts.value.length <= 1) {
+    data.push({
+      title: 'Производитель',
+      value: manufacturers
+    })
+    data.push({ title: 'Гарантия', value: warranty })
+  } else {
+    const isManufacturersDifferent = !products.every(
+      (e) => e.manufacturers.title === products[0].manufacturers.title
+    )
+    const isWarrantiesDifferent = !products.every(
+      (e) => e.warranty === products[0].warranty
+    )
+    if (isManufacturersDifferent) {
+      data.push({
+        title: 'Производитель',
+        value: manufacturers
+      })
+    }
+    if (isWarrantiesDifferent) {
+      data.push({ title: 'Гарантия', value: warranty })
+    }
+  }
+
+  return data
 })
 
 const firstCellIndex = ref(1)
@@ -124,7 +189,7 @@ const onChildRow = (e: Event, value: 'add' | 'remove') => {
 
         <div class="cells">
           <div
-            v-for="(title, i) in productData.titles"
+            v-for="(title, i) in titles"
             :key="title"
             class="cell"
             :style="{ marginLeft: i === 0 ? firstCellMargin + 'px' : '' }"
@@ -192,19 +257,16 @@ const onChildRow = (e: Event, value: 'add' | 'remove') => {
         </div>
       </div>
 
-      <template
-        v-for="(el, i) in [productData.manufacturers, productData.warranties]"
-        :key="i"
-      >
+      <template v-for="(el, i) in productData" :key="i">
         <div
           class="row"
           @mouseenter="setRowColor($event, 'add')"
           @mouseleave="setRowColor($event, 'remove')"
         >
-          <div class="cell__title"> Производитель </div>
+          <div class="cell__title"> {{ el.title }}</div>
           <div class="cells">
             <div
-              v-for="(subEl, j) in el"
+              v-for="(subEl, j) in el.value"
               :key="j"
               class="cell"
               :style="{ marginLeft: j === 0 ? firstCellMargin + 'px' : '' }"
@@ -213,7 +275,6 @@ const onChildRow = (e: Event, value: 'add' | 'remove') => {
                 v-if="j === firstCellIndex - 1 && comparisonWidth <= 616"
                 class="font-medium"
               >
-                {{ i == 0 ? 'Производитель' : 'Гарантия' }}
               </div>
               {{ subEl }} {{ typeof subEl === 'number' ? 'мес' : '' }}
             </div>

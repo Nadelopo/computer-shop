@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useFilterStore } from '@/stores/filterStore'
 import InputFilter from '@/components/CategoryProducts/InputFilter.vue'
-import CheckboxFilter from '@/components/CategoryProducts/CheckboxFilter.vue'
+import Checkbox from '@/components/UI/Checkbox.vue'
 import VButton from '../UI/VButton.vue'
 import SkeletonFiltersVue from './SkeletonFilters.vue'
 
@@ -121,11 +121,10 @@ const cancel = () => {
           <div class="text-center">{{ value.title }}</div>
           <div v-for="variant in value.variantsValues" :key="variant">
             <div>
-              <checkbox-filter
+              <Checkbox
                 :id="value.id"
                 v-model="value.values"
                 :title="variant"
-                :en-title="value.enTitle"
               />
             </div>
           </div>
