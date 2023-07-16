@@ -8,6 +8,7 @@ type Props = {
   title: string
   message: string
   type?: 'primary' | 'danger' | 'noactive'
+  width?: string
 }
 
 type Emit = {
@@ -35,7 +36,9 @@ const onOk = () => {
 
 <template>
   <span @click="showModal = true">
-    <v-button :variant="type" v-bind="$attrs"> {{ label }}</v-button>
+    <v-button :variant="type" :width="width" v-bind="$attrs">
+      {{ label }}
+    </v-button>
   </span>
   <v-modal v-model="showModal">
     <div class="confirm">

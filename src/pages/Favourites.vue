@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onBeforeMount, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { getAll, updateOne } from '@/utils/queries/db'
 import { useUserStore } from '@/stores/userStore'
@@ -8,6 +8,7 @@ import ButtonCart from '@/components/ButtonCart.vue'
 import VButton from '@/components/UI/VButton.vue'
 import VLoader from '@/components/UI/VLoader.vue'
 import CrossSVG from '@/assets/icons/cross.svg?component'
+import TrashSVG from '@/assets/icons/trash.svg?component'
 import type { ProductRead } from '@/types/tables/products.types'
 
 type ProductCard = ProductRead & {
@@ -23,25 +24,17 @@ const favourites = ref<ProductCard[]>([])
 
 const lodaing = ref<'loading' | 'empty' | 'success'>('loading')
 
-const watcher = watch(
-  () => user.value?.favourites.length,
-  async () => {
-    if (user.value) {
-      lodaing.value = 'loading'
-      const data = await getAll<ProductCard>('products', {
-        select: '*, categories(id, enTitle)',
-        in: ['id', user.value.favourites]
-      })
-      favourites.value = data || []
-      lodaing.value = favourites.value.length ? 'success' : 'empty'
-      watcher()
-    }
-  },
-  {
-    immediate: true
+onBeforeMount(async () => {
+  if (user.value) {
+    lodaing.value = 'loading'
+    const data = await getAll<ProductCard>('products', {
+      select: '*, categories(id, enTitle)',
+      in: ['id', user.value.favourites]
+    })
+    favourites.value = data || []
+    lodaing.value = favourites.value.length ? 'success' : 'empty'
   }
-)
-
+})
 const clear = async () => {
   if (user.value) {
     const data = await updateOne('users', user.value.id, {
@@ -84,6 +77,7 @@ const deleteItem = async (id: number) => {
           class="noactive"
           @click="clear"
         >
+          <TrashSVG />
           очистить список
         </v-button>
         <div v-else-if="lodaing === 'empty'">

@@ -56,7 +56,7 @@ onBeforeMount(async () => {
             <div>{{ product.count }}</div>
             <v-button @click="increaseItemCount(product)"> + </v-button>
             <v-button @click="deleteItem(product.id)">
-              <TrashSVG fill="#fff" width="24" />
+              <TrashSVG />
             </v-button>
           </div>
         </div>

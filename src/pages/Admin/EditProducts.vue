@@ -232,7 +232,7 @@ const back = async () => {
           <v-button>сохранить</v-button>
         </div>
       </form>
-      <v-button class="mt-8" @click="back"> назад </v-button>
+      <v-button class="mt-6" @click="back"> назад </v-button>
     </div>
     <div v-else class="h-screen flex items-center">
       <v-loader />
@@ -245,5 +245,5 @@ const back = async () => {
   background: #fff
   min-height: 100vh
   margin: 0
-  padding: 0
+  padding: 50px 0
 </style>

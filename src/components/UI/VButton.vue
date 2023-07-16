@@ -1,13 +1,17 @@
 <script setup lang="ts">
+import VLoader from './VLoader.vue'
+
 type Props = {
-  minWidth?: number | 'auto'
   variant?: 'primary' | 'danger' | 'noactive'
+  loading: boolean
+  minWidth?: number | 'auto'
   width?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   variant: 'primary',
-  width: 'auto'
+  width: 'auto',
+  loading: false
 })
 
 let minWidth = '100px'
@@ -31,13 +35,65 @@ if (props.minWidth) {
       noactive: variant === 'noactive'
     }"
   >
-    <slot></slot>
+    <template v-if="loading">
+      <v-loader height="24px" />
+    </template>
+    <template v-else>
+      <slot />
+    </template>
   </button>
 </template>
 
 <style scoped lang="sass">
-@import '@/styles/buttons'
+.btn, .danger
+  border: none
+  border-radius: 4px
+  padding: 0.375rem 0.75rem
+  color: #fff
+  cursor: pointer
+  transition: .3s
+  display: flex
+  align-items: center
+  justify-content: center
+  outline: 2px solid transparent
+  &:active
+    transform: scale(0.9)
+
 .btn
   min-width: v-bind(minWidth)
   width: v-bind(width)
+  background: var(--color-main)
+  :slotted(svg)
+    fill: #fff
+  &:hover
+    background: var(--color-sec)
+  &:focus-visible
+    outline: 2px solid var(--color-text)
+  &.noactive
+    border-radius: 4px
+    padding: 0.375rem 0.75rem
+    cursor: pointer
+    transition: .3s
+    display: flex
+    align-items: center
+    justify-content: center
+    color: var(--color-main)
+    box-shadow: inset 0px 0px 0px 2px var(--color-main)
+    background: transparent
+    :slotted(svg)
+      transition: .3s
+      fill: var(--color-main)
+    &:hover
+      :slotted(svg)
+        fill: #fff
+    &:hover
+      background: var(--color-sec)
+      color: #fff
+      box-shadow: inset 0px 0px 0px 2px var(--color-sec)
+  &.danger
+    background: var(--danger)
+    &:hover
+      background: var(--danger-light)
+    &:focus-visible
+      outline: 2px solid #ffa3a3
 </style>

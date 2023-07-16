@@ -163,7 +163,7 @@ const onChildRow = (e: Event, value: 'add' | 'remove') => {
       </div>
 
       <div
-        v-for="i in categoryProducts[0].specifications.length"
+        v-for="i in categoryProducts[0]?.specifications.length"
         :key="categoryProducts[0].specifications[i - 1].id"
         class="row"
         @mouseenter="setRowColor($event, 'add')"

@@ -6,13 +6,10 @@ import Sidebar from '@/components/Admin/AdminSidebar.vue'
 import { loadingKey, productsKey, setProductsKey } from './types'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
-import { useManufacturersStore } from '@/stores/manufacturersStore'
 
 const route = useRoute()
 
 const { getProducts } = useProductsStore()
-const { setManufacturers } = useManufacturersStore()
-setManufacturers()
 
 const products = ref<ProductWithSpecifications[]>([])
 const loading = ref<Loading>('loading')

@@ -89,7 +89,7 @@ const sort = async (type: SortType) => {
   margin-top: 32px
   align-items: center
   svg
-    fill: #60efe1
+    fill: var(--bright)
     transition: .2s
     &.down
       transform: rotate(180deg)

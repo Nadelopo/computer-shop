@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { getAll } from '@/utils/queries/db'
+import { getAll, updateOne } from '@/utils/queries/db'
+import { localStorageGet, localStorageSet } from '@/utils/localStorage'
 import { useUserStore } from '@/stores/userStore'
 import VTabs from '@/components/UI/VTabs.vue'
 import ComparisonList from '@/components/Comparison/ComparisonList.vue'
 import VLoader from '@/components/UI/VLoader.vue'
+import VButton from '@/components/UI/VButton.vue'
+import TrashSVG from '@/assets/icons/trash.svg?component'
 import type { ProductRead } from '@/types/tables/products.types'
 import type {
   Category,
@@ -14,7 +17,8 @@ import type {
   ComparisonProduct,
   CurrentCategory
 } from '@/components/Comparison/types'
-import { localStorageGet } from '@/utils/localStorage'
+import type { Loading } from '@/types'
+import { supabase } from '@/supabase'
 
 type Product = ProductRead & {
   categories: {
@@ -29,6 +33,7 @@ type Product = ProductRead & {
 }
 
 const route = useRoute()
+const router = useRouter()
 
 const { user } = storeToRefs(useUserStore())
 
@@ -39,36 +44,46 @@ const currentCategory = computed((): CurrentCategory => {
   const specifications =
     categories.value.find((e) => e.id === currentCategoryId.value)
       ?.specifications || []
+  console.log(currentCategoryId.value)
   return { id: currentCategoryId.value, specifications }
 })
 
 const products = ref<ComparisonProduct[]>([])
 
-const loading = ref<'loading' | 'empty' | 'success'>('loading')
+const loading = ref<Loading>('loading')
 
-const watcher = watch(
+watch(
   () => user.value?.comparison.length,
   async () => {
-    const storageProductIds = localStorageGet<number[]>('compareList') || []
-    const productIds = user.value ? user.value.comparison : storageProductIds
+    const isUser = supabase.auth.user()
+    let productIds: number[] = []
+    if (isUser) {
+      productIds = user.value?.comparison || []
+    } else {
+      const storageProductIds = localStorageGet<number[]>('compareList') || []
+      productIds = storageProductIds
+    }
+
     if (productIds.length === 0) {
       loading.value = 'empty'
       return
     }
+
     loading.value = 'loading'
 
     const productData = await getAll<Product>('products', {
       select: '*, categories(id, enTitle, title), manufacturers(id, title)',
       in: ['id', productIds]
     })
-
     const specificationsData = await getAll('specifications', {
       in: ['productId', productIds],
       order: {
         value: 'categorySpecificationsId'
       }
     })
+
     const modifiedProducts: ComparisonProduct[] = []
+
     if (productData && specificationsData) {
       for (const product of productData) {
         modifiedProducts.push({
@@ -91,13 +106,13 @@ const watcher = watch(
           )
         }
       }
-      console.log(productIds)
 
-      const categoryId = route.query.category_id
-      if (categoryId) {
-        currentCategoryId.value = Number(categoryId)
+      const categoryId = Number(route.query.category_id)
+      if (categories.value.some((e) => e.id === categoryId)) {
+        currentCategoryId.value = categoryId
       } else {
         currentCategoryId.value = categories.value[0].id
+        router.push({ query: { category_id: String(currentCategoryId.value) } })
       }
 
       products.value = modifiedProducts
@@ -111,6 +126,7 @@ const watcher = watch(
           select: 'categoryId, title, units'
         }
       )
+
       for (const category of categories.value) {
         const categorySpecifications = categoriesSpecifications?.filter(
           (e) => e.categoryId === category.id
@@ -125,13 +141,39 @@ const watcher = watch(
     }
 
     loading.value = products.value.length ? 'success' : 'empty'
-
-    watcher()
   },
-  {
-    immediate: true
-  }
+  { immediate: true }
 )
+
+const clear = async () => {
+  loading.value = 'loading'
+
+  const remainProducts = products.value.filter(
+    (e) => e.categoryId !== currentCategoryId.value
+  )
+  if (user.value) {
+    const data = await updateOne('users', user.value.id, {
+      comparison: remainProducts.map((e) => e.id)
+    })
+    if (data) {
+      user.value.comparison = data.comparison
+    }
+  } else {
+    localStorageSet(
+      'compareList',
+      remainProducts.map((e) => e.id)
+    )
+  }
+  products.value = remainProducts
+  categories.value = categories.value.filter(
+    (e) => e.id !== currentCategoryId.value
+  )
+  currentCategoryId.value = remainProducts.length
+    ? remainProducts[0].categoryId
+    : null
+
+  loading.value = products.value.length ? 'success' : 'empty'
+}
 
 watch(
   () => route.query.category_id,
@@ -157,6 +199,12 @@ watch(
         "
         query-param-name="category_id"
       />
+      <div class="mb-4 flex gap-x-4 items-center">
+        <v-button variant="noactive" class="button" @click="clear">
+          <TrashSVG />
+          очистить список
+        </v-button>
+      </div>
       <ComparisonList
         :current-category="currentCategory"
         :products="products"
@@ -165,6 +213,9 @@ watch(
     </template>
     <div v-else-if="loading === 'loading'">
       <v-loader />
+    </div>
+    <div v-else class="font-bold text-2xl text-center">
+      Нет товаров для сравнения
     </div>
   </div>
 </template>

@@ -3,7 +3,6 @@ import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
 import VButton from './UI/VButton.vue'
-import VLoader from './UI/VLoader.vue'
 import CartSVG from '@/assets/icons/cartInButton.svg?component'
 
 type Props = {
@@ -33,21 +32,14 @@ const width = computed(() => props.width + 'px')
 </script>
 
 <template>
-  <template v-if="loading">
-    <v-button :width="width">
-      <v-loader color="#9fe7e0" height="24px" />
-    </v-button>
-  </template>
-  <template v-else>
-    <v-button
-      v-if="state"
-      :width="width"
-      @click.prevent="$router.push({ name: 'Cart' })"
-    >
-      в корзину
-    </v-button>
-    <v-button v-else :width="width" @click.prevent="add">
-      <CartSVG width="16" fill="#fff" class="mr-2" /> купить
-    </v-button>
-  </template>
+  <v-button
+    v-if="state"
+    :width="width"
+    @click.prevent="$router.push({ name: 'Cart' })"
+  >
+    в корзину
+  </v-button>
+  <v-button v-else :width="width" :loading="loading" @click.prevent="add">
+    <CartSVG width="16" fill="#fff" class="mr-2" /> купить
+  </v-button>
 </template>

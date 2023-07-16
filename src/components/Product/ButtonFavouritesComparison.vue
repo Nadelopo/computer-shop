@@ -50,25 +50,23 @@ const routerTitle =
 </script>
 
 <template>
-  <template v-if="loading">
-    <v-button>
-      <v-loader color="#9fe7e0" height="24px" />
-    </v-button>
-  </template>
-  <template v-else>
-    <v-button v-if="!state" class="product__button" @click="add">
-      <Icon />
-      {{ notInListTitle }}
-    </v-button>
-    <v-button
-      v-else
-      class="product__button"
-      @click="$router.push({ name: routerTitle })"
-    >
-      <Icon fill="#60efe1" />
-      {{ inListTitle }}
-    </v-button>
-  </template>
+  <v-button
+    v-if="!state"
+    class="product__button"
+    :loading="loading"
+    @click="add"
+  >
+    <Icon />
+    {{ notInListTitle }}
+  </v-button>
+  <v-button
+    v-else
+    class="product__button"
+    @click="$router.push({ name: routerTitle })"
+  >
+    <Icon fill="#60efe1" />
+    {{ inListTitle }}
+  </v-button>
 </template>
 
 <style scoped lang="sass">
