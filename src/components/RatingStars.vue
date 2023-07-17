@@ -25,13 +25,18 @@ const arr = [5, 4, 3, 2, 1]
 <template>
   <div v-if="static" class="flex">
     <div>
-      <label
-        v-for="i in arr"
-        :key="i"
-        :title="`Оценка «${i}»`"
-        class="rating__static"
-        :class="[Math.round(modelValue) + 1 > i ? 'coloured' : 'colourless']"
-      />
+      <template v-if="modelValue === 0">
+        <label class="rating__static" />
+      </template>
+      <template v-else>
+        <label
+          v-for="i in arr"
+          :key="i"
+          :title="`Оценка «${i}»`"
+          class="rating__static"
+          :class="{ coloured: Math.round(modelValue) + 1 > i }"
+        />
+      </template>
     </div>
     <div class="self-center">
       {{ modelValue ? modelValue.toFixed(2) : 'нет отзывов' }}
@@ -110,10 +115,9 @@ const arr = [5, 4, 3, 2, 1]
   line-height: 32px
   text-shadow: 1px 1px #bbb
   transition: 0.3s
+  color: lightgrey
   &:before
     content: '★'
   &.coloured
     color: var(--color-main)
-  &.colourless
-    color: lightgrey
 </style>

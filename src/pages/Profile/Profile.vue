@@ -19,7 +19,6 @@ onBeforeMount(async () => {
         ascending: false
       }
     })
-    console.log(data)
     if (data) {
       reviews.value = data
     }
