@@ -7,6 +7,8 @@ import { useCartStore } from './stores/cartStore'
 import { useManufacturersStore } from './stores/manufacturersStore'
 import Navbar from './components/Navbar.vue'
 
+const route = useRoute()
+
 const { setUserData } = useUserStore()
 const { setCartItems } = useCartStore()
 const { setManufacturers } = useManufacturersStore()
@@ -22,7 +24,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 })
 
 const pathMissing = (path: string) => {
-  const href = useRoute().fullPath
+  const href = route.fullPath
   return !href.includes(path)
 }
 

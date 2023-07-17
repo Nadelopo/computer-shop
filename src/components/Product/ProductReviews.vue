@@ -22,8 +22,6 @@ type ReviewFormCreate = {
   rating: ReviewCreateRating | 0
 }
 
-const toast = useToast()
-
 const props = defineProps<{
   productId: number
   countReviews: number
@@ -34,10 +32,13 @@ const emit = defineEmits<{
   (e: 'updateProductRating', data: UpdateProductRating): void
 }>()
 
+const toast = useToast()
+const route = useRoute()
+
 const { user } = storeToRefs(useUserStore())
 
-const categoryId = Number(useRoute().params.categoryId)
-const commId = String(useRoute().query.comm_id)
+const categoryId = Number(route.params.categoryId)
+const commId = String(route.query.comm_id)
 
 const reviews = ref<ReviewReadWithDetails[]>([])
 const showReviewForm = ref(false)

@@ -282,6 +282,7 @@ const onChildRow = (e: Event, value: 'add' | 'remove') => {
                 v-if="j === firstCellIndex - 1 && comparisonWidth <= 616"
                 class="font-medium"
               >
+                {{ el.title }}
               </div>
               {{ subEl }} {{ el.units }}
             </div>

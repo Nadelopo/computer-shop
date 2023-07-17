@@ -8,6 +8,8 @@ type Option = {
   count?: number
 }
 
+const route = useRoute()
+
 const modelValue = defineModel<number | string | null>()
 
 const props = defineProps<{
@@ -63,7 +65,7 @@ const clickOnTab = (value: number | string) => {
       :to="{
         query: props.queryParamName
           ? { [props.queryParamName]: option.value }
-          : { ...useRoute().query }
+          : { ...route.query }
       }"
       :class="{ active: option.value === modelValue }"
       class="tab"

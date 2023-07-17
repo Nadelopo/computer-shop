@@ -26,8 +26,14 @@ const { manufacturers } = storeToRefs(useManufacturersStore())
 .list
   margin-top: 100px
   display: grid
-  grid-template-columns: repeat(8, 1fr)
+  grid-template-columns: repeat(6, 250px)
   gap: 30px
+  @media (width <= 2000px)
+    grid-template-columns: repeat(4, 250px)
+    @media (width <= 1450px)
+      grid-template-columns: repeat(3, 250px)
+      @media (width <= 1160px)
+        grid-template-columns: repeat(2, 250px)
   .wrapper
     display: grid
     grid-template-rows: auto 1fr
@@ -40,4 +46,6 @@ const { manufacturers } = storeToRefs(useManufacturersStore())
     transition: .2s
     &:hover
       box-shadow: 0 0 10px 3px rgb(1,1,1,0.2)
+    img
+      max-height: 80px
 </style>

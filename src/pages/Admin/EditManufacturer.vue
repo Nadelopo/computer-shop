@@ -8,9 +8,12 @@ import VButton from '@/components/UI/VButton.vue'
 import VLoader from '@/components/UI/VLoader.vue'
 import type { ManufacturerUpdate } from '@/types/tables/manufacturers.types'
 
+const route = useRoute()
+const router = useRouter()
+
 const { getManufacturer, updateManufacturer } = useManufacturersStore()
 
-const manufactuerId = Number(useRoute().params.id)
+const manufactuerId = Number(route.params.id)
 const manufacturer = ref<ManufacturerUpdate | null>(null)
 
 const loading = ref<'success' | 'loading'>('loading')
@@ -27,7 +30,6 @@ onBeforeMount(async () => {
   loading.value = 'success'
 })
 
-const router = useRouter()
 const update = async () => {
   if (manufacturer.value) {
     loading.value = 'loading'

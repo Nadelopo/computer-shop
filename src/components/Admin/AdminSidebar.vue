@@ -53,7 +53,7 @@ const { categories } = storeToRefs(useCategoriesStore())
             name: 'AdminSpecifications'
           }"
         >
-          Характеристик категорий
+          Характеристики категорий
         </router-link>
       </div>
 

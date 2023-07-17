@@ -177,20 +177,17 @@ const clear = async () => {
     (e) => e.id !== currentCategoryId.value
   )
   currentCategoryId.value = remainProducts.length
-    ? remainProducts[0].categoryId
+    ? categories.value[0].id
     : null
+
+  let query = {}
+  if (currentCategoryId.value) {
+    query = { category_id: String(currentCategoryId.value) }
+  }
+  router.push({ query })
 
   loading.value = products.value.length ? 'success' : 'empty'
 }
-
-watch(
-  () => route.query.category_id,
-  (categoryId) => {
-    if (categoryId) {
-      currentCategoryId.value = Number(categoryId)
-    }
-  }
-)
 </script>
 
 <template>
@@ -207,7 +204,7 @@ watch(
         "
         query-param-name="category_id"
       />
-      <div class="mb-4 flex gap-x-4 items-center">
+      <div class="comparre__actions">
         <v-button variant="noactive" class="button" @click="clear">
           <TrashSVG />
           очистить список
@@ -234,4 +231,13 @@ watch(
   </div>
 </template>
 
-<style scoped lang="sass"></style>
+<style scoped lang="sass">
+.comparre__actions
+  display: flex
+  gap: 16px
+  align-items: center
+  margin-bottom: 16px
+  @media (width < 500px)
+    flex-direction: column-reverse
+    align-items: start
+</style>

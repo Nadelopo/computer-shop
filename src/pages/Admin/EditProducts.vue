@@ -37,11 +37,11 @@ type ProductWithSpecificationsOnEdit = ProductReadWithDetails & {
 type SpecificationUpdateMany = SpecificationUpdate &
   Required<Pick<SpecificationUpdate, 'id'>>
 
-const { updateProduct, updateProductSpecifications } = useProductsStore()
-const { manufacturers } = storeToRefs(useManufacturersStore())
-
 const router = useRouter()
 const route = useRoute()
+
+const { updateProduct, updateProductSpecifications } = useProductsStore()
+const { manufacturers } = storeToRefs(useManufacturersStore())
 
 const id = Number(route.params.id)
 const categoryId = Number(route.params.categoryId)

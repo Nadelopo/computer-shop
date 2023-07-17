@@ -5,7 +5,6 @@ import { useUserStore } from '@/stores/userStore'
 import { useAddFavouritesAndComparison } from '@/utils/useAddFavouritesAndComparison'
 import { localStorageGet } from '@/utils/localStorage'
 import VButton from '../UI/VButton.vue'
-import VLoader from '../UI/VLoader.vue'
 import FavouriteSVG from '@/assets/icons/favourites.svg?component'
 import ComparisonSVG from '@/assets/icons/comparison.svg?component'
 

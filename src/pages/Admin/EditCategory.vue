@@ -14,10 +14,12 @@ import type {
   CategoryUpdate
 } from '@/types/tables/categories.types'
 
+const route = useRoute()
+const router = useRouter()
+
 const { categories } = storeToRefs(useCategoriesStore())
 const { updateCategory } = useCategoriesStore()
-const categoryId = Number(useRoute().params.id)
-const router = useRouter()
+const categoryId = Number(route.params.id)
 
 const loading = ref(false)
 let oldImg: string | undefined = undefined
