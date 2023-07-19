@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { onClickOutside } from '@/utils/onClickOutside'
 
 defineProps<{
   isOpen: boolean
+  links: {
+    text: string
+    page: string
+  }[]
 }>()
 
 const emit = defineEmits(['update:isOpen'])
@@ -14,6 +18,14 @@ const closeSidebar = () => {
 }
 
 onClickOutside(sidebarRef, closeSidebar)
+
+onMounted(() => {
+  document.body.style.overflow = 'hidden'
+})
+
+onUnmounted(() => {
+  document.body.style.overflow = 'visible'
+})
 </script>
 
 <template>
@@ -33,11 +45,14 @@ onClickOutside(sidebarRef, closeSidebar)
         </div>
       </div>
       <div class="list">
-        <div>Главная</div>
-        <div>Товары</div>
-        <div>О нас</div>
-        <div>Доставка</div>
-        <div>Контакты</div>
+        <router-link
+          v-for="link in links"
+          :key="link.text"
+          :to="{ name: link.page }"
+          @click="closeSidebar"
+        >
+          {{ link.text }}
+        </router-link>
       </div>
     </div>
   </div>
@@ -45,7 +60,7 @@ onClickOutside(sidebarRef, closeSidebar)
 
 <style scoped lang="sass">
 .wrapper
-  z-index: 100
+  z-index: 101
   width: 100%
   position: absolute
   height: 100%
@@ -70,7 +85,7 @@ onClickOutside(sidebarRef, closeSidebar)
       display: flex
       flex-direction: column
       gap: 10px
-      div
+      a
         padding-left: 20px
 
 .dot

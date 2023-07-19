@@ -12,7 +12,7 @@ const { categories } = storeToRefs(useCategoriesStore())
         class="lev"
         :to="{
           name: 'CategoryProducts',
-          params: { category: category.enTitle, id: category.id },
+          params: { category: category.enTitle, id: category.id }
         }"
       >
         <div class="wrap">
@@ -48,9 +48,13 @@ const { categories } = storeToRefs(useCategoriesStore())
   display: grid
   grid-template-columns: repeat(4, 1fr)
   gap: 40px
+  @media (width < 1024px)
+    grid-template-columns: 1fr 1fr
+  @media (width < 700px)
+    grid-template-columns: 1fr
 
 .wrap
-  padding: 20px 0
+  padding: 20px 10px
   display: flex
   flex-direction: column
   justify-content: center

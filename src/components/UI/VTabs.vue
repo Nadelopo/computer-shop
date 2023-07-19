@@ -10,7 +10,7 @@ type Option = {
 
 const route = useRoute()
 
-const modelValue = defineModel<number | string | null>()
+const modelValue = defineModel<number | string | null>({ required: true })
 
 const props = defineProps<{
   options: Option[]
@@ -53,6 +53,7 @@ watch(modelValue, setTab, {
 
 const clickOnTab = (value: number | string) => {
   modelValue.value = value
+  props.onClick?.()
 }
 </script>
 

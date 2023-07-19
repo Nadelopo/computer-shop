@@ -21,7 +21,10 @@ const signIn = async () => {
       email: email.value,
       password: password.value
     })
-    if (error) console.log(error)
+    if (error) {
+      console.log(error)
+      toast.warning('Неверная почта или пароль')
+    }
     if (user) router.push({ name: 'Home' })
   } else {
     toast.warning('Не все поля заполнены')
@@ -34,7 +37,11 @@ const signUp = async () => {
       email: email.value,
       password: password.value
     })
-    if (error) console.log(error)
+    if (error) {
+      console.log(error)
+
+      toast.warning('Пользователь уже зарегестрирован')
+    }
     if (user) {
       const { error, data: insertData } = await supabase
         .from<UserCreate>('users')
@@ -73,7 +80,13 @@ const signUp = async () => {
       </div>
       <div v-if="!active" class="flex flex-col mb-4">
         <label class="label" for="">ИМЯ</label>
-        <input v-model="name" class="input" type="text" minlength="4" />
+        <input
+          v-model="name"
+          class="input"
+          type="text"
+          minlength="4"
+          maxlength="50"
+        />
       </div>
       <div class="flex flex-col mb-4">
         <label class="label" for="">ПОЧТА</label>
@@ -81,7 +94,13 @@ const signUp = async () => {
       </div>
       <div class="flex flex-col mb-4">
         <label class="label" for="">ПАРОЛЬ</label>
-        <input v-model="password" class="input" type="password" />
+        <input
+          v-model="password"
+          class="input"
+          type="password"
+          minlength="6"
+          maxlength="50"
+        />
       </div>
       <div class="my-10">
         <v-button class="btnn">

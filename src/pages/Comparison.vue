@@ -11,23 +11,17 @@ import Checkbox from '@/components/UI/Checkbox.vue'
 import VLoader from '@/components/UI/VLoader.vue'
 import VButton from '@/components/UI/VButton.vue'
 import TrashSVG from '@/assets/icons/trash.svg?component'
-import type { ProductRead } from '@/types/tables/products.types'
+import type { ProductReadWithDetails } from '@/types/tables/products.types'
 import type {
   Category,
   CategorySpecifications,
-  ComparisonProduct,
-  CurrentCategory
+  ComparisonProduct
 } from '@/components/Comparison/types'
 import type { Loading } from '@/types'
 import { supabase } from '@/supabase'
 
-type Product = ProductRead & {
+type Product = Omit<ProductReadWithDetails, 'categories.id'> & {
   categories: {
-    id: number
-    enTitle: string
-    title: string
-  }
-  manufacturers: {
     id: number
     title: string
   }
@@ -39,18 +33,17 @@ const router = useRouter()
 const { user } = storeToRefs(useUserStore())
 
 const categories = ref<Category[]>([])
-
 const currentCategoryId = ref<number | null>(null)
-const currentCategory = computed((): CurrentCategory => {
-  const specifications =
-    categories.value.find((e) => e.id === currentCategoryId.value)
-      ?.specifications || []
-  return { id: currentCategoryId.value, specifications }
+
+const currentCategorySpecifications = computed((): CategorySpecifications[] => {
+  const specifications = categories.value.find(
+    (e) => e.id === currentCategoryId.value
+  )?.specifications
+  return specifications || []
 })
 
 const products = ref<ComparisonProduct[]>([])
 const showDifferences = ref(false)
-
 const loading = ref<Loading>('loading')
 
 const watcher = watch(
@@ -69,11 +62,10 @@ const watcher = watch(
       loading.value = 'empty'
       return
     }
-
     loading.value = 'loading'
 
     const productData = await getAll<Product>('products', {
-      select: '*, categories(id, enTitle, title), manufacturers(id, title)',
+      select: '*, categories(id, title), manufacturers(id, title)',
       in: ['id', productIds]
     })
     const specificationsData = await getAll('specifications', {
@@ -113,7 +105,6 @@ const watcher = watch(
         currentCategoryId.value = categoryId
       } else {
         currentCategoryId.value = categories.value[0].id
-        router.push({ query: { category_id: String(currentCategoryId.value) } })
       }
 
       products.value = modifiedProducts
@@ -159,6 +150,7 @@ const clear = async () => {
   const remainProducts = products.value.filter(
     (e) => e.categoryId !== currentCategoryId.value
   )
+
   if (user.value) {
     const data = await updateOne('users', user.value.id, {
       comparison: remainProducts.map((e) => e.id)
@@ -172,6 +164,7 @@ const clear = async () => {
       remainProducts.map((e) => e.id)
     )
   }
+
   products.value = remainProducts
   categories.value = categories.value.filter(
     (e) => e.id !== currentCategoryId.value
@@ -188,6 +181,16 @@ const clear = async () => {
 
   loading.value = products.value.length ? 'success' : 'empty'
 }
+
+// нужно следить за route т.к. пользователь может перемещаться по истории, без кликов на нужную категорию
+watch(
+  () => route.query.category_id,
+  (categoryId) => {
+    if (categoryId) {
+      currentCategoryId.value = Number(categoryId)
+    }
+  }
+)
 </script>
 
 <template>
@@ -216,9 +219,9 @@ const clear = async () => {
         />
       </div>
       <ComparisonList
-        :current-category="currentCategory"
+        :current-category-id="currentCategoryId"
+        :current-category-specifications="currentCategorySpecifications"
         :products="products"
-        :categories="categories"
         :show-differences="showDifferences"
       />
     </template>

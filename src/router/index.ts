@@ -30,8 +30,7 @@ export const routes: RouteRecordRaw[] = [
   {
     path: '/cart',
     name: 'Cart',
-    component: () => import('@/pages/Cart.vue'),
-    meta: { auth: true }
+    component: () => import('@/pages/Cart.vue')
   },
   {
     path: '/products/:category/:categoryId/:productId',

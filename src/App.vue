@@ -6,6 +6,7 @@ import { useUserStore } from './stores/userStore'
 import { useCartStore } from './stores/cartStore'
 import { useManufacturersStore } from './stores/manufacturersStore'
 import Navbar from './components/Navbar.vue'
+import MainNavMobile from './components/MainNav.mobile.vue'
 
 const route = useRoute()
 
@@ -38,4 +39,5 @@ const showNavbar = computed((): boolean => {
   <main>
     <router-view />
   </main>
+  <MainNavMobile />
 </template>

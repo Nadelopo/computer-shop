@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
 import type {
-  Category,
   ComparisonProduct,
-  CurrentCategory,
-  BasicProductData
+  BasicProductData,
+  CategorySpecifications
 } from './types'
 
 const props = defineProps<{
+  currentCategoryId: number | null
   products: ComparisonProduct[]
-  currentCategory: CurrentCategory
-  categories: Category[]
+  currentCategorySpecifications: CategorySpecifications[]
   showDifferences: boolean
 }>()
 
@@ -28,7 +27,7 @@ const getSpecificationValue = (
 
 const categoryProducts = computed((): ComparisonProduct[] => {
   const products = props.products.filter(
-    (e) => e.categoryId === props.currentCategory.id
+    (e) => e.categoryId === props.currentCategoryId
   )
   if (!props.showDifferences || products.length <= 1) return products
   else {
@@ -55,39 +54,38 @@ const categoryProducts = computed((): ComparisonProduct[] => {
 
 const comparisonRef = ref<HTMLElement>()
 const { width: comparisonWidth } = useElementSize(comparisonRef)
-const firstCellMargin = ref(0)
-const widthCell = ref('235px')
-const horizontalPaddingCell = '10px'
+const translateCells = ref(0)
+const widthCell = ref(235)
 const countItems = ref(0)
-const widthCells = ref('0px')
+
+const isMobileWidth = computed(() => {
+  return comparisonWidth.value <= 620
+})
 
 const calculateWidths = () => {
   if (!comparisonRef.value) return
 
   let widthContainer = 0
-  if (comparisonWidth.value <= 616) {
-    widthCell.value = comparisonWidth.value / 2 + 'px'
+  if (isMobileWidth.value) {
+    widthCell.value = comparisonWidth.value / 2
     widthContainer = comparisonWidth.value
   } else {
-    widthCell.value = '235px'
-    widthContainer = comparisonWidth.value - parseInt(widthCell.value)
+    widthCell.value = 235
+    widthContainer = comparisonWidth.value - widthCell.value
   }
 
-  countItems.value = Math.floor(widthContainer / parseInt(widthCell.value))
-  widthCells.value = countItems.value * parseInt(widthCell.value) + 'px'
+  countItems.value = Math.floor(widthContainer / widthCell.value)
 }
 
 watch(comparisonWidth, () => {
   calculateWidths()
-  firstCellMargin.value = 0
-  firstCellIndex.value = 1
+  translateCells.value = 0
 })
 
 const titles = computed(() => categoryProducts.value.map((e) => e.name))
 
 const productData = computed(() => {
   const data: BasicProductData[] = []
-
   const products = categoryProducts.value
 
   const manufacturers: BasicProductData = {
@@ -122,42 +120,33 @@ const productData = computed(() => {
   return data
 })
 
-const firstCellIndex = ref(1)
 const updateItemsList = (action: 'prev' | 'next') => {
   if (action === 'next') {
-    firstCellIndex.value++
-    firstCellMargin.value -= parseInt(widthCell.value)
+    translateCells.value -= widthCell.value
   }
   if (action === 'prev') {
-    firstCellIndex.value--
-    firstCellMargin.value += parseInt(widthCell.value)
+    translateCells.value += widthCell.value
   }
 }
 
 const showPrevBtn = computed(() => {
   if (categoryProducts.value.length < countItems.value) return false
-  return firstCellMargin.value !== 0
+  return translateCells.value !== 0
 })
 const showNextBtn = computed(() => {
   if (categoryProducts.value.length < countItems.value) return false
   const outsideItemsCount = categoryProducts.value.length - countItems.value
-  return (
-    outsideItemsCount * parseInt(widthCell.value) !==
-    Math.abs(firstCellMargin.value)
-  )
+  return outsideItemsCount * widthCell.value !== Math.abs(translateCells.value)
 })
 
-const prevBtnStyleLeft = computed(() => {
-  if (comparisonWidth.value <= 616) return horizontalPaddingCell
-  const left = parseInt(horizontalPaddingCell) * 3 + parseInt(widthCell.value)
-  return left + 'px'
-})
-
+const transition = ref('.3s')
 watch(
-  () => props.currentCategory.id,
-  () => {
-    firstCellMargin.value = 0
-    firstCellIndex.value = 1
+  () => props.currentCategoryId,
+  async () => {
+    translateCells.value = 0
+    transition.value = '0s'
+    await nextTick()
+    transition.value = '.3s'
   }
 )
 
@@ -171,55 +160,31 @@ const setRowColor = (e: Event, value: 'add' | 'remove') => {
   }
 }
 
-const onChildRow = (e: Event, value: 'add' | 'remove') => {
-  const target = e.target as HTMLElement
-  const parent = target.parentElement
-  if (!parent) return
-  if (value === 'add') {
-    parent.style.background = 'unset'
-  }
-  if (value === 'remove') {
-    parent.style.background = 'var(--light)'
-  }
-}
+const styles = computed(() => {
+  const translateX = translateCells.value + 'px'
+  const width = widthCell.value + 'px'
+  return { translateX, width }
+})
 </script>
 
 <template>
   <div ref="comparisonRef" class="comparison">
     <div class="overflow-hidden">
-      <div
-        class="relative mb-4 row"
-        @mouseenter="setRowColor($event, 'add')"
-        @mouseleave="setRowColor($event, 'remove')"
-      >
+      <div class="relative row">
         <div class="cell__title"> Наименование</div>
-
-        <div class="cells">
-          <div
-            v-for="(title, i) in titles"
-            :key="title"
-            class="cell"
-            :style="{ marginLeft: i === 0 ? firstCellMargin + 'px' : '' }"
-          >
-            <div
-              v-if="i === firstCellIndex - 1 && comparisonWidth <= 616"
-              class="font-medium"
-            >
-              Наименование
+        <div class="wrapper__cells">
+          <div v-if="isMobileWidth" class="title__mobile"> Наименование </div>
+          <div class="cells">
+            <div v-for="title in titles" :key="title" class="cell">
+              {{ title }}
             </div>
-            {{ title }}
           </div>
         </div>
 
         <button
           v-if="showPrevBtn"
           class="control__btn prev"
-          :style="{
-            left: prevBtnStyleLeft
-          }"
           @click="updateItemsList('prev')"
-          @mouseenter="onChildRow($event, 'add')"
-          @mouseleave="onChildRow($event, 'remove')"
         >
           <ArrowSVG transform="rotate(-90)" />
         </button>
@@ -227,39 +192,35 @@ const onChildRow = (e: Event, value: 'add' | 'remove') => {
           v-if="showNextBtn"
           class="control__btn next"
           @click="updateItemsList('next')"
-          @mouseenter="onChildRow($event, 'add')"
-          @mouseleave="onChildRow($event, 'remove')"
         >
           <ArrowSVG transform="rotate(90)" />
         </button>
       </div>
 
       <div
-        v-for="i in categoryProducts[0]?.specifications.length"
-        :key="categoryProducts[0].specifications[i - 1].id"
+        v-for="(__, i) in categoryProducts[0]?.specifications.length"
+        :key="categoryProducts[0].specifications[i].id"
         class="row"
         @mouseenter="setRowColor($event, 'add')"
         @mouseleave="setRowColor($event, 'remove')"
       >
         <div class="cell__title">
-          {{ currentCategory.specifications[i - 1].title }}
+          {{ currentCategorySpecifications[i].title }}
         </div>
-        <div class="cells">
-          <div
-            v-for="j in categoryProducts.length"
-            :key="categoryProducts[j - 1].id"
-            class="cell"
-            :style="{ marginLeft: j === 1 ? firstCellMargin + 'px' : '' }"
-          >
+        <div class="wrapper__cells">
+          <div v-if="isMobileWidth" class="title__mobile">
+            {{ currentCategorySpecifications[i].title }}
+          </div>
+          <div class="cells">
             <div
-              v-if="j === firstCellIndex && comparisonWidth <= 616"
-              class="font-medium"
+              v-for="(_, j) in categoryProducts.length"
+              :key="categoryProducts[j].id"
+              class="cell"
             >
-              {{ currentCategory.specifications[i - 1].title }}
+              {{ categoryProducts[j].specifications[i].valueNumber }}
+              {{ categoryProducts[j].specifications[i].valueString }}
+              {{ currentCategorySpecifications[i].units }}
             </div>
-            {{ categoryProducts[j - 1].specifications[i - 1].valueNumber }}
-            {{ categoryProducts[j - 1].specifications[i - 1].valueString }}
-            {{ currentCategory.specifications[i - 1].units }}
           </div>
         </div>
       </div>
@@ -271,20 +232,14 @@ const onChildRow = (e: Event, value: 'add' | 'remove') => {
           @mouseleave="setRowColor($event, 'remove')"
         >
           <div class="cell__title"> {{ el.title }}</div>
-          <div class="cells">
-            <div
-              v-for="(subEl, j) in el.value"
-              :key="j"
-              class="cell"
-              :style="{ marginLeft: j === 0 ? firstCellMargin + 'px' : '' }"
-            >
-              <div
-                v-if="j === firstCellIndex - 1 && comparisonWidth <= 616"
-                class="font-medium"
-              >
-                {{ el.title }}
+          <div class="wrapper__cells">
+            <div v-if="isMobileWidth" class="title__mobile">
+              {{ el.title }}
+            </div>
+            <div class="cells">
+              <div v-for="(subEl, j) in el.value" :key="j" class="cell">
+                {{ subEl }} {{ el.units }}
               </div>
-              {{ subEl }} {{ el.units }}
             </div>
           </div>
         </div>
@@ -296,23 +251,50 @@ const onChildRow = (e: Event, value: 'add' | 'remove') => {
 <style scoped lang="sass">
 .comparison
   display: flex
-  user-select: none
+  cursor: default
   .row
     display: flex
     border-radius: 6px
     transition: .3s linear
+    padding: 0 10px
+  .wrapper__cells
+    position: relative
+    overflow: hidden
+    @media (width <= 1535px)
+      width: 940px
+    @media (width <= 1279px)
+      width: 705px
+    @media (width <= 1023px)
+      width: 470px
+    @media (width <= 767px)
+      width: auto
+      overflow: visible
+    .title__mobile
+      font-weight: 500
+      @media (width <= 767px)
+        padding-top: 20px
   .cells
     display: flex
-    overflow: hidden
+    transition: v-bind(transition)
     position: relative
-    width: v-bind(widthCells)
+    transform: translateX(v-bind('styles.translateX'))
+  .cell, .cell__title
+    width: v-bind('styles.width')
+    padding: 20px 10px 20px 0
+    min-width: 235px
     @media (width <= 767px)
-      overflow: visible
-      width: auto
+      padding-top: 0px
+      min-width: auto
+  .cell__title
+    z-index: 10
+    box-sizing: content-box
+    font-weight: 500
+    @media(max-width: 767px)
+      display: none
   .control__btn
     position: absolute
     bottom: -20px
-    z-index: 100
+    z-index: 10
     background: #e5e5e5
     border-radius: 20px
     padding: 8px
@@ -322,16 +304,10 @@ const onChildRow = (e: Event, value: 'add' | 'remove') => {
       fill: #fff
     &.next
       right: 0
-  .cell, .cell__title
-    width: v-bind(widthCell)
-    padding: 20px v-bind(horizontalPaddingCell)
-    transition: margin .3s
-    @media (width > 500px)
-        min-width: 235px
-  .cell__title
-    z-index: 10
-    box-sizing: content-box
-    font-weight: 500
-    @media(max-width: 767px)
-      display: none
+      @media (width < 768px)
+        right: 10px
+    &.prev
+      margin-left: 245px
+      @media (width <= 767px)
+        margin-left: 0
 </style>

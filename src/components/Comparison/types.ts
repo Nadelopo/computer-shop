@@ -14,15 +14,14 @@ export type Category = {
   specifications: CategorySpecifications[]
 }
 
-export type CurrentCategory = {
-  id: number | null
-  specifications: CategorySpecifications[]
-}
-
 export type ComparisonProduct = Omit<
   ProductWithSpecifications,
-  'specifications'
+  'specifications' | 'categories'
 > & {
+  categories: {
+    id: number
+    title: string
+  }
   specifications: SpecificationRead[]
 }
 

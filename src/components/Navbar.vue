@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia'
 import { supabase } from '@/supabase'
 import { useUserStore } from '../stores/userStore'
 import VPopup from './UI/VPopup.vue'
-import Sidebar from './Sidebar.vue'
+import Sidebar from './Sidebar.mobile.vue'
 import UserSvg from '@/assets/icons/avatar.svg?component'
 import FavouritesSVG from '@/assets/icons/favourites.svg?component'
 import CartSVG from '@/assets/icons/cart.svg?component'
@@ -23,6 +23,30 @@ const logout = async () => {
 }
 
 const open = ref(false)
+
+const links = [
+  {
+    text: 'Главная',
+    page: 'Home'
+  },
+
+  {
+    text: 'Товары',
+    page: 'Home'
+  },
+  {
+    text: 'О нас',
+    page: 'Home'
+  },
+  {
+    text: 'Доставка',
+    page: 'Home'
+  },
+  {
+    text: 'Контакты',
+    page: 'Home'
+  }
+]
 </script>
 
 <template>
@@ -48,33 +72,16 @@ const open = ref(false)
             <img src="/img/logoChangeWhiteSizeFnew.png" width="95" alt="" />
           </router-link>
         </div>
-        <div class="nav">
-          <div class="li">
-            <router-link :to="{ name: 'Home' }" class="li__line">
-              ГЛАВНАЯ
+        <ul class="nav">
+          <li v-for="(link, i) in links" :key="link.text" class="li">
+            <router-link
+              :to="{ name: link.page }"
+              :class="{ li__line: i !== links.length - 1 }"
+            >
+              {{ link.text }}
             </router-link>
-          </div>
-          <div class="li">
-            <router-link :to="{ name: 'Home' }" class="li__line">
-              ТОВАРЫ
-            </router-link>
-          </div>
-          <div class="li">
-            <router-link :to="{ name: 'Home' }" class="li__line">
-              О НАС
-            </router-link>
-          </div>
-          <div class="li">
-            <router-link :to="{ name: 'Home' }" class="li__line">
-              ДОСТАВКА
-            </router-link>
-          </div>
-          <div class="li">
-            <router-link :to="{ name: 'Home' }" class="h-full">
-              КОНТАКТЫ
-            </router-link>
-          </div>
-        </div>
+          </li>
+        </ul>
         <div class="nav__rigth">
           <div>
             <v-popup>
@@ -98,9 +105,15 @@ const open = ref(false)
           </div>
           <router-link :to="{ name: 'Favourites' }">
             <FavouritesSVG fill="#fff" width="25" class="cursor-pointer" />
+            <span v-if="user?.favourites.length" class="count">
+              {{ user.favourites.length }}
+            </span>
           </router-link>
           <router-link :to="{ name: 'Comparison' }">
             <ComparisonSVG width="25" />
+            <span v-if="user?.comparison.length" class="count">
+              {{ user.comparison.length }}
+            </span>
           </router-link>
           <router-link :to="{ name: 'Cart' }">
             <CartSVG height="25" />
@@ -110,7 +123,7 @@ const open = ref(false)
     </div>
   </header>
   <Transition name="v">
-    <Sidebar v-if="open" v-model:is-open="open" />
+    <Sidebar v-if="open" v-model:is-open="open" :links="links" />
   </Transition>
 </template>
 
@@ -138,7 +151,7 @@ header
   grid-template-columns:  240px 1fr 240px
   align-items: center
   height: 60px
-  @media (max-width: 1023px)
+  @media (width <= 1023px)
     display: none
 
 .nav
@@ -146,9 +159,20 @@ header
   grid-template-columns: repeat(5, auto)
   margin: 0 auto
   position: relative
-  div
+  li
     font-size: 14px
     text-align: center
+    a
+      display: flex
+      align-items: center
+      padding: 8px
+      color: rgba(255,255,255, .8)
+      transition: .2s
+      text-transform: uppercase
+      height: 100%
+      &:hover
+        color: rgba(255,255,255, 1)
+
   &::after
     top: 0
     content: ""
@@ -164,15 +188,6 @@ header
     position: absolute
     height: 1px
 
-.li
-  a
-    display: flex
-    align-items: center
-    padding: 8px
-    color: rgba(255,255,255, .8)
-    transition: .2s
-    &:hover
-      color: rgba(255,255,255, 1)
 
 .li__line
   &::after
@@ -196,6 +211,20 @@ header
   grid-template-columns: repeat(4, 60px)
   align-items: center
   justify-items: end
+  & div, a
+    position: relative
+    .count
+      position: absolute
+      top: -10px
+      left: 14px
+      background: #26a69a
+      align-items: center
+      justify-content: center
+      width: 20px
+      display: flex
+      height: 20px
+      border-radius: 50px
+      font-size: 12px
 
 .cart__icon
   cursor: pointer
@@ -207,7 +236,7 @@ header
   grid-template-columns: repeat(2, 1fr)
   align-items: center
   height: 58px
-  @media (min-width: 1023px)
+  @media (width >= 1024px)
     display: none
   .dots
     width: 40px
