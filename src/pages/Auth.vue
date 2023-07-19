@@ -92,7 +92,7 @@ const signUp = async () => {
         <label class="label" for="">ПОЧТА</label>
         <input v-model="email" class="input" type="email" />
       </div>
-      <div class="flex flex-col mb-4">
+      <div class="flex flex-col">
         <label class="label" for="">ПАРОЛЬ</label>
         <input
           v-model="password"
@@ -130,11 +130,12 @@ const signUp = async () => {
   display: flex
   align-items: center
   justify-content: center
+  padding: 0 10px
 
 .main
   display: flex
   flex-direction: column
-  min-height: 500px
+  // min-height: 500px
   max-width: 400px
   width: 100%
   background:  linear-gradient( rgba(38, 166, 154, .8), rgb(32, 95, 109, .8))
@@ -148,12 +149,15 @@ const signUp = async () => {
       transform: perspective(2500px) rotateY(-90deg)
     100%
       transform: perspective(2500px) rotateY(0)
+  @media (width < 370px)
+    padding: 20px
 
 
 .head
   display: grid
   grid-template-columns: 60px auto
   margin-bottom: auto
+  margin-bottom: 50px
 
 .text
   padding-left: 16px

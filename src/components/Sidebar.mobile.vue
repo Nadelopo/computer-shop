@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { supabase } from '@/supabase'
 import { onClickOutside } from '@/utils/onClickOutside'
+import { useUserStore } from '@/stores/userStore'
 
 defineProps<{
   isOpen: boolean
@@ -10,11 +13,18 @@ defineProps<{
   }[]
 }>()
 
+const { user } = storeToRefs(useUserStore())
+
 const emit = defineEmits(['update:isOpen'])
 
 const sidebarRef = ref()
 const closeSidebar = () => {
   emit('update:isOpen', false)
+}
+
+const logout = async () => {
+  const { error } = await supabase.auth.signOut()
+  if (error) console.log(error)
 }
 
 onClickOutside(sidebarRef, closeSidebar)
@@ -45,6 +55,9 @@ onUnmounted(() => {
         </div>
       </div>
       <div class="list">
+        <router-link :to="{ name: user ? 'Home' : 'Auth' }" @click="logout">
+          {{ user ? 'Выйти' : 'Войти' }}
+        </router-link>
         <router-link
           v-for="link in links"
           :key="link.text"

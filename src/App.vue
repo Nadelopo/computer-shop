@@ -29,15 +29,15 @@ const pathMissing = (path: string) => {
   return !href.includes(path)
 }
 
-const showNavbar = computed((): boolean => {
+const showComponent = computed((): boolean => {
   return pathMissing('admin') && pathMissing('auth')
 })
 </script>
 
 <template>
-  <Navbar v-if="showNavbar" />
+  <Navbar v-if="showComponent" />
   <main>
     <router-view />
   </main>
-  <MainNavMobile />
+  <MainNavMobile v-if="showComponent" />
 </template>
