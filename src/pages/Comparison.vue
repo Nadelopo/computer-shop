@@ -20,7 +20,7 @@ import type {
 import type { Loading } from '@/types'
 import { supabase } from '@/supabase'
 
-type Product = Omit<ProductReadWithDetails, 'categories.id'> & {
+type Product = Omit<ProductReadWithDetails, 'categories'> & {
   categories: {
     id: number
     title: string
