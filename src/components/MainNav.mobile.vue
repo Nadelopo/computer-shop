@@ -28,7 +28,7 @@ const links = [
   },
   {
     name: 'Профиль',
-    page: 'Profile',
+    page: 'ProfileMain',
     svg: AvatarSVG
   }
 ]
