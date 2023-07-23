@@ -7,6 +7,7 @@ import type {
   BasicProductData,
   CategorySpecifications
 } from './types'
+import { formatPrice } from '@/utils/formatPrice'
 
 const props = defineProps<{
   currentCategoryId: number | null
@@ -82,9 +83,30 @@ watch(comparisonWidth, () => {
   translateCells.value = 0
 })
 
-const titles = computed(() => categoryProducts.value.map((e) => e.name))
+// const titles = computed(() => categoryProducts.value.map((e) => e.name))
 
-const productData = computed(() => {
+const productTopData = computed(() => {
+  return {
+    images: {
+      title: '',
+      value: categoryProducts.value.map((e) => e.img)
+    },
+    titles: {
+      title: 'Наименование',
+      value: categoryProducts.value.map((e) => e.name)
+    },
+    rating: {
+      title: 'Рейтинг',
+      value: categoryProducts.value.map((e) => e.rating.toFixed(1))
+    },
+    prices: {
+      title: 'Цена',
+      value: categoryProducts.value.map((e) => formatPrice(e.price))
+    }
+  }
+})
+
+const productBottomData = computed(() => {
   const data: BasicProductData[] = []
   const products = categoryProducts.value
 
@@ -150,13 +172,25 @@ watch(
   }
 )
 
+watch(
+  () => props.showDifferences,
+  async () => {
+    transition.value = '0s'
+    setTimeout(() => {
+      transition.value = '.3s'
+    })
+  }
+)
+
+const previousColor = ref('#fff')
 const setRowColor = (e: Event, value: 'add' | 'remove') => {
   const target = e.target as HTMLElement
   if (value === 'add') {
+    previousColor.value = target.style.backgroundColor
     target.style.background = 'var(--light)'
   }
   if (value === 'remove') {
-    target.style.background = 'unset'
+    target.style.background = previousColor.value
   }
 }
 
@@ -170,37 +204,60 @@ const styles = computed(() => {
 <template>
   <div ref="comparisonRef" class="comparison">
     <div class="overflow-hidden">
-      <div class="relative row">
-        <div class="cell__title"> Наименование</div>
+      <div
+        v-for="(data, _, i) of productTopData"
+        :key="data.title"
+        class="relative row"
+        :class="{ 'bg-white': i % 2 === 0 }"
+      >
+        <div class="cell__title">{{ data.title }} </div>
         <div class="wrapper__cells">
-          <div v-if="isMobileWidth" class="title__mobile"> Наименование </div>
+          <div v-if="isMobileWidth" class="title__mobile">
+            {{ data.title }}
+          </div>
           <div class="cells">
-            <div v-for="title in titles" :key="title" class="cell">
-              {{ title }}
+            <div
+              v-for="value in data.value"
+              :key="value"
+              class="cell flex items-center"
+            >
+              <template v-if="data.title === ''">
+                <img :src="String(value)" alt="..." />
+              </template>
+              <template v-else>
+                <span>{{ value }} </span>
+                <label
+                  v-if="data.title === 'Рейтинг'"
+                  class="rating"
+                  :class="{ coloured: Number(value) > 0 }"
+                />
+              </template>
             </div>
           </div>
         </div>
-
-        <button
-          v-if="showPrevBtn"
-          class="control__btn prev"
-          @click="updateItemsList('prev')"
-        >
-          <ArrowSVG transform="rotate(-90)" />
-        </button>
-        <button
-          v-if="showNextBtn"
-          class="control__btn next"
-          @click="updateItemsList('next')"
-        >
-          <ArrowSVG transform="rotate(90)" />
-        </button>
+        <template v-if="data.title === 'Наименование'">
+          <button
+            v-if="showPrevBtn"
+            class="control__btn prev"
+            @click="updateItemsList('prev')"
+          >
+            <ArrowSVG transform="rotate(-90)" />
+          </button>
+          <button
+            v-if="showNextBtn"
+            class="control__btn next"
+            @click="updateItemsList('next')"
+          >
+            <ArrowSVG transform="rotate(90)" />
+          </button>
+        </template>
       </div>
 
       <div
         v-for="(__, i) in categoryProducts[0]?.specifications.length"
         :key="categoryProducts[0].specifications[i].id"
         class="row"
+        :class="{ 'bg-white': i % 2 === 0 }"
         @mouseenter="setRowColor($event, 'add')"
         @mouseleave="setRowColor($event, 'remove')"
       >
@@ -217,17 +274,22 @@ const styles = computed(() => {
               :key="categoryProducts[j].id"
               class="cell"
             >
-              {{ categoryProducts[j].specifications[i].valueNumber }}
-              {{ categoryProducts[j].specifications[i].valueString }}
+              {{ getSpecificationValue(categoryProducts, j, i) }}
               {{ currentCategorySpecifications[i].units }}
             </div>
           </div>
         </div>
       </div>
 
-      <template v-for="(el, i) in productData" :key="i">
+      <template v-for="(el, i) in productBottomData" :key="i">
         <div
           class="row"
+          :class="{
+            'bg-white':
+              categoryProducts[0]?.specifications.length % 2 === 0
+                ? i % 2 === 0
+                : i % 2 !== 0
+          }"
           @mouseenter="setRowColor($event, 'add')"
           @mouseleave="setRowColor($event, 'remove')"
         >
@@ -255,7 +317,7 @@ const styles = computed(() => {
   .row
     display: flex
     border-radius: 6px
-    transition: .3s linear
+    transition: v-bind(transition) linear
     padding: 0 10px
   .wrapper__cells
     position: relative
@@ -282,9 +344,13 @@ const styles = computed(() => {
     width: v-bind('styles.width')
     padding: 20px 10px 20px 0
     min-width: 235px
+    img
+      max-height: 150px
     @media (width <= 767px)
       padding-top: 0px
       min-width: auto
+      &:has(img) img
+        padding-right: 10px
   .cell__title
     z-index: 10
     box-sizing: content-box
@@ -310,4 +376,16 @@ const styles = computed(() => {
       margin-left: 245px
       @media (width <= 767px)
         margin-left: 0
+  .rating
+    margin-left: 6px
+    width: 32px
+    padding: 0
+    font-size: 32px
+    line-height: 32px
+    text-shadow: 1px 1px #bbb
+    color: lightgrey
+    &:before
+      content: '★'
+    &.coloured
+      color: var(--color-main)
 </style>

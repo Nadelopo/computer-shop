@@ -28,5 +28,5 @@ export type ComparisonProduct = Omit<
 export type BasicProductData = {
   title: string
   value: (string | number)[]
-  units: string
+  units?: string
 }
