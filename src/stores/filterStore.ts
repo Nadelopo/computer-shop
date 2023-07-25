@@ -69,6 +69,9 @@ export const useFilterStore = defineStore('filter', () => {
   })
 
   const products = ref<ProductWithSpecifications[]>([])
+  const productCount = ref(0)
+  const limit = ref(1)
+  const currentPage = ref<number>(Number(route.query.page) - 1 ?? 0)
   const loading = ref<Loading>('loading')
 
   async function setFilteredProducts(categoryId: number) {
@@ -130,18 +133,26 @@ export const useFilterStore = defineStore('filter', () => {
       a.filter((c) => b.includes(c))
     )
 
-    const { data: productsData } = await supabase
+    const { data: productsData, count } = await supabase
       .from<ProductReadWithDetails>('products')
-      .select('*, categories(id, enTitle), manufacturers(id, title)')
+      .select('*, categories(id, enTitle), manufacturers(id, title)', {
+        count: 'exact'
+      })
       .in('id', filteredProductsId)
       .order(sortColumn.value, { ascending: sortAscents[sortColumn.value] })
       .lte('price', productsPrice.value.max)
       .gte('price', productsPrice.value.min)
+      .range(
+        currentPage.value * limit.value,
+        currentPage.value * limit.value + limit.value - 1
+      )
 
     const { data: specificationsData } = await supabase
       .from<SpecificationReadWithDetails>('specifications')
       .select('*, category_specifications(id, title, units, visible)')
       .in('productId', productsData?.map((e) => e.id) || [])
+
+    productCount.value = count ?? 0
 
     if (productsData && specificationsData) {
       products.value = productsData.map((p) => {
@@ -167,6 +178,9 @@ export const useFilterStore = defineStore('filter', () => {
     sortAscents,
     specificationsValues,
     sortColumn,
-    productsPrice
+    productsPrice,
+    productCount,
+    currentPage,
+    limit
   }
 })

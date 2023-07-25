@@ -12,6 +12,7 @@ import SkeletonFiltersVue from './SkeletonFilters.vue'
 const { getCategorySpecifications } = useCategoriesStore()
 
 const { setFilteredProducts } = useFilterStore()
+const { currentPage } = storeToRefs(useFilterStore())
 const { specificationsValues, productsPrice, search } = storeToRefs(
   useFilterStore()
 )
@@ -74,6 +75,11 @@ onBeforeMount(async () => {
   }
 })
 
+const apply = () => {
+  currentPage.value = 0
+  setFilteredProducts(categoryId)
+}
+
 const cancel = () => {
   specificationsValues.value.forEach((spec) => {
     if (spec.type) {
@@ -131,11 +137,7 @@ const cancel = () => {
         </template>
       </template>
       <div>
-        <v-button
-          class="my-4"
-          width="100%"
-          @click="setFilteredProducts(categoryId)"
-        >
+        <v-button class="my-4" width="100%" @click="apply">
           применить
         </v-button>
         <v-button width="100%" @click="cancel"> сбросить </v-button>

@@ -1,18 +1,87 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
+
+const props = withDefaults(
+  defineProps<{
+    type: 'click' | 'hover'
+    width?: string
+    float?: 'start' | 'end' | 'center'
+  }>(),
+  {
+    type: 'click'
+  }
+)
+
+const minWidth = props.width ?? '100px'
+let left = ref('0')
 
 const activeRef = ref()
 const isOpen = onClickOutsideClose(activeRef)
+const mouseOnContent = ref(false)
+let timeout = 0
+
+const onEnter = () => {
+  if (props.type === 'hover') {
+    clearTimeout(timeout)
+    timeout = window.setTimeout(() => {
+      isOpen.value = true
+    }, 100)
+  }
+}
+onMounted(() => {
+  const activeWidth = activeRef.value.scrollWidth
+  if (props.float === 'start') {
+    console.log(minWidth, activeWidth)
+    left.value = `-${parseInt(minWidth) - activeWidth}px`
+  } else if (props.float === 'center') {
+    left.value = `-${parseInt(minWidth) / 2 - activeWidth / 2}px`
+  }
+})
+
+const onLeave = () => {
+  if (props.type === 'hover') {
+    clearTimeout(timeout)
+    timeout = window.setTimeout(() => {
+      if (!mouseOnContent.value) {
+        isOpen.value = false
+      }
+    }, 300)
+  }
+}
+
+const contentLeave = () => {
+  if (props.type === 'hover') {
+    onLeave()
+    mouseOnContent.value = false
+  }
+}
+
+const contentEnter = () => {
+  if (props.type === 'hover') {
+    onEnter()
+    mouseOnContent.value = true
+  }
+}
 </script>
 
 <template>
   <div class="popup__rootasd32bs34">
-    <div ref="activeRef" @click="isOpen = !isOpen">
+    <div
+      ref="activeRef"
+      @click="isOpen = !isOpen"
+      @mouseenter="onEnter"
+      @mouseleave="onLeave"
+    >
       <slot name="active" class="popup__slotdgh345c"></slot>
     </div>
     <transition name="popup__animation">
-      <div v-if="isOpen" class="popup__contentlksdn553">
+      <div
+        v-if="isOpen"
+        class="popup__contentlksdn553"
+        @mouseenter="contentEnter"
+        @mouseleave="contentLeave"
+      >
         <slot name="content"></slot>
       </div>
     </transition>
@@ -22,9 +91,11 @@ const isOpen = onClickOutsideClose(activeRef)
 <style lang="sass">
 .popup__rootasd32bs34
   position: relative
+  width: 100%
   .popup__slotdgh345c
     position: absolute
   .popup__contentlksdn553
+    min-width: v-bind(minWidth)
     top: 35px
     position: absolute
     background: #fff
@@ -33,16 +104,23 @@ const isOpen = onClickOutsideClose(activeRef)
     border-radius: 4px
     color: #000
     z-index: 100
+    max-height: 150px
+    overflow: auto
+    left: v-bind(left)
+    &::-webkit-scrollbar
+      width: 4px
+    &::-webkit-scrollbar-thumb
+      background: #888
+      border-radius: 80px
     div, a
-      min-width: 100px
+      min-width: 100%
       font-size: 18px
-      display: block
+      display: flex
       user-select: none
       border-radius: 4px
       transition: .2s
       padding: 0 4px
       cursor: pointer
-      text-align: start!important
       &:hover
         color: #fff
         background: var(--color-main)
@@ -55,4 +133,5 @@ const isOpen = onClickOutsideClose(activeRef)
 .popup__animation-enter-from,
 .popup__animation-leave-to
   opacity: 0
+  transform: scale(0.6)
 </style>

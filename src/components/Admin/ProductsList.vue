@@ -78,7 +78,7 @@ const basicData = computed((): BasicData => {
     <div v-for="(_, i) in specifications" :key="i" class="row">
       <div class="title cell">{{ specifications[i].title }}</div>
       <div class="cells">
-        <div v-for="(_, j) in products.length" :key="j" class="cell">
+        <div v-for="(__, j) in products.length" :key="j" class="cell">
           {{
             products[j].specifications[i].valueNumber ??
             products[j].specifications[i].valueString
@@ -127,7 +127,6 @@ const basicData = computed((): BasicData => {
         </div>
       </div>
     </div>
-
     <div
       v-if="loading === 'empty'"
       class="text-2xl text-center font-normal mt-16"

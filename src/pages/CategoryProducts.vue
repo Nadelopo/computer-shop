@@ -1,19 +1,27 @@
 <script setup lang="ts">
 import { nextTick, onUnmounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useFilterStore } from '@/stores/filterStore'
 import { storeToRefs } from 'pinia'
+import VPaginate from '@/components/UI/VPaginate.vue'
 import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
 import Search from '@/components/CategoryProducts/Search.vue'
 import Sort from '@/components/CategoryProducts/Sort.vue'
 import FiltersList from '@/components/CategoryProducts/FiltersList.vue'
 import Skeleton from '@/components/CategoryProducts/SkeletonProducts.vue'
 
-const { products, loading } = storeToRefs(useFilterStore())
+const { products, loading, productCount, currentPage, limit } = storeToRefs(
+  useFilterStore()
+)
+const { setFilteredProducts } = useFilterStore()
 
+const route = useRoute()
+const categoryId = Number(route.params.id)
 const styles = ref('card__disable')
 
 onUnmounted(() => {
   products.value = []
+  currentPage.value = 0
 })
 
 watch(
@@ -27,6 +35,11 @@ watch(
     }
   }
 )
+
+const clickOnPaginate = () => {
+  setFilteredProducts(categoryId)
+  scrollTo(0, 0)
+}
 </script>
 
 <template>
@@ -48,8 +61,11 @@ watch(
             </transition-group>
           </div>
         </template>
-        <div v-else-if="loading === 'loading'">
-          <template v-for="_ in 10" :key="_">
+        <div
+          v-else-if="loading === 'loading'"
+          class="flex flex-col gap-y-[30px] mb-10 mt-[20px]"
+        >
+          <template v-for="_ in limit" :key="_">
             <Skeleton />
           </template>
         </div>
@@ -59,6 +75,13 @@ watch(
             правильность ввода или попробуйте изменить запрос.
           </div>
         </template>
+        <v-paginate
+          v-model="currentPage"
+          :item-count="productCount"
+          :page-size="limit"
+          :on-click="clickOnPaginate"
+          class="mb-8"
+        />
       </div>
     </div>
   </div>
@@ -76,6 +99,7 @@ watch(
   flex-direction: column
   gap: 30px
   position: relative
+  margin-bottom: 40px
 
 .card__active
   transform: scale(1)

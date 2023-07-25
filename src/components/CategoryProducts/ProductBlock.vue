@@ -94,7 +94,7 @@ defineProps<{
     display: flex
     justify-content: center
     img
-      max-height: 220px
+      max-height: 210px
 
 .card__link
   cursor: pointer
