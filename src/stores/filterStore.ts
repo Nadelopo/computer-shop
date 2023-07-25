@@ -71,7 +71,9 @@ export const useFilterStore = defineStore('filter', () => {
   const products = ref<ProductWithSpecifications[]>([])
   const productCount = ref(0)
   const limit = ref(1)
-  const currentPage = ref<number>(Number(route.query.page) - 1 ?? 0)
+  const currentPage = ref<number>(
+    route.query.page ? Number(route.query.page) - 1 : 0
+  )
   const loading = ref<Loading>('loading')
 
   async function setFilteredProducts(categoryId: number) {

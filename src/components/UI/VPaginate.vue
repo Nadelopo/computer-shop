@@ -26,7 +26,7 @@ const items = computed(() => {
   const count = pageCount.value
   const currentPage = modelValue.value
   if (count < 5) return Array.from({ length: count }, (_, i) => i + 1)
-  if (currentPage < 4) {
+  if (currentPage < 3) {
     return [1, 2, 3, 4, 5, 0, count]
   } else if (count - currentPage < 4) {
     return [1, -1, count - 4, count - 3, count - 2, count - 1, count]
@@ -64,7 +64,7 @@ const setPage = (page: number) => {
 }
 
 watch(modelValue, () => {
-  router.push({ query: { page: modelValue.value + 1, ...route.query } })
+  router.push({ query: { ...route.query, page: modelValue.value + 1 } })
 })
 </script>
 
