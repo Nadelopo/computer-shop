@@ -21,7 +21,8 @@ const pageCount = computed(() => {
 const items = computed(() => {
   const count = pageCount.value
   const currentPage = modelValue.value
-  if (count < 5) return Array.from({ length: count }, (_, i) => i + 1)
+
+  if (count < 7) return arrayRange(1, count + 1)
   if (currentPage < 3) {
     return [1, 2, 3, 4, 5, 0, count]
   } else if (count - currentPage < 4) {
