@@ -66,7 +66,7 @@ export const useFilterStore = defineStore('filter', () => {
 
   const products = ref<ProductWithSpecifications[]>([])
   const productCount = ref(0)
-  const limit = ref(3)
+  const limit = ref(5)
   const currentPage = ref<number>(0)
   const loading = ref<Loading>('loading')
 

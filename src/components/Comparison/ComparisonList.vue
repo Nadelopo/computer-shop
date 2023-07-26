@@ -83,27 +83,25 @@ watch(comparisonWidth, () => {
   translateCells.value = 0
 })
 
-// const titles = computed(() => categoryProducts.value.map((e) => e.name))
-
 const productTopData = computed(() => {
-  return {
-    images: {
+  return [
+    {
       title: '',
       value: categoryProducts.value.map((e) => e.img)
     },
-    titles: {
+    {
       title: 'Наименование',
       value: categoryProducts.value.map((e) => e.name)
     },
-    rating: {
+    {
       title: 'Рейтинг',
       value: categoryProducts.value.map((e) => e.rating.toFixed(1))
     },
-    prices: {
+    {
       title: 'Цена',
       value: categoryProducts.value.map((e) => formatPrice(e.price))
     }
-  }
+  ]
 })
 
 const productBottomData = computed(() => {
@@ -205,7 +203,7 @@ const styles = computed(() => {
   <div ref="comparisonRef" class="comparison">
     <div class="overflow-hidden">
       <div
-        v-for="(data, _, i) of productTopData"
+        v-for="(data, _, i) in productTopData"
         :key="data.title"
         class="relative row"
         :class="{ 'bg-white': i % 2 === 0 }"
