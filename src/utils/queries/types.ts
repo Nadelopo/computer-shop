@@ -101,6 +101,7 @@ export type GetAllParams = {
   }
   limit?: number
   neq?: [column: string, value: number | string]
+  range?: [from: number, to: number]
 }
 
 export type getParams = {

@@ -64,11 +64,11 @@ const watcher = watch(
     }
     loading.value = 'loading'
 
-    const productData = await getAll<Product>('products', {
+    const { data: productData } = await getAll<Product>('products', {
       select: '*, categories(id, title), manufacturers(id, title)',
       in: ['id', productIds]
     })
-    const specificationsData = await getAll('specifications', {
+    const { data: specificationsData } = await getAll('specifications', {
       in: ['productId', productIds],
       order: {
         value: 'categorySpecificationsId'
@@ -108,16 +108,14 @@ const watcher = watch(
       }
 
       products.value = modifiedProducts
-      const categoriesSpecifications = await getAll<CategorySpecifications>(
-        'category_specifications',
-        {
+      const { data: categoriesSpecifications } =
+        await getAll<CategorySpecifications>('category_specifications', {
           in: [
             'categoryId',
             [...new Set(products.value.map((e) => e.categoryId))]
           ],
           select: 'categoryId, title, units'
-        }
-      )
+        })
 
       for (const category of categories.value) {
         const categorySpecifications = categoriesSpecifications?.filter(

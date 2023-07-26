@@ -15,7 +15,7 @@ export const useCategoriesStore = defineStore('categories', () => {
   const categories = ref<CategoryRead[]>([])
 
   async function setCategories(): Promise<void> {
-    const data = await getAll('categories')
+    const { data } = await getAll('categories')
     if (data) {
       categories.value = data
     }
@@ -56,7 +56,7 @@ export const useCategoriesStore = defineStore('categories', () => {
   async function getCategorySpecifications(
     categoryId: number
   ): Promise<CategorySpecificationRead[] | null> {
-    const data = await getAll<CategorySpecificationRead>(
+    const { data } = await getAll<CategorySpecificationRead>(
       'category_specifications',
       {
         eq: [['categoryId', categoryId]]

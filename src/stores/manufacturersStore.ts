@@ -21,7 +21,7 @@ export const useManufacturersStore = defineStore('manufacturers', () => {
   }
 
   async function setManufacturers(): Promise<void> {
-    const data = await getAll('manufacturers')
+    const { data } = await getAll('manufacturers')
     if (data) manufacturers.value = data
   }
 

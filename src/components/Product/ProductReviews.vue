@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
 import { createOne, getAll, updateOne } from '@/utils/queries/db'
 import { useUserStore } from '@/stores/userStore'
+import VPagination from '../UI/VPagination.vue'
 import RatingStars from '../RatingStars.vue'
 import ReviewsBlock from './ReviewsBlock.vue'
 import VButton from '@/components/UI/VButton.vue'
@@ -34,6 +35,7 @@ const emit = defineEmits<{
 
 const toast = useToast()
 const route = useRoute()
+const router = useRouter()
 
 const { user } = storeToRefs(useUserStore())
 
@@ -42,19 +44,28 @@ const commId = String(route.query.comm_id)
 
 const reviews = ref<ReviewReadWithDetails[]>([])
 const showReviewForm = ref(false)
+const reviewsLimit = 6
+const currentPage = ref(0)
+const reviewsCount = ref(0)
 
 const loadReviews = async () => {
-  const data = await getAll<ReviewReadWithDetails>('reviews', {
+  currentPage.value = route.query.page ? Number(route.query.page) - 1 : 0
+  const { data, count } = await getAll<ReviewReadWithDetails>('reviews', {
     eq: [['productId', props.productId]],
     select: '*, users(name)',
     order: {
       value: 'created_at',
       ascending: false
-    }
+    },
+    range: [
+      currentPage.value * reviewsLimit,
+      currentPage.value * reviewsLimit + reviewsLimit - 1
+    ]
   })
 
-  if (data) {
+  if (data && count) {
     reviews.value = data
+    reviewsCount.value = count
     await nextTick()
     const el = document.getElementById(commId)
 
@@ -202,6 +213,17 @@ const evaluationReview = async (
 watch(() => props.productId, loadReviews, {
   immediate: true
 })
+
+const clickOnPaginate = () => {
+  router.push({ query: { ...route.query, page: currentPage.value + 1 } })
+}
+
+watch(
+  () => route.query.page,
+  () => {
+    loadReviews()
+  }
+)
 </script>
 
 <template>
@@ -251,6 +273,13 @@ watch(() => props.productId, loadReviews, {
           />
         </template>
       </div>
+      <v-pagination
+        v-model="currentPage"
+        :item-count="reviewsCount"
+        :page-size="reviewsLimit"
+        :on-click="clickOnPaginate"
+        class="mb-8"
+      />
     </div>
   </div>
 </template>
@@ -290,7 +319,7 @@ watch(() => props.productId, loadReviews, {
   margin-top: 0
 
 .reviews
-  margin-top: 50px
+  margin: 50px 0
   display: flex
   flex-direction: column
   gap: 50px

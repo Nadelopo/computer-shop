@@ -43,7 +43,7 @@ export const useProductsStore = defineStore('products', () => {
   ): Promise<ProductWithSpecifications[]> {
     const newProducts = ref<ProductWithSpecifications[]>([])
 
-    const data = await getAll<ProductReadWithDetails>('products', {
+    const { data } = await getAll<ProductReadWithDetails>('products', {
       eq: [['categoryId', categoryId]],
       select: '*, categories(id, enTitle), manufacturers(id, title)'
     })
@@ -64,9 +64,9 @@ export const useProductsStore = defineStore('products', () => {
 
       const specifications = await Promise.all(promises)
       for (const product of data) {
-        const specificationProduct = specifications.find((s) =>
-          s?.find((s) => s.productId === product.id)
-        )
+        const specificationProduct = specifications
+          .map((s) => s.data)
+          .find((s) => s?.find((s) => s.productId === product.id))
         if (specificationProduct?.length) {
           const newProduct: ProductWithSpecifications = {
             ...product,
@@ -92,16 +92,14 @@ export const useProductsStore = defineStore('products', () => {
     )
 
     if (data) {
-      const specifications = await getAll<SpecificationReadWithDetails>(
-        'specifications',
-        {
+      const { data: specifications } =
+        await getAll<SpecificationReadWithDetails>('specifications', {
           eq: [['productId', productId]],
           select: '*, category_specifications(id, title, units, visible)',
           order: {
             value: 'categorySpecificationsId'
           }
-        }
-      )
+        })
       if (specifications) {
         product.value = { ...data, specifications }
       }

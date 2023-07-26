@@ -33,12 +33,15 @@ export async function getOneById<
 export const getAll = async <Z extends object = never, T extends Table = Table>(
   table: T,
   params?: GetAllParams
-): Promise<Result<T, Z>[] | null> => {
+): Promise<{ data: Result<T, Z>[] | null; count: number | null }> => {
   const search = params?.search
   const order = params?.order?.value ?? 'id'
+
   const query = supabase
     .from(table)
-    .select(params?.select)
+    .select(params?.select, {
+      count: 'exact'
+    })
     .order(order, {
       ascending: params?.order?.ascending ?? true
     })
@@ -73,9 +76,14 @@ export const getAll = async <Z extends object = never, T extends Table = Table>(
     query.neq(neq[0], neq[1])
   }
 
-  const { data, error } = await query
+  if (params?.range) {
+    query.range(params.range[0], params.range[1])
+  }
+
+  const { data, error, count } = await query
+
   if (error) console.log(error)
-  return data
+  return { data, count }
 }
 
 export const createOne = async <

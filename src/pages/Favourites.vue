@@ -29,7 +29,7 @@ const watcher = watch(
   async () => {
     if (user.value) {
       lodaing.value = 'loading'
-      const data = await getAll<ProductCard>('products', {
+      const { data } = await getAll<ProductCard>('products', {
         select: '*, categories(id, enTitle)',
         in: ['id', user.value.favourites]
       })

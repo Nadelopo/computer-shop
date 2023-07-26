@@ -41,7 +41,7 @@ const create = async () => {
   const data = await createCategorySpecifications(form.value)
 
   if (data) {
-    const products = await getAll('products', {
+    const { data: products } = await getAll('products', {
       eq: [['categoryId', data.categoryId]]
     })
 

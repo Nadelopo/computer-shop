@@ -56,7 +56,7 @@ onBeforeMount(async () => {
   const productData = await getOneById<ProductReadWithDetails>('products', id, {
     select: '*, manufacturers(id, title), categories(id, enTitle)'
   })
-  const specifications = await getAll<ProductSpecificationOnEdit>(
+  const { data: specifications } = await getAll<ProductSpecificationOnEdit>(
     'specifications',
     {
       eq: [['productId', id]],

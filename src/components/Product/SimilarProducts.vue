@@ -17,7 +17,7 @@ const props = defineProps<{
 const similarProducts = ref<ProductRead[]>([])
 
 const loadSimilarProducts = async () => {
-  const similar = await getAll('products', {
+  const { data } = await getAll('products', {
     eq: [['categoryId', categoryId]],
     between: {
       column: 'price',
@@ -27,8 +27,8 @@ const loadSimilarProducts = async () => {
     limit: 4,
     neq: ['id', props.productId]
   })
-  if (similar) {
-    similarProducts.value = similar
+  if (data) {
+    similarProducts.value = data
   }
 }
 
