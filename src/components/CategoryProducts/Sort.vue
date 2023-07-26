@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useFilterStore } from '@/stores/filterStore'
@@ -11,40 +10,12 @@ const router = useRouter()
 
 type SortType = keyof typeof sortAscents
 
-function isSortType(key: string): key is SortType {
-  if (key in sortAscents) {
-    return true
-  }
-  return false
-}
-
-const categoryId = Number(route.params.id)
-
-const { sortAscents, setFilteredProducts } = useFilterStore()
-const { specificationsValues, sortColumn } = storeToRefs(useFilterStore())
-
-const querySort =
-  typeof route.query.sort === 'string' ? route.query.sort.split('_') : null
-
-const watcher = watch(specificationsValues, () => {
-  if (querySort) {
-    const querySortTitle = querySort[0]
-    const querySortValue: boolean = JSON.parse(querySort[1])
-
-    if (isSortType(querySortTitle)) {
-      sortAscents[querySortTitle] = querySortValue
-      sortColumn.value = querySortTitle
-      setFilteredProducts(categoryId)
-    }
-  } else {
-    setFilteredProducts(categoryId)
-  }
-  watcher()
-})
+const { sortAscents } = useFilterStore()
+const { sortColumn, loading } = storeToRefs(useFilterStore())
 
 const sort = async (type: SortType) => {
+  if (loading.value === 'loading') return
   sortColumn.value = type
-  setFilteredProducts(categoryId)
 
   sortAscents[type] = !sortAscents[type]
   router.push({

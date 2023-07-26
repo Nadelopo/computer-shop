@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { nextTick, onUnmounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useFilterStore } from '@/stores/filterStore'
 import { storeToRefs } from 'pinia'
-import VPaginate from '@/components/UI/VPaginate.vue'
+import VPagination from '@/components/UI/VPagination.vue'
 import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
 import Search from '@/components/CategoryProducts/Search.vue'
 import Sort from '@/components/CategoryProducts/Sort.vue'
@@ -13,15 +13,14 @@ import Skeleton from '@/components/CategoryProducts/SkeletonProducts.vue'
 const { products, loading, productCount, currentPage, limit } = storeToRefs(
   useFilterStore()
 )
-const { setFilteredProducts } = useFilterStore()
 
+const router = useRouter()
 const route = useRoute()
-const categoryId = Number(route.params.id)
 const styles = ref('card__disable')
 
 onUnmounted(() => {
-  products.value = []
-  currentPage.value = 0
+  productCount.value = 0
+  loading.value = 'loading'
 })
 
 watch(
@@ -37,8 +36,8 @@ watch(
 )
 
 const clickOnPaginate = () => {
-  setFilteredProducts(categoryId)
   scrollTo(0, 0)
+  router.push({ query: { ...route.query, page: currentPage.value + 1 } })
 }
 </script>
 
@@ -63,7 +62,7 @@ const clickOnPaginate = () => {
         </template>
         <div
           v-else-if="loading === 'loading'"
-          class="flex flex-col gap-y-[30px] mb-10 mt-[20px]"
+          class="flex flex-col gap-y-[30px] mb-10 mt-5"
         >
           <template v-for="_ in limit" :key="_">
             <Skeleton />
@@ -71,11 +70,10 @@ const clickOnPaginate = () => {
         </div>
         <template v-else>
           <div class="font-bold text-center text-2xl mt-8">
-            К сожалению, по вашему запросу ничего не найдено. Проверьте
-            правильность ввода или попробуйте изменить запрос.
+            К сожалению, по вашему запросу ничего не найдено.
           </div>
         </template>
-        <v-paginate
+        <v-pagination
           v-model="currentPage"
           :item-count="productCount"
           :page-size="limit"

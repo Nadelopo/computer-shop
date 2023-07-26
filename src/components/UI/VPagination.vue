@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { computed } from 'vue'
 import { arrayRange } from '@/utils/arrayRange'
 import ArrowSVG from '@/assets/icons/arrow.svg'
 import VPopup from './VPopup.vue'
@@ -13,9 +12,6 @@ type Props = {
 
 const props = defineProps<Props>()
 const modelValue = defineModel<number>({ required: true })
-
-const router = useRouter()
-const route = useRoute()
 
 const pageCount = computed(() => {
   return Math.ceil(props.itemCount / props.pageSize)
@@ -62,10 +58,6 @@ const setPage = (page: number) => {
   modelValue.value = page
   props.onClick?.()
 }
-
-watch(modelValue, () => {
-  router.push({ query: { ...route.query, page: modelValue.value + 1 } })
-})
 </script>
 
 <template>

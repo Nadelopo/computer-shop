@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onBeforeMount } from 'vue'
-import { useRoute } from 'vue-router'
+import { watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useFilterStore } from '@/stores/filterStore'
@@ -9,19 +9,27 @@ import Checkbox from '@/components/UI/Checkbox.vue'
 import VButton from '../UI/VButton.vue'
 import SkeletonFiltersVue from './SkeletonFilters.vue'
 
+type SortType = keyof typeof sortAscents
+
+function isSortType(key: string): key is SortType {
+  if (key in sortAscents) {
+    return true
+  }
+  return false
+}
+
 const { getCategorySpecifications } = useCategoriesStore()
 
-const { setFilteredProducts } = useFilterStore()
-const { currentPage } = storeToRefs(useFilterStore())
-const { specificationsValues, productsPrice, search } = storeToRefs(
-  useFilterStore()
-)
+const { setFilteredProducts, sortAscents } = useFilterStore()
+const { specificationsValues, productsPrice, search, currentPage, sortColumn } =
+  storeToRefs(useFilterStore())
 
 const route = useRoute()
+const router = useRouter()
 
 const categoryId = Number(route.params.id)
 
-onBeforeMount(async () => {
+const setFilterProperties = async () => {
   const data = await getCategorySpecifications(categoryId)
   if (data) {
     specificationsValues.value = data
@@ -54,7 +62,22 @@ onBeforeMount(async () => {
       .sort((a, b) => Number(b.type) - Number(a.type))
   }
   const query = route.query
-  const price = route.query.price
+  const price = query.price
+  currentPage.value = query.page ? Number(query.page) - 1 : 0
+  search.value = query.q ? String(query.q) : ''
+  const querySort =
+    typeof query.sort === 'string' ? query.sort.split('_') : null
+
+  if (querySort) {
+    const querySortTitle = querySort[0]
+    const querySortValue: boolean = !(querySort[1] == 'false')
+
+    if (isSortType(querySortTitle)) {
+      sortAscents[querySortTitle] = querySortValue
+      sortColumn.value = querySortTitle
+    }
+  }
+
   if (typeof price === 'string') {
     const [min, max] = price.split('_').map(Number)
     productsPrice.value = {
@@ -73,11 +96,32 @@ onBeforeMount(async () => {
       value.values = [...(Array.isArray(field) ? field : [field])].map(String)
     }
   }
-})
+}
+
+const setQueryParams = () => {
+  const query: {
+    q: string
+    [key: string]: number | string | string[]
+  } = { page: 1, q: search.value }
+  for (const value of specificationsValues.value) {
+    if (value.type) {
+      query[value.enTitle] = `${value.minValue}_${value.maxValue}`
+    } else {
+      query[value.enTitle] = value.values
+    }
+  }
+  router.push({
+    query: {
+      ...route.query,
+      ...query,
+      price: `${productsPrice.value.min}_${productsPrice.value.max}`
+    }
+  })
+}
 
 const apply = () => {
+  setQueryParams()
   currentPage.value = 0
-  setFilteredProducts(categoryId)
 }
 
 const cancel = () => {
@@ -95,8 +139,20 @@ const cancel = () => {
     max: 300000
   }
   search.value = ''
-  setFilteredProducts(categoryId)
+  currentPage.value = 0
+  router.push({ query: {} })
 }
+
+watch(
+  () => route.params,
+  async () => {
+    await setFilterProperties()
+    setFilteredProducts(categoryId)
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <template>

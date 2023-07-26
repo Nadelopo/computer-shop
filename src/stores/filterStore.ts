@@ -1,5 +1,4 @@
 import { reactive, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 import { defineStore } from 'pinia'
 import { supabase } from '@/supabase'
 import { formatSearch } from '@/utils/formatSearch'
@@ -48,9 +47,6 @@ type QueryData = {
 }
 
 export const useFilterStore = defineStore('filter', () => {
-  const route = useRoute()
-  const router = useRouter()
-
   type SortType = keyof typeof sortAscents
   const specificationsValues = ref<SpecificationsValues[]>([])
 
@@ -70,32 +66,11 @@ export const useFilterStore = defineStore('filter', () => {
 
   const products = ref<ProductWithSpecifications[]>([])
   const productCount = ref(0)
-  const limit = ref(1)
-  const currentPage = ref<number>(
-    route.query.page ? Number(route.query.page) - 1 : 0
-  )
+  const limit = ref(3)
+  const currentPage = ref<number>(0)
   const loading = ref<Loading>('loading')
 
   async function setFilteredProducts(categoryId: number) {
-    const query: {
-      q: string
-      [key: string]: string | string[]
-    } = { q: search.value }
-    for (const value of specificationsValues.value) {
-      if (value.type) {
-        query[value.enTitle] = `${value.minValue}_${value.maxValue}`
-      } else {
-        query[value.enTitle] = value.values
-      }
-    }
-    router.push({
-      query: {
-        ...route.query,
-        ...query,
-        price: `${productsPrice.value.min}_${productsPrice.value.max}`
-      }
-    })
-
     loading.value = 'loading'
     products.value = []
 
@@ -168,8 +143,11 @@ export const useFilterStore = defineStore('filter', () => {
         return { ...p, specifications }
       })
     }
-
-    loading.value = 'success'
+    if (productCount.value === 0) {
+      loading.value = 'empty'
+    } else {
+      loading.value = 'success'
+    }
   }
 
   return {
