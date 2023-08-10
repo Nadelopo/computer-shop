@@ -110,7 +110,6 @@ const deleteItem = async (id: number) => {
             >
               <div>
                 <CrossSVG
-                  width="20"
                   class="cursor-pointer ml-auto"
                   @mouseenter="titleActive = false"
                   @mouseleave="titleActive = true"
@@ -166,7 +165,6 @@ const deleteItem = async (id: number) => {
         max-height: 190px
       svg
         transition: .2s
-        fill: #B3B3B7
         &:hover
           transform: scale(1.3)
 </style>

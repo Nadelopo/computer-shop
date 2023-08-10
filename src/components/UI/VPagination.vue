@@ -127,6 +127,7 @@ const setPage = (page: number) => {
     &:hover:not(.active):not([disabled])
       background: #EBF4F3
     &:disabled
+      cursor: no-drop
       svg
         fill: var(--gray)
     &:focus-visible

@@ -2,6 +2,7 @@
 import { ref, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { supabase } from '@/supabase'
 import { getAll, updateOne } from '@/utils/queries/db'
 import { localStorageGet, localStorageSet } from '@/utils/localStorage'
 import { useUserStore } from '@/stores/userStore'
@@ -18,7 +19,6 @@ import type {
   ComparisonProduct
 } from '@/components/Comparison/types'
 import type { Loading } from '@/types'
-import { supabase } from '@/supabase'
 
 type Product = Omit<ProductReadWithDetails, 'categories'> & {
   categories: {
@@ -189,6 +189,36 @@ watch(
     }
   }
 )
+
+const deleteItem = async (item: ComparisonProduct) => {
+  const newProducts = products.value.filter((e) => e.id !== item.id)
+  const newCategories = categories.value
+    .map((e) => (e.id === item.categoryId ? { ...e, count: e.count - 1 } : e))
+    .filter((e) => e.count > 0)
+
+  if (user.value) {
+    const data = await updateOne('users', user.value.id, {
+      comparison: user.value.comparison.filter((e) => e !== item.id)
+    })
+    if (!data) return
+    user.value.comparison = data.comparison
+  }
+  products.value = newProducts
+  categories.value = newCategories
+  if (!user.value) {
+    localStorageSet(
+      'compareList',
+      products.value.map((e) => e.id)
+    )
+  }
+
+  if (categories.value.length === 0) {
+    loading.value = 'empty'
+    currentCategoryId.value = null
+    return
+  }
+  currentCategoryId.value = categories.value[0].id
+}
 </script>
 
 <template>
@@ -221,6 +251,7 @@ watch(
         :current-category-specifications="currentCategorySpecifications"
         :products="products"
         :show-differences="showDifferences"
+        @delete-item="deleteItem"
       />
     </template>
     <div v-else-if="loading === 'loading'">

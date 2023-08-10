@@ -1,1 +1,1 @@
-export type Loading = 'loading' | 'success' | 'empty'
+export type Loading = 'loading' | 'success' | 'empty' | 'error'

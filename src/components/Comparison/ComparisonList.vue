@@ -3,6 +3,7 @@ import { ref, computed, watch, nextTick } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { formatPrice } from '@/utils/formatPrice'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
+import CrossSVG from '@/assets/icons/cross.svg?component'
 import type {
   ComparisonProduct,
   BasicProductData,
@@ -16,12 +17,17 @@ const props = defineProps<{
   showDifferences: boolean
 }>()
 
+const emit = defineEmits<{
+  deleteItem: [item: ComparisonProduct]
+}>()
+
 const getSpecificationValue = (
   products: ComparisonProduct[],
-  i: number,
-  j: number
+  productIndex: number,
+  specificationIndex: number
 ) => {
-  const specification = products[i].specifications[j]
+  const specification =
+    products[productIndex].specifications[specificationIndex]
   const value = specification.valueNumber ?? specification.valueString
   return value
 }
@@ -197,6 +203,12 @@ const styles = computed(() => {
   const width = widthCell.value + 'px'
   return { translateX, width }
 })
+
+const deleteItem = async (index: number) => {
+  const item = categoryProducts.value[index]
+  emit('deleteItem', item)
+  translateCells.value = 0
+}
 </script>
 
 <template>
@@ -215,12 +227,13 @@ const styles = computed(() => {
           </div>
           <div class="cells">
             <div
-              v-for="value in data.value"
+              v-for="(value, j) in data.value"
               :key="value"
               class="cell flex items-center"
             >
               <template v-if="data.title === ''">
                 <img :src="String(value)" alt="..." />
+                <CrossSVG class="cross" @click="deleteItem(j)" />
               </template>
               <template v-else>
                 <span>{{ value }} </span>
@@ -344,6 +357,7 @@ const styles = computed(() => {
     min-width: 235px
     img
       max-height: 150px
+      max-width: 170px
     @media (width <= 767px)
       padding-top: 0px
       min-width: auto
@@ -386,4 +400,10 @@ const styles = computed(() => {
       content: '★'
     &.coloured
       color: var(--color-main)
+  .cross
+    transition: .2s
+    cursor: pointer
+    margin: 0 20px auto auto
+    &:hover
+      transform: scale(1.3)
 </style>
