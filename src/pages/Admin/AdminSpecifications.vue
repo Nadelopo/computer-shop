@@ -42,7 +42,7 @@ const create = async () => {
 
   if (data) {
     const { data: products } = await getAll('products', {
-      eq: [['categoryId', data.categoryId]]
+      match: { categoryId: data.categoryId }
     })
 
     const initialSpecificationsValue: SpecificationCreate[] = []

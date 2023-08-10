@@ -51,7 +51,7 @@ const reviewsCount = ref(0)
 const loadReviews = async () => {
   currentPage.value = route.query.page ? Number(route.query.page) - 1 : 0
   const { data, count } = await getAll<ReviewReadWithDetails>('reviews', {
-    eq: [['productId', props.productId]],
+    match: { productId: props.productId },
     select: '*, users(name)',
     order: {
       value: 'created_at',

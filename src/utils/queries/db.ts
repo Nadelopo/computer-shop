@@ -46,12 +46,8 @@ export const getAll = async <Z extends object = never, T extends Table = Table>(
       ascending: params?.order?.ascending ?? true
     })
 
-  const eq = params?.eq || []
-  for (const value of eq) {
-    if (value[1]) {
-      query.eq(value[0], value[1])
-    }
-  }
+  const match = params?.match || {}
+  query.match(match)
 
   if (params?.in) {
     query.in(params.in[0], params.in[1])

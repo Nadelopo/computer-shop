@@ -18,7 +18,7 @@ const similarProducts = ref<ProductRead[]>([])
 
 const loadSimilarProducts = async () => {
   const { data } = await getAll('products', {
-    eq: [['categoryId', categoryId]],
+    match: { categoryId: categoryId },
     between: {
       column: 'price',
       begin: props.productPrice - 5000,

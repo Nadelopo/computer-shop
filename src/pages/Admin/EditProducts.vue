@@ -59,7 +59,7 @@ onBeforeMount(async () => {
   const { data: specifications } = await getAll<ProductSpecificationOnEdit>(
     'specifications',
     {
-      eq: [['productId', id]],
+      match: { productId: id },
       select:
         '*, category_specifications(id, title, visible, units, type, step, min, max, variantsValues)',
       order: {

@@ -83,7 +83,7 @@ export type Table =
   | 'reviews'
 
 export type GetAllParams = {
-  eq?: [column: string, value: string | number | null][]
+  match?: Record<string, unknown>
   in?: [column: string, values: (number | string)[]]
   select?: string
   order?: {

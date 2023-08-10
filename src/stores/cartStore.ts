@@ -47,10 +47,10 @@ export const useCartStore = defineStore('cart', () => {
 
     if (user) {
       const { data: productCart } = await getAll('cart', {
-        eq: [
-          ['userId', user.id],
-          ['productId', productId]
-        ]
+        match: {
+          userId: user.id,
+          productId: productId
+        }
       })
 
       if (productCart?.length && product) {
@@ -94,7 +94,7 @@ export const useCartStore = defineStore('cart', () => {
     const user = supabase.auth.user()
     if (user) {
       const { data } = await getAll('cart', {
-        eq: [['userId', user.id]]
+        match: { userId: user.id }
       })
       if (data) {
         cartItems.value = data
@@ -207,10 +207,10 @@ export const useCartStore = defineStore('cart', () => {
     let data: CartRead | ProductInStorage[] | null = null
     if (user) {
       const { data: productCart } = await getAll('cart', {
-        eq: [
-          ['userId', user.id],
-          ['productId', productId]
-        ]
+        match: {
+          userId: user.id,
+          productId: productId
+        }
       })
       if (productCart) {
         data = await deleteOne('cart', productCart[0].id)

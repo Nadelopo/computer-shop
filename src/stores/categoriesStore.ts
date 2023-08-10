@@ -59,7 +59,7 @@ export const useCategoriesStore = defineStore('categories', () => {
     const { data } = await getAll<CategorySpecificationRead>(
       'category_specifications',
       {
-        eq: [['categoryId', categoryId]]
+        match: { categoryId: categoryId }
       }
     )
     return data
