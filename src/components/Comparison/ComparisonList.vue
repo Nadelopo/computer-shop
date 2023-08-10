@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from 'vue'
 import { useElementSize } from '@vueuse/core'
+import { formatPrice } from '@/utils/formatPrice'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
 import type {
   ComparisonProduct,
   BasicProductData,
   CategorySpecifications
 } from './types'
-import { formatPrice } from '@/utils/formatPrice'
 
 const props = defineProps<{
   currentCategoryId: number | null
@@ -203,12 +203,12 @@ const styles = computed(() => {
   <div ref="comparisonRef" class="comparison">
     <div class="overflow-hidden">
       <div
-        v-for="(data, _, i) in productTopData"
+        v-for="(data, i) in productTopData"
         :key="data.title"
         class="relative row"
         :class="{ 'bg-white': i % 2 === 0 }"
       >
-        <div class="cell__title">{{ data.title }} </div>
+        <div class="cell__title">{{ data.title }}</div>
         <div class="wrapper__cells">
           <div v-if="isMobileWidth" class="title__mobile">
             {{ data.title }}
@@ -291,7 +291,7 @@ const styles = computed(() => {
           @mouseenter="setRowColor($event, 'add')"
           @mouseleave="setRowColor($event, 'remove')"
         >
-          <div class="cell__title"> {{ el.title }}</div>
+          <div class="cell__title">{{ el.title }}</div>
           <div class="wrapper__cells">
             <div v-if="isMobileWidth" class="title__mobile">
               {{ el.title }}
@@ -337,7 +337,7 @@ const styles = computed(() => {
     display: flex
     transition: v-bind(transition)
     position: relative
-    transform: translateX(v-bind('styles.translateX'))
+    translate: v-bind('styles.translateX')
   .cell, .cell__title
     width: v-bind('styles.width')
     padding: 20px 10px 20px 0

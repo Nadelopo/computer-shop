@@ -2,6 +2,7 @@ import { reactive, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { supabase } from '@/supabase'
 import { formatSearch } from '@/utils/formatSearch'
+import type { RouteLocationNormalizedLoaded, Router } from 'vue-router'
 import type { PostgrestResponse } from '@supabase/supabase-js'
 import type {
   ProductReadWithDetails,
@@ -36,12 +37,7 @@ export type CheckboxData = {
 }
 
 type QueryData = {
-  category_specifications: {
-    id: number
-    enTitle: string
-  }
   products: {
-    categoryId: number
     id: number
   }
 }
@@ -61,7 +57,7 @@ export const useFilterStore = defineStore('filter', () => {
   const search = ref('')
   const productsPrice = ref<{ min: number; max: number }>({
     min: 0,
-    max: 300000
+    max: 300_000
   })
 
   const products = ref<ProductWithSpecifications[]>([])
@@ -70,7 +66,31 @@ export const useFilterStore = defineStore('filter', () => {
   const currentPage = ref<number>(0)
   const loading = ref<Loading>('loading')
 
-  async function setFilteredProducts(categoryId: number) {
+  function setQueryParams(
+    router: Router,
+    route: RouteLocationNormalizedLoaded
+  ) {
+    const query: {
+      q: string
+      [key: string]: number | string | string[]
+    } = { page: 1, q: search.value }
+    for (const value of specificationsValues.value) {
+      if (value.type) {
+        query[value.enTitle] = `${value.minValue}_${value.maxValue}`
+      } else {
+        query[value.enTitle] = value.values
+      }
+    }
+    router.push({
+      query: {
+        ...route.query,
+        ...query,
+        price: `${productsPrice.value.min}_${productsPrice.value.max}`
+      }
+    })
+  }
+
+  async function setFilteredProducts(categoryId: number): Promise<void> {
     loading.value = 'loading'
     products.value = []
 
@@ -78,12 +98,10 @@ export const useFilterStore = defineStore('filter', () => {
     for (const spec of specificationsValues.value) {
       const query = supabase
         .from('specifications')
-        .select(
-          'category_specifications!inner(id, enTitle), products!inner(id, categoryId)'
-        )
+        .select('products!inner(id)')
         .match({
           'products.categoryId': categoryId,
-          'category_specifications.id': spec.id
+          categorySpecificationsId: spec.id
         })
         .ilike('products.name', formatSearch(search.value))
 
@@ -153,6 +171,7 @@ export const useFilterStore = defineStore('filter', () => {
   return {
     products,
     loading,
+    setQueryParams,
     setFilteredProducts,
     search,
     sortAscents,

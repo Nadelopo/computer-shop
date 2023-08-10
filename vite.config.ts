@@ -1,4 +1,3 @@
-import { fileURLToPath, URL } from 'node:url'
 import { checker } from 'vite-plugin-checker'
 import { defineConfig } from 'vite'
 import svgLoader from 'vite-svg-loader'
@@ -24,8 +23,9 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
+      '@': '/src'
+    },
+
   },
   server: {
     port: 3000

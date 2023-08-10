@@ -19,7 +19,12 @@ type Emit = {
 withDefaults(defineProps<Props>(), {
   type: 'primary'
 })
+
 const emit = defineEmits<Emit>()
+
+defineOptions({
+  inheritAttrs: false
+})
 
 const showModal = ref(false)
 

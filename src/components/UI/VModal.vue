@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { watch } from 'vue'
 
+defineOptions({
+  inheritAttrs: false
+})
+
 const modelValue = defineModel<boolean>({ required: true })
 
 watch(modelValue, () => {

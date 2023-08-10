@@ -20,7 +20,7 @@ function isSortType(key: string): key is SortType {
 
 const { getCategorySpecifications } = useCategoriesStore()
 
-const { setFilteredProducts, sortAscents } = useFilterStore()
+const { setQueryParams, setFilteredProducts, sortAscents } = useFilterStore()
 const { specificationsValues, productsPrice, search, currentPage, sortColumn } =
   storeToRefs(useFilterStore())
 
@@ -98,29 +98,8 @@ const setFilterProperties = async () => {
   }
 }
 
-const setQueryParams = () => {
-  const query: {
-    q: string
-    [key: string]: number | string | string[]
-  } = { page: 1, q: search.value }
-  for (const value of specificationsValues.value) {
-    if (value.type) {
-      query[value.enTitle] = `${value.minValue}_${value.maxValue}`
-    } else {
-      query[value.enTitle] = value.values
-    }
-  }
-  router.push({
-    query: {
-      ...route.query,
-      ...query,
-      price: `${productsPrice.value.min}_${productsPrice.value.max}`
-    }
-  })
-}
-
 const apply = () => {
-  setQueryParams()
+  setQueryParams(router, route)
   currentPage.value = 0
 }
 

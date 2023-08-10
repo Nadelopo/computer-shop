@@ -15,6 +15,10 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['update:modelValue'])
 
+defineOptions({
+  inheritAttrs: false
+})
+
 const btn = ref<HTMLElement>()
 const active = onClickOutsideClose(btn)
 const selected = ref('')

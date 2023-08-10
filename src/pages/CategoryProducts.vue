@@ -10,9 +10,8 @@ import Sort from '@/components/CategoryProducts/Sort.vue'
 import FiltersList from '@/components/CategoryProducts/FiltersList.vue'
 import Skeleton from '@/components/CategoryProducts/SkeletonProducts.vue'
 
-const { products, loading, productCount, currentPage, limit } = storeToRefs(
-  useFilterStore()
-)
+const { products, loading, productCount, currentPage, limit, productsPrice } =
+  storeToRefs(useFilterStore())
 
 const router = useRouter()
 const route = useRoute()
@@ -20,6 +19,8 @@ const styles = ref('card__disable')
 
 onUnmounted(() => {
   productCount.value = 0
+  productsPrice.value.min = 0
+  productsPrice.value.max = 300_000
   loading.value = 'loading'
 })
 

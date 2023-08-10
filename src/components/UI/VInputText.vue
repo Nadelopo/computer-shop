@@ -16,6 +16,10 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['update:modelValue'])
 
+defineOptions({
+  inheritAttrs: false
+})
+
 const onChange = (e: Event) => {
   if (e.target instanceof HTMLInputElement) {
     const value: number | string =
