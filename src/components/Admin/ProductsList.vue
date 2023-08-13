@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { removeFromStorage } from '@/utils/queries/storage'
 import { getImgName } from '@/utils/getImgName'
 import { deleteOne } from '@/utils/queries/db'
-import { loadingKey, productsKey } from '@/pages/Admin/types'
 import VButton from '@/components/UI/VButton.vue'
+import VLoader from '../UI/VLoader.vue'
 import VConfirm from '../UI/VConfirm.vue'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
+import type { ProductWithSpecifications } from '@/types/tables/products.types'
+import type { Loading } from '@/types'
 
 type BasicData = {
   [key: string]: {
@@ -16,12 +18,15 @@ type BasicData = {
   }
 }
 
-defineProps<{
+const props = defineProps<{
   specifications: CategorySpecificationRead[]
+  loading: Loading
+  products: ProductWithSpecifications[]
 }>()
 
-const products = inject(productsKey, ref([]))
-const loading = inject(loadingKey)
+const emit = defineEmits<{
+  'update:products': [ProductWithSpecifications[]]
+}>()
 
 const showModal = ref(false)
 
@@ -29,36 +34,39 @@ const deleteProduct = async (id: number, img: string) => {
   showModal.value = true
   const data = await deleteOne('products', id)
   if (data) {
-    products.value = products.value.filter((e) => e.id !== data.id)
+    emit(
+      'update:products',
+      props.products.filter((e) => e.id !== data.id)
+    )
     await removeFromStorage('products', getImgName(img))
   }
 }
 
-const titles = computed(() => products.value.map((e) => e.name))
+const titles = computed(() => props.products.map((e) => e.name))
 
 const basicData = computed((): BasicData => {
   return {
     manufacturers: {
       title: 'Производитель',
-      value: products.value.map((e) => e.manufacturers.title)
+      value: props.products.map((e) => e.manufacturers.title)
     },
     imgs: {
       title: 'Изображение',
-      value: products.value.map((e) => e.img)
+      value: props.products.map((e) => e.img)
     },
     warranties: {
       title: 'Гарантия',
-      value: products.value.map((e) => e.warranty),
+      value: props.products.map((e) => e.warranty),
       units: 'мес'
     },
     discounts: {
       title: 'Скидка',
-      value: products.value.map((e) => e.discount),
+      value: props.products.map((e) => e.discount),
       units: '%'
     },
     prices: {
       title: 'Цена',
-      value: products.value.map((e) => e.price),
+      value: props.products.map((e) => e.price),
       units: '₽'
     }
   }
@@ -66,7 +74,7 @@ const basicData = computed((): BasicData => {
 </script>
 
 <template>
-  <div class="table">
+  <div v-if="loading === 'success'" class="table">
     <div class="row">
       <div class="title cell">Наименование</div>
       <div class="cells">
@@ -80,8 +88,8 @@ const basicData = computed((): BasicData => {
       <div class="cells">
         <div v-for="(__, j) in products.length" :key="j" class="cell">
           {{
-            products[j].specifications[i].valueNumber ??
-            products[j].specifications[i].valueString
+            products[j].specifications[i]?.valueNumber ??
+            products[j].specifications[i]?.valueString
           }}
           {{ specifications[i].units }}
         </div>
@@ -127,12 +135,15 @@ const basicData = computed((): BasicData => {
         </div>
       </div>
     </div>
-    <div
-      v-if="loading === 'empty'"
-      class="text-2xl text-center font-normal mt-16"
-    >
-      товары отсутствуют
-    </div>
+  </div>
+  <div
+    v-else-if="loading === 'empty'"
+    class="text-2xl text-center font-normal mt-16"
+  >
+    товары отсутствуют
+  </div>
+  <div v-else class="h-[50vh] flex items-center">
+    <v-loader />
   </div>
 </template>
 

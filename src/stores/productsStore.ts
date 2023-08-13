@@ -39,13 +39,24 @@ export const useProductsStore = defineStore('products', () => {
   }
 
   async function getProducts(
-    categoryId: number
-  ): Promise<ProductWithSpecifications[]> {
+    categoryId: number,
+    params: {
+      page: number
+      limit: number
+    } = {
+      limit: 300,
+      page: 0
+    }
+  ): Promise<{ data: ProductWithSpecifications[]; count: number | null }> {
     const newProducts = ref<ProductWithSpecifications[]>([])
 
-    const { data } = await getAll<ProductReadWithDetails>('products', {
+    const { data, count } = await getAll<ProductReadWithDetails>('products', {
       match: { categoryId: categoryId },
-      select: '*, categories(id, enTitle), manufacturers(id, title)'
+      select: '*, categories(id, enTitle), manufacturers(id, title)',
+      range: [
+        params.page * params.limit,
+        params.page * params.limit + params?.limit - 1
+      ]
     })
 
     if (data?.length) {
@@ -76,7 +87,7 @@ export const useProductsStore = defineStore('products', () => {
         }
       }
     }
-    return newProducts.value
+    return { data: newProducts.value, count }
   }
 
   async function getProduct(

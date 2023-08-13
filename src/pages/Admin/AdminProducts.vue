@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
@@ -8,13 +8,17 @@ import { useManufacturersStore } from '@/stores/manufacturersStore'
 import VInputText from '@/components/UI/VInputText.vue'
 import VInputFile from '@/components/UI/VInputFile.vue'
 import ProdctsList from '@/components/Admin/ProductsList.vue'
+import VPagination from '@/components/UI/VPagination.vue'
 import VLoader from '@/components/UI/VLoader.vue'
 import VButton from '@/components/UI/VButton.vue'
 import VSelect from '@/components/UI/VSelect.vue'
-import { loadingKey, setProductsKey } from './types'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import type { SpecificationCreate } from '@/types/tables/specifications.types'
-import type { ProductCreate } from '@/types/tables/products.types'
+import type {
+  ProductCreate,
+  ProductWithSpecifications
+} from '@/types/tables/products.types'
+import type { Loading } from '@/types'
 
 type ProductSpecificationForm = Omit<SpecificationCreate, 'productId'> & {
   productId: number | null
@@ -22,17 +26,58 @@ type ProductSpecificationForm = Omit<SpecificationCreate, 'productId'> & {
 
 const route = useRoute()
 
-const setProducts = inject(setProductsKey, () => {})
-const loading = inject(loadingKey)
+const loadingProducts = ref<Loading>('loading')
+const products = ref<ProductWithSpecifications[]>([])
 
 const { manufacturers } = storeToRefs(useManufacturersStore())
 const { getCategorySpecifications } = useCategoriesStore()
-const { createProduct, createSpecifications } = useProductsStore()
+const { createProduct, createSpecifications, getProducts } = useProductsStore()
 
 const manufacturerSelect = ref<number | string>('')
 const categoryId = computed(() => Number(route.params.id))
 const categorySpecifications = ref<CategorySpecificationRead[]>([])
+const loadingSpecifications = ref<Loading>('loading')
 const categoryFormSpecifications = ref<ProductSpecificationForm[]>([])
+const page = ref(0)
+const limit = ref(6)
+const productCount = ref(0)
+
+const breakpoints = [
+  { width: 1850, limit: 5 },
+  { width: 1570, limit: 4 },
+  { width: 1340, limit: 3 },
+  { width: 1140, limit: 2 },
+  { width: 940, limit: 1 }
+]
+
+for (const breakpoint of breakpoints) {
+  if (window.outerWidth <= breakpoint.width) {
+    limit.value = breakpoint.limit
+  }
+}
+
+const setProducts = async () => {
+  const categoryId = Number(route.params.id)
+  if (categoryId) {
+    loadingProducts.value = 'loading'
+    const { data, count } = await getProducts(categoryId, {
+      limit: limit.value,
+      page: page.value
+    })
+    products.value = data
+    if (count !== null) {
+      productCount.value = count
+    }
+
+    if (products.value.length === 0) {
+      loadingProducts.value = 'empty'
+    } else {
+      loadingProducts.value = 'success'
+    }
+  }
+}
+
+watch(page, setProducts)
 
 const copyForm: ProductCreate = {
   categoryId: categoryId.value,
@@ -49,6 +94,7 @@ const copyForm: ProductCreate = {
 const product = ref<ProductCreate>({ ...copyForm })
 
 const setCategorySpecifications = async () => {
+  loadingSpecifications.value = 'loading'
   const data = await getCategorySpecifications(categoryId.value)
   if (data) {
     categorySpecifications.value = data
@@ -69,7 +115,11 @@ const setCategorySpecifications = async () => {
         }
       }
     })
-  } else categoryFormSpecifications.value = []
+    loadingSpecifications.value = 'success'
+  } else {
+    categoryFormSpecifications.value = []
+    loadingSpecifications.value = 'empty'
+  }
 }
 
 watch(
@@ -115,8 +165,12 @@ const create = async () => {
 </script>
 
 <template>
-  <div v-if="categorySpecifications.length && loading === 'success'">
-    <form class="list__form mb-8" @submit.prevent="create">
+  <div>
+    <form
+      v-if="loadingSpecifications === 'success'"
+      class="list__form mb-8"
+      @submit.prevent="create"
+    >
       <div
         v-for="(specification, i) in categorySpecifications"
         :key="specification.id"
@@ -184,9 +238,20 @@ const create = async () => {
       </template>
       <div><v-button>создать</v-button></div>
     </form>
-    <ProdctsList :specifications="categorySpecifications" />
-  </div>
-  <div v-else class="h-screen flex items-center">
-    <v-loader />
+    <div v-else class="h-[50vh] flex items-center">
+      <v-loader />
+    </div>
+    <ProdctsList
+      v-model:products="products"
+      :specifications="categorySpecifications"
+      :loading="loadingProducts"
+    />
+
+    <v-pagination
+      v-model="page"
+      :page-size="limit"
+      :item-count="productCount"
+      class="my-8"
+    />
   </div>
 </template>

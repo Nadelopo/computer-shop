@@ -63,7 +63,7 @@ const loadReviews = async () => {
     ]
   })
 
-  if (data && count) {
+  if (data && count !== null) {
     reviews.value = data
     reviewsCount.value = count
     await nextTick()

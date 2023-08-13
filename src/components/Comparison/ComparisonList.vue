@@ -357,7 +357,7 @@ const deleteItem = async (index: number) => {
     min-width: 235px
     img
       max-height: 150px
-      max-width: 170px
+      max-width: 70%
     @media (width <= 767px)
       padding-top: 0px
       min-width: auto
