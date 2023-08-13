@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
-import VButton from './UI/VButton.vue'
+import { VButton } from '@/components/UI'
 import CartSVG from '@/assets/icons/cartInButton.svg?component'
 
 type Props = {

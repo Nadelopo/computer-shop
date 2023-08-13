@@ -2,17 +2,19 @@
 import { computed, onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { useProductsStore } from '@/stores/productsStore'
+import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { getAll, getOneById } from '@/utils/queries/db'
 import { getImgName } from '@/utils/getImgName'
 import { removeFromStorage } from '@/utils/queries/storage'
-import { useProductsStore } from '@/stores/productsStore'
-import { useManufacturersStore } from '@/stores/manufacturersStore'
-import VInputText from '@/components/UI/VInputText.vue'
-import VInputFile from '@/components/UI/VInputFile.vue'
-import VButton from '@/components/UI/VButton.vue'
-import VSelect from '@/components/UI/VSelect.vue'
-import VLoader from '@/components/UI/VLoader.vue'
-import VDoubleButtons from '@/components/UI/VDoubleButtons.vue'
+import {
+  VButton,
+  VLoader,
+  VInputText,
+  VInputFile,
+  VSelect,
+  VDoubleButtons
+} from '@/components/UI'
 import type {
   SpecificationRead,
   SpecificationUpdate

@@ -2,7 +2,8 @@
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import VAccordion from '@/components/UI/VAccordion.vue'
+// import VAccordion from '@/components/UI/VAccordion.vue'
+import { VAccordion } from '@/components/UI'
 
 const isVisible = ref(false)
 

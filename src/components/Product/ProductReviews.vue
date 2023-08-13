@@ -3,12 +3,11 @@ import { ref, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
-import { createOne, getAll, updateOne } from '@/utils/queries/db'
 import { useUserStore } from '@/stores/userStore'
-import VPagination from '../UI/VPagination.vue'
+import { createOne, getAll, updateOne } from '@/utils/queries/db'
 import RatingStars from '../RatingStars.vue'
 import ReviewsBlock from './ReviewsBlock.vue'
-import VButton from '@/components/UI/VButton.vue'
+import { VButton, VPagination } from '@/components/UI'
 import type {
   ReviewCreateRating,
   ReviewReadWithDetails,

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { supabase } from '@/supabase'
 import { useToast } from 'vue-toastification'
-import VButton from '@/components/UI/VButton.vue'
+import { supabase } from '@/supabase'
+import { VButton } from '@/components/UI'
 import type { UserCreate } from '@/types/tables/users.types'
 
 const router = useRouter()

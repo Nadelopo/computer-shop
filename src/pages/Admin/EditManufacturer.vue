@@ -2,10 +2,7 @@
 import { onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
-import VInputText from '@/components/UI/VInputText.vue'
-import VInputFile from '@/components/UI/VInputFile.vue'
-import VButton from '@/components/UI/VButton.vue'
-import VLoader from '@/components/UI/VLoader.vue'
+import { VButton, VLoader, VInputText, VInputFile } from '@/components/UI'
 import type { ManufacturerUpdate } from '@/types/tables/manufacturers.types'
 
 const route = useRoute()

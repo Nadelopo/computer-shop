@@ -2,7 +2,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useFilterStore } from '@/stores/filterStore'
-import VButton from '../UI/VButton.vue'
+import { VButton } from '@/components/UI'
 import ArrowSVG from '@/assets/icons/arrow.svg?component'
 
 const route = useRoute()

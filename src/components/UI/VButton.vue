@@ -3,7 +3,7 @@ import VLoader from './VLoader.vue'
 
 type Props = {
   variant?: 'primary' | 'danger' | 'noactive'
-  loading: boolean
+  loading?: boolean
   minWidth?: number | 'auto'
   width?: string
 }

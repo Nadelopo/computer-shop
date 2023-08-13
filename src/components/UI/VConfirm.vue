@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import VModal from '@/components/UI/VModal.vue'
-import VButton from './VButton.vue'
 import { ref } from 'vue'
+import { VModal, VButton } from '@/components/UI'
 
 type Props = {
   label: string

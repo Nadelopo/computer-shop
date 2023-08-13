@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import { createMany, getAll } from '@/utils/queries/db'
 import { useCategoriesStore } from '@/stores/categoriesStore'
+import { createMany, getAll } from '@/utils/queries/db'
 import SpecificationsList from '@/components/Admin/SpecificationsList.vue'
-import VDoubleButtons from '@/components/UI/VDoubleButtons.vue'
-import VInputText from '@/components/UI/VInputText.vue'
-import VButton from '@/components/UI/VButton.vue'
-import VSelect from '@/components/UI/VSelect.vue'
+import { VDoubleButtons, VInputText, VButton, VSelect } from '@/components/UI'
 import type { CategorySpecificationCreate } from '@/types/tables/categorySpecifications.types'
 import type { SpecificationCreate } from '@/types/tables/specifications.types'
 

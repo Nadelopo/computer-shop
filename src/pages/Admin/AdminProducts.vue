@@ -5,13 +5,15 @@ import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useProductsStore } from '@/stores/productsStore'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
-import VInputText from '@/components/UI/VInputText.vue'
-import VInputFile from '@/components/UI/VInputFile.vue'
 import ProdctsList from '@/components/Admin/ProductsList.vue'
-import VPagination from '@/components/UI/VPagination.vue'
-import VLoader from '@/components/UI/VLoader.vue'
-import VButton from '@/components/UI/VButton.vue'
-import VSelect from '@/components/UI/VSelect.vue'
+import {
+  VInputText,
+  VInputFile,
+  VPagination,
+  VLoader,
+  VButton,
+  VSelect
+} from '@/components/UI'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import type { SpecificationCreate } from '@/types/tables/specifications.types'
 import type {

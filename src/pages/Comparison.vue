@@ -3,14 +3,11 @@ import { ref, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/supabase'
+import { useUserStore } from '@/stores/userStore'
 import { getAll, updateOne } from '@/utils/queries/db'
 import { localStorageGet, localStorageSet } from '@/utils/localStorage'
-import { useUserStore } from '@/stores/userStore'
 import ComparisonList from '@/components/Comparison/ComparisonList.vue'
-import VTabs from '@/components/UI/VTabs.vue'
-import Checkbox from '@/components/UI/Checkbox.vue'
-import VLoader from '@/components/UI/VLoader.vue'
-import VButton from '@/components/UI/VButton.vue'
+import { VTabs, VCheckbox, VLoader, VButton } from '@/components/UI'
 import TrashSVG from '@/assets/icons/trash.svg?component'
 import type { ProductReadWithDetails } from '@/types/tables/products.types'
 import type {
@@ -240,7 +237,7 @@ const deleteItem = async (item: ComparisonProduct) => {
           <TrashSVG />
           очистить список
         </v-button>
-        <Checkbox
+        <v-checkbox
           :id="1"
           v-model="showDifferences"
           title="Показывать только отличия"

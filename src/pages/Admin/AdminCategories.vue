@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import VInputFile from '@/components/UI/VInputFile.vue'
-import VInputText from '@/components/UI/VInputText.vue'
 import CategoriesList from '@/components/Admin/CategoriesList.vue'
-import VButton from '@/components/UI/VButton.vue'
+import { VButton, VInputFile, VInputText } from '@/components/UI'
 import type { CategoryCreate } from '@/types/tables/categories.types'
 
 const { createCategory } = useCategoriesStore()

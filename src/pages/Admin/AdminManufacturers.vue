@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
-import VInputFile from '@/components/UI/VInputFile.vue'
-import VInputText from '@/components/UI/VInputText.vue'
-import VButton from '@/components/UI/VButton.vue'
+import { VButton, VInputFile, VInputText } from '@/components/UI'
 import ManufacturersList from '@/components/Admin/ManufacturersList.vue'
 import type { ManufacturerCreate } from '@/types/tables/manufacturers.types'
 

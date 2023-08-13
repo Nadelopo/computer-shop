@@ -4,7 +4,7 @@ import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
 
 const props = withDefaults(
   defineProps<{
-    type: 'click' | 'hover'
+    type?: 'click' | 'hover'
     width?: string
     float?: 'start' | 'end' | 'center'
   }>(),

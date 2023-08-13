@@ -5,8 +5,7 @@ import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useFilterStore } from '@/stores/filterStore'
 import InputFilter from '@/components/CategoryProducts/InputFilter.vue'
-import Checkbox from '@/components/UI/Checkbox.vue'
-import VButton from '../UI/VButton.vue'
+import { VCheckbox, VButton } from '@/components/UI'
 import SkeletonFiltersVue from './SkeletonFilters.vue'
 
 type SortType = keyof typeof sortAscents
@@ -162,7 +161,7 @@ watch(
           <div class="text-center">{{ value.title }}</div>
           <div v-for="variant in value.variantsValues" :key="variant">
             <div>
-              <Checkbox
+              <v-checkbox
                 :id="value.id"
                 v-model="value.values"
                 :title="variant"

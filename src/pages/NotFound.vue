@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import { VButton } from '@/components/UI'
+</script>
+
 <template>
   <div class="container flex justify-center">
     <div class="">
@@ -9,10 +13,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import VButton from '@/components/UI/VButton.vue'
-</script>
 
 <style scoped lang="scss">
 h1 {

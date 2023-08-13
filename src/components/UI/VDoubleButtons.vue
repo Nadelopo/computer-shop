@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import VButton from '@/components/UI/VButton.vue'
+import { VButton } from '@/components/UI'
 
 type Props = {
   textFirst: string

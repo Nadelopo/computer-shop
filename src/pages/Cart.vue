@@ -2,8 +2,7 @@
 import { onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
-import VButton from '@/components/UI/VButton.vue'
-import VLoader from '@/components/UI/VLoader.vue'
+import { VButton, VLoader } from '@/components/UI'
 import TrashSVG from '@/assets/icons/trash.svg?component'
 
 const {
