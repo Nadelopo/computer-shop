@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { VButton } from '@/components/UI'
 
-type Props = {
+defineProps<{
   textFirst: string
   textSecond: string
   modelValue: boolean
-}
+}>()
 
-defineProps<Props>()
-
-defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  'update:modelValue': [boolean]
+}>()
 </script>
 
 <template>
@@ -17,14 +17,14 @@ defineEmits(['update:modelValue'])
     <v-button
       type="button"
       :class="!modelValue && 'noactive'"
-      @click="$emit('update:modelValue', true)"
+      @click="emit('update:modelValue', true)"
     >
       {{ textFirst }}
     </v-button>
     <v-button
       type="button"
       :class="modelValue && 'noactive'"
-      @click="$emit('update:modelValue', false)"
+      @click="emit('update:modelValue', false)"
     >
       {{ textSecond }}
     </v-button>

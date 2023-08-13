@@ -1,6 +1,4 @@
 <script setup lang="ts">
-const modelValue = defineModel<string | string[] | boolean>()
-
 type Props = {
   id: number
   title: string
@@ -10,6 +8,7 @@ type Props = {
 withDefaults(defineProps<Props>(), {
   units: ''
 })
+const modelValue = defineModel<string | string[] | boolean>()
 </script>
 
 <template>

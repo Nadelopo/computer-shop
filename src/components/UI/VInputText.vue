@@ -14,7 +14,9 @@ const props = withDefaults(defineProps<Props>(), {
   autofocus: false
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  'update:modelValue': [string | number]
+}>()
 
 defineOptions({
   inheritAttrs: false

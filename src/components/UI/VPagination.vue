@@ -4,13 +4,12 @@ import { arrayRange } from '@/utils/arrayRange'
 import ArrowSVG from '@/assets/icons/arrow.svg'
 import VPopup from './VPopup.vue'
 
-type Props = {
+const props = defineProps<{
   itemCount: number
   pageSize: number
   onClick?: () => void
-}
+}>()
 
-const props = defineProps<Props>()
 const modelValue = defineModel<number>({ required: true })
 
 const pageCount = computed(() => {

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onUnmounted, ref, watch } from 'vue'
 import {
-  type Folder,
   insertInStorage,
-  removeFromStorage
+  removeFromStorage,
+  type Folder
 } from '@/utils/queries/storage'
 
 type Props = {
@@ -16,7 +16,9 @@ const props = withDefaults(defineProps<Props>(), {
   required: true
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  'update:modelValue': [url: string]
+}>()
 
 const imageData = ref<File | null>(null)
 const onInput = async (event: Event) => {

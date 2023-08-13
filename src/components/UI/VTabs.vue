@@ -8,18 +8,17 @@ type Option = {
   count?: number
 }
 
-const route = useRoute()
-
-const modelValue = defineModel<number | string | null>({ required: true })
-
 const props = defineProps<{
   options: Option[]
   onClick?: () => void
   queryParamName?: string
 }>()
 
-const tabsRefs = ref<ComponentPublicInstance[]>([])
+const modelValue = defineModel<number | string | null>({ required: true })
 
+const route = useRoute()
+
+const tabsRefs = ref<ComponentPublicInstance[]>([])
 const tabLineStyles = ref({
   width: '0px',
   marginLeft: '0px'

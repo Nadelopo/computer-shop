@@ -29,7 +29,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'updateProductRating', data: UpdateProductRating): void
+  updateProductRating: [newRating: UpdateProductRating]
 }>()
 
 const toast = useToast()

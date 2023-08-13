@@ -2,16 +2,15 @@
 import { onMounted, ref } from 'vue'
 import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
 
-const props = withDefaults(
-  defineProps<{
-    type?: 'click' | 'hover'
-    width?: string
-    float?: 'start' | 'end' | 'center'
-  }>(),
-  {
-    type: 'click'
-  }
-)
+type Props = {
+  type?: 'click' | 'hover'
+  width?: string
+  float?: 'start' | 'end' | 'center'
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  type: 'click'
+})
 
 const minWidth = props.width ?? '100px'
 let left = ref('0')

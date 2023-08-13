@@ -5,12 +5,10 @@ import { useCartStore } from '@/stores/cartStore'
 import { VButton } from '@/components/UI'
 import CartSVG from '@/assets/icons/cartInButton.svg?component'
 
-type Props = {
+const props = defineProps<{
   productId: number
   width?: number
-}
-
-const props = defineProps<Props>()
+}>()
 
 const loading = ref(false)
 

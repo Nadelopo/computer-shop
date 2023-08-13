@@ -15,7 +15,9 @@ defineProps<{
 
 const { user } = storeToRefs(useUserStore())
 
-const emit = defineEmits(['update:isOpen'])
+const emit = defineEmits<{
+  'update:isOpen': [boolean]
+}>()
 
 const sidebarRef = ref()
 const closeSidebar = () => {

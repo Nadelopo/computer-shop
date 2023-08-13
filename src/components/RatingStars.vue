@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 
-const props = withDefaults(
-  defineProps<{
-    modelValue: number
-    static?: boolean
-  }>(),
-  {
-    static: true
-  }
-)
+type Props = {
+  modelValue: number
+  static?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  static: true
+})
 
 const emit = defineEmits(['update:modelValue'])
 

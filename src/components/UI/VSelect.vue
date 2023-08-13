@@ -13,7 +13,9 @@ const props = withDefaults(defineProps<Props>(), {
   required: true
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  'update:modelValue': [string | number | boolean]
+}>()
 
 defineOptions({
   inheritAttrs: false

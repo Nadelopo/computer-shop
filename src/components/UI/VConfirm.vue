@@ -10,16 +10,14 @@ type Props = {
   width?: string
 }
 
-type Emit = {
-  ok: []
-  cancel: []
-}
-
 withDefaults(defineProps<Props>(), {
   type: 'primary'
 })
 
-const emit = defineEmits<Emit>()
+const emit = defineEmits<{
+  ok: []
+  cancel: []
+}>()
 
 defineOptions({
   inheritAttrs: false
