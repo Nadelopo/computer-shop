@@ -4,11 +4,11 @@ import { ContentLoader } from 'vue-content-loader'
 
 <template>
   <content-loader
+    :speed="1"
     class="skeleton"
     viewBox="0 0 290 600"
-    :speed="2"
     primary-color="#e8e8e8"
-    secondary-color="#ecebeb"
+    secondary-color="#e8e8e882"
   >
     <rect x="70" y="20" rx="8" ry="8" width="150" height="24" />
     <rect x="0" y="60" rx="8" ry="8" width="104" height="42" />

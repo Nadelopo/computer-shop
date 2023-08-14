@@ -51,7 +51,7 @@ onBeforeMount(async () => {
 <style scoped lang="sass">
 .grid
   display: grid
-  grid-template-columns: 300px 1fr
+  grid-template-columns: 240px 1fr
   gap: 20px
 
 

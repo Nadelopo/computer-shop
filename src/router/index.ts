@@ -41,7 +41,7 @@ export const routes: RouteRecordRaw[] = [
     path: '/favourites',
     name: 'Favourites',
     meta: { auth: true },
-    component: () => import('@/pages/Favourites.vue')
+    component: () => import('@/pages/Favourites/Favourites.vue')
   },
   {
     path: '/comparison',
