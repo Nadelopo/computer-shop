@@ -43,9 +43,9 @@ const loadData = async () => {
   }
 }
 
-loadData()
-
-watch(() => route.params.productId, loadData)
+watch(() => route.params.productId, loadData, {
+  immediate: true
+})
 
 const updateProductRating = (newData: UpdateProductRating) => {
   if (product.value) {

@@ -94,27 +94,23 @@ export const useProductsStore = defineStore('products', () => {
     productId: number
   ): Promise<Ref<ProductWithSpecifications | null>> {
     const product = ref<ProductWithSpecifications | null>(null)
-    const data = await getOneById<ProductReadWithDetails>(
-      'products',
-      productId,
-      {
-        select: '*, categories(id, enTitle), manufacturers(id, title)'
-      }
-    )
 
-    if (data) {
-      const { data: specifications } =
-        await getAll<SpecificationReadWithDetails>('specifications', {
-          match: { productId: productId },
-          select: '*, category_specifications(id, title, units, visible)',
-          order: {
-            value: 'categorySpecificationsId'
-          }
-        })
-      if (specifications) {
-        product.value = { ...data, specifications }
-      }
+    const [data, { data: specifications }] = await Promise.all([
+      getOneById<ProductReadWithDetails>('products', productId, {
+        select: '*, categories(id, enTitle), manufacturers(id, title)'
+      }),
+      getAll<SpecificationReadWithDetails>('specifications', {
+        match: { productId: productId },
+        select: '*, category_specifications(id, title, units, visible)',
+        order: {
+          value: 'categorySpecificationsId'
+        }
+      })
+    ])
+    if (data && specifications) {
+      product.value = { ...data, specifications }
     }
+
     return product
   }
 

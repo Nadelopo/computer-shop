@@ -36,38 +36,37 @@ watch(select, (cur) => {
 
 const create = async () => {
   const data = await createCategorySpecifications(form.value)
+  if (!data) return
 
-  if (data) {
-    const { data: products } = await getAll('products', {
-      match: { categoryId: data.categoryId }
+  const { data: products } = await getAll('products', {
+    match: { categoryId: data.categoryId }
+  })
+
+  const initialSpecificationsValue: SpecificationCreate[] = []
+  for (const product of products || []) {
+    initialSpecificationsValue.push({
+      productId: product.id,
+      categorySpecificationsId: data.id,
+      valueNumber: data.type ? 0 : null,
+      valueString: data.type ? null : data.variantsValues[0]
     })
-
-    const initialSpecificationsValue: SpecificationCreate[] = []
-    for (const product of products || []) {
-      initialSpecificationsValue.push({
-        productId: product.id,
-        categorySpecificationsId: data.id,
-        valueNumber: data.type ? 0 : null,
-        valueString: data.type ? null : data.variantsValues[0]
-      })
-    }
-
-    createMany('specifications', initialSpecificationsValue)
-
-    form.value = {
-      categoryId: 0,
-      title: '',
-      enTitle: '',
-      type: true,
-      visible: false,
-      units: '',
-      step: 1,
-      min: 0,
-      max: 64,
-      variantsValues: null
-    }
-    select.value = 'выберите категорию'
   }
+
+  createMany('specifications', initialSpecificationsValue)
+
+  form.value = {
+    categoryId: 0,
+    title: '',
+    enTitle: '',
+    type: true,
+    visible: false,
+    units: '',
+    step: 1,
+    min: 0,
+    max: 64,
+    variantsValues: null
+  }
+  select.value = 'выберите категорию'
 }
 
 const addVarianValues = () => {

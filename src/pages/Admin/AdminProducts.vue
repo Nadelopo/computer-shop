@@ -145,24 +145,24 @@ watch(manufacturerSelect, (cur) => {
 
 const create = async () => {
   const data = await createProduct(product.value)
-  if (data) {
-    const productSpecifications = categoryFormSpecifications.value.map((e) => {
-      return { ...e, productId: data.id }
-    })
-    await createSpecifications(productSpecifications)
-    setProducts()
-    product.value = { ...copyForm }
-    categoryFormSpecifications.value = categoryFormSpecifications.value.map(
-      (e, i) => {
-        const specificationsValue = categorySpecifications.value[i]
-        if (specificationsValue.type) {
-          return { ...e, valueNumber: specificationsValue.min }
-        } else {
-          return { ...e, valueString: '' }
-        }
+  if (!data) return
+
+  const productSpecifications = categoryFormSpecifications.value.map((e) => {
+    return { ...e, productId: data.id }
+  })
+  await createSpecifications(productSpecifications)
+  setProducts()
+  product.value = { ...copyForm }
+  categoryFormSpecifications.value = categoryFormSpecifications.value.map(
+    (e, i) => {
+      const specificationsValue = categorySpecifications.value[i]
+      if (specificationsValue.type) {
+        return { ...e, valueNumber: specificationsValue.min }
+      } else {
+        return { ...e, valueString: '' }
       }
-    )
-  }
+    }
+  )
 }
 </script>
 

@@ -55,20 +55,20 @@ const manufacturerSelect = ref(0)
 const loading = ref<'loading' | 'success'>('loading')
 
 onBeforeMount(async () => {
-  const productData = await getOneById<ProductReadWithDetails>('products', id, {
-    select: '*, manufacturers(id, title), categories(id, enTitle)'
-  })
-  const { data: specifications } = await getAll<ProductSpecificationOnEdit>(
-    'specifications',
-    {
+  const [productData, { data: specifications }] = await Promise.all([
+    getOneById<ProductReadWithDetails>('products', id, {
+      select: '*, manufacturers(id, title), categories(id, enTitle)'
+    }),
+    getAll<ProductSpecificationOnEdit>('specifications', {
       match: { productId: id },
       select:
         '*, category_specifications(id, title, visible, units, type, step, min, max, variantsValues)',
       order: {
         value: 'categorySpecificationsId'
       }
-    }
-  )
+    })
+  ])
+
   if (productData && specifications) {
     img.value = productData.img
     manufacturerSelect.value = productData.manufacturers.id
@@ -106,8 +106,11 @@ const save = async () => {
       })
 
     product.value = null
-    await updateProductSpecifications(newSpecifications)
-    await updateProduct(id, productU)
+    await Promise.all([
+      updateProductSpecifications(newSpecifications),
+      updateProduct(id, productU)
+    ])
+
     router.push({
       name: 'AdminProducts',
       params: { category: categoryTitle, id: categoryId }

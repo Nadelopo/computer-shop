@@ -61,16 +61,19 @@ const watcher = watch(
     }
     loading.value = 'loading'
 
-    const { data: productData } = await getAll<Product>('products', {
-      select: '*, categories(id, title), manufacturers(id, title)',
-      in: ['id', productIds]
-    })
-    const { data: specificationsData } = await getAll('specifications', {
-      in: ['productId', productIds],
-      order: {
-        value: 'categorySpecificationsId'
-      }
-    })
+    const [{ data: productData }, { data: specificationsData }] =
+      await Promise.all([
+        getAll<Product>('products', {
+          select: '*, categories(id, title), manufacturers(id, title)',
+          in: ['id', productIds]
+        }),
+        getAll('specifications', {
+          in: ['productId', productIds],
+          order: {
+            value: 'categorySpecificationsId'
+          }
+        })
+      ])
 
     const modifiedProducts: ComparisonProduct[] = []
 

@@ -3,8 +3,8 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { supabase } from '@/supabase'
+import { createOne } from '@/utils/queries/db'
 import { VButton } from '@/components/UI'
-import type { UserCreate } from '@/types/tables/users.types'
 
 const router = useRouter()
 
@@ -25,7 +25,9 @@ const signIn = async () => {
       console.log(error)
       toast.warning('Неверная почта или пароль')
     }
-    if (user) router.push({ name: 'Home' })
+    if (user) {
+      router.push({ name: 'Home' })
+    }
   } else {
     toast.warning('Не все поля заполнены')
   }
@@ -39,19 +41,16 @@ const signUp = async () => {
     })
     if (error) {
       console.log(error)
-
       toast.warning('Пользователь уже зарегестрирован')
     }
-    if (user) {
-      const { error, data: insertData } = await supabase
-        .from<UserCreate>('users')
-        .insert({
-          name: name.value,
-          email: email.value,
-          id: user.id
-        })
-      if (error) console.log(error)
-      if (insertData) router.push({ name: 'Home' })
+    if (!user) return
+    const insertData = await createOne('users', {
+      name: name.value,
+      email: email.value,
+      id: user.id
+    })
+    if (insertData) {
+      router.push({ name: 'Home' })
     }
   } else {
     toast.warning('Не все поля заполнены')
