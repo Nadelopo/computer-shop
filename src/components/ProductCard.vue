@@ -65,7 +65,7 @@ const titleActive = ref(true)
       />
     </div>
     <div class="flex justify-between">
-      <b class="text-xl">{{ formatPrice(item.price) }}</b>
+      <b class="text-xl self-center">{{ formatPrice(item.price) }}</b>
       <div>
         <button-cart :product-id="item.id" />
       </div>
@@ -84,7 +84,9 @@ const titleActive = ref(true)
   background: #fff
   transition: .3s
   cursor: pointer
-  width: 270px
+  width: 100%
+  max-width: 280px
+  min-width: 240px
   &:hover
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px
     .title__active

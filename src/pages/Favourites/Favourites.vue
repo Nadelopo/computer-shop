@@ -85,7 +85,7 @@ const deleteItem = async (id: number) => {
             @on-delete-item="deleteItem"
           />
         </template>
-        <template v-if="loading === 'success'">
+        <template v-else-if="loading === 'loading'">
           <skeleton-card v-for="i in 8" :key="i" />
         </template>
       </div>
@@ -97,10 +97,19 @@ const deleteItem = async (id: number) => {
 .favourites
   display: grid
   grid-template-columns: 200px 1fr
-  gap: 40px
+  gap: 20px
+  @media (width < 768px)
+    grid-template-columns: 1fr
+    grid-template-rows: auto 1fr
   .cards
     display: grid
     grid-template-columns: repeat(4, 1fr)
-    gap: 20px
+    gap: 30px 20px
     justify-items: center
+    @media (width < 1536px)
+      grid-template-columns: repeat(3, 1fr)
+    @media (width < 1024px)
+      grid-template-columns: repeat(2, 1fr)
+    @media (width < 530px)
+      grid-template-columns: 1fr
 </style>
