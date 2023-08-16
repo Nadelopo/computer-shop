@@ -17,7 +17,8 @@ onBeforeMount(async () => {
       order: {
         value: 'created_at',
         ascending: false
-      }
+      },
+      limit: 3
     })
     if (data) {
       reviews.value = data

@@ -1,12 +1,12 @@
 import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
-import Auth from '@/pages/Auth.vue'
-import Home from '@/pages/Home.vue'
+import { useToast } from 'vue-toastification'
 import { supabase } from '@/supabase'
 import { getOneById } from '@/utils/queries/db'
-import { Role, type UserRead } from '@/types/tables/users.types'
 import { adminRoutes } from './admin'
 import { profileRoutes } from './profile'
-import { useToast } from 'vue-toastification'
+import Auth from '@/pages/Auth.vue'
+import Home from '@/pages/Home.vue'
+import { Role, type UserRead } from '@/types/tables/users.types'
 
 export const routes: RouteRecordRaw[] = [
   ...adminRoutes,
@@ -69,12 +69,13 @@ router.beforeEach(async (to, from) => {
     if (!from.name) return { name: 'Home' }
     else return false
   }
+  const requireAdmin = to.matched.some((record) => record.meta.admin)
+  if (!requireAdmin) return true
   const data = await getOneById<{ role: UserRead['role'] }>('users', user.id, {
     select: 'role'
   })
   if (!data) return false
-  const requireAdmin = to.matched.some((record) => record.meta.admin)
-  if (requireAdmin && data.role !== Role.ADMIN) return { name: 'Home' }
+  if (data.role !== Role.ADMIN) return { name: 'Home' }
   return true
 })
 
