@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
 import { VButton } from '@/components/UI'
-import CartSVG from '@/assets/icons/cartInButton.svg?component'
+import { CartInButtonSvg } from '@/assets/icons'
 
 const props = defineProps<{
   productId: number
@@ -38,6 +38,6 @@ const width = computed(() => props.width + 'px')
     в корзину
   </v-button>
   <v-button v-else :width="width" :loading="loading" @click.prevent="add">
-    <CartSVG width="16" fill="#fff" class="mr-2" /> купить
+    <cart-in-button-svg width="16" fill="#fff" class="mr-2" /> купить
   </v-button>
 </template>

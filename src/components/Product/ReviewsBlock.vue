@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import RatingStars from '../RatingStars.vue'
-import AvatarSvg from '@/assets/icons/avatar.svg?component'
-import ArrowSVG from '@/assets/icons/arrow.svg?component'
+import { AvatarSvg, ArrowSvg } from '@/assets/icons'
 import type { ReviewReadWithDetails } from '@/types/tables/reviews.types'
 
 type Props = {
@@ -58,7 +57,7 @@ const arrowSvgClasse = (review: ReviewReadWithDetails, type: boolean) => {
 <template>
   <div class="review__root">
     <div class="flex gap-x-6">
-      <AvatarSvg width="40" fill="#cdcdcd" />
+      <avatar-svg width="40" fill="#cdcdcd" />
       <div class="flex items-center">{{ review.users.name }}</div>
       <div class="flex gap-x-2 items-center">
         <RatingStars :model-value="review.rating" />
@@ -82,7 +81,7 @@ const arrowSvgClasse = (review: ReviewReadWithDetails, type: boolean) => {
     <div class="flex gap-x-6 mt-4">
       <div v-for="(el, i) in ratingBtns(review)" :key="i" class="flex gap-x-2">
         <button class="review__root__arrow" @click="onClick(review, el.type)">
-          <ArrowSVG :class="arrowSvgClasse(review, el.type)" />
+          <arrow-svg :class="arrowSvgClasse(review, el.type)" />
         </button>
         <span>{{ el.value }}</span>
       </div>

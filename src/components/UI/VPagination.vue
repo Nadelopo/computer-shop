@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { arrayRange } from '@/utils/arrayRange'
-import ArrowSVG from '@/assets/icons/arrow.svg'
+import { ArrowSvg } from '@/assets/icons'
 import VPopup from './VPopup.vue'
 
 const props = defineProps<{
@@ -68,7 +68,7 @@ const setPage = (page: number) => {
       class="prev"
       @click="setPrev"
     >
-      <ArrowSVG transform="rotate(-90)" />
+      <arrow-svg transform="rotate(-90)" />
     </button>
     <template v-for="(value, i) in items" :key="i">
       <button
@@ -101,7 +101,7 @@ const setPage = (page: number) => {
       class="next"
       @click="setNext"
     >
-      <ArrowSVG transform="rotate(90)" />
+      <arrow-svg transform="rotate(90)" />
     </button>
   </div>
 </template>

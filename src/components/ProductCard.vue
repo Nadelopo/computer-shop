@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { formatPrice } from '@/utils/formatPrice'
-import ButtonCart from '@/components/ButtonCart.vue'
-import CrossSVG from '@/assets/icons/cross.svg?component'
-import type { ProductCardData } from '@/pages/Favourites/types'
 import IconButtonFavouritesComparison from './IconButtonFavouritesComparison.vue'
+import ButtonCart from '@/components/ButtonCart.vue'
+import { CrossSvg } from '@/assets/icons'
+import type { ProductCardData } from '@/pages/Favourites/types'
 
 type Props = {
   item: ProductCardData
@@ -40,7 +40,7 @@ const titleActive = ref(true)
   >
     <div class="flex">
       <button class="cross">
-        <CrossSVG
+        <cross-svg
           v-if="props.delete"
           @mouseenter="titleActive = false"
           @mouseleave="titleActive = true"

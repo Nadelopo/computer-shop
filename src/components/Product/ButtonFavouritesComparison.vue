@@ -5,8 +5,7 @@ import { useUserStore } from '@/stores/userStore'
 import { useAddFavouritesAndComparison } from '@/utils/useAddFavouritesAndComparison'
 import { localStorageGet } from '@/utils/localStorage'
 import { VButton } from '@/components/UI'
-import FavouriteSVG from '@/assets/icons/favourites.svg?component'
-import ComparisonSVG from '@/assets/icons/comparison.svg?component'
+import { FavouriteSvg, ComparisonSvg } from '@/assets/icons'
 
 const props = defineProps<{
   productId: number
@@ -38,7 +37,7 @@ const add = async () => {
   )
   loading.value = false
 }
-const Icon = props.listTitle === 'favourites' ? FavouriteSVG : ComparisonSVG
+const Icon = props.listTitle === 'favourites' ? FavouriteSvg : ComparisonSvg
 const notInListTitle =
   props.listTitle === 'favourites' ? 'в избранное' : 'в сравнение'
 const inListTitle =

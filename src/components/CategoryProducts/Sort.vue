@@ -3,7 +3,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useFilterStore } from '@/stores/filterStore'
 import { VButton } from '@/components/UI'
-import ArrowSVG from '@/assets/icons/arrow.svg?component'
+import { ArrowSvg } from '@/assets/icons'
 
 const route = useRoute()
 const router = useRouter()
@@ -32,23 +32,23 @@ const sort = async (type: SortType) => {
     <div class="font-medium">соритровка по:</div>
     <v-button min-width="auto" @click="sort('price')">
       <span class="mr-3">цене</span>
-      <ArrowSVG :class="!sortAscents.price && 'down'" />
+      <arrow-svg :class="!sortAscents.price && 'down'" />
     </v-button>
     <v-button @click="sort('countReviews')">
       <span class="mr-3">отзывам</span>
-      <ArrowSVG :class="!sortAscents.countReviews && 'down'" />
+      <arrow-svg :class="!sortAscents.countReviews && 'down'" />
     </v-button>
     <v-button @click="sort('discount')">
       <span class="mr-3"> скидке</span>
-      <ArrowSVG :class="!sortAscents.discount && 'down'" />
+      <arrow-svg :class="!sortAscents.discount && 'down'" />
     </v-button>
     <v-button @click="sort('popularity')">
       <span class="mr-3"> популярности</span>
-      <ArrowSVG :class="!sortAscents.popularity && 'down'" />
+      <arrow-svg :class="!sortAscents.popularity && 'down'" />
     </v-button>
     <v-button @click="sort('rating')">
       <span class="mr-3"> оценке</span>
-      <ArrowSVG :class="!sortAscents.rating && 'down'" />
+      <arrow-svg :class="!sortAscents.rating && 'down'" />
     </v-button>
   </div>
 </template>

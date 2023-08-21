@@ -1,35 +1,37 @@
 <script setup lang="ts">
-import HomeSVG from '@/assets/icons/home.svg?component'
-import FavouritesSVG from '@/assets/icons/favourites.svg?component'
-import CartSVG from '@/assets/icons/cart.svg?component'
-import ComparisonSVG from '@/assets/icons/comparison.svg?component'
-import AvatarSVG from '@/assets/icons/avatar.svg?component'
+import {
+  HomeSvg,
+  FavouriteSvg,
+  CartSvg,
+  ComparisonSvg,
+  AvatarSvg
+} from '@/assets/icons'
 
 const links = [
   {
     name: 'Главная',
     page: 'Home',
-    svg: HomeSVG
+    svg: HomeSvg
   },
   {
     name: 'Избранное',
     page: 'Favourites',
-    svg: FavouritesSVG
+    svg: FavouriteSvg
   },
   {
     name: 'Корзина',
     page: 'Cart',
-    svg: CartSVG
+    svg: CartSvg
   },
   {
     name: 'Сравнение',
     page: 'Comparison',
-    svg: ComparisonSVG
+    svg: ComparisonSvg
   },
   {
     name: 'Профиль',
     page: 'ProfileMain',
-    svg: AvatarSVG
+    svg: AvatarSvg
   }
 ]
 </script>

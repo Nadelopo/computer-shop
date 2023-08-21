@@ -2,8 +2,7 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { formatPrice } from '@/utils/formatPrice'
-import ArrowSVG from '@/assets/icons/arrow.svg?component'
-import CrossSVG from '@/assets/icons/cross.svg?component'
+import { ArrowSvg, CrossSvg } from '@/assets/icons'
 import type {
   ComparisonProduct,
   BasicProductData,
@@ -233,7 +232,7 @@ const deleteItem = async (index: number) => {
             >
               <template v-if="data.title === ''">
                 <img :src="String(value)" alt="..." />
-                <CrossSVG class="cross" @click="deleteItem(j)" />
+                <cross-svg class="cross" @click="deleteItem(j)" />
               </template>
               <template v-else>
                 <span>{{ value }} </span>
@@ -252,14 +251,14 @@ const deleteItem = async (index: number) => {
             class="control__btn prev"
             @click="updateItemsList('prev')"
           >
-            <ArrowSVG transform="rotate(-90)" />
+            <arrow-svg transform="rotate(-90)" />
           </button>
           <button
             v-if="showNextBtn"
             class="control__btn next"
             @click="updateItemsList('next')"
           >
-            <ArrowSVG transform="rotate(90)" />
+            <arrow-svg transform="rotate(90)" />
           </button>
         </template>
       </div>

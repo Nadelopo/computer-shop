@@ -8,7 +8,7 @@ import { getAll, updateOne } from '@/utils/queries/db'
 import { localStorageGet, localStorageSet } from '@/utils/localStorage'
 import ComparisonList from '@/components/Comparison/ComparisonList.vue'
 import { VTabs, VCheckbox, VLoader, VButton } from '@/components/UI'
-import TrashSVG from '@/assets/icons/trash.svg?component'
+import { TrashSvg } from '@/assets/icons'
 import type { ProductReadWithDetails } from '@/types/tables/products.types'
 import type {
   Category,
@@ -237,7 +237,7 @@ const deleteItem = async (item: ComparisonProduct) => {
       />
       <div class="comparre__actions">
         <v-button variant="noactive" class="button" @click="clear">
-          <TrashSVG />
+          <trash-svg />
           очистить список
         </v-button>
         <v-checkbox

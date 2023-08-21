@@ -6,10 +6,7 @@ import { supabase } from '@/supabase'
 import { useUserStore } from '../stores/userStore'
 import { VPopup } from '@/components/UI'
 import Sidebar from './Sidebar.mobile.vue'
-import UserSvg from '@/assets/icons/avatar.svg?component'
-import FavouritesSVG from '@/assets/icons/favourites.svg?component'
-import CartSVG from '@/assets/icons/cart.svg?component'
-import ComparisonSVG from '@/assets/icons/comparison.svg?component'
+import { AvatarSvg, FavouriteSvg, CartSvg, ComparisonSvg } from '@/assets/icons'
 import { Role } from '@/types/tables/users.types'
 
 const { user } = storeToRefs(useUserStore())
@@ -86,7 +83,7 @@ const links = [
           <div>
             <v-popup>
               <template #active>
-                <UserSvg width="25" class="user__svg" />
+                <avatar-svg width="25" class="user__svg" />
               </template>
               <template #content>
                 <router-link
@@ -104,19 +101,19 @@ const links = [
             </v-popup>
           </div>
           <router-link :to="{ name: 'Favourites' }">
-            <FavouritesSVG fill="#fff" width="25" class="cursor-pointer" />
+            <favourite-svg fill="#fff" width="25" class="cursor-pointer" />
             <span v-if="user?.favourites.length" class="count">
               {{ user.favourites.length }}
             </span>
           </router-link>
           <router-link :to="{ name: 'Comparison' }">
-            <ComparisonSVG width="25" />
+            <comparison-svg width="25" />
             <span v-if="user?.comparison.length" class="count">
               {{ user.comparison.length }}
             </span>
           </router-link>
           <router-link :to="{ name: 'Cart' }">
-            <CartSVG height="25" />
+            <cart-svg height="25" />
           </router-link>
         </div>
       </div>

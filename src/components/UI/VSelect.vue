@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onUnmounted, ref, watchEffect } from 'vue'
 import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
-import ArrowSVG from '@/assets/icons/arrow.svg?component'
+import { ArrowSvg } from '@/assets/icons'
 
 type Props = {
   modelValue: string | number | boolean | null
@@ -132,7 +132,7 @@ const required = computed(() => {
       >
         <div class="head">
           <span>{{ selected ?? 'Select' }}</span>
-          <ArrowSVG class="svg" :class="{ active }" />
+          <arrow-svg class="svg" :class="{ active }" />
         </div>
       </button>
       <transition name="list">

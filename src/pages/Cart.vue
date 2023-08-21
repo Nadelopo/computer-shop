@@ -3,7 +3,7 @@ import { onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
 import { VButton, VLoader } from '@/components/UI'
-import TrashSVG from '@/assets/icons/trash.svg?component'
+import { TrashSvg } from '@/assets/icons'
 
 const {
   setCartItemsWithDetails,
@@ -55,7 +55,7 @@ onBeforeMount(async () => {
             <div>{{ product.count }}</div>
             <v-button @click="increaseItemCount(product)"> + </v-button>
             <v-button @click="deleteItem(product.id)">
-              <TrashSVG />
+              <trash-svg />
             </v-button>
           </div>
         </div>

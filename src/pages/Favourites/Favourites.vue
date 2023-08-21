@@ -6,7 +6,7 @@ import { getAll, updateOne } from '@/utils/queries/db'
 import { VButton } from '@/components/UI'
 import ProductCard from '@/components/ProductCard.vue'
 import SkeletonCard from '@/components/SkeletonCard.vue'
-import TrashSVG from '@/assets/icons/trash.svg?component'
+import { TrashSvg } from '@/assets/icons'
 import type { ProductCardData } from './types'
 
 const { user } = storeToRefs(useUserStore())
@@ -67,7 +67,7 @@ const deleteItem = async (id: number) => {
       <div class="sidebar">
         <div class="text-3xl font-bold mb-8">Избранное</div>
         <v-button v-if="loading === 'success'" class="noactive" @click="clear">
-          <TrashSVG />
+          <trash-svg />
           очистить список
         </v-button>
         <div v-else-if="loading === 'empty'">
