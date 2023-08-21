@@ -235,7 +235,7 @@ const deleteItem = async (item: ComparisonProduct) => {
         "
         query-param-name="category_id"
       />
-      <div class="comparre__actions">
+      <div class="compare__actions">
         <v-button variant="noactive" class="button" @click="clear">
           <trash-svg />
           очистить список
@@ -264,7 +264,7 @@ const deleteItem = async (item: ComparisonProduct) => {
 </template>
 
 <style scoped lang="sass">
-.comparre__actions
+.compare__actions
   display: flex
   gap: 16px
   align-items: center

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue'
-import { useElementSize } from '@vueuse/core'
+import { ref, computed, watch, nextTick, ComponentPublicInstance } from 'vue'
+import { useResizeObserver } from '@vueuse/core'
 import { formatPrice } from '@/utils/formatPrice'
 import { ArrowSvg, CrossSvg } from '@/assets/icons'
 import type {
@@ -58,35 +58,28 @@ const categoryProducts = computed((): ComparisonProduct[] => {
   }
 })
 
-const comparisonRef = ref<HTMLElement>()
-const { width: comparisonWidth } = useElementSize(comparisonRef)
 const translateCells = ref(0)
 const widthCell = ref(235)
-const countItems = ref(0)
-
-const isMobileWidth = computed(() => {
-  return comparisonWidth.value <= 620
+const countVisibleItems = ref(0)
+const cellRef = ref<HTMLElement>()
+useResizeObserver(cellRef, (entries) => {
+  const borderBoxSize = entries[0].borderBoxSize
+  if (!borderBoxSize?.length) return
+  widthCell.value = borderBoxSize[0].inlineSize
 })
-
-const calculateWidths = () => {
-  if (!comparisonRef.value) return
-
-  let widthContainer = 0
-  if (isMobileWidth.value) {
-    widthCell.value = comparisonWidth.value / 2
-    widthContainer = comparisonWidth.value
-  } else {
-    widthCell.value = 235
-    widthContainer = comparisonWidth.value - widthCell.value
-  }
-
-  countItems.value = Math.floor(widthContainer / widthCell.value)
-}
-
-watch(comparisonWidth, () => {
-  calculateWidths()
+const comparisonRef = ref<HTMLElement>()
+useResizeObserver(comparisonRef, (entries) => {
+  setCountVisibleItems(entries[0].contentRect.width)
   translateCells.value = 0
 })
+
+const setCountVisibleItems = (comparisonWidth: number) => {
+  if (comparisonWidth <= 620) {
+    countVisibleItems.value = 2
+    return
+  }
+  countVisibleItems.value = Math.floor(comparisonWidth / widthCell.value) - 1
+}
 
 const productTopData = computed(() => {
   return [
@@ -155,12 +148,13 @@ const updateItemsList = (action: 'prev' | 'next') => {
 }
 
 const showPrevBtn = computed(() => {
-  if (categoryProducts.value.length < countItems.value) return false
+  if (categoryProducts.value.length < countVisibleItems.value) return false
   return translateCells.value !== 0
 })
 const showNextBtn = computed(() => {
-  if (categoryProducts.value.length < countItems.value) return false
-  const outsideItemsCount = categoryProducts.value.length - countItems.value
+  if (categoryProducts.value.length < countVisibleItems.value) return false
+  const outsideItemsCount =
+    categoryProducts.value.length - countVisibleItems.value
   return outsideItemsCount * widthCell.value !== Math.abs(translateCells.value)
 })
 
@@ -197,16 +191,19 @@ const setRowColor = (e: Event, value: 'add' | 'remove') => {
   }
 }
 
-const styles = computed(() => {
-  const translateX = translateCells.value + 'px'
-  const width = widthCell.value + 'px'
-  return { translateX, width }
+const translate = computed(() => {
+  return translateCells.value + 'px'
 })
 
 const deleteItem = async (index: number) => {
   const item = categoryProducts.value[index]
   emit('deleteItem', item)
   translateCells.value = 0
+}
+
+const setCellRef = (val: Element | ComponentPublicInstance | null) => {
+  if (cellRef.value) return
+  cellRef.value = val as HTMLElement
 }
 </script>
 
@@ -221,7 +218,7 @@ const deleteItem = async (index: number) => {
       >
         <div class="cell__title">{{ data.title }}</div>
         <div class="wrapper__cells">
-          <div v-if="isMobileWidth" class="title__mobile">
+          <div class="title__mobile">
             {{ data.title }}
           </div>
           <div class="cells">
@@ -231,7 +228,7 @@ const deleteItem = async (index: number) => {
               class="cell flex items-center"
             >
               <template v-if="data.title === ''">
-                <img :src="String(value)" alt="..." />
+                <img :src="value" alt="..." />
                 <cross-svg class="cross" @click="deleteItem(j)" />
               </template>
               <template v-else>
@@ -275,7 +272,7 @@ const deleteItem = async (index: number) => {
           {{ currentCategorySpecifications[i].title }}
         </div>
         <div class="wrapper__cells">
-          <div v-if="isMobileWidth" class="title__mobile">
+          <div class="title__mobile">
             {{ currentCategorySpecifications[i].title }}
           </div>
           <div class="cells">
@@ -305,11 +302,16 @@ const deleteItem = async (index: number) => {
         >
           <div class="cell__title">{{ el.title }}</div>
           <div class="wrapper__cells">
-            <div v-if="isMobileWidth" class="title__mobile">
+            <div class="title__mobile">
               {{ el.title }}
             </div>
             <div class="cells">
-              <div v-for="(subEl, j) in el.value" :key="j" class="cell">
+              <div
+                v-for="(subEl, j) in el.value"
+                :key="j"
+                :ref="setCellRef"
+                class="cell"
+              >
                 {{ subEl }} {{ el.units }}
               </div>
             </div>
@@ -343,15 +345,17 @@ const deleteItem = async (index: number) => {
       overflow: visible
     .title__mobile
       font-weight: 500
+      display: none
       @media (width <= 767px)
         padding-top: 20px
+        display: block
   .cells
     display: flex
     transition: v-bind(transition)
     position: relative
-    translate: v-bind('styles.translateX')
+    translate: v-bind(translate)
   .cell, .cell__title
-    width: v-bind('styles.width')
+    width: 235px
     padding: 20px 10px 20px 0
     min-width: 235px
     img
@@ -360,8 +364,11 @@ const deleteItem = async (index: number) => {
     @media (width <= 767px)
       padding-top: 0px
       min-width: auto
+      width: 308px
       &:has(img) img
         padding-right: 10px
+    @media (width <= 640px)
+      width: Calc(50vw - 12px)
   .cell__title
     z-index: 10
     box-sizing: content-box

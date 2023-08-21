@@ -25,30 +25,42 @@ const sort = async (type: SortType) => {
     }
   })
 }
+
+const sortData: { type: SortType; text: string }[] = [
+  {
+    type: 'price',
+    text: 'цене'
+  },
+  {
+    type: 'countReviews',
+    text: 'отзывам'
+  },
+  {
+    type: 'discount',
+    text: 'скидке'
+  },
+  {
+    type: 'popularity',
+    text: 'популярности'
+  },
+  {
+    type: 'rating',
+    text: 'оценке'
+  }
+]
 </script>
 
 <template>
   <div class="sort">
     <div class="font-medium">соритровка по:</div>
-    <v-button min-width="auto" @click="sort('price')">
-      <span class="mr-3">цене</span>
-      <arrow-svg :class="!sortAscents.price && 'down'" />
-    </v-button>
-    <v-button @click="sort('countReviews')">
-      <span class="mr-3">отзывам</span>
-      <arrow-svg :class="!sortAscents.countReviews && 'down'" />
-    </v-button>
-    <v-button @click="sort('discount')">
-      <span class="mr-3"> скидке</span>
-      <arrow-svg :class="!sortAscents.discount && 'down'" />
-    </v-button>
-    <v-button @click="sort('popularity')">
-      <span class="mr-3"> популярности</span>
-      <arrow-svg :class="!sortAscents.popularity && 'down'" />
-    </v-button>
-    <v-button @click="sort('rating')">
-      <span class="mr-3"> оценке</span>
-      <arrow-svg :class="!sortAscents.rating && 'down'" />
+    <v-button
+      v-for="(item, i) in sortData"
+      :key="i"
+      :min-width="i === 0 ? 'auto' : undefined"
+      @click="sort(item.type)"
+    >
+      <span class="mr-3">{{ item.text }}</span>
+      <arrow-svg :class="sortAscents[item.type] === false && 'down'" />
     </v-button>
   </div>
 </template>
