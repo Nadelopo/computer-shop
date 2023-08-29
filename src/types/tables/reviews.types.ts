@@ -1,6 +1,6 @@
 export type ReviewRead = Required<ReviewCreate>
 
-export type ReviewCreateRating = 1 | 2 | 3 | 4 | 5
+export type ReviewRating = 1 | 2 | 3 | 4 | 5
 
 export type UsersRated = {
   userId: string
@@ -29,7 +29,7 @@ export type ReviewCreate = {
   id?: number
   likes?: number
   productId: number
-  rating: ReviewCreateRating
+  rating: ReviewRating
   userId: string
   usersRated?: UsersRated[]
   categoryId: number

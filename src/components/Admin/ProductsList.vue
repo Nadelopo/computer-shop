@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { removeFromStorage } from '@/utils/queries/storage'
 import { getImgName } from '@/utils/getImgName'
-import { deleteOne } from '@/utils/queries/db'
+import { deleteOneById } from '@/utils/queries/db'
 import { VButton, VLoader, VConfirm } from '@/components/UI'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
@@ -30,7 +30,7 @@ const showModal = ref(false)
 
 const deleteProduct = async (id: number, img: string) => {
   showModal.value = true
-  const data = await deleteOne('products', id)
+  const data = await deleteOneById('products', id)
   if (data) {
     emit(
       'update:products',

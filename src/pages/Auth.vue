@@ -17,7 +17,10 @@ const toast = useToast()
 
 const signIn = async () => {
   if (email.value && password.value) {
-    const { user, error } = await supabase.auth.signIn({
+    const {
+      data: { user },
+      error
+    } = await supabase.auth.signInWithPassword({
       email: email.value,
       password: password.value
     })
@@ -35,7 +38,10 @@ const signIn = async () => {
 
 const signUp = async () => {
   if (email.value && password.value && name.value) {
-    const { user, error } = await supabase.auth.signUp({
+    const {
+      data: { user },
+      error
+    } = await supabase.auth.signUp({
       email: email.value,
       password: password.value
     })

@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import { createOne, getAll, updateOneById } from '@/utils/queries/db'
 import type {
   CategoryCreate,
   CategoryRead,
@@ -9,7 +10,6 @@ import type {
   CategorySpecificationCreate,
   CategorySpecificationRead
 } from '@/types/tables/categorySpecifications.types'
-import { createOne, getAll, updateOne } from '@/utils/queries/db'
 
 export const useCategoriesStore = defineStore('categories', () => {
   const categories = ref<CategoryRead[]>([])
@@ -35,7 +35,7 @@ export const useCategoriesStore = defineStore('categories', () => {
     category: CategoryUpdate
   ): Promise<CategoryRead | null> {
     if (category.id) {
-      const data = await updateOne('categories', category.id, category)
+      const data = await updateOneById('categories', category.id, category)
       if (data) {
         categories.value = categories.value.map((e) =>
           e.id === category.id ? { ...e, ...category } : e
@@ -49,8 +49,7 @@ export const useCategoriesStore = defineStore('categories', () => {
   async function createCategorySpecifications(
     form: CategorySpecificationCreate
   ): Promise<CategorySpecificationRead | null> {
-    const data = await createOne('category_specifications', form)
-    return data
+    return createOne('category_specifications', form)
   }
 
   async function getCategorySpecifications(

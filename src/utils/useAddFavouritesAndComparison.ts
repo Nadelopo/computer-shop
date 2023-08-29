@@ -1,5 +1,5 @@
 import { storeToRefs } from 'pinia'
-import { getOneById, updateOne } from './queries/db'
+import { getOneById, updateOneById } from './queries/db'
 import { useUserStore } from '@/stores/userStore'
 import { useToast } from 'vue-toastification'
 import { localStorageGet, localStorageSet } from './localStorage'
@@ -19,10 +19,10 @@ export const useAddFavouritesAndComparison = async (
   }
   let items: number[] = []
   if (user.value) {
-    items =
-      (await getOneById('users', user.value.id, { select: listTitle }))?.[
-        listTitle
-      ] || []
+    const data = await getOneById('users', user.value.id, listTitle)
+    if (data) {
+      items = 'favourites' in data ? data.favourites : data.comparison
+    }
   } else {
     const storageComapreList = localStorageGet<number[]>('compareList') || []
     storageComapreList.push(productId)
@@ -38,7 +38,7 @@ export const useAddFavouritesAndComparison = async (
       ? items.filter((e) => e !== productId)
       : [...items, productId]
     if (user.value) {
-      const data = await updateOne('users', user.value.id, {
+      const data = await updateOneById('users', user.value.id, {
         [listTitle]: updatedItems
       })
       if (data) {

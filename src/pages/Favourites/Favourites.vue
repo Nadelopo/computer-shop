@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
-import { getAll, updateOne } from '@/utils/queries/db'
+import { getAll, updateOneById } from '@/utils/queries/db'
 import { VButton } from '@/components/UI'
 import ProductCard from '@/components/ProductCard.vue'
 import SkeletonCard from '@/components/SkeletonCard.vue'
@@ -20,7 +20,7 @@ const watcher = watch(
   async () => {
     if (!user.value) return
     loading.value = 'loading'
-    const { data } = await getAll<ProductCardData>('products', {
+    const { data } = await getAll('products', {
       select: '*, categories(id, enTitle)',
       in: ['id', user.value.favourites]
     })
@@ -34,7 +34,7 @@ const watcher = watch(
 )
 const clear = async () => {
   if (user.value) {
-    const data = await updateOne('users', user.value.id, {
+    const data = await updateOneById('users', user.value.id, {
       favourites: []
     })
     if (data) {
@@ -47,7 +47,7 @@ const clear = async () => {
 
 const deleteItem = async (id: number) => {
   if (user.value) {
-    const data = await updateOne('users', user.value.id, {
+    const data = await updateOneById('users', user.value.id, {
       favourites: user.value.favourites.filter((e) => e !== id)
     })
     if (data) {

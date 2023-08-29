@@ -1,165 +1,163 @@
 import { supabase } from '@/supabase'
 import { formatSearch } from '../formatSearch'
-import type { PostgrestSingleResponse } from '@supabase/supabase-js'
-import type {
-  CreateData,
-  GetAllParams,
-  ResultData,
-  Table,
-  UpdateData,
-  UpdateMany,
-  getParams,
-  Result
-} from './types'
+import type { GetAllParams, GetAllResult, Id, UpdateMany } from './types'
+import type { CreateData, Table, UpdateData } from '@/types/database.types'
 
-export async function getOneById<
-  Z extends object = never,
-  T extends Table = Table
->(
+export type ForeignWithoutNull<T> = T extends Array<any>
+  ? {
+      [K in keyof T[0]]: K extends Table ? NonNullable<T[0][K]> : T[0][K]
+    }[]
+  : {
+      [K in keyof T]: K extends Table ? NonNullable<T[K]> : T[K]
+    }
+
+export async function getOneById<T extends Table, S extends string = '*'>(
   table: T,
-  id: string | number,
-  params?: getParams
-): Promise<Result<T, Z> | null> {
+  id: Id<T>,
+  select?: S
+): Promise<ForeignWithoutNull<typeof data>> {
   const { data, error } = await supabase
     .from(table)
-    .select(params?.select)
+    .select(select)
     .eq('id', id)
-    .order(params?.order ?? 'id')
     .single()
-  if (error) console.log(error)
-  return data
+  if (error) console.error(error)
+  return data as ForeignWithoutNull<typeof data>
 }
 
-export const getAll = async <Z extends object = never, T extends Table = Table>(
+export const getAll = async <
+  R extends object = never,
+  T extends Table = Table,
+  S extends string = [R] extends [never] ? '*' : string
+>(
   table: T,
-  params?: GetAllParams
-): Promise<{ data: Result<T, Z>[] | null; count: number | null }> => {
-  const search = params?.search
-  const order = params?.order?.value ?? 'id'
+  params?: GetAllParams<S>
+): Promise<GetAllResult<typeof data, R>> => {
+  const { order, search, between, limit, match, neq, range, select } =
+    params || {}
+  const orderColumn = order?.[0] ?? 'id'
 
   const query = supabase
     .from(table)
-    .select(params?.select, {
+    .select(select, {
       count: 'exact'
     })
-    .order(order, {
-      ascending: params?.order?.ascending ?? true
+    .order(orderColumn, {
+      ascending: order?.[1] ?? true
     })
 
-  const match = params?.match || {}
-  query.match(match)
-
+  if (match) {
+    query.match(match)
+  }
   if (params?.in) {
     query.in(params.in[0], params.in[1])
   }
-
-  if (search?.value) {
-    query.ilike(search.column, formatSearch(search.value))
+  if (search) {
+    query.ilike(search[0], formatSearch(search[1]))
   }
-
-  if (params?.between) {
-    const between = params.between
-    query.gt(between.column, between.begin)
-    query.lt(between.column, between.end)
+  if (between) {
+    query.gte(between.column, between.begin)
+    query.lte(between.column, between.end)
   }
-
-  if (params?.limit) {
-    query.limit(params.limit)
+  if (limit) {
+    query.limit(limit)
   }
-
-  if (params?.neq) {
-    const neq = params.neq
+  if (neq) {
     query.neq(neq[0], neq[1])
   }
-
-  if (params?.range) {
-    query.range(params.range[0], params.range[1])
+  if (range) {
+    query.range(range[0], range[1])
   }
 
   const { data, error, count } = await query
 
-  if (error) console.log(error)
-  return { data, count }
+  if (error) console.error(error)
+  return { data, count } as GetAllResult<typeof data, R>
 }
 
-export const createOne = async <
-  Z extends object = never,
-  T extends Table = Table
->(
+export const createOne = async <T extends Table, S extends string = '*'>(
   table: T,
-  fields: CreateData[T],
-  params?: {
-    select?: string
-  }
-): Promise<Result<T, Z> | null> => {
-  let query = supabase.from(table).insert(fields)
-  if (params?.select) {
-    query = query.select(params.select)
-  }
-  const { data, error } = await query.single()
-  if (error) console.log(error)
-  return data
+  fields: CreateData<T>,
+  select?: S
+): Promise<ForeignWithoutNull<typeof data>> => {
+  const { data, error } = await supabase
+    .from(table)
+    .insert(fields as any)
+    .select(select)
+    .single()
+
+  if (error) console.error(error)
+  return data as ForeignWithoutNull<typeof data>
 }
 
 export const createMany = async <T extends Table>(
   table: T,
-  fields: CreateData[T][]
-): Promise<ResultData[T][] | null> => {
-  const { data, error } = await supabase.from(table).insert(fields)
-  if (error) console.log(error)
-  return data
-}
-
-export async function updateOne<
-  Z extends object = never,
-  T extends Table = Table
->(
-  table: T,
-  id: number | string,
-  fields: UpdateData[T]
-): Promise<Result<T, Z> | null> {
+  fields: CreateData<T>[]
+): Promise<ForeignWithoutNull<typeof data>> => {
   const { data, error } = await supabase
     .from(table)
-    .update(fields)
-    .eq('id', id)
-    .single()
-  if (error) console.log(error)
-  return data
+    .insert(fields as any)
+    .select()
+  if (error) console.error(error)
+  return data as ForeignWithoutNull<typeof data>
 }
 
-export async function updateMany<
-  Z extends object = never,
-  T extends Table = Table
->(table: T, fields: UpdateMany<UpdateData[T]>[]): Promise<Result<T, Z>[]> {
+export async function updateOneById<T extends Table, S extends string = '*'>(
+  table: T,
+  id: Id<T>,
+  fields: UpdateData<T>,
+  select?: S
+): Promise<ForeignWithoutNull<typeof data>> {
+  const { data, error } = await supabase
+    .from(table)
+    .update(fields as any)
+    .eq('id', id)
+    .select(select)
+    .single()
+  if (error) console.error(error)
+  return data as ForeignWithoutNull<typeof data>
+}
+
+export async function updateManyById<T extends Table>(
+  table: T,
+  fields: UpdateMany<UpdateData<T>>[]
+) {
   const promises = []
   for (const item of fields) {
-    promises.push(supabase.from(table).update(item).eq('id', item.id).single())
+    promises.push(
+      supabase
+        .from(table)
+        .update(item as any)
+        .eq('id', item.id as any)
+        .select()
+        .single()
+    )
   }
 
-  const results: PostgrestSingleResponse<Result<T, Z>>[] = await Promise.all(
-    promises
-  )
+  const results = await Promise.all(promises)
 
-  const data: Result<T, Z>[] = results
-    .map((e) => e.data)
-    .filter((e): e is never => e !== null)
-
+  const data = results
+    .map((e) => {
+      if (e.error) {
+        console.error(e.error)
+      }
+      return e.data
+    })
+    .filter((e): e is NonNullable<typeof e> => e !== null)
   return data
 }
 
-export const deleteOne = async <
-  Z extends object = never,
-  T extends Table = Table
->(
+export const deleteOneById = async <T extends Table>(
   table: T,
-  id: number
-): Promise<Result<T, Z> | null> => {
+  id: Id<T>
+): Promise<typeof data | null> => {
   const { data, error } = await supabase
     .from(table)
     .delete()
     .eq('id', id)
+    .select()
     .single()
 
-  if (error) console.log(error)
+  if (error) console.error(error)
   return data
 }

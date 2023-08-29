@@ -15,11 +15,12 @@ export const insertInStorage = async (
     })
   if (error) console.log(error)
   if (data) {
-    const { publicURL, error: errorUrl } = supabase.storage
+    const {
+      data: { publicUrl }
+    } = supabase.storage
       .from('storage')
       .getPublicUrl(`${folder}/${imageData.name}`)
-    if (errorUrl) console.log(errorUrl)
-    value = publicURL
+    value = publicUrl
   }
 
   return value

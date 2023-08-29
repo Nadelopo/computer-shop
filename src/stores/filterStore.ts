@@ -1,14 +1,10 @@
 import { reactive, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { supabase } from '@/supabase'
+import { getAll } from '@/utils/queries/db'
 import { formatSearch } from '@/utils/formatSearch'
 import type { RouteLocationNormalizedLoaded, Router } from 'vue-router'
-import type { PostgrestResponse } from '@supabase/supabase-js'
-import type {
-  ProductReadWithDetails,
-  ProductWithSpecifications
-} from '@/types/tables/products.types'
-import type { SpecificationReadWithDetails } from '@/types/tables/specifications.types'
+import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
 
 type SpecificationsValues = {
@@ -114,13 +110,14 @@ export const useFilterStore = defineStore('filter', () => {
           query.in('valueString', spec.values)
         }
       }
-      promises.push(query)
+      promises.push(query.returns<QueryData[]>())
     }
-    const results: PostgrestResponse<QueryData>[] = await Promise.all(promises)
+
+    const results = await Promise.all(promises)
 
     const data = results
       .map((e) => e.data)
-      .filter((e): e is QueryData[] => e !== null)
+      .filter((e): e is NonNullable<typeof e> => e !== null)
 
     const idList = data.map((e) => e.map((e) => e.products.id))
 
@@ -128,24 +125,25 @@ export const useFilterStore = defineStore('filter', () => {
       a.filter((c) => b.includes(c))
     )
 
-    const { data: productsData, count } = await supabase
-      .from<ProductReadWithDetails>('products')
-      .select('*, categories(id, enTitle), manufacturers(id, title)', {
-        count: 'exact'
-      })
-      .in('id', filteredProductsId)
-      .order(sortColumn.value, { ascending: sortAscents[sortColumn.value] })
-      .lte('price', productsPrice.value.max)
-      .gte('price', productsPrice.value.min)
-      .range(
+    const { data: productsData, count } = await getAll('products', {
+      select: '*, categories(id, enTitle), manufacturers(id, title)',
+      in: ['id', filteredProductsId],
+      order: [sortColumn.value, sortAscents[sortColumn.value]],
+      between: {
+        column: 'price',
+        begin: productsPrice.value.min,
+        end: productsPrice.value.max
+      },
+      range: [
         currentPage.value * limit.value,
         currentPage.value * limit.value + limit.value - 1
-      )
+      ]
+    })
 
-    const { data: specificationsData } = await supabase
-      .from<SpecificationReadWithDetails>('specifications')
-      .select('*, category_specifications(id, title, units, visible)')
-      .in('productId', productsData?.map((e) => e.id) || [])
+    const { data: specificationsData } = await getAll('specifications', {
+      select: '*, category_specifications(id, title, units, visible)',
+      in: ['productId', productsData?.map((e) => e.id) || []]
+    })
 
     productCount.value = count ?? 0
 

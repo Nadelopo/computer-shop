@@ -4,13 +4,11 @@ import { defineStore } from 'pinia'
 import type {
   SpecificationCreate,
   SpecificationRead,
-  SpecificationReadWithDetails,
   SpecificationUpdate
 } from '@/types/tables/specifications.types'
 import type {
   ProductCreate,
   ProductRead,
-  ProductReadWithDetails,
   ProductWithSpecifications
 } from '@/types/tables/products.types'
 import type { ProductUpdate } from '@/types/tables/products.types'
@@ -19,8 +17,8 @@ import {
   createOne,
   getAll,
   getOneById,
-  updateMany,
-  updateOne
+  updateManyById,
+  updateOneById
 } from '@/utils/queries/db'
 import type { UpdateMany } from '@/utils/queries/types'
 
@@ -28,14 +26,13 @@ export const useProductsStore = defineStore('products', () => {
   async function createProduct(
     params: ProductCreate
   ): Promise<ProductRead | null> {
-    const data = await createOne('products', params)
-    return data
+    return createOne('products', params)
   }
 
   async function createSpecifications(
     params: SpecificationCreate[]
   ): Promise<SpecificationRead[] | null> {
-    return await createMany('specifications', params)
+    return createMany('specifications', params)
   }
 
   async function getProducts(
@@ -50,7 +47,7 @@ export const useProductsStore = defineStore('products', () => {
   ): Promise<{ data: ProductWithSpecifications[]; count: number | null }> {
     const newProducts = ref<ProductWithSpecifications[]>([])
 
-    const { data, count } = await getAll<ProductReadWithDetails>('products', {
+    const { data, count } = await getAll('products', {
       match: { categoryId: categoryId },
       select: '*, categories(id, enTitle), manufacturers(id, title)',
       range: [
@@ -63,12 +60,10 @@ export const useProductsStore = defineStore('products', () => {
       const promises = []
       for (const product of data) {
         promises.push(
-          getAll<SpecificationReadWithDetails>('specifications', {
+          getAll('specifications', {
             match: { productId: product.id },
             select: '*,  category_specifications(id, title, units, visible)',
-            order: {
-              value: 'categorySpecificationsId'
-            }
+            order: ['categorySpecificationsId']
           })
         )
       }
@@ -96,15 +91,15 @@ export const useProductsStore = defineStore('products', () => {
     const product = ref<ProductWithSpecifications | null>(null)
 
     const [data, { data: specifications }] = await Promise.all([
-      getOneById<ProductReadWithDetails>('products', productId, {
-        select: '*, categories(id, enTitle), manufacturers(id, title)'
-      }),
-      getAll<SpecificationReadWithDetails>('specifications', {
+      getOneById(
+        'products',
+        productId,
+        '*, categories(id, enTitle), manufacturers(id, title)'
+      ),
+      getAll('specifications', {
         match: { productId: productId },
         select: '*, category_specifications(id, title, units, visible)',
-        order: {
-          value: 'categorySpecificationsId'
-        }
+        order: ['categorySpecificationsId']
       })
     ])
     if (data && specifications) {
@@ -118,7 +113,7 @@ export const useProductsStore = defineStore('products', () => {
     id: number,
     params: ProductUpdate
   ): Promise<ProductRead | null> {
-    const data = await updateOne('products', id, params)
+    const data = await updateOneById('products', id, params)
     if (data) {
       const product = await getProduct(data.id)
       product.value?.specifications.sort(
@@ -131,7 +126,7 @@ export const useProductsStore = defineStore('products', () => {
   async function updateProductSpecifications(
     specifications: UpdateMany<SpecificationUpdate>[]
   ) {
-    const updatedSpecifications = await updateMany(
+    const updatedSpecifications = await updateManyById(
       'specifications',
       specifications
     )

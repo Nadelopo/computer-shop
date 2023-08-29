@@ -1,99 +1,12 @@
-import type {
-  CartCreate,
-  CartRead,
-  CartUpdate
-} from '@/types/tables/cart.types'
-import type {
-  CategoryRead,
-  CategoryCreate,
-  CategoryUpdate
-} from '@/types/tables/categories.types'
-import type {
-  CategorySpecificationRead,
-  CategorySpecificationCreate,
-  CategorySpecificationUpdate
-} from '@/types/tables/categorySpecifications.types'
-import type {
-  ManufacturerRead,
-  ManufacturerCreate,
-  ManufacturerUpdate
-} from '@/types/tables/manufacturers.types'
-import type {
-  ProductRead,
-  ProductCreate,
-  ProductUpdate
-} from '@/types/tables/products.types'
-import type {
-  ReviewCreate,
-  ReviewRead,
-  ReviewUpdate
-} from '@/types/tables/reviews.types'
-import type {
-  SpecificationRead,
-  SpecificationCreate,
-  SpecificationUpdate
-} from '@/types/tables/specifications.types'
-import type {
-  UserRead,
-  UserCreate,
-  UserUpdate
-} from '@/types/tables/users.types'
+import type { Database, Table } from '@/types/database.types'
+import type { ForeignWithoutNull } from './db'
 
-export type UpdateData = {
-  manufacturers: ManufacturerUpdate
-  products: ProductUpdate
-  categories: CategoryUpdate
-  specifications: SpecificationUpdate
-  category_specifications: CategorySpecificationUpdate
-  users: UserUpdate
-  cart: CartUpdate
-  reviews: ReviewUpdate
-}
-
-export type CreateData = {
-  manufacturers: ManufacturerCreate
-  products: ProductCreate
-  categories: CategoryCreate
-  specifications: SpecificationCreate
-  category_specifications: CategorySpecificationCreate
-  users: UserCreate
-  cart: CartCreate
-  reviews: ReviewCreate
-}
-
-export type ResultData = {
-  manufacturers: ManufacturerRead
-  products: ProductRead
-  categories: CategoryRead
-  specifications: SpecificationRead
-  category_specifications: CategorySpecificationRead
-  users: UserRead
-  cart: CartRead
-  reviews: ReviewRead
-}
-
-export type Table =
-  | 'categories'
-  | 'category_specifications'
-  | 'manufacturers'
-  | 'products'
-  | 'specifications'
-  | 'users'
-  | 'cart'
-  | 'reviews'
-
-export type GetAllParams = {
+export type GetAllParams<S> = {
   match?: Record<string, unknown>
   in?: [column: string, values: (number | string)[]]
-  select?: string
-  order?: {
-    value: string
-    ascending?: boolean
-  }
-  search?: {
-    column: string
-    value?: string
-  }
+  select?: S
+  order?: [column: string, ascending?: boolean]
+  search?: [column: string, value?: string]
   between?: {
     column: string
     begin: number
@@ -104,12 +17,11 @@ export type GetAllParams = {
   range?: [from: number, to: number]
 }
 
-export type getParams = {
-  order?: string
-  select?: string
-}
-
 export type UpdateMany<T> = T & Required<Pick<T, keyof T & 'id'>>
 
-type DefinitionType<T> = T extends Table ? ResultData[T] : T
-export type Result<T, Z> = DefinitionType<[Z] extends [never] ? T : Z>
+export type Id<T extends Table> = Database['public']['Tables'][T]['Row']['id']
+
+export type GetAllResult<T, R> = {
+  data: ([R] extends [never] ? ForeignWithoutNull<T> : R[]) | null
+  count: number | null
+}

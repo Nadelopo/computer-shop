@@ -5,7 +5,12 @@ import type {
   ManufacturerRead,
   ManufacturerUpdate
 } from '@/types/tables/manufacturers.types'
-import { createOne, getAll, getOneById, updateOne } from '@/utils/queries/db'
+import {
+  createOne,
+  getAll,
+  getOneById,
+  updateOneById
+} from '@/utils/queries/db'
 
 export const useManufacturersStore = defineStore('manufacturers', () => {
   const manufacturers = ref<ManufacturerRead[]>([])
@@ -33,7 +38,7 @@ export const useManufacturersStore = defineStore('manufacturers', () => {
     id: number,
     params: ManufacturerUpdate
   ): Promise<ManufacturerRead | null> {
-    const data = await updateOne('manufacturers', id, params)
+    const data = await updateOneById('manufacturers', id, params)
     if (data) {
       manufacturers.value = manufacturers.value.map((e) =>
         e.id === id ? data : e

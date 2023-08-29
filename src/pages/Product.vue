@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { updateOne } from '@/utils/queries/db'
+import { updateOneById } from '@/utils/queries/db'
 import { useProductsStore } from '@/stores/productsStore'
 import ProductHeader from '@/components/Product/ProductHeader.vue'
 import ProductSpecifications from '@/components/Product/ProductSpecifications.vue'
@@ -37,7 +37,7 @@ const loadData = async () => {
     })
     product.value = data.value
     loading.value = 'success'
-    updateOne('products', product.value.id, {
+    updateOneById('products', product.value.id, {
       popularity: product.value.popularity + 1
     })
   }

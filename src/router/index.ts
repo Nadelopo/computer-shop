@@ -1,12 +1,12 @@
 import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import { supabase } from '@/supabase'
+import { useUserStore } from '@/stores/userStore'
 import { getOneById } from '@/utils/queries/db'
 import { adminRoutes } from './admin'
 import { profileRoutes } from './profile'
 import Auth from '@/pages/Auth.vue'
 import Home from '@/pages/Home.vue'
-import { Role, type UserRead } from '@/types/tables/users.types'
+import { Role } from '@/types/tables/users.types'
 
 export const routes: RouteRecordRaw[] = [
   ...adminRoutes,
@@ -63,7 +63,8 @@ const router = createRouter({
 router.beforeEach(async (to, from) => {
   const requireAuth = to.matched.some((record) => record.meta.auth)
   if (!requireAuth) return true
-  const user = supabase.auth.user()
+  const { isUserAuthenticated } = useUserStore()
+  const user = await isUserAuthenticated()
   if (!user) {
     useToast().warning('Необходима авторизация')
     if (!from.name) return { name: 'Home' }
@@ -71,9 +72,7 @@ router.beforeEach(async (to, from) => {
   }
   const requireAdmin = to.matched.some((record) => record.meta.admin)
   if (!requireAdmin) return true
-  const data = await getOneById<{ role: UserRead['role'] }>('users', user.id, {
-    select: 'role'
-  })
+  const data = await getOneById('users', user.id, 'role')
   if (!data) return false
   if (data.role !== Role.ADMIN) return { name: 'Home' }
   return true

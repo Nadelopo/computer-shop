@@ -56,16 +56,16 @@ const loading = ref<'loading' | 'success'>('loading')
 
 onBeforeMount(async () => {
   const [productData, { data: specifications }] = await Promise.all([
-    getOneById<ProductReadWithDetails>('products', id, {
-      select: '*, manufacturers(id, title), categories(id, enTitle)'
-    }),
-    getAll<ProductSpecificationOnEdit>('specifications', {
+    getOneById(
+      'products',
+      id,
+      '*, manufacturers(id, title), categories(id, enTitle)'
+    ),
+    getAll('specifications', {
       match: { productId: id },
       select:
         '*, category_specifications(id, title, visible, units, type, step, min, max, variantsValues)',
-      order: {
-        value: 'categorySpecificationsId'
-      }
+      order: ['categorySpecificationsId']
     })
   ])
 

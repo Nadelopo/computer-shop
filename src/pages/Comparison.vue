@@ -2,14 +2,12 @@
 import { ref, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { supabase } from '@/supabase'
 import { useUserStore } from '@/stores/userStore'
-import { getAll, updateOne } from '@/utils/queries/db'
+import { getAll, updateOneById } from '@/utils/queries/db'
 import { localStorageGet, localStorageSet } from '@/utils/localStorage'
 import ComparisonList from '@/components/Comparison/ComparisonList.vue'
 import { VTabs, VCheckbox, VLoader, VButton } from '@/components/UI'
 import { TrashSvg } from '@/assets/icons'
-import type { ProductReadWithDetails } from '@/types/tables/products.types'
 import type {
   Category,
   CategorySpecifications,
@@ -17,17 +15,11 @@ import type {
 } from '@/components/Comparison/types'
 import type { Loading } from '@/types'
 
-type Product = Omit<ProductReadWithDetails, 'categories'> & {
-  categories: {
-    id: number
-    title: string
-  }
-}
-
 const route = useRoute()
 const router = useRouter()
 
 const { user } = storeToRefs(useUserStore())
+const { isUserAuthenticated } = useUserStore()
 
 const categories = ref<Category[]>([])
 const currentCategoryId = ref<number | null>(null)
@@ -46,10 +38,11 @@ const loading = ref<Loading>('loading')
 const watcher = watch(
   () => user.value?.comparison.length,
   async () => {
-    const isUser = supabase.auth.user()
+    const isUser = await isUserAuthenticated()
     let productIds: number[] = []
     if (isUser) {
-      productIds = user.value?.comparison || []
+      if (!user.value) return
+      productIds = user.value.comparison
     } else {
       const storageProductIds = localStorageGet<number[]>('compareList') || []
       productIds = storageProductIds
@@ -63,15 +56,13 @@ const watcher = watch(
 
     const [{ data: productData }, { data: specificationsData }] =
       await Promise.all([
-        getAll<Product>('products', {
+        getAll('products', {
           select: '*, categories(id, title), manufacturers(id, title)',
           in: ['id', productIds]
         }),
         getAll('specifications', {
           in: ['productId', productIds],
-          order: {
-            value: 'categorySpecificationsId'
-          }
+          order: ['categorySpecificationsId']
         })
       ])
 
@@ -108,14 +99,16 @@ const watcher = watch(
       }
 
       products.value = modifiedProducts
-      const { data: categoriesSpecifications } =
-        await getAll<CategorySpecifications>('category_specifications', {
+      const { data: categoriesSpecifications } = await getAll(
+        'category_specifications',
+        {
           in: [
             'categoryId',
             [...new Set(products.value.map((e) => e.categoryId))]
           ],
           select: 'categoryId, title, units'
-        })
+        }
+      )
 
       for (const category of categories.value) {
         const categorySpecifications = categoriesSpecifications?.filter(
@@ -150,7 +143,7 @@ const clear = async () => {
   )
 
   if (user.value) {
-    const data = await updateOne('users', user.value.id, {
+    const data = await updateOneById('users', user.value.id, {
       comparison: remainProducts.map((e) => e.id)
     })
     if (data) {
@@ -197,7 +190,7 @@ const deleteItem = async (item: ComparisonProduct) => {
     .filter((e) => e.count > 0)
 
   if (user.value) {
-    const data = await updateOne('users', user.value.id, {
+    const data = await updateOneById('users', user.value.id, {
       comparison: user.value.comparison.filter((e) => e !== item.id)
     })
     if (!data) return

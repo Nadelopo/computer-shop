@@ -224,7 +224,7 @@ const setCellRef = (val: Element | ComponentPublicInstance | null) => {
           <div class="cells">
             <div
               v-for="(value, j) in data.value"
-              :key="value"
+              :key="j"
               class="cell flex items-center"
             >
               <template v-if="data.title === ''">

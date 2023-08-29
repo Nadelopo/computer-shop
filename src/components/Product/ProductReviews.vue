@@ -4,12 +4,12 @@ import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
 import { useUserStore } from '@/stores/userStore'
-import { createOne, getAll, updateOne } from '@/utils/queries/db'
+import { createOne, getAll, updateOneById } from '@/utils/queries/db'
 import RatingStars from '../RatingStars.vue'
 import ReviewsBlock from './ReviewsBlock.vue'
 import { VButton, VPagination } from '@/components/UI'
 import type {
-  ReviewCreateRating,
+  ReviewRating,
   ReviewReadWithDetails,
   UsersRated
 } from '@/types/tables/reviews.types'
@@ -19,7 +19,7 @@ type ReviewFormCreate = {
   dignities: string
   disadvantages: string
   comment: string
-  rating: ReviewCreateRating | 0
+  rating: ReviewRating | 0
 }
 
 const props = defineProps<{
@@ -49,13 +49,10 @@ const reviewsCount = ref(0)
 
 const loadReviews = async () => {
   currentPage.value = route.query.page ? Number(route.query.page) - 1 : 0
-  const { data, count } = await getAll<ReviewReadWithDetails>('reviews', {
+  const { data, count } = await getAll('reviews', {
     match: { productId: props.productId },
     select: '*, users(name)',
-    order: {
-      value: 'created_at',
-      ascending: false
-    },
+    order: ['created_at', false],
     range: [
       currentPage.value * reviewsLimit,
       currentPage.value * reviewsLimit + reviewsLimit - 1
@@ -93,7 +90,7 @@ const createReview = async () => {
   } else if (form.value.rating === 0) {
     toast.warning('Укажите оценку')
   } else {
-    const data = await createOne<ReviewReadWithDetails>(
+    const data = await createOne(
       'reviews',
       {
         userId: user.value.id,
@@ -104,9 +101,7 @@ const createReview = async () => {
         rating: form.value.rating,
         categoryId
       },
-      {
-        select: '*, users(name)'
-      }
+      '*, users(name)'
     )
     if (data) {
       reviews.value.unshift(data)
@@ -116,7 +111,7 @@ const createReview = async () => {
       const newProductRating =
         (props.productRating * props.countReviews + data.rating) /
         (props.countReviews + 1)
-      const productData = await updateOne('products', props.productId, {
+      const productData = await updateOneById('products', props.productId, {
         countReviews: props.countReviews + 1,
         rating: newProductRating
       })
@@ -201,7 +196,7 @@ const evaluationReview = async (
     usersRated: newUsersRated
   }
 
-  const data = await updateOne('reviews', review.id, newValues)
+  const data = await updateOneById('reviews', review.id, newValues)
   if (data) {
     reviews.value = reviews.value.map((e) =>
       review.id === e.id ? { ...e, ...newValues } : e
