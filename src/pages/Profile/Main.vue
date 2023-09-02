@@ -39,7 +39,7 @@ const { user } = storeToRefs(useUserStore())
       </div>
       <div v-if="reviews.length" class="last__reviews">
         <router-link
-          v-for="review in reviews.slice(0, 3)"
+          v-for="review in reviews.slice(0, 4)"
           :key="review.id"
           :to="{
             name: 'Product',

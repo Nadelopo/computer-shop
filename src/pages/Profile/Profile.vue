@@ -4,22 +4,30 @@ import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import { getAll } from '@/utils/queries/db'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
+import { useRoute } from 'vue-router'
 
 const { user } = storeToRefs(useUserStore())
 
-const reviews = ref<ReviewWithDetails[]>([])
+const route = useRoute()
+const pageName = route.name
 
-onBeforeMount(async () => {
-  if (user.value) {
-    const { data } = await getAll('reviews', {
-      match: { userId: user.value.id },
-      select: '*, users(name), categories(id, enTitle)',
-      order: ['created_at', false],
-      limit: 3
-    })
-    if (data) {
-      reviews.value = data
-    }
+const reviews = ref<ReviewWithDetails[]>([])
+const setReviews = async (limit?: number) => {
+  if (!user.value) return null
+  const { data } = await getAll('reviews', {
+    match: { userId: user.value.id },
+    select: '*, users(name), categories(id, enTitle)',
+    order: ['created_at', false],
+    limit
+  })
+  if (data) {
+    reviews.value = data
+  }
+}
+
+onBeforeMount(() => {
+  if (!reviews.value.length && pageName === 'ProfileMain') {
+    setReviews(4)
   }
 })
 </script>
@@ -40,7 +48,7 @@ onBeforeMount(async () => {
         </router-link>
       </div>
       <div>
-        <router-view :reviews="reviews" />
+        <router-view :reviews="reviews" :set-reviews="setReviews" />
       </div>
     </div>
   </div>

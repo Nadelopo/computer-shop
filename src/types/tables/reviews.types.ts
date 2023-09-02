@@ -25,9 +25,8 @@ export type ReviewCreate = {
   created_at?: string
   dignities?: string | null
   disadvantages?: string | null
-  dislikes?: number
   id?: number
-  likes?: number
+  evaluation?: number
   productId: number
   rating: ReviewRating
   userId: string

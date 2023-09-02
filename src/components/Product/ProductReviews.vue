@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
@@ -14,6 +14,7 @@ import type {
   UsersRated
 } from '@/types/tables/reviews.types'
 import type { UpdateProductRating } from '@/pages/Product.vue'
+import type { Loading } from '@/types'
 
 type ReviewFormCreate = {
   dignities: string
@@ -39,41 +40,16 @@ const router = useRouter()
 const { user } = storeToRefs(useUserStore())
 
 const categoryId = Number(route.params.categoryId)
-const commId = String(route.query.comm_id)
+const commId = computed(() => route.query.comm_id)
 
 const reviews = ref<ReviewReadWithDetails[]>([])
 const showReviewForm = ref(false)
 const reviewsLimit = 6
-const currentPage = ref(0)
+const currentPage = ref(route.query.page ? Number(route.query.page) - 1 : 0)
 const reviewsCount = ref(0)
+const loading = ref<Loading | 'init'>('init')
 
-const loadReviews = async () => {
-  currentPage.value = route.query.page ? Number(route.query.page) - 1 : 0
-  const { data, count } = await getAll('reviews', {
-    match: { productId: props.productId },
-    select: '*, users(name)',
-    order: ['created_at', false],
-    range: [
-      currentPage.value * reviewsLimit,
-      currentPage.value * reviewsLimit + reviewsLimit - 1
-    ]
-  })
-
-  if (data && count !== null) {
-    reviews.value = data
-    reviewsCount.value = count
-    await nextTick()
-    const el = document.getElementById(commId)
-
-    if (el) {
-      setTimeout(() => {
-        el.scrollIntoView()
-      }, 100)
-    }
-  }
-}
-
-const copyForm: ReviewFormCreate = {
+const purifiedForm: ReviewFormCreate = {
   dignities: '',
   disadvantages: '',
   comment: '',
@@ -81,13 +57,20 @@ const copyForm: ReviewFormCreate = {
 }
 
 const form = ref<ReviewFormCreate>({
-  ...copyForm
+  ...purifiedForm
 })
 
-const createReview = async () => {
+const toggleFormVisibility = () => {
   if (!user.value) {
-    toast.warning('Только авторизованные пользователи\n могут оставлять отзывы')
-  } else if (form.value.rating === 0) {
+    toast.warning('Требуется авторизация')
+    return
+  }
+  showReviewForm.value = !showReviewForm.value
+}
+
+const createReview = async () => {
+  if (!user.value) return
+  if (form.value.rating === 0) {
     toast.warning('Укажите оценку')
   } else {
     const data = await createOne(
@@ -105,7 +88,7 @@ const createReview = async () => {
     )
     if (data) {
       reviews.value.unshift(data)
-      form.value = { ...copyForm }
+      form.value = { ...purifiedForm }
       showReviewForm.value = false
 
       const newProductRating =
@@ -125,18 +108,17 @@ const createReview = async () => {
   }
 }
 
-const userAlreadyRated = (review: ReviewReadWithDetails): boolean | null => {
-  for (const rated of review.usersRated) {
-    if (rated.userId === user.value?.id) {
-      return rated.evaluation
-    }
-  }
-  return null
+const getUserEvaluation = (
+  review: ReviewReadWithDetails
+): 'like' | 'dislike' | null => {
+  const findUser = review.usersRated.find((e) => e.userId === user.value?.id)
+  if (!findUser) return null
+  return findUser.evaluation ? 'like' : 'dislike'
 }
 
 const evaluationReview = async (
   review: ReviewReadWithDetails,
-  evaluation: boolean
+  evaluation: 'like' | 'dislike'
 ) => {
   if (!user.value) {
     toast.warning('Только авторизованные пользователи\n могут ставить оценки', {
@@ -144,59 +126,48 @@ const evaluationReview = async (
     })
     return
   }
-  const value = evaluation ? 'likes' : 'dislikes'
+  if (review.userId === user.value.id) {
+    toast.warning('Нельзя изменить рейтинг собственного комментария')
+    return
+  }
 
+  const prevEvaluation = getUserEvaluation(review)
+
+  let newEvaluation = review.evaluation
   let newUsersRated: UsersRated[] = review.usersRated
-  let quantity: { likes?: number; dislikes?: number } = {}
 
-  if (userAlreadyRated(review) === null) {
+  if (!prevEvaluation) {
+    if (evaluation === 'like') newEvaluation++
+    else newEvaluation--
     newUsersRated.push({
       userId: user.value.id,
-      evaluation
+      evaluation: evaluation === 'like' ? true : false
     })
-    quantity = {
-      [value]: review[value] + 1
-    }
   } else {
-    if (userAlreadyRated(review) === true && value === 'likes') {
+    if (prevEvaluation === 'like' && evaluation === 'like') {
+      newEvaluation--
       newUsersRated = newUsersRated.filter((e) => e.userId !== user.value?.id)
-      quantity = {
-        likes: review.likes - 1
-      }
-    }
-    if (userAlreadyRated(review) === true && value === 'dislikes') {
-      quantity = {
-        likes: review.likes - 1,
-        dislikes: review.dislikes + 1
-      }
+    } else if (prevEvaluation === 'like' && evaluation === 'dislike') {
+      newEvaluation -= 2
       newUsersRated = newUsersRated.map((e) =>
         e.userId === user.value?.id ? { ...e, evaluation: false } : e
       )
-    }
-    if (userAlreadyRated(review) === false && value === 'likes') {
-      quantity = {
-        likes: review.likes + 1,
-        dislikes: review.dislikes - 1
-      }
+    } else if (prevEvaluation === 'dislike' && evaluation === 'like') {
+      newEvaluation += 2
       newUsersRated = newUsersRated.map((e) =>
         e.userId === user.value?.id ? { ...e, evaluation: true } : e
       )
-    }
-    if (userAlreadyRated(review) === false && value === 'dislikes') {
+    } else if (prevEvaluation === 'dislike' && evaluation === 'dislike') {
+      newEvaluation++
       newUsersRated = newUsersRated.filter((e) => e.userId !== user.value?.id)
-
-      quantity = {
-        dislikes: review.dislikes - 1
-      }
     }
   }
-
   const newValues = {
-    ...quantity,
+    evaluation: newEvaluation,
     usersRated: newUsersRated
   }
-
   const data = await updateOneById('reviews', review.id, newValues)
+
   if (data) {
     reviews.value = reviews.value.map((e) =>
       review.id === e.id ? { ...e, ...newValues } : e
@@ -204,27 +175,69 @@ const evaluationReview = async (
   }
 }
 
-watch(() => props.productId, loadReviews, {
-  immediate: true
-})
-
 const clickOnPaginate = () => {
-  router.push({ query: { ...route.query, page: currentPage.value + 1 } })
+  router.replace({ query: { page: currentPage.value + 1 } })
 }
 
-watch(
-  () => route.query.page,
-  () => {
+const loadReviews = async () => {
+  if (loading.value === 'loading') return
+  loading.value = 'loading'
+  const { data, count } = await getAll('reviews', {
+    match: { productId: props.productId },
+    select: '*, users(name)',
+    order: ['created_at', false],
+    range: [
+      currentPage.value * reviewsLimit,
+      currentPage.value * reviewsLimit + reviewsLimit - 1
+    ]
+  })
+  if (data && count !== null) {
+    reviews.value = data
+    reviewsCount.value = count
+  }
+  loading.value = 'success'
+}
+
+onMounted(async () => {
+  if (commId.value) {
+    const reviewReferenceId = Number(commId.value)
+    const { data, count } = await getAll('reviews', {
+      select: 'id',
+      match: {
+        productId: props.productId
+      }
+    })
+    const reviewIndex = data?.findIndex((e) => e.id === reviewReferenceId)
+    if (reviewIndex !== undefined && count !== null) {
+      const pageWithComment = Math.ceil(
+        (count - (reviewIndex - 1)) / reviewsLimit
+      )
+      currentPage.value = pageWithComment - 1
+      router.replace({
+        query: {
+          ...route.query,
+          page: pageWithComment
+        }
+      })
+      await loadReviews()
+      const el = document.getElementById('comment_' + commId.value)
+      if (el) {
+        el.scrollIntoView()
+      }
+    }
+  } else {
     loadReviews()
   }
-)
+})
+
+watch(currentPage, loadReviews)
 </script>
 
 <template>
   <div class="wrapper grid">
     <div>Отзывы</div>
     <div>
-      <v-button class="ml-2" @click="showReviewForm = !showReviewForm">
+      <v-button class="ml-2" @click="toggleFormVisibility">
         {{ showReviewForm ? 'закрыть' : 'написать отзыв' }}
       </v-button>
       <Transition name="review__form">
@@ -258,10 +271,10 @@ watch(
       <div class="reviews">
         <template v-for="review in reviews" :key="review.id">
           <reviews-block
-            :id="review.id"
+            :id="'comment_' + review.id"
             :review="review"
             :class="{ active: commId === String(review.id) }"
-            :user-already-rated="userAlreadyRated"
+            :get-user-evaluation="getUserEvaluation"
             :static="false"
             @on-click="evaluationReview"
           />
@@ -283,7 +296,9 @@ watch(
   overflow: hidden
   padding-left: 8px
   margin-top: 30px
-  height: 700px
+  height: 720px
+  .title
+    margin-bottom: 10px
   textarea
     padding: 10px
     background: #f2f2f2
@@ -313,7 +328,7 @@ watch(
   margin-top: 0
 
 .reviews
-  margin: 50px 0
+  margin: 40px 0
   display: flex
   flex-direction: column
   gap: 50px

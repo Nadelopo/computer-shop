@@ -1,26 +1,15 @@
 <script setup lang="ts">
-import { ref, onBeforeMount } from 'vue'
-import { storeToRefs } from 'pinia'
-import { useUserStore } from '@/stores/userStore'
-import { getAll } from '@/utils/queries/db'
+import { onBeforeMount } from 'vue'
 import ReviewsBlock from '@/components/Product/ReviewsBlock.vue'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 
-const { user } = storeToRefs(useUserStore())
-
-const reviews = ref<ReviewWithDetails[]>([])
+const props = defineProps<{
+  reviews: ReviewWithDetails[]
+  setReviews: () => Promise<ReviewWithDetails[]>
+}>()
 
 onBeforeMount(async () => {
-  if (user.value) {
-    const { data } = await getAll('reviews', {
-      match: { userId: user.value.id },
-      select: '*, users(name), categories(id, enTitle)',
-      order: ['created_at', false]
-    })
-    if (data) {
-      reviews.value = data
-    }
-  }
+  props.setReviews()
 })
 </script>
 
@@ -29,7 +18,7 @@ onBeforeMount(async () => {
     <div class="text-3xl font-bold mb-8">Отзывы</div>
     <div class="flex flex-col gap-8">
       <router-link
-        v-for="review in reviews"
+        v-for="review in props.reviews"
         :key="review.id"
         :to="{
           name: 'Product',

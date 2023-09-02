@@ -66,7 +66,7 @@ router.beforeEach(async (to, from) => {
   const { isUserAuthenticated } = useUserStore()
   const user = await isUserAuthenticated()
   if (!user) {
-    useToast().warning('Необходима авторизация')
+    useToast().warning('Требуется авторизация')
     if (!from.name) return { name: 'Home' }
     else return false
   }

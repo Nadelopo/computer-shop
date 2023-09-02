@@ -1,16 +1,16 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import RatingStars from '../RatingStars.vue'
 import { AvatarSvg, ArrowSvg } from '@/assets/icons'
 import type { ReviewReadWithDetails } from '@/types/tables/reviews.types'
+
+type Evaluation = 'like' | 'dislike'
 
 type Props = {
   review: ReviewReadWithDetails
   color?: string
   static?: boolean
-  userAlreadyRated?: (
-    review: ReviewReadWithDetails,
-    type: boolean
-  ) => boolean | null
+  getUserEvaluation?: (review: ReviewReadWithDetails) => Evaluation | null
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -18,40 +18,30 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  onClick: [review: ReviewReadWithDetails, type: boolean]
+  onClick: [review: ReviewReadWithDetails, type: Evaluation]
 }>()
 
 const color = props.color ?? '#f6f6f6'
 
-const ratingBtns = (review: ReviewReadWithDetails) => {
-  return [
-    {
-      type: true,
-      action: 'like',
-      value: review.likes
-    },
-    {
-      type: false,
-      action: 'dislike',
-      value: review.dislikes
-    }
-  ]
-}
-
-const onClick = (review: ReviewReadWithDetails, type: boolean) => {
+const onClick = (review: ReviewReadWithDetails, type: Evaluation) => {
   emit('onClick', review, type)
 }
 
-const arrowSvgClasse = (review: ReviewReadWithDetails, type: boolean) => {
-  let typeClass = type ? 'like' : 'dislike'
+const arrowSvgClasse = (review: ReviewReadWithDetails, type: Evaluation) => {
   if (props.static) {
-    return typeClass + ' coloured'
+    return type + ' coloured'
   } else {
     const isColoured =
-      props.userAlreadyRated?.(review, type) === type ? ' coloured' : ''
-    return typeClass + isColoured
+      props.getUserEvaluation?.(review) === type ? ' coloured' : ''
+    return type + isColoured
   }
 }
+
+const evalatuationClasses = computed(() => {
+  if (props.review.evaluation === 0) return ''
+  const staticMod = props.static ? 'static' : ''
+  return (props.review.evaluation > 0 ? 'positive ' : 'negative ') + staticMod
+})
 </script>
 
 <template>
@@ -78,18 +68,35 @@ const arrowSvgClasse = (review: ReviewReadWithDetails, type: boolean) => {
       <div class="title">Комментарий</div>
       <div>{{ review.comment }}</div>
     </div>
-    <div class="flex gap-x-6 mt-4">
-      <div v-for="(el, i) in ratingBtns(review)" :key="i" class="flex gap-x-2">
-        <button class="review__root__arrow" @click="onClick(review, el.type)">
-          <arrow-svg :class="arrowSvgClasse(review, el.type)" />
-        </button>
-        <span>{{ el.value }}</span>
+    <div class="flex mt-4">
+      <div class="flex">
+        <arrow-svg
+          v-if="!static"
+          :class="arrowSvgClasse(review, 'like')"
+          class="arrow"
+          @click="onClick(review, 'like')"
+        />
+        <span
+          class="px-4 evaluation__count"
+          :class="evalatuationClasses"
+          :data-contet="static ? '★' : ''"
+        >
+          {{ review.evaluation }}
+        </span>
+        <arrow-svg
+          v-if="!static"
+          :class="arrowSvgClasse(review, 'dislike')"
+          class="arrow"
+          @click="onClick(review, 'dislike')"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <style scoped lang="sass">
+
+
 
 .review__root
   background: v-bind(color)
@@ -99,19 +106,28 @@ const arrowSvgClasse = (review: ReviewReadWithDetails, type: boolean) => {
     font-size: 20px
     font-weight: 500
     margin-bottom: 10px
-  &__arrow
+  .evaluation__count
+    &.positive
+      color: var(--color-text)
+    &.negative
+      color: var(--danger-light)
+    &.static
+      padding: 0
+      &::before
+        content: attr(data-contet)
+        margin-right: 4px
+  .arrow
     cursor: pointer
-    &:hover .like
+    width: 16px
+    transition: .1s
+    &:hover.like
       fill: var(--color-text)
-    &:hover .dislike
+    &:hover.dislike
       fill: var(--danger-light)
-    svg
-      width: 16px
-      transition: .1s
-      &.dislike
-        transform: rotate(180deg)
-        &.coloured
-          fill: var(--danger-light)
-      &.like.coloured
-        fill: var(--color-text)
+    &.dislike
+      transform: rotate(180deg)
+      &.coloured
+        fill: var(--danger-light)
+    &.like.coloured
+      fill: var(--color-text)
 </style>
