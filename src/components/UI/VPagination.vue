@@ -4,9 +4,13 @@ import { arrayRange } from '@/utils/arrayRange'
 import { ArrowSvg } from '@/assets/icons'
 import VPopup from './VPopup.vue'
 
+//prettier-ignore
+type PageSlots = 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20
+
 const props = defineProps<{
   itemCount: number
   pageSize: number
+  pageSlots?: PageSlots
   onClick?: () => void
 }>()
 
@@ -20,14 +24,28 @@ const pageCount = computed(() => {
 const items = computed(() => {
   const count = pageCount.value
   const currentPage = modelValue.value
+  const pageSlots = props.pageSlots ?? 7
+  const isSlotsEven = pageSlots % 2 === 0 ? true : false
+  const withOtherPrefPages = Math.ceil(pageSlots / 2)
+  const togglePagesCount = pageSlots - 4
+  const middlePageIndex = Math.floor(togglePagesCount / 2)
 
-  if (count < 7) return arrayRange(1, count + 1)
-  if (currentPage < 3) {
-    return [1, 2, 3, 4, 5, 0, count]
-  } else if (count - currentPage < 4) {
-    return [1, -1, count - 4, count - 3, count - 2, count - 1, count]
+  if (count <= pageSlots) return arrayRange(1, count + 1)
+
+  const isStartPosition = currentPage < withOtherPrefPages
+  const isMiddlePosition =
+    currentPage <= count - (withOtherPrefPages + (isSlotsEven ? 2 : 1))
+  if (isStartPosition) {
+    return [...arrayRange(1, pageSlots - 1), 0, count]
+  } else if (isMiddlePosition) {
+    let minPage = currentPage - middlePageIndex + 1
+    const maxPage = currentPage + middlePageIndex + 2
+    if (isSlotsEven) {
+      minPage += 1
+    }
+    return [1, -1, ...arrayRange(minPage, maxPage), 0, count]
   } else {
-    return [1, -1, currentPage, currentPage + 1, currentPage + 2, 0, count]
+    return [1, -1, ...arrayRange(count - (pageSlots - 3), count + 1)]
   }
 })
 
@@ -79,9 +97,11 @@ const setPage = (page: number) => {
       >
         {{ value }}
       </button>
-      <button v-else class="page-switch">
+      <template v-else>
         <v-popup width="40px" type="hover" float="center">
-          <template #active> ... </template>
+          <template #active>
+            <button class="page-switch"> ...</button>
+          </template>
           <template #content>
             <div
               v-for="j in value === -1 ? otherPrefPages : otherNextPages"
@@ -93,7 +113,7 @@ const setPage = (page: number) => {
             </div>
           </template>
         </v-popup>
-      </button>
+      </template>
     </template>
     <button
       v-wave="modelValue !== pageCount - 1"
