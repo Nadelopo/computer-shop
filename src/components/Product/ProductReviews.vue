@@ -7,7 +7,7 @@ import { useUserStore } from '@/stores/userStore'
 import { createOne, getAll, updateOneById } from '@/utils/queries/db'
 import RatingStars from '../RatingStars.vue'
 import ReviewsBlock from './ReviewsBlock.vue'
-import { VButton, VPagination } from '@/components/UI'
+import { VButton, VLoader, VPagination } from '@/components/UI'
 import type {
   ReviewRating,
   ReviewReadWithDetails,
@@ -269,16 +269,19 @@ watch(currentPage, loadReviews)
         </form>
       </Transition>
       <div class="reviews">
-        <template v-for="review in reviews" :key="review.id">
-          <reviews-block
-            :id="'comment_' + review.id"
-            :review="review"
-            :class="{ active: commId === String(review.id) }"
-            :get-user-evaluation="getUserEvaluation"
-            :static="false"
-            @on-click="evaluationReview"
-          />
+        <template v-if="loading === 'success'">
+          <template v-for="review in reviews" :key="review.id">
+            <reviews-block
+              :id="'comment_' + review.id"
+              :review="review"
+              :class="{ active: commId === String(review.id) }"
+              :get-user-evaluation="getUserEvaluation"
+              :static="false"
+              @on-click="evaluationReview"
+            />
+          </template>
         </template>
+        <v-loader v-else />
       </div>
       <v-pagination
         v-model="currentPage"

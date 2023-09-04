@@ -38,9 +38,15 @@ const arrowSvgClasse = (review: ReviewReadWithDetails, type: Evaluation) => {
 }
 
 const evalatuationClasses = computed(() => {
-  if (props.review.evaluation === 0) return ''
-  const staticMod = props.static ? 'static' : ''
-  return (props.review.evaluation > 0 ? 'positive ' : 'negative ') + staticMod
+  if (!props.static && props.review.evaluation === 0) return ''
+  let classes = props.static ? 'static' : ''
+  if (props.review.evaluation > 0) {
+    classes += ' positive '
+  }
+  if (props.review.evaluation < 0) {
+    classes += ' negative '
+  }
+  return classes
 })
 </script>
 
@@ -79,7 +85,7 @@ const evalatuationClasses = computed(() => {
         <span
           class="px-4 evaluation__count"
           :class="evalatuationClasses"
-          :data-contet="static ? '★' : ''"
+          data-contet="★"
         >
           {{ review.evaluation }}
         </span>

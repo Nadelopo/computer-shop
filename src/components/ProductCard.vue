@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  onDeleteItem: [id: number]
+  onDelete: [id: number]
 }>()
 
 const titleActive = ref(true)
@@ -44,7 +44,7 @@ const titleActive = ref(true)
           v-if="props.delete"
           @mouseenter="titleActive = false"
           @mouseleave="titleActive = true"
-          @click.prevent="emit('onDeleteItem', item.id)"
+          @click.prevent="emit('onDelete', item.id)"
         />
       </button>
     </div>

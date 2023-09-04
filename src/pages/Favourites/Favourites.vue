@@ -82,7 +82,7 @@ const deleteItem = async (id: number) => {
             :item="item"
             :delete="true"
             :favourites="false"
-            @on-delete-item="deleteItem"
+            @on-delete="deleteItem"
           />
         </template>
         <template v-else-if="loading === 'loading'">

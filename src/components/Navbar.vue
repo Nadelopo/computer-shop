@@ -208,7 +208,7 @@ header
   grid-template-columns: repeat(4, 60px)
   align-items: center
   justify-items: end
-  & div, a
+  a
     position: relative
     .count
       position: absolute
