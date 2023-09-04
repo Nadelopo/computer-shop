@@ -17,9 +17,16 @@ let left = ref('0')
 
 const activeRef = ref()
 const isOpen = onClickOutsideClose(activeRef)
-const mouseOnContent = ref(false)
 let timeout = 0
 
+onMounted(() => {
+  const activeWidth = activeRef.value.scrollWidth
+  if (props.float === 'start') {
+    left.value = `-${parseInt(minWidth) - activeWidth}px`
+  } else if (props.float === 'center') {
+    left.value = `-${parseInt(minWidth) / 2 - activeWidth / 2}px`
+  }
+})
 const onEnter = () => {
   if (props.type === 'hover') {
     clearTimeout(timeout)
@@ -28,38 +35,20 @@ const onEnter = () => {
     }, 100)
   }
 }
-onMounted(() => {
-  const activeWidth = activeRef.value.scrollWidth
-  if (props.float === 'start') {
-    console.log(minWidth, activeWidth)
-    left.value = `-${parseInt(minWidth) - activeWidth}px`
-  } else if (props.float === 'center') {
-    left.value = `-${parseInt(minWidth) / 2 - activeWidth / 2}px`
-  }
-})
 
 const onLeave = () => {
   if (props.type === 'hover') {
     clearTimeout(timeout)
     timeout = window.setTimeout(() => {
-      if (!mouseOnContent.value) {
-        isOpen.value = false
-      }
+      isOpen.value = false
     }, 300)
   }
 }
 
-const contentLeave = () => {
-  if (props.type === 'hover') {
-    onLeave()
-    mouseOnContent.value = false
-  }
-}
-
 const contentEnter = () => {
+  if (!isOpen.value) return
   if (props.type === 'hover') {
     onEnter()
-    mouseOnContent.value = true
   }
 }
 </script>
@@ -79,7 +68,7 @@ const contentEnter = () => {
         v-if="isOpen"
         class="popup__contentlksdn553"
         @mouseenter="contentEnter"
-        @mouseleave="contentLeave"
+        @mouseleave="onLeave"
       >
         <slot name="content"></slot>
       </div>
@@ -90,7 +79,6 @@ const contentEnter = () => {
 <style lang="sass">
 .popup__rootasd32bs34
   position: relative
-  width: 100%
   .popup__slotdgh345c
     position: absolute
   .popup__contentlksdn553
