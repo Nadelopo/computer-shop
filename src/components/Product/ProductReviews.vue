@@ -209,9 +209,7 @@ onMounted(async () => {
     })
     const reviewIndex = data?.findIndex((e) => e.id === reviewReferenceId)
     if (reviewIndex !== undefined && count !== null) {
-      const pageWithComment = Math.ceil(
-        (count - (reviewIndex - 1)) / reviewsLimit
-      )
+      const pageWithComment = Math.ceil((count - reviewIndex) / reviewsLimit)
       currentPage.value = pageWithComment - 1
       router.replace({
         query: {
