@@ -44,7 +44,8 @@ const loadData = async () => {
 }
 
 watch(() => route.params.productId, loadData, {
-  immediate: true
+  immediate: true,
+  flush: 'post'
 })
 
 const updateProductRating = (newData: UpdateProductRating) => {

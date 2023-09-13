@@ -3,7 +3,7 @@ import type { RouteRecordRaw } from 'vue-router'
 export const profileRoutes: RouteRecordRaw[] = [
   {
     path: '/profile',
-    component: () => import('@/pages/Profile/Profile.vue'),
+    component: () => import('@/Layouts/Profile.vue'),
     meta: { auth: true },
     children: [
       {

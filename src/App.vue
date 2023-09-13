@@ -1,14 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref } from 'vue'
 import { supabase } from './supabase'
 import { useUserStore } from './stores/userStore'
 import { useCartStore } from './stores/cartStore'
 import { useManufacturersStore } from './stores/manufacturersStore'
-import Navbar from './components/Navbar.vue'
-import MainNavMobile from './components/MainNav.mobile.vue'
-
-const route = useRoute()
 
 const { setUserData } = useUserStore()
 const { setCartItems } = useCartStore()
@@ -23,21 +18,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     eventValue.value = event
   }
 })
-
-const pathMissing = (path: string) => {
-  const href = route.fullPath
-  return !href.includes(path)
-}
-
-const showComponent = computed((): boolean => {
-  return pathMissing('admin') && pathMissing('auth')
-})
 </script>
 
 <template>
-  <Navbar v-if="showComponent" />
-  <main>
-    <router-view />
-  </main>
-  <MainNavMobile v-if="showComponent" />
+  <router-view />
 </template>

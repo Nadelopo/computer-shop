@@ -3,50 +3,22 @@ import { useToast } from 'vue-toastification'
 import { useUserStore } from '@/stores/userStore'
 import { getOneById } from '@/utils/queries/db'
 import { adminRoutes } from './admin'
-import { profileRoutes } from './profile'
+import { mainRoutes } from './main'
 import Auth from '@/pages/Auth.vue'
-import Home from '@/pages/Home.vue'
 import { Role } from '@/types/tables/users.types'
+import MainVue from '@/Layouts/Main.vue'
 
 export const routes: RouteRecordRaw[] = [
   ...adminRoutes,
-  ...profileRoutes,
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    component: MainVue,
+    children: mainRoutes
   },
   {
     path: '/auth',
     name: 'Auth',
     component: Auth
-  },
-  {
-    path: '/products/:category/:id',
-    name: 'CategoryProducts',
-    component: () => import('@/pages/CategoryProducts.vue')
-  },
-
-  {
-    path: '/cart',
-    name: 'Cart',
-    component: () => import('@/pages/Cart.vue')
-  },
-  {
-    path: '/products/:category/:categoryId/:productId',
-    name: 'Product',
-    component: () => import('@/pages/Product.vue')
-  },
-  {
-    path: '/favourites',
-    name: 'Favourites',
-    meta: { auth: true },
-    component: () => import('@/pages/Favourites/Favourites.vue')
-  },
-  {
-    path: '/comparison',
-    name: 'Comparison',
-    component: () => import('@/pages/Comparison.vue')
   },
   {
     path: '/:pathMatch(.*)*',

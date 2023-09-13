@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import { getAll } from '@/utils/queries/db'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
-import { useRoute } from 'vue-router'
 
 const { user } = storeToRefs(useUserStore())
 

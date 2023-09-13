@@ -4,7 +4,7 @@ export const adminRoutes: RouteRecordRaw[] = [
   {
     path: '/admin',
     name: 'Admin',
-    component: () => import('@/pages/Admin/Admin.vue'),
+    component: () => import('@/Layouts/Admin.vue'),
     meta: { auth: true, admin: true },
     children: [
       {
