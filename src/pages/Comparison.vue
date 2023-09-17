@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onBeforeMount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import { getAll, updateOneById } from '@/utils/queries/db'
-import { localStorageGet, localStorageSet } from '@/utils/localStorage'
+import { localStorageSet } from '@/utils/localStorage'
 import ComparisonList from '@/components/Comparison/ComparisonList.vue'
 import { VTabs, VCheckbox, VLoader, VButton } from '@/components/UI'
 import { TrashSvg } from '@/assets/icons'
@@ -19,7 +19,7 @@ const route = useRoute()
 const router = useRouter()
 
 const { user } = storeToRefs(useUserStore())
-const { isUserAuthenticated } = useUserStore()
+const { userLists, setUserListsValue, deleteItemFromUserList } = useUserStore()
 
 const categories = ref<Category[]>([])
 const currentCategoryId = ref<number | null>(null)
@@ -35,125 +35,102 @@ const products = ref<ComparisonProduct[]>([])
 const showDifferences = ref(false)
 const loading = ref<Loading>('loading')
 
-const watcher = watch(
-  () => user.value?.comparison.length,
-  async () => {
-    const isUser = await isUserAuthenticated()
-    let productIds: number[] = []
-    if (isUser) {
-      if (!user.value) return
-      productIds = user.value.comparison
-    } else {
-      const storageProductIds = localStorageGet<number[]>('compareList') || []
-      productIds = storageProductIds
-    }
+onBeforeMount(async () => {
+  await setUserListsValue()
+  if (userLists.comparison.length === 0) {
+    loading.value = 'empty'
+    return
+  }
 
-    if (productIds.length === 0) {
-      loading.value = 'empty'
-      return
-    }
-    loading.value = 'loading'
+  const [{ data: productData }, { data: specificationsData }] =
+    await Promise.all([
+      getAll('products', {
+        select: '*, categories(id, title), manufacturers(id, title)',
+        in: ['id', userLists.comparison]
+      }),
+      getAll('specifications', {
+        in: ['productId', userLists.comparison],
+        order: ['categorySpecificationsId']
+      })
+    ])
 
-    const [{ data: productData }, { data: specificationsData }] =
-      await Promise.all([
-        getAll('products', {
-          select: '*, categories(id, title), manufacturers(id, title)',
-          in: ['id', productIds]
-        }),
-        getAll('specifications', {
-          in: ['productId', productIds],
-          order: ['categorySpecificationsId']
-        })
-      ])
+  const modifiedProducts: ComparisonProduct[] = []
 
-    const modifiedProducts: ComparisonProduct[] = []
-
-    if (productData && specificationsData) {
-      for (const product of productData) {
-        modifiedProducts.push({
-          ...product,
-          specifications: specificationsData.filter(
-            (e) => e.productId === product.id
-          )
-        })
-
-        if (!categories.value.some((e) => e.id === product.categoryId)) {
-          categories.value.push({
-            id: product.categoryId,
-            title: product.categories.title,
-            count: 1,
-            specifications: []
-          })
-        } else {
-          categories.value = categories.value.map((e) =>
-            e.id === product.categoryId ? { ...e, count: e.count + 1 } : e
-          )
-        }
-      }
-
-      const categoryId = Number(route.query.category_id)
-      if (categories.value.some((e) => e.id === categoryId)) {
-        currentCategoryId.value = categoryId
-      } else {
-        currentCategoryId.value = categories.value[0].id
-      }
-
-      products.value = modifiedProducts
-      const { data: categoriesSpecifications } = await getAll(
-        'category_specifications',
-        {
-          in: [
-            'categoryId',
-            [...new Set(products.value.map((e) => e.categoryId))]
-          ],
-          select: 'categoryId, title, units'
-        }
-      )
-
-      for (const category of categories.value) {
-        const categorySpecifications = categoriesSpecifications?.filter(
-          (e) => e.categoryId === category.id
+  if (productData && specificationsData) {
+    for (const product of productData) {
+      modifiedProducts.push({
+        ...product,
+        specifications: specificationsData.filter(
+          (e) => e.productId === product.id
         )
-        if (categorySpecifications) {
-          category.specifications = categorySpecifications.map((e) => {
-            e.title = e.title[0].toUpperCase() + e.title.slice(1)
-            return e
-          })
-        }
+      })
+
+      if (!categories.value.some((e) => e.id === product.categoryId)) {
+        categories.value.push({
+          id: product.categoryId,
+          title: product.categories.title,
+          count: 1,
+          specifications: []
+        })
+      } else {
+        categories.value = categories.value.map((e) =>
+          e.id === product.categoryId ? { ...e, count: e.count + 1 } : e
+        )
       }
     }
 
-    loading.value = products.value.length ? 'success' : 'empty'
-    if (!isUser) {
-      watcher()
+    const categoryId = Number(route.query.category_id)
+    if (categories.value.some((e) => e.id === categoryId)) {
+      currentCategoryId.value = categoryId
     } else {
-      if ((user.value?.comparison.length ?? 0) > 0) {
-        watcher()
+      currentCategoryId.value = categories.value[0].id
+    }
+
+    products.value = modifiedProducts
+    const { data: categoriesSpecifications } = await getAll(
+      'category_specifications',
+      {
+        in: [
+          'categoryId',
+          [...new Set(products.value.map((e) => e.categoryId))]
+        ],
+        select: 'categoryId, title, units'
+      }
+    )
+
+    for (const category of categories.value) {
+      const categorySpecifications = categoriesSpecifications?.filter(
+        (e) => e.categoryId === category.id
+      )
+      if (categorySpecifications) {
+        category.specifications = categorySpecifications.map((e) => {
+          e.title = e.title[0].toUpperCase() + e.title.slice(1)
+          return e
+        })
       }
     }
-  },
-  { immediate: true }
-)
+  }
 
-const clear = async () => {
-  loading.value = 'loading'
+  loading.value = 'success'
+})
 
+const clearList = async () => {
   const remainProducts = products.value.filter(
     (e) => e.categoryId !== currentCategoryId.value
   )
+  const remainProductIds = remainProducts.map((e) => e.id)
 
   if (user.value) {
     const data = await updateOneById('users', user.value.id, {
-      comparison: remainProducts.map((e) => e.id)
+      comparison: remainProductIds
     })
     if (data) {
       user.value.comparison = data.comparison
+      userLists.comparison = data.comparison
     }
   } else {
-    localStorageSet(
-      'compareList',
-      remainProducts.map((e) => e.id)
-    )
+    localStorageSet('compareList', remainProductIds)
+    userLists.comparison = remainProductIds
   }
 
   products.value = remainProducts
@@ -184,27 +161,12 @@ watch(
 )
 
 const deleteItem = async (item: ComparisonProduct) => {
-  const newProducts = products.value.filter((e) => e.id !== item.id)
-  const newCategories = categories.value
+  const data = await deleteItemFromUserList('comparison', item.id)
+  if (!data) return
+  products.value = products.value.filter((e) => e.id !== item.id)
+  categories.value = categories.value
     .map((e) => (e.id === item.categoryId ? { ...e, count: e.count - 1 } : e))
     .filter((e) => e.count > 0)
-
-  if (user.value) {
-    const data = await updateOneById('users', user.value.id, {
-      comparison: user.value.comparison.filter((e) => e !== item.id)
-    })
-    if (!data) return
-    user.value.comparison = data.comparison
-  }
-  products.value = newProducts
-  categories.value = newCategories
-  if (!user.value) {
-    localStorageSet(
-      'compareList',
-      products.value.map((e) => e.id)
-    )
-  }
-
   if (categories.value.length === 0) {
     loading.value = 'empty'
     currentCategoryId.value = null
@@ -229,7 +191,7 @@ const deleteItem = async (item: ComparisonProduct) => {
         query-param-name="category_id"
       />
       <div class="compare__actions">
-        <v-button variant="noactive" class="button" @click="clear">
+        <v-button variant="noactive" class="button" @click="clearList">
           <trash-svg />
           очистить список
         </v-button>

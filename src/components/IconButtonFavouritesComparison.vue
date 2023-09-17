@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
 import { useUserStore } from '@/stores/userStore'
-import { useAddFavouritesAndComparison } from '@/utils/useAddFavouritesAndComparison'
-import { localStorageGet } from '@/utils/localStorage'
 import { FavouriteSvg, ComparisonSvg } from '@/assets/icons'
 
 const props = defineProps<{
@@ -11,36 +8,24 @@ const props = defineProps<{
   listTitle: 'favourites' | 'comparison'
 }>()
 
-const { user } = storeToRefs(useUserStore())
+const { userLists, changeUserListValueOnClick } = useUserStore()
 
-let productId
+const fill = computed(() =>
+  userLists[props.listTitle].includes(props.productId)
+    ? 'var(--color-main)'
+    : 'var(--gray)'
+)
 
-if (user.value) {
-  productId = user.value?.[props.listTitle].find((e) => e === props.productId)
-} else if (props.listTitle === 'comparison') {
-  const storageProductids = localStorageGet<number[]>('compareList')
-  productId = storageProductids?.find((e) => e === props.productId)
-}
-
-const state = ref(productId ? true : false)
-
-const fill = computed(() => (state.value ? 'var(--color-main)' : 'var(--gray)'))
-
-const add = () => {
-  useAddFavouritesAndComparison(
-    props.listTitle,
-    props.productId,
-    state.value,
-    () => {
-      state.value = !state.value
-    }
-  )
-}
 const Icon = props.listTitle === 'favourites' ? FavouriteSvg : ComparisonSvg
 </script>
 
 <template>
-  <button class="favourite-comparison__btn" @click.prevent="add">
+  <button
+    class="favourite-comparison__btn"
+    @click.prevent="
+      changeUserListValueOnClick(props.listTitle, props.productId)
+    "
+  >
     <Icon width="24" />
   </button>
 </template>

@@ -9,7 +9,7 @@ import Sidebar from './Sidebar.mobile.vue'
 import { AvatarSvg, FavouriteSvg, CartSvg, ComparisonSvg } from '@/assets/icons'
 import { Role } from '@/types/tables/users.types'
 
-const { user } = storeToRefs(useUserStore())
+const { user, userLists } = storeToRefs(useUserStore())
 
 const router = useRouter()
 
@@ -102,14 +102,14 @@ const links = [
           </div>
           <router-link :to="{ name: 'Favourites' }">
             <favourite-svg fill="#fff" width="25" class="cursor-pointer" />
-            <span v-if="user?.favourites.length" class="count">
-              {{ user.favourites.length }}
+            <span v-if="userLists.favourites.length" class="count">
+              {{ userLists.favourites.length }}
             </span>
           </router-link>
           <router-link :to="{ name: 'Comparison' }">
             <comparison-svg width="25" />
-            <span v-if="user?.comparison.length" class="count">
-              {{ user.comparison.length }}
+            <span v-if="userLists.comparison.length" class="count">
+              {{ userLists.comparison.length }}
             </span>
           </router-link>
           <router-link :to="{ name: 'Cart' }">

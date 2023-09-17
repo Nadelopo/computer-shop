@@ -4,9 +4,9 @@ import { useUserStore } from '@/stores/userStore'
 import { getOneById } from '@/utils/queries/db'
 import { adminRoutes } from './admin'
 import { mainRoutes } from './main'
+import MainVue from '@/layouts/Main.vue'
 import Auth from '@/pages/Auth.vue'
 import { Role } from '@/types/tables/users.types'
-import MainVue from '@/Layouts/Main.vue'
 
 export const routes: RouteRecordRaw[] = [
   ...adminRoutes,

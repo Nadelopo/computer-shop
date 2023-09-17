@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import { getAll, updateOneById } from '@/utils/queries/db'
@@ -9,54 +9,43 @@ import SkeletonCard from '@/components/SkeletonCard.vue'
 import { TrashSvg } from '@/assets/icons'
 import type { ProductCardData } from './types'
 
+const { userLists, setUserListsValue, deleteItemFromUserList } = useUserStore()
 const { user } = storeToRefs(useUserStore())
 
 const favourites = ref<ProductCardData[]>([])
+const loading = ref<'loading' | 'empty' | 'success'>('success')
 
-const loading = ref<'loading' | 'empty' | 'success'>('loading')
+onBeforeMount(async () => {
+  loading.value = 'loading'
+  await setUserListsValue()
+  const { data } = await getAll('products', {
+    select: '*, categories(id, enTitle)',
+    in: ['id', userLists.favourites]
+  })
+  favourites.value = data || []
+  loading.value = favourites.value.length ? 'success' : 'empty'
+})
 
-const watcher = watch(
-  () => user.value?.favourites.length,
-  async () => {
-    if (!user.value) return
-    loading.value = 'loading'
-    const { data } = await getAll('products', {
-      select: '*, categories(id, enTitle)',
-      in: ['id', user.value.favourites]
-    })
-    favourites.value = data || []
-    loading.value = favourites.value.length ? 'success' : 'empty'
-    watcher()
-  },
-  {
-    immediate: true
-  }
-)
 const clear = async () => {
   if (user.value) {
     const data = await updateOneById('users', user.value.id, {
       favourites: []
     })
     if (data) {
-      user.value.favourites = []
       favourites.value = []
+      user.value.favourites = []
+      userLists.favourites = []
       loading.value = 'empty'
     }
   }
 }
 
 const deleteItem = async (id: number) => {
-  if (user.value) {
-    const data = await updateOneById('users', user.value.id, {
-      favourites: user.value.favourites.filter((e) => e !== id)
-    })
-    if (data) {
-      user.value.favourites = data.favourites
-      favourites.value = favourites.value.filter((e) => e.id !== id)
-      if (favourites.value.length === 0) {
-        loading.value = 'empty'
-      }
-    }
+  const data = await deleteItemFromUserList('favourites', id)
+  if (!data) return
+  favourites.value = favourites.value.filter((e) => e.id !== id)
+  if (favourites.value.length === 0) {
+    loading.value = 'empty'
   }
 }
 </script>
