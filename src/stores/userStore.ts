@@ -69,6 +69,7 @@ export const useUserStore = defineStore('user', () => {
     const isUser = await isUserAuthenticated()
     if (!isUser && listTitle === 'favourites') {
       toast.warning('Требуется авторизация')
+      return
     }
     let items: number[]
     if (isUser) {
