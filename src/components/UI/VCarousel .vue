@@ -7,17 +7,20 @@ type Props = {
   countSlides?: number
   countSwipeSlides?: number
   spaceBetween?: number
+  draggable?: boolean
+  showArrows?: boolean | 'hover'
 }
 
 const props = withDefaults(defineProps<Props>(), {
   countSlides: 1,
   spaceBetween: 0,
-  countSwipeSlides: 1
+  countSwipeSlides: 1,
+  draggable: false,
+  showArrows: false
 })
 
 const carouselRef = ref<HTMLElement>()
 const { width: carouselWidth } = useElementSize(carouselRef)
-
 const slideWidth = computed(() => {
   const carouselWidthValue =
     carouselWidth.value - props.spaceBetween * (props.countSlides - 1)
@@ -45,15 +48,14 @@ const carouselWrapperCss = computed(() => {
 })
 
 const swipeSlide = (direction: 'next' | 'prev') => {
-  console.log(direction)
   let newTranslate = 0
   if (direction === 'next') {
-    newTranslate = translate.value - swipeTranslate.value
     const isLastElement = -translate.value === lastTranslate.value
     if (isLastElement) {
       translate.value = 0
       return
     }
+    newTranslate = translate.value - swipeTranslate.value
     if (lastTranslate.value <= -newTranslate) {
       translate.value = -lastTranslate.value
       return
@@ -61,12 +63,12 @@ const swipeSlide = (direction: 'next' | 'prev') => {
     translate.value = newTranslate
   }
   if (direction === 'prev') {
-    newTranslate = translate.value + swipeTranslate.value
     const isFirstElement = translate.value === 0
     if (isFirstElement) {
       translate.value = -lastTranslate.value
       return
     }
+    newTranslate = translate.value + swipeTranslate.value
     if (newTranslate >= 0) {
       translate.value = 0
       return
@@ -76,9 +78,9 @@ const swipeSlide = (direction: 'next' | 'prev') => {
 }
 
 const isMovable = ref(false)
-
 const currentPosX = ref(0)
 const startPosX = ref(0)
+
 const move = (e: MouseEvent) => {
   isMovable.value = true
   if (e.clientX > currentPosX.value || e.clientX < currentPosX.value) {
@@ -88,6 +90,7 @@ const move = (e: MouseEvent) => {
 }
 
 const swipeByMouse = (e: MouseEvent) => {
+  if (!props.draggable) return
   startTranslate.value = translate.value
   carouselWrapperTransition.value = 0
   startPosX.value = e.clientX
@@ -96,6 +99,7 @@ const swipeByMouse = (e: MouseEvent) => {
 }
 
 const stop = async (e: MouseEvent) => {
+  if (!props.draggable) return
   carouselWrapperTransition.value = 3
   window.removeEventListener('mousemove', move)
   if (isMovable.value) {
@@ -117,34 +121,46 @@ watch(isMovable, () => {
   }
 
   const direction = currentPosX.value > startPosX.value ? 'right' : 'left'
-  const difference = Math.abs(currentPosX.value - startPosX.value)
-  console.log(direction)
-  if (difference < swipeTranslate.value / 2) {
-    translate.value = startTranslate.value
-  } else {
-    if (direction === 'right') {
-      translate.value = startTranslate.value + swipeTranslate.value
-    }
-    if (direction === 'left') {
-      translate.value = startTranslate.value - swipeTranslate.value
-    }
+
+  const difference =
+    Math.abs(currentPosX.value - startPosX.value) % swipeTranslate.value
+  const isLessHalf = difference < swipeTranslate.value / 2
+  let offsetBlocks = Math.floor(
+    Math.abs(currentPosX.value - startPosX.value) / swipeTranslate.value
+  )
+  offsetBlocks += isLessHalf ? 0 : 1
+  if (direction === 'right') {
+    translate.value = startTranslate.value + swipeTranslate.value * offsetBlocks
+    return
+  }
+  if (direction === 'left') {
+    translate.value = startTranslate.value - swipeTranslate.value * offsetBlocks
+    return
   }
 })
 </script>
 
 <template>
-  <div ref="carouselRef" class="carousel">
-    <div
-      class="carousel__wrapper"
-      :style="carouselWrapperCss"
-      @mousedown.prevent.left="swipeByMouse"
-      @mouseleave="stop"
-      @click.capture="stop"
-    >
+  <div
+    ref="carouselRef"
+    class="carousel"
+    @mousedown.prevent.left="swipeByMouse"
+    @mouseleave="stop"
+    @click.capture="stop"
+  >
+    <div class="carousel__wrapper" :style="carouselWrapperCss">
       <slot />
     </div>
-    <ArrowSvg class="action prev" @click="swipeSlide('prev')" />
-    <ArrowSvg class="action next" @click="swipeSlide('next')" />
+
+    <template v-for="direction in (['prev', 'next'] as const)" :key="direction">
+      <ArrowSvg
+        v-show="showArrows"
+        class="action"
+        :class="{ hover: showArrows === 'hover', [direction]: true }"
+        @click="swipeSlide(direction)"
+        @mousedown.stop
+      />
+    </template>
   </div>
 </template>
 
@@ -152,21 +168,35 @@ watch(isMovable, () => {
 .carousel
   position: relative
   overflow: hidden
-  // user-select: none
+  &:hover
+    .action.hover
+      opacity: 1
+      &.prev
+        left: 20px
+      &.next
+        right: 20px
   .carousel__container
     overflow: hidden
   .action
     position: absolute
-    top: calc( 50% - 18px )
+    top: calc( 50% - 20px )
     cursor: pointer
-    width: 34px
-    background: var(--color-main)
+    width: 40px
+    background: #fff
     border-radius: 50px
-    padding: 6px
+    padding: 10px
     transition: .2s
-    fill: #fff
+    fill: #8c8c8c
+    box-shadow: 0 4px 10px #0000001a
+    &.hover
+      opacity: 0
+      &.prev
+        left: -40px
+      &.next
+        right: -40px
     &:hover
-      background: var(--color-text)
+      background: var(--color-main)
+      fill: #fff
     &.next
       rotate: 90deg
       right: 10px
