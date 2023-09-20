@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import VLoader from './VLoader.vue'
 
 type Props = {
@@ -15,15 +16,21 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 let minWidth = '100px'
-let width = props.width ?? 'auto'
+const width = computed(() => props.width ?? 'auto')
 
-if (props.minWidth) {
-  if (props.minWidth == 'auto') {
-    minWidth = 'auto'
-  } else {
-    minWidth = props.minWidth + 'px'
-  }
+if (props.minWidth === 'auto') {
+  minWidth = 'auto'
+} else if (props.minWidth) {
+  minWidth = props.minWidth + 'px'
 }
+
+// if (props.minWidth) {
+//   if (props.minWidth == 'auto') {
+//     minWidth = 'auto'
+//   } else {
+//     minWidth = props.minWidth + 'px'
+//   }
+// }
 </script>
 
 <template>
@@ -51,11 +58,13 @@ if (props.minWidth) {
   padding: 0.375rem 0.75rem
   color: #fff
   cursor: pointer
-  transition: .3s
+  transition: transform .3s, background .3s
   display: flex
   align-items: center
   justify-content: center
   outline: 2px solid transparent
+  @media (width < 426px)
+    font-size: 14px
   &:active
     transform: scale(0.9)
 
@@ -73,7 +82,7 @@ if (props.minWidth) {
     border-radius: 4px
     padding: 0.375rem 0.75rem
     cursor: pointer
-    transition: .3s
+    transition: fill .3s, background .3s, transform .3s, color .3s
     display: flex
     align-items: center
     justify-content: center
@@ -81,7 +90,7 @@ if (props.minWidth) {
     box-shadow: inset 0px 0px 0px 2px var(--color-main)
     background: transparent
     :slotted(svg)
-      transition: .3s
+      transition: fill .3s
       fill: var(--color-main)
     &:hover
       :slotted(svg)

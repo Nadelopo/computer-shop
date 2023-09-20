@@ -83,7 +83,7 @@ defineProps<{
   border-radius: 8px
   padding: 20px 40px
   display: grid
-  grid-template-columns: 20% auto 10%
+  grid-template-columns: 20% auto 14%
   grid-gap: 40px
   align-items: center
   box-shadow: 0px 0px 10px 4px rgba(0,0,0, 0.1 )

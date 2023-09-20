@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
+import { useMediaQuery } from '@vueuse/core'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { formatPrice } from '@/utils/formatPrice'
 import ButtonCart from '@/components/ButtonCart.vue'
@@ -13,7 +14,6 @@ const props = defineProps<{
 }>()
 
 const { getManufacturer } = useManufacturersStore()
-
 const manufacturer = ref<ManufacturerRead>()
 
 const loadManufacturer = async () => {
@@ -28,24 +28,33 @@ const productPrice = computed(() => {
 })
 
 loadManufacturer()
-watch(() => props.product.id, loadManufacturer)
+
+const isLargeScreen = useMediaQuery('(width >= 1024px)')
+
+const buttonCartWidth = computed(() => {
+  return isLargeScreen.value ? '400px' : '100%'
+})
 </script>
 
 <template>
   <div class="product__top wrapper">
-    <img class="align-middle max-h-80" :src="product.img" alt="..." />
+    <img
+      class="align-middle sm:max-h-80 max-h-64"
+      :src="product.img"
+      alt="..."
+    />
     <div class="w-full">
       <div class="product__title">
-        <div class="text-3xl">{{ product.name }}</div>
-        <div class="ml-auto">
+        <div class="text-3xl font-medium">{{ product.name }}</div>
+        <div class="ml-auto hidden sm:block">
           <img class="max-h-14" :src="manufacturer?.img" />
         </div>
       </div>
 
-      <RatingStars :model-value="product.rating" />
-      <div class="text-4xl mb-4 mt-6">{{ productPrice }}</div>
+      <div class="text-4xl my-1 mb-4 font-medium">{{ productPrice }}</div>
+      <RatingStars class="mb-4" :model-value="product.rating" />
       <div>
-        <button-cart :width="400" :product-id="product.id" />
+        <button-cart :width="buttonCartWidth" :product-id="product.id" />
         <div class="list__btns">
           <button-favourites-comparison
             list-title="favourites"
@@ -69,18 +78,26 @@ watch(() => props.product.id, loadManufacturer)
   justify-items: center
   min-height: 350px
   align-items: center
+  @media (width <1024px)
+    grid-template-columns: 1fr
+    grid-template-rows: 1fr 1fr
   .product__title
     display: grid
     grid-template-columns: 1fr 120px
     justify-content: space-between
     gap: 16px
     min-height: 56px
+    @media (width < 640px)
+      grid-template-columns: 1fr
+      grid-template-rows: auto auto
   .list__btns
     margin-top: 6px
     max-width: 400px
     display: grid
     grid-template-columns: 1fr 1fr
     gap: 6px
+    @media (width <1024px)
+      max-width: 100%
     button
       display: flex
       gap: 8px

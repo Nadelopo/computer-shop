@@ -3,6 +3,7 @@ import { ref, watch, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
+import { useMediaQuery } from '@vueuse/core'
 import { useUserStore } from '@/stores/userStore'
 import { createOne, getAll, updateOneById } from '@/utils/queries/db'
 import RatingStars from '../RatingStars.vue'
@@ -229,13 +230,15 @@ onMounted(async () => {
 })
 
 watch(currentPage, loadReviews)
+
+const isPageSmall = useMediaQuery('(width < 400px)')
 </script>
 
 <template>
   <div class="wrapper grid">
     <div>Отзывы</div>
     <div>
-      <v-button class="ml-2" @click="toggleFormVisibility">
+      <v-button @click="toggleFormVisibility">
         {{ showReviewForm ? 'закрыть' : 'написать отзыв' }}
       </v-button>
       <Transition name="review__form">
@@ -286,7 +289,8 @@ watch(currentPage, loadReviews)
         :item-count="reviewsCount"
         :page-size="reviewsLimit"
         :on-click="clickOnPaginate"
-        class="mb-8"
+        :page-slots="isPageSmall ? 5 : 7"
+        class="mb-8 justify-center md:justify-start"
       />
     </div>
   </div>
