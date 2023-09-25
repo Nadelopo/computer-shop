@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { updateOneById } from '@/utils/queries/db'
+import { getOneById, updateOneById } from '@/utils/queries/db'
 import { useProductsStore } from '@/stores/productsStore'
 import ProductHeader from '@/components/Product/ProductHeader.vue'
 import ProductSpecifications from '@/components/Product/ProductSpecifications.vue'
 import SimilarProducts from '@/components/Product/SimilarProducts.vue'
 import ProductReviews from '@/components/Product/ProductReviews.vue'
-import { VLoader } from '@/components/UI'
+import ProductCard from '@/components/ProductCard.vue'
+import { VLoader, VCarousel, VCarouselSlide } from '@/components/UI'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
+import type { ProductCardData } from './Favourites/types'
 
 export type UpdateProductRating = {
   countReviews: number
@@ -57,10 +59,31 @@ const updateProductRating = (newData: UpdateProductRating) => {
     }
   }
 }
+
+const test = ref<ProductCardData | null>(null)
+onMounted(async () => {
+  test.value = await getOneById('products', 6, '*, categories(id, enTitle)')
+})
 </script>
 
 <template>
   <div class="container">
+    <VCarousel
+      v-if="test"
+      class="mb-4 py-6 bg-blue-600"
+      :slides-per-view="4"
+      :space-between="10"
+      :count-swipe-slides="2"
+      draggable
+      show-arrows
+      show-dots
+    >
+      <VCarouselSlide v-for="i in 10" :key="i" class="flex justify-center">
+        <span>{{ i }}</span>
+        <ProductCard :item="test" />
+      </VCarouselSlide>
+    </VCarousel>
+
     <div v-if="product && loading === 'success'">
       <ProductHeader :product="product" />
       <div class="wrapper grid">

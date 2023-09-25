@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { nextTick, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useFilterStore } from '@/stores/filterStore'
 import { storeToRefs } from 'pinia'
-import { VPagination, VCarousel, VCarouselSlide } from '@/components/UI'
+import { VPagination } from '@/components/UI'
 import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
 import Search from '@/components/CategoryProducts/Search.vue'
 import Sort from '@/components/CategoryProducts/Sort.vue'
 import FiltersList from '@/components/CategoryProducts/FiltersList.vue'
 import Skeleton from '@/components/CategoryProducts/SkeletonProducts.vue'
-import { getOneById } from '@/utils/queries/db'
-import ProductCard from '@/components/ProductCard.vue'
 
 const { products, loading, productCount, currentPage, limit, productsPrice } =
   storeToRefs(useFilterStore())
@@ -42,30 +40,10 @@ const clickOnPaginate = () => {
   scrollTo(0, 0)
   router.push({ query: { ...route.query, page: currentPage.value + 1 } })
 }
-
-const product = ref()
-onMounted(async () => {
-  const data = await getOneById('products', 6, '*, categories(id, enTitle)')
-  product.value = data
-})
 </script>
 
 <template>
   <div class="container">
-    <VCarousel
-      v-if="product"
-      :count-slides="4"
-      :space-between="10"
-      :count-swipe-slides="2"
-      draggable
-      show-arrows="hover"
-    >
-      <VCarouselSlide v-for="i in 10" :key="i" class="flex justify-center my-6">
-        <span>{{ i }}</span>
-        <ProductCard :item="product" />
-      </VCarouselSlide>
-    </VCarousel>
-
     <div class="grid">
       <filters-list />
       <div>
@@ -75,8 +53,8 @@ onMounted(async () => {
           <div class="product__list">
             <transition-group name="list">
               <ProductBlock
-                v-for="item in products"
-                :key="item.id"
+                v-for="product in products"
+                :key="product.id"
                 :item="product"
                 :class="styles"
               />

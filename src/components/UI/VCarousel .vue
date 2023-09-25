@@ -4,34 +4,61 @@ import { computed, ref, watch } from 'vue'
 import { ArrowSvg } from '@/assets/icons'
 
 type Props = {
-  countSlides?: number
+  slidesPerView?: number
   countSwipeSlides?: number
   spaceBetween?: number
   draggable?: boolean
   showArrows?: boolean | 'hover'
+  showDots?: boolean
+  dotType?: 'dot' | 'line'
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  countSlides: 1,
+  slidesPerView: 1,
   spaceBetween: 0,
   countSwipeSlides: 1,
   draggable: false,
-  showArrows: false
+  showArrows: false,
+  dotType: 'line'
 })
 
-const carouselRef = ref<HTMLElement>()
-const { width: carouselWidth } = useElementSize(carouselRef)
-const slideWidth = computed(() => {
-  const carouselWidthValue =
-    carouselWidth.value - props.spaceBetween * (props.countSlides - 1)
-  return carouselWidthValue / props.countSlides + 'px'
-})
 const translate = ref(0)
 const startTranslate = ref(0)
+const carouselRef = ref<HTMLElement>()
+const currentSlideIndex = ref(0)
+
+const setCurrentSlideIndex = () => {
+  if (translate.value >= 0) {
+    currentSlideIndex.value = 0
+    return
+  }
+  if (translate.value <= -lastTranslate.value) {
+    currentSlideIndex.value = countSlides.value - 1
+    return
+  }
+
+  currentSlideIndex.value = Math.ceil(-translate.value / swipeTranslate.value)
+}
+
+const isMovable = ref(false)
+watch(isMovable, () => {
+  if (isMovable.value) return
+  setCurrentSlideIndex()
+})
+
+const { width: carouselWidth } = useElementSize(carouselRef)
+const countSlides = computed(() => {
+  return Math.ceil(lastTranslate.value / swipeTranslate.value) + 1
+})
+const slideWidth = computed(() => {
+  const carouselWidthValue =
+    carouselWidth.value - props.spaceBetween * (props.slidesPerView - 1)
+  return carouselWidthValue / props.slidesPerView + 'px'
+})
 const lastTranslate = computed(() => {
   if (!carouselRef.value) return 0
   const countItems =
-    carouselRef.value.children[0].children.length - props.countSlides
+    carouselRef.value.children[0].children.length - props.slidesPerView
   return (
     countItems * parseInt(slideWidth.value) + countItems * props.spaceBetween
   )
@@ -47,66 +74,84 @@ const carouselWrapperCss = computed(() => {
   return `gap: ${props.spaceBetween}px; translate: ${translate.value}px; transition: .${carouselWrapperTransition.value}s`
 })
 
-const swipeSlide = (direction: 'next' | 'prev') => {
-  let newTranslate = 0
-  if (direction === 'next') {
-    const isLastElement = -translate.value === lastTranslate.value
-    if (isLastElement) {
-      translate.value = 0
-      return
+const swipeSlideByClick = (direction: 'next' | 'prev') => {
+  console.log('swipeSlideByClick')
+  try {
+    let newTranslate = 0
+    if (direction === 'next') {
+      const isLastElement = -translate.value === lastTranslate.value
+      if (isLastElement) {
+        translate.value = 0
+        return
+      }
+      newTranslate = translate.value - swipeTranslate.value
+      if (lastTranslate.value <= -newTranslate) {
+        translate.value = -lastTranslate.value
+        return
+      }
+      translate.value = newTranslate
     }
-    newTranslate = translate.value - swipeTranslate.value
-    if (lastTranslate.value <= -newTranslate) {
-      translate.value = -lastTranslate.value
-      return
+    if (direction === 'prev') {
+      const isFirstElement = translate.value === 0
+      if (isFirstElement) {
+        translate.value = -lastTranslate.value
+        return
+      }
+      newTranslate = translate.value + swipeTranslate.value
+      if (newTranslate >= 0) {
+        translate.value = 0
+        return
+      }
+      translate.value = newTranslate
     }
-    translate.value = newTranslate
-  }
-  if (direction === 'prev') {
-    const isFirstElement = translate.value === 0
-    if (isFirstElement) {
-      translate.value = -lastTranslate.value
-      return
-    }
-    newTranslate = translate.value + swipeTranslate.value
-    if (newTranslate >= 0) {
-      translate.value = 0
-      return
-    }
-    translate.value = newTranslate
+  } finally {
+    setCurrentSlideIndex()
   }
 }
 
-const isMovable = ref(false)
 const currentPosX = ref(0)
 const startPosX = ref(0)
 
-const move = (e: MouseEvent) => {
+const onMove = (e: MouseEvent | TouchEvent) => {
+  e.preventDefault()
+  const { clientX } = e instanceof MouseEvent ? e : e.touches[0]
   isMovable.value = true
-  if (e.clientX > currentPosX.value || e.clientX < currentPosX.value) {
-    translate.value += e.clientX - currentPosX.value
+  if (clientX > currentPosX.value || clientX < currentPosX.value) {
+    translate.value += clientX - currentPosX.value
   }
-  currentPosX.value = e.clientX
+  currentPosX.value = clientX
 }
 
-const swipeByMouse = (e: MouseEvent) => {
+const swipeSlide = (e: MouseEvent | TouchEvent) => {
   if (!props.draggable) return
+  const { clientX } = e instanceof MouseEvent ? e : e.touches[0]
+  const eventType = e instanceof MouseEvent ? 'mousemove' : 'touchmove'
+  console.log('slide', eventType)
   startTranslate.value = translate.value
   carouselWrapperTransition.value = 0
-  startPosX.value = e.clientX
-  currentPosX.value = e.clientX
-  window.addEventListener('mousemove', move)
+  startPosX.value = clientX
+  currentPosX.value = clientX
+  window.addEventListener(eventType, onMove, {
+    passive: false
+  })
 }
 
-const stop = async (e: MouseEvent) => {
+const stop = async (e: MouseEvent | TouchEvent) => {
+  console.log('stop')
   if (!props.draggable) return
   carouselWrapperTransition.value = 3
-  window.removeEventListener('mousemove', move)
+  window.removeEventListener('mousemove', onMove)
+  window.removeEventListener('touchmove', onMove)
   if (isMovable.value) {
     e.preventDefault()
     e.stopPropagation()
   }
   isMovable.value = false
+}
+
+const setCurrentSlide = (slideIndex: number) => {
+  currentSlideIndex.value = slideIndex
+  translate.value = -slideIndex * swipeTranslate.value
 }
 
 watch(isMovable, () => {
@@ -138,18 +183,39 @@ watch(isMovable, () => {
     return
   }
 })
+
+watch(
+  () => props.slidesPerView,
+  () => {
+    translate.value = 0
+    setCurrentSlideIndex()
+  }
+)
 </script>
 
 <template>
   <div
     ref="carouselRef"
     class="carousel"
-    @mousedown.prevent.left="swipeByMouse"
+    @mousedown.prevent.left="swipeSlide"
     @mouseleave="stop"
+    @touchstart="swipeSlide"
+    @touchend="stop"
     @click.capture="stop"
   >
     <div class="carousel__wrapper" :style="carouselWrapperCss">
       <slot />
+    </div>
+
+    <div v-if="showDots" class="dots">
+      <div
+        v-for="(_, i) in countSlides"
+        :key="i"
+        :class="[{ active: i === currentSlideIndex }, dotType]"
+        @click="setCurrentSlide(i)"
+        @mousedown.stop
+        @touchstart.stop.passive
+      />
     </div>
 
     <template v-for="direction in (['prev', 'next'] as const)" :key="direction">
@@ -157,14 +223,17 @@ watch(isMovable, () => {
         v-show="showArrows"
         class="action"
         :class="{ hover: showArrows === 'hover', [direction]: true }"
-        @click="swipeSlide(direction)"
-        @mousedown.stop
+        @click.prevent.stop="swipeSlideByClick(direction)"
+        @touchend.prevent.stop="swipeSlideByClick(direction)"
+        @touchstart.stop.passive
       />
     </template>
   </div>
 </template>
 
 <style lang="sass">
+$actionBtnsWidth: 40px
+
 .carousel
   position: relative
   overflow: hidden
@@ -179,9 +248,9 @@ watch(isMovable, () => {
     overflow: hidden
   .action
     position: absolute
-    top: calc( 50% - 20px )
+    top: calc( 50% - $actionBtnsWidth / 2 )
     cursor: pointer
-    width: 40px
+    width: $actionBtnsWidth
     background: #fff
     border-radius: 50px
     padding: 10px
@@ -207,4 +276,30 @@ watch(isMovable, () => {
     display: flex
     .carousel__slide
       min-width: v-bind(slideWidth)
+  .dots
+    position: absolute
+    bottom: 20px
+    width: 100%
+    display: flex
+    justify-content: center
+    gap: 4px
+    .line
+      background-color: rgba(255, 255, 255, .3)
+      border-radius: 4px
+      cursor: pointer
+      height: 4px
+      transition: width .3s,background-color .3s cubic-bezier(.4,0,.2,1)
+      width: 12px
+      &.active
+        width: 40px
+        background: #fff
+    .dot
+      height: 8px
+      width: 8px
+      background-color: rgba(255, 255, 255, .3)
+      border-radius: 50%
+      cursor: pointer
+      transition: width .3s,background-color .3s cubic-bezier(.4,0,.2,1)
+      &.active
+        background-color: #fff
 </style>
