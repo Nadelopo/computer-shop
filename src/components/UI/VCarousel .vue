@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useElementSize } from '@vueuse/core'
-import { computed, ref, watch } from 'vue'
+import { computed, onUnmounted, ref, watch } from 'vue'
 import { ArrowSvg } from '@/assets/icons'
 
 type Props = {
@@ -11,6 +11,7 @@ type Props = {
   showArrows?: boolean | 'hover'
   showDots?: boolean
   dotType?: 'dot' | 'line'
+  autoplay?: boolean | number
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -19,14 +20,32 @@ const props = withDefaults(defineProps<Props>(), {
   countSwipeSlides: 1,
   draggable: false,
   showArrows: false,
-  dotType: 'line'
+  dotType: 'line',
+  autoplay: false
 })
 
 const translate = ref(0)
 const startTranslate = ref(0)
 const carouselRef = ref<HTMLElement>()
+const isMovable = ref(false)
+const autoplay = {
+  value: 0,
+  stop() {
+    if (!props.autoplay) return
+    clearInterval(this.value)
+  },
+  start() {
+    if (!props.autoplay) return
+    this.stop()
+    const timeInterval =
+      typeof props.autoplay === 'number' ? props.autoplay : 5000
+    this.value = window.setInterval(() => {
+      console.log('interval')
+      swipeSlideByClick('next')
+    }, timeInterval)
+  }
+}
 const currentSlideIndex = ref(0)
-
 const setCurrentSlideIndex = () => {
   if (translate.value >= 0) {
     currentSlideIndex.value = 0
@@ -36,15 +55,8 @@ const setCurrentSlideIndex = () => {
     currentSlideIndex.value = countSlides.value - 1
     return
   }
-
   currentSlideIndex.value = Math.ceil(-translate.value / swipeTranslate.value)
 }
-
-const isMovable = ref(false)
-watch(isMovable, () => {
-  if (isMovable.value) return
-  setCurrentSlideIndex()
-})
 
 const { width: carouselWidth } = useElementSize(carouselRef)
 const countSlides = computed(() => {
@@ -69,7 +81,6 @@ const swipeTranslate = computed(() => {
   )
 })
 const carouselWrapperTransition = ref(3)
-
 const carouselWrapperCss = computed(() => {
   return `gap: ${props.spaceBetween}px; translate: ${translate.value}px; transition: .${carouselWrapperTransition.value}s`
 })
@@ -114,6 +125,7 @@ const startPosX = ref(0)
 const touchMoveDirection = ref<'vertical' | 'horizontal' | null>(null)
 
 const onMove = (e: MouseEvent | TouchEvent) => {
+  // console.log('move')
   const { clientX } = e instanceof MouseEvent ? e : e.touches[0]
 
   if (e instanceof MouseEvent) {
@@ -146,8 +158,8 @@ const swipeSlide = (e: MouseEvent | TouchEvent) => {
   })
 }
 
-const stop = async (e: MouseEvent | TouchEvent) => {
-  // console.log('stop')
+const stopEvents = async (e: MouseEvent | TouchEvent) => {
+  console.log('stop')
   if (!props.draggable) return
   carouselWrapperTransition.value = 3
   window.removeEventListener('mousemove', onMove)
@@ -159,6 +171,7 @@ const stop = async (e: MouseEvent | TouchEvent) => {
     e.stopPropagation()
   }
   isMovable.value = false
+  removeEventListener('mouseup', stopEvents)
 }
 
 const setCurrentSlide = (slideIndex: number) => {
@@ -168,6 +181,7 @@ const setCurrentSlide = (slideIndex: number) => {
 
 watch(isMovable, () => {
   if (isMovable.value) return
+  setCurrentSlideIndex()
   if (translate.value > 0) {
     translate.value = 0
     return
@@ -203,6 +217,38 @@ watch(
     setCurrentSlideIndex()
   }
 )
+
+watch(
+  () => props.autoplay,
+  () => {
+    if (props.autoplay) autoplay.start()
+    else autoplay.stop()
+  },
+  {
+    immediate: true
+  }
+)
+
+const handleParentMouseEnter = () => {
+  autoplay.stop()
+}
+const handleParentMouseLeave = () => {
+  autoplay.start()
+  addEventListener('mouseup', stopEvents)
+}
+const handleParentTouchStart = (e: MouseEvent | TouchEvent) => {
+  swipeSlide(e)
+  autoplay.stop()
+}
+const handleParentTouchEnd = (e: MouseEvent | TouchEvent) => {
+  stopEvents(e)
+  autoplay.start()
+}
+
+onUnmounted(() => {
+  window.removeEventListener('mousemove', onMove)
+  window.removeEventListener('touchmove', onMove)
+})
 </script>
 
 <template>
@@ -210,10 +256,11 @@ watch(
     ref="carouselRef"
     class="carousel"
     @mousedown.prevent.left="swipeSlide"
-    @mouseleave="stop"
-    @touchstart="swipeSlide"
-    @touchend="stop"
-    @click.capture="stop"
+    @click.capture="stopEvents"
+    @touchstart="handleParentTouchStart"
+    @touchend="handleParentTouchEnd"
+    @mouseenter="handleParentMouseEnter"
+    @mouseleave="handleParentMouseLeave"
   >
     <div class="carousel__wrapper" :style="carouselWrapperCss">
       <slot />
@@ -270,6 +317,7 @@ $actionBtnsWidth: 40px
     transition: .2s
     fill: #8c8c8c
     box-shadow: 0 4px 10px #0000001a
+    user-select: none
     &.hover
       opacity: 0
       &.prev
@@ -296,6 +344,7 @@ $actionBtnsWidth: 40px
     display: flex
     justify-content: center
     gap: 4px
+    user-select: none
     .line
       background-color: rgba(255, 255, 255, .3)
       border-radius: 4px
