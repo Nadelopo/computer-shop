@@ -75,7 +75,7 @@ const carouselWrapperCss = computed(() => {
 })
 
 const swipeSlideByClick = (direction: 'next' | 'prev') => {
-  console.log('swipeSlideByClick')
+  // console.log('swipeSlideByClick')
   try {
     let newTranslate = 0
     if (direction === 'next') {
@@ -111,11 +111,21 @@ const swipeSlideByClick = (direction: 'next' | 'prev') => {
 
 const currentPosX = ref(0)
 const startPosX = ref(0)
+const touchMoveDirection = ref<'vertical' | 'horizontal' | null>(null)
 
 const onMove = (e: MouseEvent | TouchEvent) => {
-  e.preventDefault()
   const { clientX } = e instanceof MouseEvent ? e : e.touches[0]
+
+  if (e instanceof MouseEvent) {
+    touchMoveDirection.value = null
+  } else if (e instanceof TouchEvent && !isMovable.value) {
+    touchMoveDirection.value =
+      Math.abs(clientX - startPosX.value) > 8 ? 'horizontal' : 'vertical'
+  }
+
   isMovable.value = true
+  if (touchMoveDirection.value === 'vertical') return
+  if (touchMoveDirection.value === 'horizontal') e.preventDefault()
   if (clientX > currentPosX.value || clientX < currentPosX.value) {
     translate.value += clientX - currentPosX.value
   }
@@ -126,7 +136,7 @@ const swipeSlide = (e: MouseEvent | TouchEvent) => {
   if (!props.draggable) return
   const { clientX } = e instanceof MouseEvent ? e : e.touches[0]
   const eventType = e instanceof MouseEvent ? 'mousemove' : 'touchmove'
-  console.log('slide', eventType)
+  // console.log('swipeSlide', eventType)
   startTranslate.value = translate.value
   carouselWrapperTransition.value = 0
   startPosX.value = clientX
@@ -137,13 +147,15 @@ const swipeSlide = (e: MouseEvent | TouchEvent) => {
 }
 
 const stop = async (e: MouseEvent | TouchEvent) => {
-  console.log('stop')
+  // console.log('stop')
   if (!props.draggable) return
   carouselWrapperTransition.value = 3
   window.removeEventListener('mousemove', onMove)
   window.removeEventListener('touchmove', onMove)
   if (isMovable.value) {
-    e.preventDefault()
+    if (e instanceof MouseEvent) {
+      e.preventDefault()
+    }
     e.stopPropagation()
   }
   isMovable.value = false
@@ -223,9 +235,10 @@ watch(
         v-show="showArrows"
         class="action"
         :class="{ hover: showArrows === 'hover', [direction]: true }"
-        @click.prevent.stop="swipeSlideByClick(direction)"
+        @click="swipeSlideByClick(direction)"
         @touchend.prevent.stop="swipeSlideByClick(direction)"
         @touchstart.stop.passive
+        @mousedown.stop
       />
     </template>
   </div>

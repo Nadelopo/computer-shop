@@ -68,7 +68,7 @@ onMounted(async () => {
 
 <template>
   <div class="container">
-    <VCarousel
+    <v-carousel
       v-if="test"
       class="mb-4 py-6 bg-blue-600"
       :slides-per-view="4"
@@ -78,11 +78,11 @@ onMounted(async () => {
       show-arrows
       show-dots
     >
-      <VCarouselSlide v-for="i in 10" :key="i" class="flex justify-center">
+      <v-carousel-slide v-for="i in 10" :key="i" class="flex justify-center">
         <span>{{ i }}</span>
         <ProductCard :item="test" />
-      </VCarouselSlide>
-    </VCarousel>
+      </v-carousel-slide>
+    </v-carousel>
 
     <div v-if="product && loading === 'success'">
       <ProductHeader :product="product" />
