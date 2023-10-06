@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
 import { useElementSize } from '@vueuse/core'
-import { computed, onUnmounted, ref, watch } from 'vue'
 import { ArrowSvg } from '@/assets/icons'
 
 type Props = {
@@ -12,6 +12,7 @@ type Props = {
   showDots?: boolean
   dotType?: 'dot' | 'line'
   autoplay?: boolean | number
+  direction?: 'vertical' | 'horizontal'
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -21,12 +22,17 @@ const props = withDefaults(defineProps<Props>(), {
   draggable: false,
   showArrows: false,
   dotType: 'line',
-  autoplay: false
+  autoplay: false,
+  direction: 'horizontal'
 })
 
 const translate = ref(0)
 const startTranslate = ref(0)
 const carouselRef = ref<HTMLElement>()
+const { width: carouselWidth } = useElementSize(carouselRef)
+const carouselSlidesRef = ref<HTMLElement>()
+// const { height: verticalTranslate } = useElementSize(carouselSlidesRef)
+
 const isMovable = ref(false)
 const autoplay = {
   value: 0,
@@ -58,7 +64,9 @@ const setCurrentSlideIndex = () => {
   currentSlideIndex.value = Math.ceil(-translate.value / swipeTranslate.value)
 }
 
-const { width: carouselWidth } = useElementSize(carouselRef)
+// const verticalTranslate = computed(() => {
+//   return carouselRef.value?.children[0].clientHeight
+// })
 const countSlides = computed(() => {
   return Math.ceil(lastTranslate.value / swipeTranslate.value) + 1
 })
@@ -77,12 +85,19 @@ const lastTranslate = computed(() => {
 })
 const swipeTranslate = computed(() => {
   return (
-    (parseInt(slideWidth.value) + props.spaceBetween) * props.countSwipeSlides
+    (parseInt(slideWidth.value) + props.spaceBetween) *
+      props.countSwipeSlides || 1
   )
 })
 const carouselWrapperTransition = ref(3)
 const carouselWrapperCss = computed(() => {
-  return `gap: ${props.spaceBetween}px; translate: ${translate.value}px; transition: .${carouselWrapperTransition.value}s`
+  const translateDirection =
+    props.direction === 'horizontal' ? 'translateX' : 'translateY'
+  return `
+    gap: ${props.spaceBetween}px;
+    transform: ${translateDirection}(${translate.value}px);
+    transition: .${carouselWrapperTransition.value}s;
+  `
 })
 
 const swipeSlideByClick = (direction: 'next' | 'prev') => {
@@ -218,16 +233,10 @@ watch(
   }
 )
 
-watch(
-  () => props.autoplay,
-  () => {
-    if (props.autoplay) autoplay.start()
-    else autoplay.stop()
-  },
-  {
-    immediate: true
-  }
-)
+watchEffect(() => {
+  if (props.autoplay) autoplay.start()
+  else autoplay.stop()
+})
 
 const handleParentMouseEnter = () => {
   autoplay.stop()
@@ -262,7 +271,11 @@ onUnmounted(() => {
     @mouseenter="handleParentMouseEnter"
     @mouseleave="handleParentMouseLeave"
   >
-    <div class="carousel__wrapper" :style="carouselWrapperCss">
+    <div
+      ref="carouselSlidesRef"
+      class="carousel__slides"
+      :style="carouselWrapperCss"
+    >
       <slot />
     </div>
 
@@ -277,13 +290,16 @@ onUnmounted(() => {
       />
     </div>
 
-    <template v-for="direction in (['prev', 'next'] as const)" :key="direction">
+    <template
+      v-for="arrowDirection in (['prev', 'next'] as const)"
+      :key="arrowDirection"
+    >
       <ArrowSvg
         v-show="showArrows"
         class="action"
-        :class="{ hover: showArrows === 'hover', [direction]: true }"
-        @click="swipeSlideByClick(direction)"
-        @touchend.prevent.stop="swipeSlideByClick(direction)"
+        :class="{ hover: showArrows === 'hover', [arrowDirection]: true }"
+        @click="swipeSlideByClick(arrowDirection)"
+        @touchend.prevent.stop="swipeSlideByClick(arrowDirection)"
         @touchstart.stop.passive
         @mousedown.stop
       />
@@ -333,7 +349,7 @@ $actionBtnsWidth: 40px
     &.prev
       left: 10px
       rotate: -90deg
-  .carousel__wrapper
+  .carousel__slides
     display: flex
     .carousel__slide
       min-width: v-bind(slideWidth)

@@ -64,6 +64,17 @@ const test = ref<ProductCardData | null>(null)
 onMounted(async () => {
   test.value = await getOneById('products', 6, '*, categories(id, enTitle)')
 })
+
+// const t = ref(500)
+// setTimeout(() => {
+//   t.value = 1000
+// }, 2000)
+// setTimeout(() => {
+//   t.value = 1500
+// }, 4100)
+// setTimeout(() => {
+//   t.value = 2000
+// }, 7100)
 </script>
 
 <template>
@@ -77,6 +88,7 @@ onMounted(async () => {
       draggable
       show-arrows
       show-dots
+      direction="horizontal"
     >
       <v-carousel-slide v-for="i in 10" :key="i" class="flex justify-center">
         <span>{{ i }}</span>
