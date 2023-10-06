@@ -71,7 +71,7 @@ const links = [
     font-size: 14px
     @media (width < 700px)
       font-size: 10px
-    &.router-link-active
+    &.router-link-exact-active
       color: var(--color-text)
       fill: var(--color-text)
     svg

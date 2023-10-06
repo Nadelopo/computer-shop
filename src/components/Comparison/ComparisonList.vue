@@ -292,10 +292,7 @@ const setCellRef = (val: Element | ComponentPublicInstance | null) => {
         <div
           class="row"
           :class="{
-            'bg-white':
-              categoryProducts[0]?.specifications.length % 2 === 0
-                ? i % 2 === 0
-                : i % 2 !== 0
+            'bg-white': i % 2 === categoryProducts[0]?.specifications.length % 2
           }"
           @mouseenter="setRowColor($event, 'add')"
           @mouseleave="setRowColor($event, 'remove')"

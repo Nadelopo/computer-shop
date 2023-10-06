@@ -100,15 +100,15 @@ onMounted(async () => {
       <ProductHeader :product="product" />
       <div class="wrapper grid">
         <div>Описание</div>
-        <div class="text-xl text-justify leading-9">
+        <div class="description">
           {{ product.description }}
         </div>
       </div>
       <ProductSpecifications :product="product" />
-      <SimilarProducts
+      <!-- <SimilarProducts
         :product-price="product.price"
         :product-id="product.id"
-      />
+      /> -->
       <ProductReviews
         :product-id="product.id"
         :count-reviews="product.countReviews"
@@ -128,17 +128,32 @@ onMounted(async () => {
   border: 1px solid #d9d9d9
   padding: 30px
   margin-bottom: 20px
+  @media(width < 768px)
+    padding: 10px
   &.grid
     display: grid
     grid-template-columns: 250px 1fr
     gap: 10px
     & > div:first-child
       font-size: 30px
+      @media (768px <= width < 1024px )
+        font-size: 22px
     & > div:last-child
       padding: 0 10px 0 10px
+      @media (width < 768px)
+        padding: 0
+    @media (width < 1024px)
+      grid-template-columns: 180px 1fr
+    @media (width < 768px)
+      grid-template-columns: 1fr
+      grid-template-rows: auto 1fr
+
 
 .description
   text-align: justify
   font-size: 20px
   line-height: 36px
+  @media (width < 768px)
+    font-size: 16px
+    line-height: 30px
 </style>

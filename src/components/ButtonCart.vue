@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
 import { VButton } from '@/components/UI'
 import { CartInButtonSvg } from '@/assets/icons'
 
-const props = defineProps<{
+type Props = {
   productId: number
-  width?: number
-}>()
+  width?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  width: '122px'
+})
 
 const loading = ref(false)
 
@@ -17,27 +21,23 @@ const { cartItems } = storeToRefs(useCartStore())
 
 const product = cartItems.value.find((e) => e.productId === props.productId)
 
-const state = ref(product ? true : false)
+const isProductInCart = ref(product ? true : false)
 
 const add = async () => {
   loading.value = true
   await addToCart(props.productId)
   loading.value = false
-  state.value = true
+  isProductInCart.value = true
 }
-
-const width = computed(() => props.width + 'px')
 </script>
 
 <template>
   <v-button
-    v-if="state"
     :width="width"
-    @click.prevent="$router.push({ name: 'Cart' })"
+    :loading="isProductInCart ? false : loading"
+    @click.prevent="isProductInCart ? $router.push({ name: 'Cart' }) : add()"
   >
-    в корзину
-  </v-button>
-  <v-button v-else :width="width" :loading="loading" @click.prevent="add">
-    <cart-in-button-svg width="16" fill="#fff" class="mr-2" /> купить
+    <cart-in-button-svg width="16" fill="#fff" class="mr-2" />
+    {{ isProductInCart ? 'в корзине' : 'купить' }}
   </v-button>
 </template>

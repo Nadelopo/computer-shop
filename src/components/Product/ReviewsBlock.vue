@@ -52,12 +52,10 @@ const evalatuationClasses = computed(() => {
 
 <template>
   <div class="review__root">
-    <div class="flex gap-x-6">
+    <div class="head">
       <avatar-svg width="40" fill="#cdcdcd" />
-      <div class="flex items-center">{{ review.users.name }}</div>
-      <div class="flex gap-x-2 items-center">
-        <RatingStars :model-value="review.rating" />
-      </div>
+      <div>{{ review.users.name }}</div>
+      <rating-stars class="rating" :model-value="review.rating" />
       <div class="ml-auto">
         {{ new Date(review.created_at).toLocaleDateString() }}
       </div>
@@ -102,12 +100,25 @@ const evalatuationClasses = computed(() => {
 
 <style scoped lang="sass">
 
-
-
 .review__root
   background: v-bind(color)
   border-radius: 8px
   padding: 8px 16px
+  @media (width < 640px)
+    padding: 8px
+  .head
+    display: grid
+    column-gap: 20px
+    grid-template-columns: repeat(3, auto) 1fr
+    align-items: center
+    @media (width < 1024px)
+      grid-template-columns: auto 1fr auto
+      grid-template-rows: auto auto
+      grid-template-areas: ". . ." "bottom bottom bottom"
+      row-gap: 4px
+  .rating
+    @media (width < 1024px)
+      grid-area: bottom
   .title
     font-size: 20px
     font-weight: 500

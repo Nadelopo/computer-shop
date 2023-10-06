@@ -1,19 +1,33 @@
 <script setup lang="ts">
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 
-defineProps<{
+const props = defineProps<{
   product: ProductWithSpecifications
 }>()
+
+const defaultSpecifications = [
+  {
+    title: 'Производитель',
+    value: props.product.manufacturers.title,
+    units: ''
+  },
+  {
+    title: 'Гарантия',
+    value: props.product.warranty,
+    units: 'мес'
+  }
+]
 </script>
 
 <template>
   <div class="wrapper grid">
-    <div>Характеристики</div>
+    <div class="ml-1">Характеристики</div>
     <div>
       <div
-        v-for="specification in product.specifications"
+        v-for="(specification, i) in product.specifications"
         :key="specification.id"
         class="specification"
+        :class="{ colored: i % 2 == 0 }"
       >
         <div class="specification__title">
           {{ specification.category_specifications.title }}
@@ -23,13 +37,18 @@ defineProps<{
           {{ specification.category_specifications.units }}
         </div>
       </div>
-      <div class="specification">
-        <div class="specification__title">Производитель</div>
-        <div class="flex items-end">{{ product.manufacturers.title }}</div>
-      </div>
-      <div class="specification">
-        <div class="specification__title">Гарантия</div>
-        <div class="flex items-end">{{ product.warranty }} мес</div>
+      <div
+        v-for="(specification, i) in defaultSpecifications"
+        :key="specification.title"
+        class="specification"
+        :class="{
+          colored: i % 2 === product.specifications.length % 2
+        }"
+      >
+        <div class="specification__title">{{ specification.title }} </div>
+        <div class="flex items-end">
+          {{ specification.value }} {{ specification.units }}
+        </div>
       </div>
     </div>
   </div>
@@ -38,10 +57,18 @@ defineProps<{
 <style scoped lang="sass">
 .specification
   font-size: 18px
-  margin-bottom: 14px
+  padding: 7px 4px
   display: grid
-  grid-template-columns: 90% auto
+  grid-template-columns: 1fr minmax(140px, auto)
   gap: 20px
+  border-radius: 6px
+  @media (width < 640px)
+    grid-template-columns: 1fr 1fr
   .specification__title
     border-bottom: 1px dotted #5e5e5e
+    @media (width < 640px)
+      border-bottom: unset
+.colored
+  @media (width < 640px)
+    background: var(--body-back)
 </style>
