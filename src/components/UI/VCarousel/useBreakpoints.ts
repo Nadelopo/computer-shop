@@ -18,11 +18,11 @@ export const useBreakpoints = (
   options: {
     slidesPerView: {
       ref: Ref<number>
-      default: number
+      default: Ref<number>
     }
     spaceBetween: {
       ref: Ref<number>
-      default: number
+      default: Ref<number>
     }
   }
 ) => {
@@ -44,8 +44,8 @@ export const useBreakpoints = (
         }
       }
       if (breakpoints.every((e) => !e.mediaQuery)) {
-        slidesPerView.ref.value = slidesPerView.default
-        spaceBetween.ref.value = spaceBetween.default
+        slidesPerView.ref.value = slidesPerView.default.value
+        spaceBetween.ref.value = spaceBetween.default.value
       }
     }
   )

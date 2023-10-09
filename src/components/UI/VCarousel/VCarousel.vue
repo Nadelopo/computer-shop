@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch, watchEffect } from 'vue'
-import { useElementSize, useMutationObserver } from '@vueuse/core'
+import { computed, ref, toRef, watch } from 'vue'
+import { useElementSize } from '@vueuse/core'
 import { useMouseUpListener, useMoveListener } from './useListeners'
 import { useBreakpoints, type PropsBreakpoints } from './useBreakpoints'
+import { useAutoPlay } from './useAutoplay'
+import { useNotMovable } from './useNotMovable'
 import Arrows from './Arrows.vue'
 import Dots from './Dots.vue'
 
@@ -36,50 +38,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const slidesPerView = ref(props.slidesPerView)
 const spaceBetween = ref(props.spaceBetween)
-const { breakpoints } = useBreakpoints(props.breakpoints, {
-  slidesPerView: {
-    ref: slidesPerView,
-    default: props.slidesPerView
-  },
-  spaceBetween: {
-    ref: spaceBetween,
-    default: props.spaceBetween
-  }
-})
 
 const translate = ref(0)
-
-const carouselRef = ref<HTMLElement>()
-const { width: carouselWidth } = useElementSize(carouselRef)
-const slideWidth = computed((): string => {
-  const carouselWidthValue =
-    carouselWidth.value - spaceBetween.value * (slidesPerView.value - 1)
-  return carouselWidthValue / slidesPerView.value + 'px'
-})
-const countItems = ref(0)
-const carouselSlidesRef = ref<HTMLElement>()
-useMutationObserver(
-  carouselSlidesRef,
-  () => {
-    countItems.value = carouselRef.value?.children[0].children.length ?? 0
-  },
-  {
-    childList: true
-  }
-)
-onMounted(() => {
-  countItems.value = carouselRef.value?.children[0].children.length ?? 0
-})
-const notMovable = computed(() => countItems.value <= props.slidesPerView)
-const lastTranslate = computed((): number => {
-  if (!carouselRef.value) return 0
-  const countOffsetItems = countItems.value - slidesPerView.value
-  return (
-    countOffsetItems * parseInt(slideWidth.value) +
-    countOffsetItems * spaceBetween.value
-  )
-})
-
 const carouselWrapperTransition = ref(3)
 const carouselWrapperCss = computed(() => {
   const translateDirection =
@@ -114,14 +74,17 @@ const onMove = (e: MouseEvent | TouchEvent) => {
 }
 
 const moveListener = useMoveListener(onMove)
-
+const carouselSlidesRef = ref<HTMLElement>()
+const notMovable = useNotMovable(
+  carouselSlidesRef,
+  toRef(props, 'slidesPerView')
+)
 const startTranslate = ref(0)
 const swipeSlide = (e: MouseEvent | TouchEvent) => {
   if (!props.draggable || notMovable.value) return
   const { clientX } = e instanceof MouseEvent ? e : e.touches[0]
   const eventType = e instanceof MouseEvent ? 'mousemove' : 'touchmove'
   startTranslate.value = translate.value
-  carouselWrapperTransition.value = 0
   startPosX.value = clientX
   currentPosX.value = clientX
   moveListener.add(eventType)
@@ -129,7 +92,6 @@ const swipeSlide = (e: MouseEvent | TouchEvent) => {
 
 const stopEvents = async (e: MouseEvent | TouchEvent) => {
   if (!props.draggable || notMovable.value) return
-  carouselWrapperTransition.value = 3
   moveListener.remove()
   if (isMovableOnEvents.value) {
     if (e instanceof MouseEvent) {
@@ -143,6 +105,22 @@ const stopEvents = async (e: MouseEvent | TouchEvent) => {
 const mouseUpListener = useMouseUpListener(stopEvents)
 
 const dotsRef = ref<{ setCurrentSlideIndex: () => void }>()
+const carouselRef = ref<HTMLElement>()
+const { width: carouselWidth } = useElementSize(carouselRef)
+const slideWidth = computed((): string => {
+  const carouselWidthValue =
+    carouselWidth.value - spaceBetween.value * (slidesPerView.value - 1)
+  return carouselWidthValue / slidesPerView.value + 'px'
+})
+const lastTranslate = computed((): number => {
+  if (!carouselSlidesRef.value) return 0
+  const countOffsetItems =
+    carouselSlidesRef.value.children.length - slidesPerView.value
+  return (
+    countOffsetItems * parseInt(slideWidth.value) +
+    countOffsetItems * spaceBetween.value
+  )
+})
 const swipeTranslate = computed(() => {
   return (
     (parseInt(slideWidth.value) + spaceBetween.value) *
@@ -150,7 +128,11 @@ const swipeTranslate = computed(() => {
   )
 })
 watch(isMovableOnEvents, () => {
-  if (isMovableOnEvents.value) return
+  if (isMovableOnEvents.value) {
+    carouselWrapperTransition.value = 0
+    return
+  }
+  carouselWrapperTransition.value = 3
   dotsRef.value?.setCurrentSlideIndex()
   if (translate.value > 0) {
     translate.value = 0
@@ -178,6 +160,16 @@ watch(isMovableOnEvents, () => {
   }
 })
 
+const { breakpoints } = useBreakpoints(props.breakpoints, {
+  slidesPerView: {
+    ref: slidesPerView,
+    default: toRef(props, 'slidesPerView')
+  },
+  spaceBetween: {
+    ref: spaceBetween,
+    default: toRef(props, 'spaceBetween')
+  }
+})
 watch(
   [() => props.slidesPerView, breakpoints],
   () => {
@@ -189,31 +181,16 @@ watch(
     deep: true
   }
 )
+watch(notMovable, () => {
+  if (!notMovable.value) return
+  mouseUpListener.remove()
+  moveListener.remove()
+})
 
 const arrowRef = ref<{
   swipeSlideByClick: (direction: 'next' | 'prev') => void
 }>()
-const autoplay = {
-  value: 0,
-  stop() {
-    if (!props.autoplay) return
-    clearInterval(this.value)
-  },
-  start() {
-    if (!props.autoplay) return
-    this.stop()
-    const timeInterval =
-      typeof props.autoplay === 'number' ? props.autoplay : 5000
-    this.value = window.setInterval(() => {
-      arrowRef.value?.swipeSlideByClick('next')
-    }, timeInterval)
-  }
-}
-watchEffect(() => {
-  if (props.autoplay) autoplay.start()
-  else autoplay.stop()
-})
-
+const { autoplay } = useAutoPlay(arrowRef, toRef(props, 'autoplay'))
 const handleParentMouseEnter = () => {
   if (notMovable.value) return
   autoplay.stop()
@@ -281,7 +258,6 @@ const countSlides = computed(() => {
 </template>
 
 <style scoped lang="sass">
-
 .carousel
   position: relative
   overflow: hidden
