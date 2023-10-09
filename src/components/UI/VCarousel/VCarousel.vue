@@ -17,6 +17,7 @@ type Props = {
   autoplay?: boolean | number
   direction?: 'vertical' | 'horizontal'
   breakpoints?: PropsBreakpoints
+  slidePosition?: 'start' | 'center' | 'end'
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -29,27 +30,42 @@ const props = withDefaults(defineProps<Props>(), {
   dotType: 'line',
   autoplay: false,
   direction: 'horizontal',
-  breakpoints: () => ({})
+  breakpoints: () => ({}),
+  slidePosition: 'center'
 })
 
 const slidesPerView = ref(props.slidesPerView)
-useBreakpoints(props.breakpoints, slidesPerView, props.slidesPerView)
+const spaceBetween = ref(props.spaceBetween)
+const { breakpoints } = useBreakpoints(props.breakpoints, {
+  slidesPerView: {
+    ref: slidesPerView,
+    default: props.slidesPerView
+  },
+  spaceBetween: {
+    ref: spaceBetween,
+    default: props.spaceBetween
+  }
+})
 
 const translate = ref(0)
 
 const carouselRef = ref<HTMLElement>()
 const { width: carouselWidth } = useElementSize(carouselRef)
-const slideWidth = computed(() => {
+const slideWidth = computed((): string => {
   const carouselWidthValue =
-    carouselWidth.value - props.spaceBetween * (slidesPerView.value - 1)
+    carouselWidth.value - spaceBetween.value * (slidesPerView.value - 1)
   return carouselWidthValue / slidesPerView.value + 'px'
 })
-const lastTranslate = computed(() => {
+const countItems = computed((): number => {
+  return carouselRef.value?.children[0].children.length ?? 0
+})
+const notMovable = computed(() => countItems.value <= props.slidesPerView)
+const lastTranslate = computed((): number => {
   if (!carouselRef.value) return 0
-  const countItems =
-    carouselRef.value.children[0].children.length - slidesPerView.value
+  const countOffsetItems = countItems.value - slidesPerView.value
   return (
-    countItems * parseInt(slideWidth.value) + countItems * props.spaceBetween
+    countOffsetItems * parseInt(slideWidth.value) +
+    countOffsetItems * spaceBetween.value
   )
 })
 
@@ -58,7 +74,7 @@ const carouselWrapperCss = computed(() => {
   const translateDirection =
     props.direction === 'horizontal' ? 'translateX' : 'translateY'
   return `
-    gap: ${props.spaceBetween}px;
+    gap: ${spaceBetween.value}px;
     transform: ${translateDirection}(${translate.value}px);
     transition: .${carouselWrapperTransition.value}s;
   `
@@ -67,7 +83,7 @@ const carouselWrapperCss = computed(() => {
 const currentPosX = ref(0)
 const startPosX = ref(0)
 const touchMoveDirection = ref<'vertical' | 'horizontal' | null>(null)
-const isMovable = ref(false)
+const isMovableOnEvents = ref(false)
 const onMove = (e: MouseEvent | TouchEvent) => {
   console.log('move')
 
@@ -75,12 +91,12 @@ const onMove = (e: MouseEvent | TouchEvent) => {
 
   if (e instanceof MouseEvent) {
     touchMoveDirection.value = null
-  } else if (e instanceof TouchEvent && !isMovable.value) {
+  } else if (e instanceof TouchEvent && !isMovableOnEvents.value) {
     touchMoveDirection.value =
       Math.abs(clientX - startPosX.value) > 4 ? 'horizontal' : 'vertical'
   }
 
-  isMovable.value = true
+  isMovableOnEvents.value = true
   if (touchMoveDirection.value === 'vertical') return
   if (touchMoveDirection.value === 'horizontal') e.preventDefault()
   const currentPosXValue = currentPosX.value
@@ -94,42 +110,42 @@ const moveListener = useMoveListener(onMove)
 
 const startTranslate = ref(0)
 const swipeSlide = (e: MouseEvent | TouchEvent) => {
-  if (!props.draggable) return
+  if (!props.draggable || notMovable.value) return
   const { clientX } = e instanceof MouseEvent ? e : e.touches[0]
   const eventType = e instanceof MouseEvent ? 'mousemove' : 'touchmove'
-  console.log('swipeSlide', eventType)
   startTranslate.value = translate.value
   carouselWrapperTransition.value = 0
   startPosX.value = clientX
   currentPosX.value = clientX
   moveListener.add(eventType)
+  console.log('swipeSlide', eventType)
 }
 
 const stopEvents = async (e: MouseEvent | TouchEvent) => {
-  console.log('stop')
-  if (!props.draggable) return
+  if (!props.draggable || notMovable.value) return
   carouselWrapperTransition.value = 3
   moveListener.remove()
-  if (isMovable.value) {
+  if (isMovableOnEvents.value) {
     if (e instanceof MouseEvent) {
       e.preventDefault()
     }
     e.stopPropagation()
   }
-  isMovable.value = false
+  isMovableOnEvents.value = false
   mouseUpListener.remove()
+  console.log('stop')
 }
 const mouseUpListener = useMouseUpListener(stopEvents)
 
 const dotsRef = ref<{ setCurrentSlideIndex: () => void }>()
 const swipeTranslate = computed(() => {
   return (
-    (parseInt(slideWidth.value) + props.spaceBetween) *
+    (parseInt(slideWidth.value) + spaceBetween.value) *
       props.countSwipeSlides || 1
   )
 })
-watch(isMovable, () => {
-  if (isMovable.value) return
+watch(isMovableOnEvents, () => {
+  if (isMovableOnEvents.value) return
   dotsRef.value?.setCurrentSlideIndex()
   if (translate.value > 0) {
     translate.value = 0
@@ -160,11 +176,14 @@ watch(isMovable, () => {
 })
 
 watch(
-  () => props.slidesPerView,
+  [() => props.slidesPerView, breakpoints],
   () => {
     slidesPerView.value = props.slidesPerView
     translate.value = 0
     dotsRef.value?.setCurrentSlideIndex()
+  },
+  {
+    deep: true
   }
 )
 
@@ -194,18 +213,22 @@ watchEffect(() => {
 })
 
 const handleParentMouseEnter = () => {
+  if (notMovable.value) return
   autoplay.stop()
   mouseUpListener.remove()
 }
 const handleParentMouseLeave = () => {
+  if (notMovable.value) return
   autoplay.start()
   mouseUpListener.add()
 }
 const handleParentTouchStart = (e: MouseEvent | TouchEvent) => {
+  if (notMovable.value) return
   swipeSlide(e)
   autoplay.stop()
 }
 const handleParentTouchEnd = (e: MouseEvent | TouchEvent) => {
+  if (notMovable.value) return
   stopEvents(e)
   autoplay.start()
 }
@@ -219,8 +242,8 @@ const countSlides = computed(() => {
   <div
     ref="carouselRef"
     class="carousel"
-    @mousedown.prevent.left="swipeSlide"
-    @click.capture="stopEvents"
+    @mousedown.left.prevent="swipeSlide"
+    @click.capture.left="stopEvents"
     @touchstart="handleParentTouchStart"
     @touchend="handleParentTouchEnd"
     @mouseenter="handleParentMouseEnter"
@@ -229,24 +252,25 @@ const countSlides = computed(() => {
     <div class="carousel__slides" :style="carouselWrapperCss">
       <slot />
     </div>
-
-    <Dots
-      ref="dotsRef"
-      v-model:translate="translate"
-      :show-dots="showDots"
-      :dot-type="dotType"
-      :last-translate="lastTranslate"
-      :swipe-translate="swipeTranslate"
-      :count-slides="countSlides"
-    />
-    <Arrows
-      ref="arrowRef"
-      v-model:translate="translate"
-      :show-arrows="showArrows"
-      :last-translate="lastTranslate"
-      :swipe-translate="swipeTranslate"
-      @set-current-slide-index="dotsRef?.setCurrentSlideIndex()"
-    />
+    <template v-if="!notMovable">
+      <Dots
+        ref="dotsRef"
+        v-model:translate="translate"
+        :show-dots="showDots"
+        :dot-type="dotType"
+        :last-translate="lastTranslate"
+        :swipe-translate="swipeTranslate"
+        :count-slides="countSlides"
+      />
+      <Arrows
+        ref="arrowRef"
+        v-model:translate="translate"
+        :show-arrows="showArrows"
+        :last-translate="lastTranslate"
+        :swipe-translate="swipeTranslate"
+        @set-current-slide-index="dotsRef?.setCurrentSlideIndex()"
+      />
+    </template>
   </div>
 </template>
 
@@ -268,4 +292,7 @@ const countSlides = computed(() => {
     display: flex
     :slotted(.carousel__slide)
       min-width: v-bind(slideWidth)
+  :slotted(.carousel__slide)
+    display: flex
+    justify-content: v-bind('props.slidePosition')
 </style>
