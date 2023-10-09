@@ -48,17 +48,20 @@ defineExpose({ swipeSlideByClick })
 </script>
 
 <template>
-  <ArrowSvg
+  <template
     v-for="arrowDirection in (['prev', 'next'] as const)"
-    v-show="showArrows"
     :key="arrowDirection"
-    class="action"
-    :class="{ hover: showArrows === 'hover', [arrowDirection]: true }"
-    @click="swipeSlideByClick(arrowDirection)"
-    @touchend.prevent.stop="swipeSlideByClick(arrowDirection)"
-    @touchstart.stop.passive
-    @mousedown.stop
-  />
+  >
+    <ArrowSvg
+      v-show="showArrows"
+      class="action"
+      :class="{ hover: showArrows === 'hover', [arrowDirection]: true }"
+      @click="swipeSlideByClick(arrowDirection)"
+      @touchend.prevent.stop="swipeSlideByClick(arrowDirection)"
+      @touchstart.stop.passive
+      @mousedown.stop
+    />
+  </template>
 </template>
 
 <style scoped lang="sass">
