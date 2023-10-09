@@ -27,7 +27,6 @@ const swipeSlideByClick = async (direction: 'next' | 'prev') => {
         translate = -props.lastTranslate
         return
       }
-      translate = newTranslate
     }
     if (direction === 'prev') {
       const isFirstElement = props.translate === 0
@@ -36,8 +35,12 @@ const swipeSlideByClick = async (direction: 'next' | 'prev') => {
         return
       }
       newTranslate = props.translate + props.swipeTranslate
-      if (newTranslate >= 0) return
+      if (newTranslate >= 0) {
+        translate = 0
+        return
+      }
     }
+    translate = newTranslate
   } finally {
     emit('update:translate', translate)
     await nextTick()

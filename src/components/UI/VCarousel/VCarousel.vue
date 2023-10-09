@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, watch, watchEffect } from 'vue'
-import { useElementSize } from '@vueuse/core'
+import { computed, onMounted, ref, watch, watchEffect } from 'vue'
+import { useElementSize, useMutationObserver } from '@vueuse/core'
 import { useMouseUpListener, useMoveListener } from './useListeners'
 import { useBreakpoints, type PropsBreakpoints } from './useBreakpoints'
 import Arrows from './Arrows.vue'
@@ -56,8 +56,19 @@ const slideWidth = computed((): string => {
     carouselWidth.value - spaceBetween.value * (slidesPerView.value - 1)
   return carouselWidthValue / slidesPerView.value + 'px'
 })
-const countItems = computed((): number => {
-  return carouselRef.value?.children[0].children.length ?? 0
+const countItems = ref(0)
+const carouselSlidesRef = ref<HTMLElement>()
+useMutationObserver(
+  carouselSlidesRef,
+  () => {
+    countItems.value = carouselRef.value?.children[0].children.length ?? 0
+  },
+  {
+    childList: true
+  }
+)
+onMounted(() => {
+  countItems.value = carouselRef.value?.children[0].children.length ?? 0
 })
 const notMovable = computed(() => countItems.value <= props.slidesPerView)
 const lastTranslate = computed((): number => {
@@ -85,17 +96,13 @@ const startPosX = ref(0)
 const touchMoveDirection = ref<'vertical' | 'horizontal' | null>(null)
 const isMovableOnEvents = ref(false)
 const onMove = (e: MouseEvent | TouchEvent) => {
-  console.log('move')
-
   const { clientX } = e instanceof MouseEvent ? e : e.touches[0]
-
   if (e instanceof MouseEvent) {
     touchMoveDirection.value = null
   } else if (e instanceof TouchEvent && !isMovableOnEvents.value) {
     touchMoveDirection.value =
       Math.abs(clientX - startPosX.value) > 4 ? 'horizontal' : 'vertical'
   }
-
   isMovableOnEvents.value = true
   if (touchMoveDirection.value === 'vertical') return
   if (touchMoveDirection.value === 'horizontal') e.preventDefault()
@@ -118,7 +125,6 @@ const swipeSlide = (e: MouseEvent | TouchEvent) => {
   startPosX.value = clientX
   currentPosX.value = clientX
   moveListener.add(eventType)
-  console.log('swipeSlide', eventType)
 }
 
 const stopEvents = async (e: MouseEvent | TouchEvent) => {
@@ -133,7 +139,6 @@ const stopEvents = async (e: MouseEvent | TouchEvent) => {
   }
   isMovableOnEvents.value = false
   mouseUpListener.remove()
-  console.log('stop')
 }
 const mouseUpListener = useMouseUpListener(stopEvents)
 
@@ -155,9 +160,7 @@ watch(isMovableOnEvents, () => {
     translate.value = -lastTranslate.value
     return
   }
-
   const direction = currentPosX.value > startPosX.value ? 'right' : 'left'
-
   const difference =
     Math.abs(currentPosX.value - startPosX.value) % swipeTranslate.value
   const isLessHalf = difference < swipeTranslate.value / 2
@@ -202,7 +205,6 @@ const autoplay = {
     const timeInterval =
       typeof props.autoplay === 'number' ? props.autoplay : 5000
     this.value = window.setInterval(() => {
-      console.log('interval')
       arrowRef.value?.swipeSlideByClick('next')
     }, timeInterval)
   }
@@ -249,7 +251,11 @@ const countSlides = computed(() => {
     @mouseenter="handleParentMouseEnter"
     @mouseleave="handleParentMouseLeave"
   >
-    <div class="carousel__slides" :style="carouselWrapperCss">
+    <div
+      ref="carouselSlidesRef"
+      class="carousel__slides"
+      :style="carouselWrapperCss"
+    >
       <slot />
     </div>
     <template v-if="!notMovable">
