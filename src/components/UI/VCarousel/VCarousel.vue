@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, toRef, watch } from 'vue'
 import { useElementSize } from '@vueuse/core'
-import { useMouseUpListener, useMoveListener } from './useListeners'
-import { useBreakpoints, type PropsBreakpoints } from './useBreakpoints'
-import { useAutoPlay } from './useAutoplay'
-import { useNotMovable } from './useNotMovable'
+//prettier-ignore
+import { useFeatureMouseUpListener, useFeatureMoveListener } from './useFeatureListeners'
+//prettier-ignore
+import { useFeatureBreakpoints, type PropsBreakpoints } from './useFeatureBreakpoints'
+import { useFeatureAutoPlay } from './useFeatureAutoplay'
+import { useFeatureNotMovable } from './useFeatureNotMovable'
 import Arrows from './Arrows.vue'
 import Dots from './Dots.vue'
 
@@ -73,9 +75,9 @@ const onMove = (e: MouseEvent | TouchEvent) => {
   currentPosX.value = clientX
 }
 
-const moveListener = useMoveListener(onMove)
+const moveListener = useFeatureMoveListener(onMove)
 const carouselSlidesRef = ref<HTMLElement>()
-const notMovable = useNotMovable(
+const notMovable = useFeatureNotMovable(
   carouselSlidesRef,
   toRef(props, 'slidesPerView')
 )
@@ -102,7 +104,7 @@ const stopEvents = async (e: MouseEvent | TouchEvent) => {
   isMovableOnEvents.value = false
   mouseUpListener.remove()
 }
-const mouseUpListener = useMouseUpListener(stopEvents)
+const mouseUpListener = useFeatureMouseUpListener(stopEvents)
 
 const dotsRef = ref<{ setCurrentSlideIndex: () => void }>()
 const carouselRef = ref<HTMLElement>()
@@ -160,7 +162,7 @@ watch(isMovableOnEvents, () => {
   }
 })
 
-const { breakpoints } = useBreakpoints(props.breakpoints, {
+const { breakPoints } = useFeatureBreakpoints(props.breakpoints, {
   slidesPerView: {
     ref: slidesPerView,
     default: toRef(props, 'slidesPerView')
@@ -171,7 +173,7 @@ const { breakpoints } = useBreakpoints(props.breakpoints, {
   }
 })
 watch(
-  [() => props.slidesPerView, breakpoints],
+  [() => props.slidesPerView, breakPoints],
   () => {
     slidesPerView.value = props.slidesPerView
     translate.value = 0
@@ -190,7 +192,7 @@ watch(notMovable, () => {
 const arrowRef = ref<{
   swipeSlideByClick: (direction: 'next' | 'prev') => void
 }>()
-const { autoplay } = useAutoPlay(arrowRef, toRef(props, 'autoplay'))
+const { autoplay } = useFeatureAutoPlay(arrowRef, toRef(props, 'autoplay'))
 const handleParentMouseEnter = () => {
   if (notMovable.value) return
   autoplay.stop()

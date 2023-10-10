@@ -13,7 +13,7 @@ export type PropsBreakpoints = {
   }
 }
 
-export const useBreakpoints = (
+export const useFeatureBreakpoints = (
   propsBreakpoints: PropsBreakpoints,
   options: {
     slidesPerView: {
@@ -26,13 +26,13 @@ export const useBreakpoints = (
     }
   }
 ) => {
-  const breakpoints: Breakpoints[] = reactive([])
+  const breakPoints: Breakpoints[] = reactive([])
 
   watch(
-    () => breakpoints.map((e) => e.mediaQuery),
+    () => breakPoints.map((e) => e.mediaQuery),
     () => {
       const { slidesPerView, spaceBetween } = options
-      for (const item of breakpoints) {
+      for (const item of breakPoints) {
         if (item.mediaQuery) {
           const point = propsBreakpoints[Number(item.point)]
           if (point.slidesPerView) {
@@ -43,7 +43,7 @@ export const useBreakpoints = (
           }
         }
       }
-      if (breakpoints.every((e) => !e.mediaQuery)) {
+      if (breakPoints.every((e) => !e.mediaQuery)) {
         slidesPerView.ref.value = slidesPerView.default.value
         spaceBetween.ref.value = spaceBetween.default.value
       }
@@ -54,11 +54,11 @@ export const useBreakpoints = (
   if (points.length) {
     for (const point of points) {
       const media = useMediaQuery(`(width < ${point}px)`)
-      breakpoints.unshift({
+      breakPoints.unshift({
         point,
         mediaQuery: media
       })
     }
   }
-  return { breakpoints }
+  return { breakPoints }
 }

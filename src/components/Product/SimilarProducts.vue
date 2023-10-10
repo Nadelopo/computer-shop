@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getAll } from '@/utils/queries/db'
+import { VCarousel, VCarouselSlide } from '../UI'
 import type { ProductRead } from '@/types/tables/products.types'
 
 const route = useRoute()
@@ -19,12 +20,12 @@ const similarProducts = ref<ProductRead[]>([])
 const loadSimilarProducts = async () => {
   const { data } = await getAll('products', {
     match: { categoryId: categoryId },
-    between: {
-      column: 'price',
-      begin: props.productPrice - 5000,
-      end: props.productPrice + 5000
-    },
-    limit: 4,
+    // between: {
+    //   column: 'price',
+    //   begin: props.productPrice - 5000,
+    //   end: props.productPrice + 5000
+    // },
+    // limit: 5,
     neq: ['id', props.productId]
   })
   if (data) {
@@ -40,13 +41,26 @@ watch(() => props.productId, loadSimilarProducts)
 <template>
   <div v-if="similarProducts.length" class="wrapper grid">
     <div>Похожие товары</div>
-    <div class="similar__products">
-      <div
+    <v-carousel
+      draggable
+      show-arrows="hover"
+      :slides-per-view="4"
+      :breakpoints="{
+        1280: {
+          slidesPerView: 3
+        },
+        1024: {
+          slidesPerView: 2
+        },
+        486: {
+          slidesPerView: 1
+        }
+      }"
+    >
+      <v-carousel-slide
         v-for="similarProduct in similarProducts"
         :key="similarProduct.id"
-        class="similar"
       >
-        <img :src="similarProduct.img" alt="" />
         <router-link
           :to="{
             name: 'Product',
@@ -56,30 +70,29 @@ watch(() => props.productId, loadSimilarProducts)
               productId: similarProduct.id
             }
           }"
+          class="similar"
         >
-          {{ similarProduct.name }}
+          <img :src="similarProduct.img" alt="" />
+          <span> {{ similarProduct.name }}</span>
         </router-link>
-      </div>
-    </div>
+      </v-carousel-slide>
+    </v-carousel>
   </div>
 </template>
 
 <style scoped lang="sass">
-.similar__products
+.similar
+  min-height: 230px
   display: grid
-  grid-template-columns: repeat(4, 1fr)
-  gap: 20px
-  .similar
-    height: 230px
-    display: grid
-    grid-template-rows: 80% 1fr
-    justify-items: center
-    img
-      max-width: 160px
-      max-height: 150px
-    a
-      transition: .2s
-      font-size: 18px
-      &:hover
-        color: var(--color-text)
+  grid-template-rows: 200px 1fr
+  justify-items: center
+  &:hover
+    span
+      color: var(--color-text)
+  img
+    max-width: 160px
+    max-height: 150px
+  span
+    transition: .2s
+    font-size: 18px
 </style>

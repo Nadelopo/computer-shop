@@ -5,7 +5,7 @@ export type ArrowRef =  Ref<{
     swipeSlideByClick: (direction: 'next' | 'prev') => void;
 } | undefined>
 
-export const useAutoPlay = (
+export const useFeatureAutoPlay = (
   arrowRef: ArrowRef,
   propsAutoplay: Ref<boolean | number>
 ) => {

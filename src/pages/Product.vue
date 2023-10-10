@@ -70,10 +70,10 @@ const updateProductRating = (newData: UpdateProductRating) => {
         </div>
       </div>
       <ProductSpecifications :product="product" />
-      <!-- <SimilarProducts
+      <SimilarProducts
         :product-price="product.price"
         :product-id="product.id"
-      /> -->
+      />
       <ProductReviews
         :product-id="product.id"
         :count-reviews="product.countReviews"
@@ -104,7 +104,6 @@ const updateProductRating = (newData: UpdateProductRating) => {
       @media (768px <= width < 1024px )
         font-size: 22px
     & > div:last-child
-      padding: 0 10px 0 10px
       @media (width < 768px)
         padding: 0
     @media (width < 1024px)

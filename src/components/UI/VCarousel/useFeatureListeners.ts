@@ -1,6 +1,6 @@
 import { onUnmounted } from 'vue'
 
-export const useMoveListener = (
+export const useFeatureMoveListener = (
   handler: (e: MouseEvent | TouchEvent) => void
 ) => {
   const add = (type: 'mousemove' | 'touchmove') => {
@@ -19,7 +19,7 @@ export const useMoveListener = (
   }
 }
 
-export const useMouseUpListener = (
+export const useFeatureMouseUpListener = (
   handler: (e: MouseEvent | TouchEvent) => void
 ) => {
   const add = () => window.addEventListener('mouseup', handler)

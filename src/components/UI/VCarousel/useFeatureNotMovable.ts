@@ -1,7 +1,7 @@
 import { useMutationObserver } from '@vueuse/core'
 import { computed, onMounted, ref, type Ref } from 'vue'
 
-export const useNotMovable = (
+export const useFeatureNotMovable = (
   carouselSlidesRef: Ref<HTMLElement | undefined>,
   slidesPerView: Ref<number>
 ) => {
