@@ -11,7 +11,10 @@ const props = defineProps<{
   itemCount: number
   pageSize: number
   pageSlots?: PageSlots
-  onClick?: () => void
+}>()
+
+const emit = defineEmits<{
+  onClick: []
 }>()
 
 const modelValue = defineModel<number>({ required: true })
@@ -64,17 +67,17 @@ const otherNextPages = computed(() => {
 
 const setPrev = () => {
   modelValue.value--
-  props.onClick?.()
+  emit('onClick')
 }
 
 const setNext = () => {
   modelValue.value++
-  props.onClick?.()
+  emit('onClick')
 }
 
 const setPage = (page: number) => {
   modelValue.value = page
-  props.onClick?.()
+  emit('onClick')
 }
 </script>
 
@@ -127,7 +130,6 @@ const setPage = (page: number) => {
 </template>
 
 <style scoped lang="sass">
-
 .pagination
   display: flex
   gap: 6px
