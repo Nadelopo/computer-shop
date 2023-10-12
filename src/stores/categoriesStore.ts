@@ -10,6 +10,8 @@ import type {
   CategorySpecificationCreate,
   CategorySpecificationRead
 } from '@/types/tables/categorySpecifications.types'
+import type { PostgrestError } from '@supabase/supabase-js'
+import type { DataError } from '@/types'
 
 export const useCategoriesStore = defineStore('categories', () => {
   const categories = ref<CategoryRead[]>([])
@@ -23,45 +25,50 @@ export const useCategoriesStore = defineStore('categories', () => {
 
   async function createCategory(
     params: CategoryCreate
-  ): Promise<CategoryRead | null> {
-    const data = await createOne('categories', params)
-    if (data) {
-      categories.value.push(data)
-    }
-    return data
+  ): Promise<DataError<CategoryRead>> {
+    const { data, error } = await createOne('categories', params)
+    if (error) return { data, error }
+    categories.value.push(data)
+    return { data, error }
   }
 
   async function updateCategory(
-    category: CategoryUpdate
-  ): Promise<CategoryRead | null> {
-    if (category.id) {
-      const data = await updateOneById('categories', category.id, category)
-      if (data) {
-        categories.value = categories.value.map((e) =>
-          e.id === category.id ? { ...e, ...category } : e
-        )
-      }
-      return data
-    }
-    return null
+    category: Omit<CategoryUpdate, 'id'> & { id: number }
+  ): Promise<DataError<CategoryRead>> {
+    const { data, error } = await updateOneById(
+      'categories',
+      category.id,
+      category
+    )
+    if (error) return { data, error }
+    categories.value = categories.value.map((e) =>
+      e.id === category.id ? { ...e, ...category } : e
+    )
+
+    return { data, error }
   }
 
   async function createCategorySpecifications(
     form: CategorySpecificationCreate
-  ): Promise<CategorySpecificationRead | null> {
-    return createOne('category_specifications', form)
+  ): Promise<DataError<CategorySpecificationRead>> {
+    const { data, error } = await createOne('category_specifications', form)
+    return { data, error } as
+      | { data: CategorySpecificationRead; error: null }
+      | { data: null; error: PostgrestError }
   }
 
   async function getCategorySpecifications(
     categoryId: number
-  ): Promise<CategorySpecificationRead[] | null> {
-    const { data } = await getAll<CategorySpecificationRead>(
+  ): Promise<DataError<CategorySpecificationRead[]>> {
+    const { data, error } = await getAll<CategorySpecificationRead>(
       'category_specifications',
       {
         match: { categoryId: categoryId }
       }
     )
-    return data
+    return { data, error } as
+      | { data: CategorySpecificationRead[]; error: null }
+      | { data: null; error: PostgrestError }
   }
 
   setCategories()

@@ -8,41 +8,51 @@ import ProductCard from '@/components/ProductCard.vue'
 import SkeletonCard from '@/components/SkeletonCard.vue'
 import { TrashSvg } from '@/assets/icons'
 import type { ProductCardData } from './types'
+import type { Loading } from '@/types'
 
 const { userLists, setUserListsValue, deleteItemFromUserList } = useUserStore()
 const { user } = storeToRefs(useUserStore())
 
 const favourites = ref<ProductCardData[]>([])
-const loading = ref<'loading' | 'empty' | 'success'>('success')
+const loading = ref<Loading>('success')
 
 onBeforeMount(async () => {
   loading.value = 'loading'
   await setUserListsValue()
-  const { data } = await getAll('products', {
+  const { data, error } = await getAll('products', {
     select: '*, categories(id, enTitle)',
     in: ['id', userLists.favourites]
   })
-  favourites.value = data || []
+  if (error) {
+    loading.value = 'error'
+    return
+  }
+  favourites.value = data
   loading.value = favourites.value.length ? 'success' : 'empty'
 })
 
 const clear = async () => {
   if (user.value) {
-    const data = await updateOneById('users', user.value.id, {
+    const { error } = await updateOneById('users', user.value.id, {
       favourites: []
     })
-    if (data) {
-      favourites.value = []
-      user.value.favourites = []
-      userLists.favourites = []
-      loading.value = 'empty'
+    if (error) {
+      loading.value = 'error'
+      return
     }
+    favourites.value = []
+    user.value.favourites = []
+    userLists.favourites = []
+    loading.value = 'empty'
   }
 }
 
 const deleteItem = async (id: number) => {
-  const data = await deleteItemFromUserList('favourites', id)
-  if (!data) return
+  const { error } = await deleteItemFromUserList('favourites', id)
+  if (error) {
+    loading.value = 'error'
+    return
+  }
   favourites.value = favourites.value.filter((e) => e.id !== id)
   if (favourites.value.length === 0) {
     loading.value = 'empty'

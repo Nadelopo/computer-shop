@@ -59,7 +59,7 @@ const createReview = async () => {
   if (form.value.rating === 0) {
     toast.warning('Укажите оценку')
   } else {
-    const data = await createOne(
+    const { data, error } = await createOne(
       'reviews',
       {
         userId: user.value.id,
@@ -72,25 +72,28 @@ const createReview = async () => {
       },
       '*, users(name)'
     )
-    if (data) {
-      emit('createReview', data)
-      form.value = { ...purifiedForm }
-      showReviewForm.value = false
+    if (error) return
 
-      const newProductRating =
-        (props.productRating * props.countReviews + data.rating) /
-        (props.countReviews + 1)
-      const productData = await updateOneById('products', props.productId, {
+    emit('createReview', data)
+    form.value = { ...purifiedForm }
+    showReviewForm.value = false
+
+    const newProductRating =
+      (props.productRating * props.countReviews + data.rating) /
+      (props.countReviews + 1)
+    const { data: productData, error: errorProduct } = await updateOneById(
+      'products',
+      props.productId,
+      {
         countReviews: props.countReviews + 1,
         rating: newProductRating
-      })
-      if (productData) {
-        emit('updateProductRating', {
-          countReviews: productData.countReviews,
-          rating: productData.rating
-        })
       }
-    }
+    )
+    if (errorProduct) return
+    emit('updateProductRating', {
+      countReviews: productData.countReviews,
+      rating: productData.rating
+    })
   }
 }
 </script>

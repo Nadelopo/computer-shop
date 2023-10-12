@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
@@ -7,9 +7,9 @@ import { useFilterStore } from '@/stores/filterStore'
 import InputFilter from '@/components/CategoryProducts/InputFilter.vue'
 import { VCheckbox, VButton } from '@/components/UI'
 import SkeletonFiltersVue from './SkeletonFilters.vue'
+import type { Loading } from '@/types'
 
 type SortType = keyof typeof sortAscents
-
 function isSortType(key: string): key is SortType {
   if (key in sortAscents) {
     return true
@@ -27,39 +27,42 @@ const route = useRoute()
 const router = useRouter()
 
 const categoryId = Number(route.params.id)
-
+const loading = ref<Loading>('loading')
 const setFilterProperties = async () => {
-  const data = await getCategorySpecifications(categoryId)
-  if (data) {
-    specificationsValues.value = data
-      .map((e) => {
-        const { id, enTitle, title } = e
-        if (e.type) {
-          const { min, max, step } = e
-          return {
-            id,
-            enTitle,
-            title,
-            type: e.type,
-            min,
-            max,
-            minValue: min,
-            maxValue: max,
-            step
-          }
-        } else {
-          return {
-            id,
-            enTitle,
-            title,
-            type: e.type,
-            variantsValues: e.variantsValues,
-            values: []
-          }
-        }
-      })
-      .sort((a, b) => Number(b.type) - Number(a.type))
+  const { data, error } = await getCategorySpecifications(categoryId)
+  if (error) {
+    loading.value = 'error'
+    return
   }
+  specificationsValues.value = data
+    .map((e) => {
+      const { id, enTitle, title } = e
+      if (e.type) {
+        const { min, max, step } = e
+        return {
+          id,
+          enTitle,
+          title,
+          type: e.type,
+          min,
+          max,
+          minValue: min,
+          maxValue: max,
+          step
+        }
+      } else {
+        return {
+          id,
+          enTitle,
+          title,
+          type: e.type,
+          variantsValues: e.variantsValues,
+          values: []
+        }
+      }
+    })
+    .sort((a, b) => Number(b.type) - Number(a.type))
+
   const query = route.query
   const price = query.price
   currentPage.value = query.page ? Number(query.page) - 1 : 0
@@ -95,6 +98,7 @@ const setFilterProperties = async () => {
       value.values = [...(Array.isArray(field) ? field : [field])].map(String)
     }
   }
+  loading.value = 'success'
 }
 
 const apply = () => {
@@ -135,7 +139,7 @@ watch(
 
 <template>
   <div>
-    <div v-if="specificationsValues.length" class="filters">
+    <div v-if="loading === 'success'" class="filters">
       <input-filter
         v-model:min-value="productsPrice.min"
         v-model:max-value="productsPrice.max"
@@ -177,9 +181,10 @@ watch(
         <v-button width="100%" @click="cancel"> сбросить </v-button>
       </div>
     </div>
-    <div v-else>
+    <div v-else-if="loading === 'loading'">
       <SkeletonFiltersVue />
     </div>
+    <div v-else-if="loading === 'error'">ошибка</div>
   </div>
 </template>
 

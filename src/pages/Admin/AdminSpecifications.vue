@@ -7,6 +7,7 @@ import SpecificationsList from '@/components/Admin/SpecificationsList.vue'
 import { VDoubleButtons, VInputText, VButton, VSelect } from '@/components/UI'
 import type { CategorySpecificationCreate } from '@/types/tables/categorySpecifications.types'
 import type { SpecificationCreate } from '@/types/tables/specifications.types'
+import type { Loading } from '@/types'
 
 const { categories } = storeToRefs(useCategoriesStore())
 const { createCategorySpecifications } = useCategoriesStore()
@@ -34,13 +35,21 @@ watch(select, (cur) => {
   }
 })
 
+const loading = ref<Loading>('loading')
 const create = async () => {
-  const data = await createCategorySpecifications(form.value)
-  if (!data) return
+  const { data, error } = await createCategorySpecifications(form.value)
+  if (error) {
+    loading.value = 'error'
+    return
+  }
 
-  const { data: products } = await getAll('products', {
+  const { data: products, error: errorProducts } = await getAll('products', {
     match: { categoryId: data.categoryId }
   })
+  if (errorProducts) {
+    loading.value = 'error'
+    return
+  }
 
   const initialSpecificationsValue: SpecificationCreate[] = []
   for (const product of products || []) {
@@ -52,7 +61,14 @@ const create = async () => {
     })
   }
 
-  createMany('specifications', initialSpecificationsValue)
+  const { error: errorSpecifications } = await createMany(
+    'specifications',
+    initialSpecificationsValue
+  )
+  if (errorSpecifications) {
+    loading.value = 'error'
+    return
+  }
 
   form.value = {
     categoryId: 0,

@@ -44,8 +44,8 @@ router.beforeEach(async (to, from) => {
   }
   const requireAdmin = to.matched.some((record) => record.meta.admin)
   if (!requireAdmin) return true
-  const data = await getOneById('users', user.id, 'role')
-  if (!data) return false
+  const { data, error } = await getOneById('users', user.id, 'role')
+  if (error) return false
   if (data.role !== Role.ADMIN) return { name: 'Home' }
   return true
 })

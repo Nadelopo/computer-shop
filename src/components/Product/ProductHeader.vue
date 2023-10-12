@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onBeforeMount, ref } from 'vue'
 import { useMediaQuery } from '@vueuse/core'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { formatPrice } from '@/utils/formatPrice'
@@ -8,6 +8,7 @@ import RatingStars from '../RatingStars.vue'
 import ButtonFavouritesComparison from './ButtonFavouritesComparison.vue'
 import type { ManufacturerRead } from '@/types/tables/manufacturers.types'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
+import type { Loading } from '@/types'
 
 const props = defineProps<{
   product: ProductWithSpecifications
@@ -16,18 +17,19 @@ const props = defineProps<{
 const { getManufacturer } = useManufacturersStore()
 const manufacturer = ref<ManufacturerRead>()
 
-const loadManufacturer = async () => {
-  const data = await getManufacturer(props.product.manufacturers.id)
-  if (data) {
-    manufacturer.value = data
+const loading = ref<Loading>('loading')
+onBeforeMount(async () => {
+  const { data, error } = await getManufacturer(props.product.manufacturers.id)
+  if (error) {
+    loading.value = 'error'
+    return
   }
-}
+  manufacturer.value = data
+})
 
 const productPrice = computed(() => {
   return formatPrice(props.product.price)
 })
-
-loadManufacturer()
 
 const isLargeScreen = useMediaQuery('(width >= 1024px)')
 

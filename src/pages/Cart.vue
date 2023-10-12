@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
 import { VButton, VLoader } from '@/components/UI'
 import { TrashSvg } from '@/assets/icons'
+import type { Loading } from '@/types'
 
 const {
   setCartItemsWithDetails,
@@ -14,21 +15,22 @@ const {
 } = useCartStore()
 const { cartItemsWithDetails } = storeToRefs(useCartStore())
 
-const loading = ref(true)
+const loading = ref<Loading>('loading')
 
 onBeforeMount(async () => {
-  const cartItems = await setCartItems()
-  await setCartItemsWithDetails(cartItems)
-  loading.value = false
+  const { data, error } = await setCartItems()
+  if (error) {
+    loading.value = 'error'
+    return
+  }
+  await setCartItemsWithDetails(data)
+  loading.value = 'success'
 })
 </script>
 
 <template>
   <div class="container">
-    <div v-if="loading" class="h-screen flex items-center">
-      <v-loader />
-    </div>
-    <div v-else class="cart">
+    <div v-if="loading === 'success'" class="cart">
       <div>
         <div
           v-for="product in cartItemsWithDetails"
@@ -64,6 +66,10 @@ onBeforeMount(async () => {
         <!-- <v-button> итого: </v-button> -->
       </div>
     </div>
+    <div v-else-if="loading === 'loading'" class="h-screen flex items-center">
+      <v-loader />
+    </div>
+    <div v-else-if="loading === 'error'"> ошибка </div>
   </div>
 </template>
 

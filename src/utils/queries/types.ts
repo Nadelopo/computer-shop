@@ -1,5 +1,4 @@
 import type { Database, Table } from '@/types/database.types'
-import type { ForeignWithoutNull } from './db'
 
 export type GetAllParams<S> = {
   match?: Record<string, unknown>
@@ -20,8 +19,3 @@ export type GetAllParams<S> = {
 export type UpdateMany<T> = T & Required<Pick<T, keyof T & 'id'>>
 
 export type Id<T extends Table> = Database['public']['Tables'][T]['Row']['id']
-
-export type GetAllResult<T, R> = {
-  data: ([R] extends [never] ? ForeignWithoutNull<T> : R[]) | null
-  count: number | null
-}

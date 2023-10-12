@@ -10,6 +10,17 @@ import type {
   CategoryRead,
   CategoryUpdate
 } from '@/types/tables/categories.types'
+import type { Loading } from '@/types'
+
+//type
+const categoryHasId = (
+  category: CategoryUpdate | null
+): category is Omit<CategoryUpdate, 'id'> & { id: number } => {
+  if (category?.id) {
+    return true
+  }
+  return false
+}
 
 const route = useRoute()
 const router = useRouter()
@@ -18,7 +29,7 @@ const { categories } = storeToRefs(useCategoriesStore())
 const { updateCategory } = useCategoriesStore()
 const categoryId = Number(route.params.id)
 
-const loading = ref(false)
+const loading = ref<Loading>('loading')
 let oldImg: string | undefined = undefined
 const newCategory = ref<CategoryUpdate | null>(null)
 
@@ -55,13 +66,13 @@ watch(
       oldImg = getImgName(cur.img)
     }
     if (cur?.title) {
-      loading.value = true
+      loading.value = 'success'
     }
   }
 )
 
 const save = async () => {
-  if (newCategory.value) {
+  if (categoryHasId(newCategory.value)) {
     await updateCategory(newCategory.value)
     newCategory.value = {
       id: 0,
@@ -69,14 +80,16 @@ const save = async () => {
       img: '',
       title: ''
     }
-    setTimeout(() => (loading.value = false))
+    setTimeout(() => (loading.value = 'loading'))
     if (oldImg) {
-      const data = await removeFromStorage('categories', oldImg)
-      if (data) {
-        router.push({
-          name: 'AdminCategories'
-        })
+      const { error } = await removeFromStorage('categories', oldImg)
+      if (error) {
+        loading.value = 'error'
+        return
       }
+      router.push({
+        name: 'AdminCategories'
+      })
     }
   }
 }

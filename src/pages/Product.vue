@@ -27,20 +27,22 @@ const loadData = async () => {
   window.scroll(0, 0)
   const productId = Number(route.params.productId)
   loading.value = 'loading'
-  const data = await getProduct(productId)
-  if (data.value) {
-    data.value.specifications = data.value.specifications.map((e) => {
-      const title = e.category_specifications.title
-      e.category_specifications.title =
-        title.charAt(0).toUpperCase() + title.slice(1)
-      return e
-    })
-    product.value = data.value
-    loading.value = 'success'
-    updateOneById('products', product.value.id, {
-      popularity: product.value.popularity + 1
-    })
+  const { data, error } = await getProduct(productId)
+  if (error) {
+    loading.value = 'error'
+    return
   }
+  data.specifications = data.specifications.map((e) => {
+    const title = e.category_specifications.title
+    e.category_specifications.title =
+      title.charAt(0).toUpperCase() + title.slice(1)
+    return e
+  })
+  product.value = data
+  loading.value = 'success'
+  updateOneById('products', product.value.id, {
+    popularity: product.value.popularity + 1
+  })
 }
 
 watch(() => route.params.productId, loadData, {

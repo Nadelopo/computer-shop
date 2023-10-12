@@ -5,37 +5,49 @@ export type Folder = 'categories' | 'manufacturers' | 'products'
 export const insertInStorage = async (
   folder: Folder,
   imageData: File
-): Promise<string | null> => {
-  let value = null
-  const { data, error } = await supabase.storage
+): Promise<
+  { url: string; error: null } | { url: null; error: NonNullable<typeof error> }
+> => {
+  const { error } = await supabase.storage
     .from('storage')
     .upload(`${folder}/${imageData.name}`, imageData, {
       cacheControl: '3600',
       upsert: false
     })
-  if (error) console.log(error)
-  if (data) {
-    const {
-      data: { publicUrl }
-    } = supabase.storage
-      .from('storage')
-      .getPublicUrl(`${folder}/${imageData.name}`)
-    value = publicUrl
+  if (error) {
+    console.log(error)
+    return {
+      url: null,
+      error
+    }
   }
 
-  return value
+  const {
+    data: { publicUrl }
+  } = supabase.storage
+    .from('storage')
+    .getPublicUrl(`${folder}/${imageData.name}`)
+
+  return { url: publicUrl, error: null }
 }
 
 export const removeFromStorage = async (
   folder: Folder,
   imgName: string
-): Promise<boolean> => {
-  let value = false
+): Promise<
+  | { data: NonNullable<typeof data>; error: null }
+  | { data: null; error: NonNullable<typeof error> }
+> => {
   const { data, error } = await supabase.storage
     .from('storage')
     .remove([`${folder}/${imgName}`])
-  if (error) console.log(error)
-  if (data) value = true
+  if (error) {
+    console.log(error)
+    return {
+      data: null,
+      error
+    }
+  }
 
-  return value
+  return { data, error }
 }

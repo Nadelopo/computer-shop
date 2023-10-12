@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { VButton, VLoader, VInputText, VInputFile } from '@/components/UI'
 import type { ManufacturerUpdate } from '@/types/tables/manufacturers.types'
+import type { Loading } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -13,28 +14,33 @@ const { getManufacturer, updateManufacturer } = useManufacturersStore()
 const manufactuerId = Number(route.params.id)
 const manufacturer = ref<ManufacturerUpdate | null>(null)
 
-const loading = ref<'success' | 'loading'>('loading')
+const loading = ref<Loading>('loading')
 
 onBeforeMount(async () => {
-  const data = await getManufacturer(manufactuerId)
-  if (data) {
-    manufacturer.value = {
-      title: data.title,
-      description: data.description,
-      img: data.img
-    }
+  const { data, error } = await getManufacturer(manufactuerId)
+  if (error) {
+    loading.value = 'error'
+    return
+  }
+  manufacturer.value = {
+    title: data.title,
+    description: data.description,
+    img: data.img
   }
   loading.value = 'success'
 })
 
 const update = async () => {
-  if (manufacturer.value) {
-    loading.value = 'loading'
-    await updateManufacturer(manufactuerId, manufacturer.value)
-    router.push({
-      name: 'AdminManufacturers'
-    })
+  if (!manufacturer.value) return
+  loading.value = 'loading'
+  const { error } = await updateManufacturer(manufactuerId, manufacturer.value)
+  if (error) {
+    loading.value = 'error'
+    return
   }
+  router.push({
+    name: 'AdminManufacturers'
+  })
 }
 </script>
 

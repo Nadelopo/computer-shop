@@ -5,7 +5,7 @@ import { supabase } from '@/supabase'
 import { getOneById, updateOneById } from '@/utils/queries/db'
 import { localStorageGet, localStorageSet } from '@/utils/localStorage'
 import type { UserRead } from '@/types/tables/users.types'
-import type { User } from '@supabase/supabase-js'
+import type { PostgrestError, User } from '@supabase/supabase-js'
 
 type listTitle = 'favourites' | 'comparison'
 
@@ -25,7 +25,7 @@ export const useUserStore = defineStore('user', () => {
 
   async function setUserData(id: string | undefined): Promise<void> {
     if (id) {
-      const data = await getOneById('users', id)
+      const { data } = await getOneById('users', id)
       user.value = data
     } else {
       user.value = null
@@ -41,39 +41,47 @@ export const useUserStore = defineStore('user', () => {
     return null
   }
 
-  async function setUserListsValue(user?: UserRead | null) {
+  async function setUserListsValue(
+    user?: UserRead | null
+  ): Promise<PostgrestError | null> {
     const isUser = await isUserAuthenticated()
     if (isUser && user) {
       userLists.favourites = user.favourites
       userLists.comparison = user.comparison
     } else if (isUser) {
-      const data = await getOneById(
+      const { data, error } = await getOneById(
         'users',
         isUser.id,
         'favourites,  comparison'
       )
-      if (data) {
-        userLists.favourites = data.favourites
-        userLists.comparison = data.comparison
+      if (error) {
+        return error
       }
+
+      userLists.favourites = data.favourites
+      userLists.comparison = data.comparison
     } else {
       userLists.comparison = localStorageGet<number[]>('compareList') ?? []
       userLists.favourites = []
     }
+    return null
   }
 
   async function changeUserListValueOnClick(
     listTitle: listTitle,
     productId: number
-  ): Promise<void> {
+  ): Promise<PostgrestError | null> {
     const isUser = await isUserAuthenticated()
     if (!isUser && listTitle === 'favourites') {
       toast.warning('Требуется авторизация')
-      return
+      return null
     }
     let items: number[]
     if (isUser) {
-      items = (await getOneById('users', isUser.id))?.[listTitle] ?? []
+      const { data, error } = await getOneById('users', isUser.id)
+      if (error) return error
+
+      items = data[listTitle]
     } else {
       items = localStorageGet<number[]>('compareList') ?? []
     }
@@ -82,40 +90,38 @@ export const useUserStore = defineStore('user', () => {
       ? items.filter((e) => e !== productId)
       : [...items, productId]
     if (isUser) {
-      const data = await updateOneById('users', isUser.id, {
+      const { error } = await updateOneById('users', isUser.id, {
         [listTitle]: updatedValue
       })
-      if (data) {
-        userLists[listTitle] = updatedValue
-        user.value && (user.value[listTitle] = updatedValue)
-      }
+      if (error) return error
+
+      userLists[listTitle] = updatedValue
+      user.value && (user.value[listTitle] = updatedValue)
     } else {
       localStorageSet('compareList', updatedValue)
       userLists[listTitle] = updatedValue
     }
+    return null
   }
 
   async function deleteItemFromUserList(
     listTitle: listTitle,
     productId: number
-  ): Promise<boolean> {
+  ): Promise<{ error: PostgrestError | null }> {
     const isUser = await isUserAuthenticated()
     const updatedItems = userLists[listTitle].filter((e) => e !== productId)
     if (isUser) {
-      const data = await updateOneById('users', isUser.id, {
+      const { error } = await updateOneById('users', isUser.id, {
         [listTitle]: updatedItems
       })
-      if (data) {
-        userLists[listTitle] = updatedItems
-        user.value && (user.value[listTitle] = updatedItems)
-        return true
-      }
+      if (error) return { error }
+      userLists[listTitle] = updatedItems
+      user.value && (user.value[listTitle] = updatedItems)
     } else {
       localStorageSet('compareList', updatedItems)
       userLists[listTitle] = updatedItems
-      return true
     }
-    return false
+    return { error: null }
   }
 
   return {

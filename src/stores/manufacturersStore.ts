@@ -11,18 +11,19 @@ import {
   getOneById,
   updateOneById
 } from '@/utils/queries/db'
+import type { PostgrestError } from '@supabase/supabase-js'
+import type { DataError } from '@/types'
 
 export const useManufacturersStore = defineStore('manufacturers', () => {
   const manufacturers = ref<ManufacturerRead[]>([])
 
   async function createManufacturer(
     params: ManufacturerCreate
-  ): Promise<ManufacturerRead | null> {
-    const data = await createOne('manufacturers', params)
-    if (data) {
-      manufacturers.value.push(data)
-    }
-    return data
+  ): Promise<DataError<ManufacturerRead>> {
+    const { data, error } = await createOne('manufacturers', params)
+    if (error) return { data, error }
+    manufacturers.value.push(data)
+    return { data, error }
   }
 
   async function setManufacturers(): Promise<void> {
@@ -30,21 +31,25 @@ export const useManufacturersStore = defineStore('manufacturers', () => {
     if (data) manufacturers.value = data
   }
 
-  async function getManufacturer(id: number): Promise<ManufacturerRead | null> {
-    return getOneById('manufacturers', id)
+  async function getManufacturer(
+    id: number
+  ): Promise<DataError<ManufacturerRead>> {
+    const { data, error } = await getOneById('manufacturers', id)
+    return { data, error } as
+      | { data: ManufacturerRead; error: null }
+      | { data: null; error: PostgrestError }
   }
 
   async function updateManufacturer(
     id: number,
     params: ManufacturerUpdate
-  ): Promise<ManufacturerRead | null> {
-    const data = await updateOneById('manufacturers', id, params)
-    if (data) {
-      manufacturers.value = manufacturers.value.map((e) =>
-        e.id === id ? data : e
-      )
-    }
-    return data
+  ): Promise<DataError<ManufacturerRead>> {
+    const { data, error } = await updateOneById('manufacturers', id, params)
+    if (error) return { data, error }
+    manufacturers.value = manufacturers.value.map((e) =>
+      e.id === id ? data : e
+    )
+    return { data, error }
   }
 
   return {

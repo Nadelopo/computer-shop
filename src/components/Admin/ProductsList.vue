@@ -27,17 +27,25 @@ const emit = defineEmits<{
 }>()
 
 const showModal = ref(false)
-
+const loadingDeletion = ref<Loading>('loading')
 const deleteProduct = async (id: number, img: string) => {
+  loadingDeletion.value = 'loading'
   showModal.value = true
-  const data = await deleteOneById('products', id)
-  if (data) {
-    emit(
-      'update:products',
-      props.products.filter((e) => e.id !== data.id)
-    )
-    await removeFromStorage('products', getImgName(img))
+  const { data, error } = await deleteOneById('products', id)
+  if (error) return
+
+  emit(
+    'update:products',
+    props.products.filter((e) => e.id !== data.id)
+  )
+  const { error: errorDelete } = await removeFromStorage(
+    'products',
+    getImgName(img)
+  )
+  if (errorDelete) {
+    loadingDeletion.value = 'error'
   }
+  loadingDeletion.value = 'success'
 }
 
 const titles = computed(() => props.products.map((e) => e.name))

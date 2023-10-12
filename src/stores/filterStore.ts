@@ -6,6 +6,7 @@ import { formatSearch } from '@/utils/formatSearch'
 import type { RouteLocationNormalizedLoaded, Router } from 'vue-router'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
+import type { PostgrestError } from '@supabase/supabase-js'
 
 type SpecificationsValues = {
   id: number
@@ -115,9 +116,19 @@ export const useFilterStore = defineStore('filter', () => {
 
     const results = await Promise.all(promises)
 
+    let errorFilters: PostgrestError | null = null
     const data = results
-      .map((e) => e.data)
+      .map((e) => {
+        if (e.error) {
+          errorFilters = e.error
+        }
+        return e.data
+      })
       .filter((e): e is NonNullable<typeof e> => e !== null)
+    if (errorFilters) {
+      loading.value = 'error'
+      return
+    }
 
     const idList = data.map((e) => e.map((e) => e.products.id))
 
@@ -125,7 +136,11 @@ export const useFilterStore = defineStore('filter', () => {
       a.filter((c) => b.includes(c))
     )
 
-    const { data: productsData, count } = await getAll('products', {
+    const {
+      data: productsData,
+      count,
+      error
+    } = await getAll('products', {
       select: '*, categories(id, enTitle), manufacturers(id, title)',
       in: ['id', filteredProductsId],
       order: [sortColumn.value, sortAscents[sortColumn.value]],
@@ -139,11 +154,20 @@ export const useFilterStore = defineStore('filter', () => {
         currentPage.value * limit.value + limit.value - 1
       ]
     })
+    if (error) {
+      loading.value = 'error'
+      return
+    }
 
-    const { data: specificationsData } = await getAll('specifications', {
-      select: '*, category_specifications(id, title, units, visible)',
-      in: ['productId', productsData?.map((e) => e.id) || []]
-    })
+    const { data: specificationsData, error: errorSpecifications } =
+      await getAll('specifications', {
+        select: '*, category_specifications(id, title, units, visible)',
+        in: ['productId', productsData?.map((e) => e.id) || []]
+      })
+    if (errorSpecifications) {
+      loading.value = 'error'
+      return
+    }
 
     productCount.value = count ?? 0
 

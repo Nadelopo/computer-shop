@@ -5,6 +5,7 @@ import {
   removeFromStorage,
   type Folder
 } from '@/utils/queries/storage'
+import type { Loading } from '@/types'
 
 type Props = {
   modelValue: string | undefined
@@ -20,27 +21,35 @@ const emit = defineEmits<{
   'update:modelValue': [url: string]
 }>()
 
+const loading = ref<Loading>('loading')
 const imageData = ref<File | null>(null)
 const onInput = async (event: Event) => {
   const target = event.target as HTMLInputElement
   if (target?.files) {
+    loading.value = 'loading'
     imageData.value = target.files[0]
-    const url = await insertInStorage(props.folder, imageData.value)
-    if (url) emit('update:modelValue', url)
+    const { url, error } = await insertInStorage(props.folder, imageData.value)
+    if (error) {
+      loading.value = 'error'
+      return
+    }
+    emit('update:modelValue', url)
+    loading.value = 'success'
   }
 }
 
 const remove = async () => {
-  if (imageData.value) {
-    const isSuccess = await removeFromStorage(
-      props.folder,
-      imageData.value.name
-    )
-    if (isSuccess) {
-      emit('update:modelValue', '')
-      imageData.value = null
-    }
+  if (!imageData.value) return
+  loading.value = 'loading'
+  const { error } = await removeFromStorage(props.folder, imageData.value.name)
+  if (error) {
+    loading.value = 'error'
+    return
   }
+
+  emit('update:modelValue', '')
+  imageData.value = null
+  loading.value = 'success'
 }
 
 const input = ref<HTMLInputElement | null>(null)

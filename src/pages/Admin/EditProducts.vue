@@ -7,6 +7,8 @@ import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { getAll, getOneById } from '@/utils/queries/db'
 import { getImgName } from '@/utils/getImgName'
 import { removeFromStorage } from '@/utils/queries/storage'
+import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
+import type { Loading } from '@/types'
 import {
   VButton,
   VLoader,
@@ -23,7 +25,6 @@ import type {
   ProductReadWithDetails,
   ProductUpdate
 } from '@/types/tables/products.types'
-import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 
 type ProductSpecificationOnEdit = SpecificationRead & {
   category_specifications: Omit<
@@ -52,10 +53,13 @@ const categoryTitle = route.params.category
 const product = ref<ProductWithSpecificationsOnEdit | null>(null)
 const img = ref('')
 const manufacturerSelect = ref(0)
-const loading = ref<'loading' | 'success'>('loading')
+const loading = ref<Loading>('loading')
 
 onBeforeMount(async () => {
-  const [productData, { data: specifications }] = await Promise.all([
+  const [
+    { data: productData, error: errorData },
+    { data: specifications, error: errorSpecifications }
+  ] = await Promise.all([
     getOneById(
       'products',
       id,
@@ -68,6 +72,11 @@ onBeforeMount(async () => {
       order: ['categorySpecificationsId']
     })
   ])
+
+  if (errorData || errorSpecifications) {
+    loading.value = 'error'
+    return
+  }
 
   if (productData && specifications) {
     img.value = productData.img
@@ -82,7 +91,11 @@ const save = async () => {
     loading.value = 'loading'
     const imgName = getImgName(img.value)
     if (imgName !== getImgName(product.value.img)) {
-      await removeFromStorage('products', imgName)
+      const { error } = await removeFromStorage('products', imgName)
+      if (error) {
+        loading.value = 'error'
+        return
+      }
     }
     const productU: ProductUpdate = {
       name: product.value.name,
@@ -106,10 +119,16 @@ const save = async () => {
       })
 
     product.value = null
-    await Promise.all([
+    const response = await Promise.all([
       updateProductSpecifications(newSpecifications),
       updateProduct(id, productU)
     ])
+
+    const error = response.some((e) => e !== null)
+    if (error) {
+      loading.value = 'error'
+      return
+    }
 
     router.push({
       name: 'AdminProducts',

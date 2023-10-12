@@ -42,17 +42,23 @@ onBeforeMount(async () => {
     return
   }
 
-  const [{ data: productData }, { data: specificationsData }] =
-    await Promise.all([
-      getAll('products', {
-        select: '*, categories(id, title), manufacturers(id, title)',
-        in: ['id', userLists.comparison]
-      }),
-      getAll('specifications', {
-        in: ['productId', userLists.comparison],
-        order: ['categorySpecificationsId']
-      })
-    ])
+  const [
+    { data: productData, error: errorData },
+    { data: specificationsData, error: errorSpecifications }
+  ] = await Promise.all([
+    getAll('products', {
+      select: '*, categories(id, title), manufacturers(id, title)',
+      in: ['id', userLists.comparison]
+    }),
+    getAll('specifications', {
+      in: ['productId', userLists.comparison],
+      order: ['categorySpecificationsId']
+    })
+  ])
+  if (errorData || errorSpecifications) {
+    loading.value = 'error'
+    return
+  }
 
   const modifiedProducts: ComparisonProduct[] = []
 
@@ -87,7 +93,7 @@ onBeforeMount(async () => {
     }
 
     products.value = modifiedProducts
-    const { data: categoriesSpecifications } = await getAll(
+    const { data: categoriesSpecifications, error } = await getAll(
       'category_specifications',
       {
         in: [
@@ -97,9 +103,13 @@ onBeforeMount(async () => {
         select: 'categoryId, title, units'
       }
     )
+    if (error) {
+      loading.value = 'error'
+      return
+    }
 
     for (const category of categories.value) {
-      const categorySpecifications = categoriesSpecifications?.filter(
+      const categorySpecifications = categoriesSpecifications.filter(
         (e) => e.categoryId === category.id
       )
       if (categorySpecifications) {
@@ -121,13 +131,15 @@ const clearList = async () => {
   const remainProductIds = remainProducts.map((e) => e.id)
 
   if (user.value) {
-    const data = await updateOneById('users', user.value.id, {
+    const { data, error } = await updateOneById('users', user.value.id, {
       comparison: remainProductIds
     })
-    if (data) {
-      user.value.comparison = data.comparison
-      userLists.comparison = data.comparison
+    if (error) {
+      loading.value = 'error'
+      return
     }
+    user.value.comparison = data.comparison
+    userLists.comparison = data.comparison
   } else {
     localStorageSet('compareList', remainProductIds)
     userLists.comparison = remainProductIds
@@ -161,8 +173,8 @@ watch(
 )
 
 const deleteItem = async (item: ComparisonProduct) => {
-  const data = await deleteItemFromUserList('comparison', item.id)
-  if (!data) return
+  const { error } = await deleteItemFromUserList('comparison', item.id)
+  if (error) return
   products.value = products.value.filter((e) => e.id !== item.id)
   categories.value = categories.value
     .map((e) => (e.id === item.categoryId ? { ...e, count: e.count - 1 } : e))

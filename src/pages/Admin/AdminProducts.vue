@@ -29,6 +29,7 @@ type ProductSpecificationForm = Omit<SpecificationCreate, 'productId'> & {
 const route = useRoute()
 
 const loadingProducts = ref<Loading>('loading')
+const loadingCreateProduct = ref<Loading>('loading')
 const products = ref<ProductWithSpecifications[]>([])
 
 const { manufacturers } = storeToRefs(useManufacturersStore())
@@ -62,10 +63,14 @@ const setProducts = async () => {
   const categoryId = Number(route.params.id)
   if (categoryId) {
     loadingProducts.value = 'loading'
-    const { data, count } = await getProducts(categoryId, {
+    const { data, count, error } = await getProducts(categoryId, {
       limit: limit.value,
       page: page.value
     })
+    if (error) {
+      loadingProducts.value = 'error'
+      return error
+    }
     products.value = data
     if (count !== null) {
       productCount.value = count
@@ -97,31 +102,35 @@ const product = ref<ProductCreate>({ ...copyForm })
 
 const setCategorySpecifications = async () => {
   loadingSpecifications.value = 'loading'
-  const data = await getCategorySpecifications(categoryId.value)
-  if (data) {
-    categorySpecifications.value = data
-    categoryFormSpecifications.value = data.map((e) => {
-      if (e.type) {
-        return {
-          categorySpecificationsId: e.id,
-          productId: null,
-          valueString: null,
-          valueNumber: 0
-        }
-      } else {
-        return {
-          categorySpecificationsId: e.id,
-          productId: null,
-          valueString: '',
-          valueNumber: null
-        }
-      }
-    })
-    loadingSpecifications.value = 'success'
-  } else {
-    categoryFormSpecifications.value = []
-    loadingSpecifications.value = 'empty'
+  const { data, error } = await getCategorySpecifications(categoryId.value)
+  if (error) {
+    loadingSpecifications.value = 'error'
+    return error
   }
+  categorySpecifications.value = data
+  categoryFormSpecifications.value = data.map((e) => {
+    if (e.type) {
+      return {
+        categorySpecificationsId: e.id,
+        productId: null,
+        valueString: null,
+        valueNumber: 0
+      }
+    } else {
+      return {
+        categorySpecificationsId: e.id,
+        productId: null,
+        valueString: '',
+        valueNumber: null
+      }
+    }
+  })
+  if (data.length === 0) {
+    loadingSpecifications.value = 'empty'
+    categoryFormSpecifications.value = []
+    return
+  }
+  loadingSpecifications.value = 'success'
 }
 
 watch(
@@ -144,13 +153,22 @@ watch(manufacturerSelect, (cur) => {
 })
 
 const create = async () => {
-  const data = await createProduct(product.value)
-  if (!data) return
+  const { data, error } = await createProduct(product.value)
+  if (error) {
+    loadingCreateProduct.value = 'error'
+    return
+  }
 
   const productSpecifications = categoryFormSpecifications.value.map((e) => {
     return { ...e, productId: data.id }
   })
-  await createSpecifications(productSpecifications)
+  const { error: errorSpecifications } = await createSpecifications(
+    productSpecifications
+  )
+  if (errorSpecifications) {
+    loadingCreateProduct.value = 'error'
+    return
+  }
   setProducts()
   product.value = { ...copyForm }
   categoryFormSpecifications.value = categoryFormSpecifications.value.map(

@@ -1,9 +1,9 @@
 import { supabase } from '@/supabase'
 import { formatSearch } from '../formatSearch'
-import type { GetAllParams, GetAllResult, Id, UpdateMany } from './types'
+import type { GetAllParams, Id, UpdateMany } from './types'
 import type { CreateData, Table, UpdateData } from '@/types/database.types'
 
-export type ForeignWithoutNull<T> = T extends Array<any>
+type ForeignWithoutNull<T> = T extends Array<any>
   ? {
       [K in keyof T[0]]: K extends Table ? NonNullable<T[0][K]> : T[0][K]
     }[]
@@ -11,18 +11,22 @@ export type ForeignWithoutNull<T> = T extends Array<any>
       [K in keyof T]: K extends Table ? NonNullable<T[K]> : T[K]
     }
 
+type ReturnType<D> = {
+  [K in keyof D]: K extends 'data' ? ForeignWithoutNull<D[K]> : D[K]
+}
+
 export async function getOneById<T extends Table, S extends string = '*'>(
   table: T,
   id: Id<T>,
   select?: S
-): Promise<ForeignWithoutNull<typeof data>> {
-  const { data, error } = await supabase
+): Promise<ReturnType<typeof response>> {
+  const response = await supabase
     .from(table)
     .select(select)
     .eq('id', id)
     .single()
-  if (error) console.error(error)
-  return data as ForeignWithoutNull<typeof data>
+  if (response.error) console.error(response.error)
+  return response as ReturnType<typeof response>
 }
 
 export const getAll = async <
@@ -32,7 +36,7 @@ export const getAll = async <
 >(
   table: T,
   params?: GetAllParams<S>
-): Promise<GetAllResult<typeof data, R>> => {
+): Promise<ReturnType<typeof response>> => {
   const { order, search, between, limit, match, neq, range, select } =
     params || {}
   const orderColumn = order?.[0] ?? 'id'
@@ -69,37 +73,37 @@ export const getAll = async <
     query.range(range[0], range[1])
   }
 
-  const { data, error, count } = await query
+  const response = await query
 
-  if (error) console.error(error)
-  return { data, count } as GetAllResult<typeof data, R>
+  if (response.error) console.error(response.error)
+  return response as ReturnType<typeof response>
 }
 
 export const createOne = async <T extends Table, S extends string = '*'>(
   table: T,
   fields: CreateData<T>,
   select?: S
-): Promise<ForeignWithoutNull<typeof data>> => {
-  const { data, error } = await supabase
+): Promise<ReturnType<typeof response>> => {
+  const response = await supabase
     .from(table)
     .insert(fields as any)
     .select(select)
     .single()
 
-  if (error) console.error(error)
-  return data as ForeignWithoutNull<typeof data>
+  if (response.error) console.error(response.error)
+  return response as ReturnType<typeof response>
 }
 
 export const createMany = async <T extends Table>(
   table: T,
   fields: CreateData<T>[]
-): Promise<ForeignWithoutNull<typeof data>> => {
-  const { data, error } = await supabase
+): Promise<ReturnType<typeof response>> => {
+  const response = await supabase
     .from(table)
     .insert(fields as any)
     .select()
-  if (error) console.error(error)
-  return data as ForeignWithoutNull<typeof data>
+  if (response.error) console.error(response.error)
+  return response as ReturnType<typeof response>
 }
 
 export async function updateOneById<T extends Table, S extends string = '*'>(
@@ -107,15 +111,15 @@ export async function updateOneById<T extends Table, S extends string = '*'>(
   id: Id<T>,
   fields: UpdateData<T>,
   select?: S
-): Promise<ForeignWithoutNull<typeof data>> {
-  const { data, error } = await supabase
+): Promise<ReturnType<typeof response>> {
+  const response = await supabase
     .from(table)
     .update(fields as any)
     .eq('id', id)
     .select(select)
     .single()
-  if (error) console.error(error)
-  return data as ForeignWithoutNull<typeof data>
+  if (response.error) console.error(response.error)
+  return response as ReturnType<typeof response>
 }
 
 export async function updateManyById<T extends Table>(
@@ -137,27 +141,28 @@ export async function updateManyById<T extends Table>(
   const results = await Promise.all(promises)
 
   const data = results
-    .map((e) => {
-      if (e.error) {
-        console.error(e.error)
+    .map((r) => {
+      if (r.error) {
+        console.error(r.error)
       }
-      return e.data
+      return r.data
     })
-    .filter((e): e is NonNullable<typeof e> => e !== null)
+    .filter((r): r is NonNullable<typeof r> => r !== null)
+
   return data
 }
 
 export const deleteOneById = async <T extends Table>(
   table: T,
   id: Id<T>
-): Promise<typeof data | null> => {
-  const { data, error } = await supabase
+): Promise<ReturnType<typeof response>> => {
+  const response = await supabase
     .from(table)
     .delete()
     .eq('id', id)
     .select()
     .single()
 
-  if (error) console.error(error)
-  return data
+  if (response.error) console.error(response.error)
+  return response as ReturnType<typeof response>
 }

@@ -4,6 +4,7 @@ import { useCategoriesStore } from '@/stores/categoriesStore'
 import CategoriesList from '@/components/Admin/CategoriesList.vue'
 import { VButton, VInputFile, VInputText } from '@/components/UI'
 import type { CategoryCreate } from '@/types/tables/categories.types'
+import type { Loading } from '@/types'
 
 const { createCategory } = useCategoriesStore()
 
@@ -13,13 +14,19 @@ let form = ref<CategoryCreate>({
   enTitle: ''
 })
 
-const create = () => {
-  createCategory(form.value)
+const loading = ref<Loading>('loading')
+const create = async () => {
+  const { error } = await createCategory(form.value)
+  if (error) {
+    loading.value = 'error'
+    return
+  }
   form.value = {
     img: '',
     title: '',
     enTitle: ''
   }
+  loading.value = 'success'
 }
 </script>
 
