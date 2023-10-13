@@ -89,8 +89,17 @@ onUnmounted(() => {
       />
     </span>
     <div v-if="modelValue">
-      <img :src="modelValue" class="my-2" alt="картинка" width="300" />
-      <button class="remove__btn" type="button" @click="remove">
+      <img
+        :src="modelValue"
+        class="my-2"
+        alt="картинка"
+        width="300"
+      />
+      <button
+        class="remove__btn"
+        type="button"
+        @click="remove"
+      >
         <div class="line line-1"></div>
         <div class="line line-2"></div>
       </button>

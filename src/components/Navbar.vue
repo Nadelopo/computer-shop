@@ -51,26 +51,50 @@ const links = [
     <div class="container">
       <div class="root__small">
         <div>
-          <button class="dots" @click="open = !open">
-            <div class="dot" :class="{ 'dot__active-f': open }" />
-            <div class="dot" :class="{ dot__middle__active: open }" />
-            <div class="dot" :class="{ 'dot__active-l': open }" />
+          <button
+            class="dots"
+            @click="open = !open"
+          >
+            <div
+              class="dot"
+              :class="{ 'dot__active-f': open }"
+            />
+            <div
+              class="dot"
+              :class="{ dot__middle__active: open }"
+            />
+            <div
+              class="dot"
+              :class="{ 'dot__active-l': open }"
+            />
           </button>
         </div>
         <div class="flex justify-end">
           <router-link :to="{ name: 'Home' }">
-            <img src="/img/logoChangeWhiteSizeFnew.png" width="95" alt="" />
+            <img
+              src="/img/logoChangeWhiteSizeFnew.png"
+              width="95"
+              alt=""
+            />
           </router-link>
         </div>
       </div>
       <div class="root">
         <div class="logo">
           <router-link :to="{ name: 'Home' }">
-            <img src="/img/logoChangeWhiteSizeFnew.png" width="95" alt="" />
+            <img
+              src="/img/logoChangeWhiteSizeFnew.png"
+              width="95"
+              alt=""
+            />
           </router-link>
         </div>
         <ul class="nav">
-          <li v-for="(link, i) in links" :key="link.text" class="li">
+          <li
+            v-for="(link, i) in links"
+            :key="link.text"
+            class="li"
+          >
             <router-link
               :to="{ name: link.page }"
               :class="{ li__line: i !== links.length - 1 }"
@@ -83,7 +107,10 @@ const links = [
           <div>
             <v-popup>
               <template #active>
-                <avatar-svg width="25" class="user__svg" />
+                <avatar-svg
+                  width="25"
+                  class="user__svg"
+                />
               </template>
               <template #content>
                 <router-link
@@ -92,8 +119,18 @@ const links = [
                 >
                   admin
                 </router-link>
-                <div v-if="user" @click="logout">выйти</div>
-                <router-link v-else :to="{ name: 'Auth' }">войти</router-link>
+                <div
+                  v-if="user"
+                  @click="logout"
+                >
+                  выйти
+                </div>
+                <router-link
+                  v-else
+                  :to="{ name: 'Auth' }"
+                >
+                  войти
+                </router-link>
                 <router-link :to="{ name: 'ProfileMain' }">
                   профиль
                 </router-link>
@@ -101,14 +138,24 @@ const links = [
             </v-popup>
           </div>
           <router-link :to="{ name: 'Favourites' }">
-            <favourite-svg fill="#fff" width="25" class="cursor-pointer" />
-            <span v-if="userLists.favourites.length" class="count">
+            <favourite-svg
+              fill="#fff"
+              width="25"
+              class="cursor-pointer"
+            />
+            <span
+              v-if="userLists.favourites.length"
+              class="count"
+            >
               {{ userLists.favourites.length }}
             </span>
           </router-link>
           <router-link :to="{ name: 'Comparison' }">
             <comparison-svg width="25" />
-            <span v-if="userLists.comparison.length" class="count">
+            <span
+              v-if="userLists.comparison.length"
+              class="count"
+            >
               {{ userLists.comparison.length }}
             </span>
           </router-link>
@@ -120,7 +167,11 @@ const links = [
     </div>
   </header>
   <Transition name="v">
-    <Sidebar v-if="open" v-model:is-open="open" :links="links" />
+    <Sidebar
+      v-if="open"
+      v-model:is-open="open"
+      :links="links"
+    />
   </Transition>
 </template>
 

@@ -83,7 +83,10 @@ const updateProductRating = (newData: UpdateProductRating) => {
         @update-product-rating="updateProductRating"
       />
     </div>
-    <v-loader v-else class="h-[75vh]" />
+    <v-loader
+      v-else
+      class="h-[75vh]"
+    />
   </div>
 </template>
 

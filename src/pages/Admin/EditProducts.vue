@@ -173,8 +173,14 @@ const back = async () => {
 
 <template>
   <div class="root">
-    <div v-if="product && loading === 'success'" class="container">
-      <form class="list__form pt-10" @submit.prevent="save">
+    <div
+      v-if="product && loading === 'success'"
+      class="container"
+    >
+      <form
+        class="list__form pt-10"
+        @submit.prevent="save"
+      >
         <div
           v-for="(specification, i) in product.specifications"
           :key="specification.category_specifications.id"
@@ -246,19 +252,33 @@ const back = async () => {
         </div>
         <div>
           <label>гарантия</label>
-          <v-input-text v-model="product.warranty" type="number" />
+          <v-input-text
+            v-model="product.warranty"
+            type="number"
+          />
         </div>
         <div>
           <label>цена</label>
-          <v-input-text v-model="product.price" type="number" />
+          <v-input-text
+            v-model="product.price"
+            type="number"
+          />
         </div>
         <div>
           <v-button>сохранить</v-button>
         </div>
       </form>
-      <v-button class="mt-6" @click="back"> назад </v-button>
+      <v-button
+        class="mt-6"
+        @click="back"
+      >
+        назад
+      </v-button>
     </div>
-    <div v-else class="h-screen flex items-center">
+    <div
+      v-else
+      class="h-screen flex items-center"
+    >
       <v-loader />
     </div>
   </div>

@@ -49,14 +49,23 @@ const buttonCartWidth = computed(() => {
       <div class="product__title">
         <div class="text-3xl font-medium">{{ product.name }}</div>
         <div class="ml-auto hidden sm:block">
-          <img class="max-h-14" :src="manufacturer?.img" />
+          <img
+            class="max-h-14"
+            :src="manufacturer?.img"
+          />
         </div>
       </div>
 
       <div class="text-4xl my-1 mb-4 font-medium">{{ productPrice }}</div>
-      <RatingStars class="mb-4" :model-value="product.rating" />
+      <RatingStars
+        class="mb-4"
+        :model-value="product.rating"
+      />
       <div>
-        <button-cart :width="buttonCartWidth" :product-id="product.id" />
+        <button-cart
+          :width="buttonCartWidth"
+          :product-id="product.id"
+        />
         <div class="list__btns">
           <button-favourites-comparison
             list-title="favourites"

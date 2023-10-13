@@ -65,7 +65,10 @@ const clickOnPaginate = () => {
           v-else-if="loading === 'loading'"
           class="flex flex-col gap-y-[30px] mb-10 mt-5"
         >
-          <template v-for="_ in limit" :key="_">
+          <template
+            v-for="_ in limit"
+            :key="_"
+          >
             <Skeleton />
           </template>
         </div>

@@ -203,7 +203,11 @@ const deleteItem = async (item: ComparisonProduct) => {
         query-param-name="category_id"
       />
       <div class="compare__actions">
-        <v-button variant="noactive" class="button" @click="clearList">
+        <v-button
+          variant="noactive"
+          class="button"
+          @click="clearList"
+        >
           <trash-svg />
           очистить список
         </v-button>
@@ -224,7 +228,10 @@ const deleteItem = async (item: ComparisonProduct) => {
     <div v-else-if="loading === 'loading'">
       <v-loader />
     </div>
-    <div v-else class="font-bold text-2xl text-center">
+    <div
+      v-else
+      class="font-bold text-2xl text-center"
+    >
       Нет товаров для сравнения
     </div>
   </div>

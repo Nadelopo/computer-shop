@@ -80,19 +80,34 @@ const basicData = computed((): BasicData => {
 </script>
 
 <template>
-  <div v-if="loading === 'success'" class="table">
+  <div
+    v-if="loading === 'success'"
+    class="table"
+  >
     <div class="row">
       <div class="title cell">Наименование</div>
       <div class="cells">
-        <div v-for="title in titles" :key="title" class="cell">
+        <div
+          v-for="title in titles"
+          :key="title"
+          class="cell"
+        >
           {{ title }}
         </div>
       </div>
     </div>
-    <div v-for="(_, i) in specifications" :key="i" class="row">
+    <div
+      v-for="(_, i) in specifications"
+      :key="i"
+      class="row"
+    >
       <div class="title cell">{{ specifications[i].title }}</div>
       <div class="cells">
-        <div v-for="(__, j) in products.length" :key="j" class="cell">
+        <div
+          v-for="(__, j) in products.length"
+          :key="j"
+          class="cell"
+        >
           {{
             products[j].specifications[i]?.valueNumber ??
             products[j].specifications[i]?.valueString
@@ -101,12 +116,23 @@ const basicData = computed((): BasicData => {
         </div>
       </div>
     </div>
-    <div v-for="data of basicData" :key="data.title" class="row">
+    <div
+      v-for="data of basicData"
+      :key="data.title"
+      class="row"
+    >
       <div class="title cell">{{ data.title }}</div>
       <div class="cells">
-        <div v-for="value in data.value" :key="value" class="cell">
+        <div
+          v-for="value in data.value"
+          :key="value"
+          class="cell"
+        >
           <template v-if="data.title === 'Изображение'">
-            <img :src="String(value)" alt="" />
+            <img
+              :src="String(value)"
+              alt=""
+            />
           </template>
           <template v-else> {{ value }} {{ data.units }} </template>
         </div>
@@ -115,7 +141,11 @@ const basicData = computed((): BasicData => {
     <div class="row">
       <div class="cell title">Действия</div>
       <div class="cells">
-        <div v-for="product in products" :key="product.id" class="cell">
+        <div
+          v-for="product in products"
+          :key="product.id"
+          class="cell"
+        >
           <div class="flex flex-col justify-center gap-y-2">
             <router-link
               :to="{
@@ -148,7 +178,10 @@ const basicData = computed((): BasicData => {
   >
     товары отсутствуют
   </div>
-  <div v-else class="h-[50vh] flex items-center">
+  <div
+    v-else
+    class="h-[50vh] flex items-center"
+  >
     <v-loader />
   </div>
 </template>

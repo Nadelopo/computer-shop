@@ -48,7 +48,10 @@ onBeforeMount(() => {
         </router-link>
       </div>
       <div>
-        <router-view :reviews="reviews" :set-reviews="setReviews" />
+        <router-view
+          :reviews="reviews"
+          :set-reviews="setReviews"
+        />
       </div>
     </div>
   </div>

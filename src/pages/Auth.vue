@@ -66,7 +66,10 @@ const signUp = async () => {
 
 <template>
   <div class="back">
-    <form class="main" @submit.prevent="active ? signIn() : signUp()">
+    <form
+      class="main"
+      @submit.prevent="active ? signIn() : signUp()"
+    >
       <div class="head">
         <div
           class="cursor-pointer uppercase text"
@@ -83,8 +86,16 @@ const signUp = async () => {
           зарегистрироваться
         </div>
       </div>
-      <div v-if="!active" class="flex flex-col mb-4">
-        <label class="label" for="">ИМЯ</label>
+      <div
+        v-if="!active"
+        class="flex flex-col mb-4"
+      >
+        <label
+          class="label"
+          for=""
+        >
+          ИМЯ
+        </label>
         <input
           v-model="name"
           class="input"
@@ -94,11 +105,25 @@ const signUp = async () => {
         />
       </div>
       <div class="flex flex-col mb-4">
-        <label class="label" for="">ПОЧТА</label>
-        <input v-model="email" class="input" type="email" />
+        <label
+          class="label"
+          for=""
+        >
+          ПОЧТА
+        </label>
+        <input
+          v-model="email"
+          class="input"
+          type="email"
+        />
       </div>
       <div class="flex flex-col">
-        <label class="label" for="">ПАРОЛЬ</label>
+        <label
+          class="label"
+          for=""
+        >
+          ПАРОЛЬ
+        </label>
         <input
           v-model="password"
           class="input"
@@ -113,7 +138,10 @@ const signUp = async () => {
         </v-button>
       </div>
       <hr class="mb-4" />
-      <div v-if="active" class="text-center">
+      <div
+        v-if="active"
+        class="text-center"
+      >
         <span
           class="link cursor-pointer"
           @click="$router.push({ name: 'Reset' })"
@@ -121,7 +149,10 @@ const signUp = async () => {
           Забыли пароль?
         </span>
       </div>
-      <div class="text-center mt-2" @click="$router.push('/')">
+      <div
+        class="text-center mt-2"
+        @click="$router.push('/')"
+      >
         <span class="link cursor-pointer">Назад</span>
       </div>
     </form>

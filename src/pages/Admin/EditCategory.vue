@@ -122,10 +122,16 @@ const save = async () => {
         <v-button>сохранить</v-button>
       </div>
     </form>
-    <div v-else class="min-h-screen flex justify-center items-center">
+    <div
+      v-else
+      class="min-h-screen flex justify-center items-center"
+    >
       <v-loader />
     </div>
-    <v-button class="mt-6" @click="$router.push({ name: 'AdminCategories' })">
+    <v-button
+      class="mt-6"
+      @click="$router.push({ name: 'AdminCategories' })"
+    >
       назад
     </v-button>
   </div>

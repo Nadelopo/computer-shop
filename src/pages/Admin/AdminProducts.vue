@@ -232,7 +232,10 @@ const create = async () => {
         </div>
         <div>
           <label>изображение</label>
-          <v-input-file v-model.trim="product.img" folder="products" />
+          <v-input-file
+            v-model.trim="product.img"
+            folder="products"
+          />
         </div>
 
         <div>
@@ -249,16 +252,25 @@ const create = async () => {
         </div>
         <div>
           <label>гарантия</label>
-          <v-input-text v-model="product.warranty" type="number" />
+          <v-input-text
+            v-model="product.warranty"
+            type="number"
+          />
         </div>
         <div>
           <label>цена</label>
-          <v-input-text v-model="product.price" type="number" />
+          <v-input-text
+            v-model="product.price"
+            type="number"
+          />
         </div>
       </template>
       <div><v-button>создать</v-button></div>
     </form>
-    <div v-else class="h-[50vh] flex items-center">
+    <div
+      v-else
+      class="h-[50vh] flex items-center"
+    >
       <v-loader />
     </div>
     <ProdctsList

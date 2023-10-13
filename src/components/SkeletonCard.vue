@@ -3,6 +3,7 @@ import { ContentLoader } from 'vue-content-loader'
 </script>
 
 <template>
+  <!-- prettier-ignore -->
   <content-loader
     class="skeleton"
     :speed="1"

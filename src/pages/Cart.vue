@@ -30,14 +30,22 @@ onBeforeMount(async () => {
 
 <template>
   <div class="container">
-    <div v-if="loading === 'success'" class="cart">
+    <div
+      v-if="loading === 'success'"
+      class="cart"
+    >
       <div>
         <div
           v-for="product in cartItemsWithDetails"
           :key="product.id"
           class="product__wrapper"
         >
-          <div><img :src="product.img" alt="..." /></div>
+          <div>
+            <img
+              :src="product.img"
+              alt="..."
+            />
+          </div>
           <div>{{ product.name }}</div>
           <div class="management">
             <v-button @click="reduceItemCount(product)">
@@ -66,7 +74,10 @@ onBeforeMount(async () => {
         <!-- <v-button> итого: </v-button> -->
       </div>
     </div>
-    <div v-else-if="loading === 'loading'" class="h-screen flex items-center">
+    <div
+      v-else-if="loading === 'loading'"
+      class="h-screen flex items-center"
+    >
       <v-loader />
     </div>
     <div v-else-if="loading === 'error'"> ошибка </div>

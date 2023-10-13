@@ -61,7 +61,10 @@ const contentEnter = () => {
       @mouseenter="onEnter"
       @mouseleave="onLeave"
     >
-      <slot name="active" class="popup__slotdgh345c"></slot>
+      <slot
+        name="active"
+        class="popup__slotdgh345c"
+      />
     </div>
     <transition name="popup__animation">
       <div

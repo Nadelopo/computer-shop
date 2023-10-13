@@ -4,7 +4,10 @@ const color = props.color ?? 'var(--bright)'
 </script>
 
 <template>
-  <svg class="spinner" viewBox="0 0 50 50">
+  <svg
+    class="spinner"
+    viewBox="0 0 50 50"
+  >
     <circle
       class="path"
       cx="25"
@@ -12,7 +15,7 @@ const color = props.color ?? 'var(--bright)'
       r="20"
       fill="none"
       stroke-width="5"
-    ></circle>
+    />
   </svg>
 </template>
 

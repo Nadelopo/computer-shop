@@ -19,8 +19,16 @@ watch(modelValue, () => {
 <template>
   <Teleport to="body">
     <transition-group name="fade">
-      <div v-if="modelValue" class="dialog" @click.stop="modelValue = false">
-        <div class="dialog__content" v-bind="$attrs" @click.stop>
+      <div
+        v-if="modelValue"
+        class="dialog"
+        @click.stop="modelValue = false"
+      >
+        <div
+          class="dialog__content"
+          v-bind="$attrs"
+          @click.stop
+        >
           <slot />
         </div>
       </div>

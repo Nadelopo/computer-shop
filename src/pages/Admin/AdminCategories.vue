@@ -32,10 +32,17 @@ const create = async () => {
 
 <template>
   <div>
-    <form class="list__form" @submit.prevent="create">
+    <form
+      class="list__form"
+      @submit.prevent="create"
+    >
       <div>
         <label>загрузить изображение</label>
-        <v-input-file v-model="form.img" class="mt-4" folder="categories" />
+        <v-input-file
+          v-model="form.img"
+          class="mt-4"
+          folder="categories"
+        />
       </div>
       <div>
         <label>наименование на английском</label>

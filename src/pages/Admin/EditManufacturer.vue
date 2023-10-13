@@ -46,7 +46,10 @@ const update = async () => {
 
 <template>
   <div>
-    <div v-if="loading === 'success'" class="container">
+    <div
+      v-if="loading === 'success'"
+      class="container"
+    >
       <form
         v-if="manufacturer"
         class="list__form pt-10"
@@ -88,7 +91,10 @@ const update = async () => {
         </v-button>
       </div>
     </div>
-    <div v-else class="h-screen flex justify-center item-center">
+    <div
+      v-else
+      class="h-screen flex justify-center item-center"
+    >
       <v-loader />
     </div>
   </div>

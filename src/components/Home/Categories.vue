@@ -6,8 +6,14 @@ const { categories } = storeToRefs(useCategoriesStore())
 </script>
 
 <template>
-  <div v-if="categories" class="grid">
-    <div v-for="category in categories" :key="category.id">
+  <div
+    v-if="categories"
+    class="grid"
+  >
+    <div
+      v-for="category in categories"
+      :key="category.id"
+    >
       <router-link
         class="lev"
         :to="{
@@ -16,7 +22,11 @@ const { categories } = storeToRefs(useCategoriesStore())
         }"
       >
         <div class="wrap">
-          <img :src="category.img" alt="" class="mx-auto mb-auto" />
+          <img
+            :src="category.img"
+            alt=""
+            class="mx-auto mb-auto"
+          />
 
           <div class="text-center text1">{{ category.title }}</div>
         </div>

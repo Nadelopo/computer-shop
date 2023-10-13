@@ -65,7 +65,11 @@ const deleteItem = async (id: number) => {
     <div class="favourites">
       <div class="sidebar">
         <div class="text-3xl font-bold mb-8">Избранное</div>
-        <v-button v-if="loading === 'success'" class="noactive" @click="clear">
+        <v-button
+          v-if="loading === 'success'"
+          class="noactive"
+          @click="clear"
+        >
           <trash-svg />
           очистить список
         </v-button>
@@ -85,7 +89,10 @@ const deleteItem = async (id: number) => {
           />
         </template>
         <template v-else-if="loading === 'loading'">
-          <skeleton-card v-for="i in 8" :key="i" />
+          <skeleton-card
+            v-for="i in 8"
+            :key="i"
+          />
         </template>
       </div>
     </div>

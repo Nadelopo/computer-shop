@@ -21,5 +21,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 </script>
 
 <template>
+  <div>
+    <button> asd </button>
+  </div>
   <router-view />
 </template>

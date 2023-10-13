@@ -16,7 +16,10 @@ const { categories } = storeToRefs(useCategoriesStore())
     >
       <div class="text-xl font-bold">{{ category.title }}</div>
       <div>
-        <img :src="category.img" alt="img" />
+        <img
+          :src="category.img"
+          alt="img"
+        />
       </div>
     </router-link>
   </div>

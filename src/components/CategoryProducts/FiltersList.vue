@@ -139,7 +139,10 @@ watch(
 
 <template>
   <div>
-    <div v-if="loading === 'success'" class="filters">
+    <div
+      v-if="loading === 'success'"
+      class="filters"
+    >
       <input-filter
         v-model:min-value="productsPrice.min"
         v-model:max-value="productsPrice.max"
@@ -149,7 +152,10 @@ watch(
         class="mb-6"
       />
 
-      <template v-for="value in specificationsValues" :key="value.id">
+      <template
+        v-for="value in specificationsValues"
+        :key="value.id"
+      >
         <template v-if="value.type">
           <input-filter
             v-model:min-value="value.minValue"
@@ -163,7 +169,10 @@ watch(
         </template>
         <template v-else>
           <div class="text-center">{{ value.title }}</div>
-          <div v-for="variant in value.variantsValues" :key="variant">
+          <div
+            v-for="variant in value.variantsValues"
+            :key="variant"
+          >
             <div>
               <v-checkbox
                 :id="value.id"
@@ -175,10 +184,19 @@ watch(
         </template>
       </template>
       <div>
-        <v-button class="my-4" width="100%" @click="apply">
+        <v-button
+          class="my-4"
+          width="100%"
+          @click="apply"
+        >
           применить
         </v-button>
-        <v-button width="100%" @click="cancel"> сбросить </v-button>
+        <v-button
+          width="100%"
+          @click="cancel"
+        >
+          сбросить
+        </v-button>
       </div>
     </div>
     <div v-else-if="loading === 'loading'">

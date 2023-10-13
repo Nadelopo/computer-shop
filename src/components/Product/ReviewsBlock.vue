@@ -53,22 +53,37 @@ const evalatuationClasses = computed(() => {
 <template>
   <div class="review__root">
     <div class="head">
-      <avatar-svg width="40" fill="#cdcdcd" />
+      <avatar-svg
+        width="40"
+        fill="#cdcdcd"
+      />
       <div>{{ review.users.name }}</div>
-      <rating-stars class="rating" :model-value="review.rating" />
+      <rating-stars
+        class="rating"
+        :model-value="review.rating"
+      />
       <div class="ml-auto">
         {{ new Date(review.created_at).toLocaleDateString() }}
       </div>
     </div>
-    <div v-if="review.dignities" class="mb-4 mt-6">
+    <div
+      v-if="review.dignities"
+      class="mb-4 mt-6"
+    >
       <div class="title">Достоинства</div>
       <div>{{ review.dignities }}</div>
     </div>
-    <div v-if="review.disadvantages" class="mb-4">
+    <div
+      v-if="review.disadvantages"
+      class="mb-4"
+    >
       <div class="title">Недостатки</div>
       <div>{{ review.disadvantages }}</div>
     </div>
-    <div v-if="review.comment" class="mb-4">
+    <div
+      v-if="review.comment"
+      class="mb-4"
+    >
       <div class="title">Комментарий</div>
       <div>{{ review.comment }}</div>
     </div>

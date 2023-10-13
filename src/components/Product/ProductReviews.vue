@@ -174,7 +174,10 @@ const isPageSmall = useMediaQuery('(width < 400px)')
       />
       <div class="reviews">
         <template v-if="loading === 'success'">
-          <template v-for="review in reviews" :key="review.id">
+          <template
+            v-for="review in reviews"
+            :key="review.id"
+          >
             <reviews-block
               :id="'comment_' + review.id"
               :review="review"

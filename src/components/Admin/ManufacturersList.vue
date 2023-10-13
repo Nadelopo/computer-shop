@@ -15,14 +15,18 @@ const { manufacturers } = storeToRefs(useManufacturersStore())
         class="wrapper"
       >
         <div>{{ manufacturer.title }}</div>
-        <div><img :src="manufacturer.img" alt="" /></div>
+        <div>
+          <img
+            :src="manufacturer.img"
+            alt=""
+          />
+        </div>
       </router-link>
     </div>
   </div>
 </template>
 
 <style scoped lang="sass">
-
 .list
   margin-top: 100px
   display: grid

@@ -15,7 +15,10 @@ const modelValue = defineModel<string | string[] | boolean>()
   <div>
     <div class="flex m-auto main">
       <div>
-        <label :for="title" class="label-cbx">
+        <label
+          :for="title"
+          class="label-cbx"
+        >
           <input
             :id="title"
             v-model="modelValue"
@@ -24,7 +27,11 @@ const modelValue = defineModel<string | string[] | boolean>()
             class="invisible"
           />
           <div class="checkbox">
-            <svg width="20px" height="20px" viewBox="0 0 20 20">
+            <svg
+              width="20px"
+              height="20px"
+              viewBox="0 0 20 20"
+            >
               <path
                 d="M3,1 L17,1 L17,1 C18.1045695,1 19,1.8954305 19,3 L19,17 L19,17 C19,18.1045695 18.1045695,19 17,19 L3,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,3 L1,3 C1,1.8954305 1.8954305,1 3,1 Z"
               ></path>
@@ -33,7 +40,12 @@ const modelValue = defineModel<string | string[] | boolean>()
           </div>
         </label>
       </div>
-      <label :for="title" class="cursor-pointer">{{ title }} {{ units }}</label>
+      <label
+        :for="title"
+        class="cursor-pointer"
+      >
+        {{ title }} {{ units }}
+      </label>
     </div>
   </div>
 </template>

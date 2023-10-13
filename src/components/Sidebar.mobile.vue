@@ -42,11 +42,21 @@ onUnmounted(() => {
 
 <template>
   <div class="wrapper">
-    <div ref="sidebarRef" class="sidebar">
+    <div
+      ref="sidebarRef"
+      class="sidebar"
+    >
       <div class="grid grid-cols-2 items-center">
         <div>
-          <router-link :to="{ name: 'Home' }" @click="closeSidebar">
-            <img src="/img/logoChangeWhiteSizeFnew.png" width="95" alt="" />
+          <router-link
+            :to="{ name: 'Home' }"
+            @click="closeSidebar"
+          >
+            <img
+              src="/img/logoChangeWhiteSizeFnew.png"
+              width="95"
+              alt=""
+            />
           </router-link>
         </div>
         <div class="text-end">
@@ -57,7 +67,10 @@ onUnmounted(() => {
         </div>
       </div>
       <div class="list">
-        <router-link :to="{ name: user ? 'Home' : 'Auth' }" @click="logout">
+        <router-link
+          :to="{ name: user ? 'Home' : 'Auth' }"
+          @click="logout"
+        >
           {{ user ? 'Выйти' : 'Войти' }}
         </router-link>
         <router-link

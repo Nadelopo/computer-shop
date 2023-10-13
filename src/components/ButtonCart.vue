@@ -37,7 +37,11 @@ const add = async () => {
     :loading="isProductInCart ? false : loading"
     @click.prevent="isProductInCart ? $router.push({ name: 'Cart' }) : add()"
   >
-    <cart-in-button-svg width="16" fill="#fff" class="mr-2" />
+    <cart-in-button-svg
+      width="16"
+      fill="#fff"
+      class="mr-2"
+    />
     {{ isProductInCart ? 'в корзине' : 'купить' }}
   </v-button>
 </template>

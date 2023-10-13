@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-// import VAccordion from '@/components/UI/VAccordion.vue'
 import { VAccordion } from '@/components/UI'
 
 const isVisible = ref(false)
@@ -13,13 +12,24 @@ const { categories } = storeToRefs(useCategoriesStore())
 <template>
   <div class="sidebar">
     <div class="mb-6 flex justify-between items-center">
-      <h1><router-link :to="{ name: 'Admin' }">Главная</router-link></h1>
+      <h1>
+        <router-link :to="{ name: 'Admin' }">Главная</router-link>
+      </h1>
       <router-link :to="{ name: 'Home' }">
-        <img src="/img/logoChangeWhiteSizeFnew.png" width="95" alt="" />
+        <img
+          src="/img/logoChangeWhiteSizeFnew.png"
+          width="95"
+          alt=""
+        />
       </router-link>
     </div>
     <div class="list">
-      <div class="head" @click="isVisible = !isVisible">Продукты категорий</div>
+      <div
+        class="head"
+        @click="isVisible = !isVisible"
+      >
+        Продукты категорий
+      </div>
       <v-accordion :visible="isVisible">
         <template v-if="categories">
           <div

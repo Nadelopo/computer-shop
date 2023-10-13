@@ -32,7 +32,10 @@ onBeforeMount(async () => {
           }
         }"
       >
-        <reviews-block :review="review" color="#fff" />
+        <reviews-block
+          :review="review"
+          color="#fff"
+        />
       </router-link>
     </div>
   </div>

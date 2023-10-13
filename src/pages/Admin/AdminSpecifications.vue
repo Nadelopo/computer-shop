@@ -125,7 +125,10 @@ watch(
 
 <template>
   <div>
-    <form class="list__form" @submit.prevent="create">
+    <form
+      class="list__form"
+      @submit.prevent="create"
+    >
       <div v-if="categories">
         <v-select
           v-model="select"
@@ -142,7 +145,10 @@ watch(
       </div>
       <div>
         <label>единицы измерения</label>
-        <v-input-text v-model.trim="form.units" :required="false" />
+        <v-input-text
+          v-model.trim="form.units"
+          :required="false"
+        />
       </div>
       <div>
         <label>тип поля</label>
@@ -156,27 +162,50 @@ watch(
       <template v-if="form.type">
         <div>
           <label>шаг изменения числа для поля ввода</label>
-          <v-input-text v-model="form.step" type="number" :step="0.1" />
+          <v-input-text
+            v-model="form.step"
+            type="number"
+            :step="0.1"
+          />
         </div>
         <div>
           <label>минимальное значение для поля ввода</label>
-          <v-input-text v-model="form.min" type="number" :min="0" />
+          <v-input-text
+            v-model="form.min"
+            type="number"
+            :min="0"
+          />
         </div>
         <div>
           <label>максимальное значение для поля ввода</label>
-          <v-input-text v-model="form.max" type="number" :min="0" />
+          <v-input-text
+            v-model="form.max"
+            type="number"
+            :min="0"
+          />
         </div>
       </template>
       <div v-else-if="form.variantsValues">
         <label>вартианты значений</label>
-        <div v-for="(_, i) in form.variantsValues.length" :key="i">
+        <div
+          v-for="(_, i) in form.variantsValues.length"
+          :key="i"
+        >
           <v-input-text v-model.trim="form.variantsValues[i]" />
         </div>
         <div class="flex gap-4">
-          <v-button class="mt-4" type="button" @click="addVarianValues">
+          <v-button
+            class="mt-4"
+            type="button"
+            @click="addVarianValues"
+          >
             добавить
           </v-button>
-          <v-button class="mt-4" type="button" @click="deleteVarianValues">
+          <v-button
+            class="mt-4"
+            type="button"
+            @click="deleteVarianValues"
+          >
             удалить
           </v-button>
         </div>

@@ -39,7 +39,10 @@ watch(() => props.productId, loadSimilarProducts)
 </script>
 
 <template>
-  <div v-if="similarProducts.length" class="wrapper grid">
+  <div
+    v-if="similarProducts.length"
+    class="wrapper grid"
+  >
     <div>Похожие товары</div>
     <v-carousel
       draggable
@@ -72,7 +75,10 @@ watch(() => props.productId, loadSimilarProducts)
           }"
           class="similar"
         >
-          <img :src="similarProduct.img" alt="" />
+          <img
+            :src="similarProduct.img"
+            alt=""
+          />
           <span> {{ similarProduct.name }}</span>
         </router-link>
       </v-carousel-slide>

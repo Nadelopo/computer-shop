@@ -7,7 +7,10 @@ import { VButton } from '@/components/UI'
     <div class="">
       <h1>404</h1>
       <h2>СТРАНИЦА НЕ НАЙДЕНА</h2>
-      <router-link :to="{ name: 'Home' }" class="flex justify-center mt-4">
+      <router-link
+        :to="{ name: 'Home' }"
+        class="flex justify-center mt-4"
+      >
         <v-button>ГЛАВНАЯ</v-button>
       </router-link>
     </div>

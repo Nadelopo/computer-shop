@@ -38,7 +38,11 @@ const onOk = () => {
 
 <template>
   <span @click="showModal = true">
-    <v-button :variant="type" :width="width" v-bind="$attrs">
+    <v-button
+      :variant="type"
+      :width="width"
+      v-bind="$attrs"
+    >
       {{ label }}
     </v-button>
   </span>
@@ -47,7 +51,12 @@ const onOk = () => {
       <div class="label">{{ title }}</div>
       <div class="message">{{ message }}</div>
       <div class="buttons">
-        <v-button variant="noactive" @click="onCancel">отменить</v-button>
+        <v-button
+          variant="noactive"
+          @click="onCancel"
+        >
+          отменить
+        </v-button>
         <v-button @click="onOk">подтвердить</v-button>
       </div>
     </div>

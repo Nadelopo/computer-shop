@@ -22,7 +22,10 @@ const arr = [5, 4, 3, 2, 1]
 </script>
 
 <template>
-  <div v-if="static" class="flex">
+  <div
+    v-if="static"
+    class="flex"
+  >
     <div>
       <template v-if="modelValue === 0">
         <label class="rating__static" />
@@ -41,8 +44,14 @@ const arr = [5, 4, 3, 2, 1]
       {{ modelValue ? modelValue.toFixed(2) : 'нет отзывов' }}
     </div>
   </div>
-  <div v-else class="rating area">
-    <template v-for="i in arr" :key="i">
+  <div
+    v-else
+    class="rating area"
+  >
+    <template
+      v-for="i in arr"
+      :key="i"
+    >
       <input
         :id="'star-' + i"
         v-model="stars"
@@ -50,7 +59,10 @@ const arr = [5, 4, 3, 2, 1]
         name="rating"
         :value="i"
       />
-      <label :for="'star-' + i" :title="`Оценка «${i}»`" />
+      <label
+        :for="'star-' + i"
+        :title="`Оценка «${i}»`"
+      />
     </template>
   </div>
 </template>

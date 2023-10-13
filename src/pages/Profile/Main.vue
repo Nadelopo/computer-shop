@@ -13,7 +13,10 @@ const { user } = storeToRefs(useUserStore())
 
 <template>
   <div>
-    <div v-if="user" class="user__info">
+    <div
+      v-if="user"
+      class="user__info"
+    >
       <div class="row">
         <div class="">Имя</div>
         <div>{{ user.name }}</div>
@@ -37,7 +40,10 @@ const { user } = storeToRefs(useUserStore())
           Посмотреть все
         </router-link>
       </div>
-      <div v-if="reviews.length" class="last__reviews">
+      <div
+        v-if="reviews.length"
+        class="last__reviews"
+      >
         <router-link
           v-for="review in reviews.slice(0, 4)"
           :key="review.id"
@@ -53,7 +59,10 @@ const { user } = storeToRefs(useUserStore())
             }
           }"
         >
-          <reviews-block :review="review" color="#fff" />
+          <reviews-block
+            :review="review"
+            color="#fff"
+          />
         </router-link>
       </div>
     </div>

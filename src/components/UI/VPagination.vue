@@ -82,7 +82,10 @@ const setPage = (page: number) => {
 </script>
 
 <template>
-  <div v-if="itemCount !== 0" class="pagination">
+  <div
+    v-if="itemCount !== 0"
+    class="pagination"
+  >
     <button
       v-wave="modelValue !== 0"
       :disabled="modelValue === 0"
@@ -91,7 +94,10 @@ const setPage = (page: number) => {
     >
       <arrow-svg transform="rotate(-90)" />
     </button>
-    <template v-for="(value, i) in items" :key="i">
+    <template
+      v-for="(value, i) in items"
+      :key="i"
+    >
       <button
         v-if="value > 0"
         v-wave
@@ -101,7 +107,11 @@ const setPage = (page: number) => {
         {{ value }}
       </button>
       <template v-else>
-        <v-popup width="40px" type="hover" float="center">
+        <v-popup
+          width="40px"
+          type="hover"
+          float="center"
+        >
           <template #active>
             <button class="page-switch"> ...</button>
           </template>

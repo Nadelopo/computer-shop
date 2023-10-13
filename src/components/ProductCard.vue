@@ -49,7 +49,10 @@ const titleActive = ref(true)
       </button>
     </div>
     <div class="justify-self-center self-center">
-      <img :src="item.img" alt="" />
+      <img
+        :src="item.img"
+        alt=""
+      />
     </div>
     <div :class="{ title__active: titleActive }">{{ item.name }}</div>
     <div class="flex gap-x-4">

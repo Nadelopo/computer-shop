@@ -208,7 +208,10 @@ const setCellRef = (val: Element | ComponentPublicInstance | null) => {
 </script>
 
 <template>
-  <div ref="comparisonRef" class="comparison">
+  <div
+    ref="comparisonRef"
+    class="comparison"
+  >
     <div class="overflow-hidden">
       <div
         v-for="(data, i) in productTopData"
@@ -228,8 +231,14 @@ const setCellRef = (val: Element | ComponentPublicInstance | null) => {
               class="cell flex items-center"
             >
               <template v-if="data.title === ''">
-                <img :src="value" alt="..." />
-                <cross-svg class="cross" @click="deleteItem(j)" />
+                <img
+                  :src="value"
+                  alt="..."
+                />
+                <cross-svg
+                  class="cross"
+                  @click="deleteItem(j)"
+                />
               </template>
               <template v-else>
                 <span>{{ value }} </span>
@@ -288,7 +297,10 @@ const setCellRef = (val: Element | ComponentPublicInstance | null) => {
         </div>
       </div>
 
-      <template v-for="(el, i) in productBottomData" :key="i">
+      <template
+        v-for="(el, i) in productBottomData"
+        :key="i"
+      >
         <div
           class="row"
           :class="{

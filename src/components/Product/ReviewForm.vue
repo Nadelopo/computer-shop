@@ -121,7 +121,11 @@ const createReview = async () => {
         <textarea v-model.trim="form.comment" />
       </div>
       <div>
-        <RatingStars v-model="form.rating" :static="false" class="mb-4 mt-8" />
+        <RatingStars
+          v-model="form.rating"
+          :static="false"
+          class="mb-4 mt-8"
+        />
         <v-button>оставить отзыв</v-button>
       </div>
     </form>

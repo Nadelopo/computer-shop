@@ -122,7 +122,10 @@ const required = computed(() => {
 
 <template>
   <span v-if="modelValue !== null">
-    <span class="root" v-bind="$attrs">
+    <span
+      class="root"
+      v-bind="$attrs"
+    >
       <button
         ref="btn"
         class="select"
@@ -132,11 +135,17 @@ const required = computed(() => {
       >
         <div class="head">
           <span>{{ selected ?? 'Select' }}</span>
-          <arrow-svg class="svg" :class="{ active }" />
+          <arrow-svg
+            class="svg"
+            :class="{ active }"
+          />
         </div>
       </button>
       <transition name="list">
-        <div v-show="active" class="list">
+        <div
+          v-show="active"
+          class="list"
+        >
           <div class="scroll">
             <button
               v-for="(option, i) in options"
@@ -154,7 +163,10 @@ const required = computed(() => {
           </div>
         </div>
       </transition>
-      <select :required="required" class="required" />
+      <select
+        :required="required"
+        class="required"
+      />
     </span>
   </span>
 </template>

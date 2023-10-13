@@ -27,7 +27,10 @@ const create = async () => {
 
 <template>
   <div>
-    <form class="list__form" @submit.prevent="create">
+    <form
+      class="list__form"
+      @submit.prevent="create"
+    >
       <div>
         <label>наименование</label>
         <v-input-text v-model.trim="form.title" />
@@ -38,7 +41,10 @@ const create = async () => {
       </div>
       <div>
         <label>наименование</label>
-        <v-input-file v-model.trim="form.img" folder="manufacturers" />
+        <v-input-file
+          v-model.trim="form.img"
+          folder="manufacturers"
+        />
       </div>
       <div>
         <v-button>добавить</v-button>
