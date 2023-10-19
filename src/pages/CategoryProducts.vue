@@ -81,8 +81,8 @@ const clickOnPaginate = () => {
           v-model="currentPage"
           :item-count="productCount"
           :page-size="limit"
-          :on-click="clickOnPaginate"
           class="mb-8"
+          @on-click="clickOnPaginate"
         />
       </div>
     </div>

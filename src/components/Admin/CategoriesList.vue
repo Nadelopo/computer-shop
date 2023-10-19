@@ -10,7 +10,10 @@ const { categories } = storeToRefs(useCategoriesStore())
     <router-link
       v-for="category in categories"
       :key="category.id"
-      :to="{ name: 'EditCategory', params: { id: category.id } }"
+      :to="{
+        name: 'EditCategory',
+        params: { id: category.id, category: category.enTitle }
+      }"
       class="wrapper"
       title="нажмите для изменения"
     >

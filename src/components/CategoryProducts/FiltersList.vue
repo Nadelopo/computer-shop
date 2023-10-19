@@ -132,7 +132,8 @@ watch(
     setFilteredProducts(categoryId)
   },
   {
-    immediate: true
+    immediate: true,
+    flush: 'post'
   }
 )
 </script>
