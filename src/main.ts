@@ -5,7 +5,7 @@ import App from './App.vue'
 import router from './router'
 import Toast from 'vue-toastification'
 import type { PluginOptions } from 'vue-toastification'
-import './styles/index.sass'
+import './assets/index.sass'
 import 'vue-toastification/dist/index.css'
 
 const app = createApp(App)
