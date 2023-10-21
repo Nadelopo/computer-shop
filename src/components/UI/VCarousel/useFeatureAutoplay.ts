@@ -16,10 +16,11 @@ export const useFeatureAutoPlay = (
       clearInterval(this.value)
     },
     start() {
-      if (!propsAutoplay.value) return
+      const propsAutoplayValue = propsAutoplay.value
+      if (!propsAutoplayValue) return
       this.stop()
       const timeInterval =
-        typeof propsAutoplay.value === 'number' ? propsAutoplay.value : 5000
+        typeof propsAutoplayValue === 'number' ? propsAutoplayValue : 5000
       this.value = window.setInterval(() => {
         arrowRef.value?.swipeSlideByClick('next')
       }, timeInterval)

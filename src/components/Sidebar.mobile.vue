@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { supabase } from '@/supabase'
+import { supabase } from '@/db/supabase'
 import { onClickOutside } from '@/utils/onClickOutside'
 import { useUserStore } from '@/stores/userStore'
 
@@ -129,3 +129,4 @@ onUnmounted(() => {
   &-l
     transform: rotate(-45deg)
 </style>
+@/db/supabase

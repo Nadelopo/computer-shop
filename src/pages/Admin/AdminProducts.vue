@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { useMediaQuery } from '@vueuse/core'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useProductsStore } from '@/stores/productsStore'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
+import { debounce } from '@/utils/debounce'
 import ProdctsList from '@/components/Admin/ProductsList.vue'
 import {
   VInputText,
@@ -45,19 +47,35 @@ const page = ref(0)
 const limit = ref(6)
 const productCount = ref(0)
 
-const breakpoints = [
-  { width: 1850, limit: 5 },
-  { width: 1570, limit: 4 },
-  { width: 1340, limit: 3 },
-  { width: 1140, limit: 2 },
-  { width: 940, limit: 1 }
-]
-
-for (const breakpoint of breakpoints) {
-  if (window.outerWidth <= breakpoint.width) {
-    limit.value = breakpoint.limit
+const breakpoints = reactive([
+  { point: useMediaQuery(`(width <= 1850px)`), limit: 5 },
+  { point: useMediaQuery(`(width <= 1570px)`), limit: 4 },
+  { point: useMediaQuery(`(width <= 1340px)`), limit: 3 },
+  { point: useMediaQuery(`(width <= 1140px)`), limit: 2 },
+  { point: useMediaQuery(`(width <= 940px)`), limit: 1 }
+])
+const onPoints = debounce(() => {
+  for (const breakpoint of breakpoints) {
+    if (breakpoint.point) {
+      limit.value = breakpoint.limit
+    }
   }
-}
+  if (breakpoints.every((e) => !e.point)) {
+    limit.value = 6
+  }
+  page.value = 0
+})
+watch(
+  () => breakpoints.map((b) => b.point),
+  () => {
+    console.log()
+    loadingProducts.value = 'loading'
+    onPoints()
+  },
+  {
+    immediate: true
+  }
+)
 
 const setProducts = async () => {
   const categoryId = Number(route.params.id)
@@ -83,8 +101,7 @@ const setProducts = async () => {
     }
   }
 }
-
-watch(page, setProducts)
+watch([page, limit], setProducts)
 
 const copyForm: ProductCreate = {
   categoryId: categoryId.value,

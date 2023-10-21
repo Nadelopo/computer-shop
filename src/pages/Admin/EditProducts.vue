@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/productsStore'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
-import { getAll, getOneById } from '@/utils/queries/db'
+import { getAll, getOneById } from '@/db/queries/tables'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import type { Loading } from '@/types'
 import {

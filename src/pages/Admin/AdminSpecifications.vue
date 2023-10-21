@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import { createMany, getAll } from '@/utils/queries/db'
+import { createMany, getAll } from '@/db/queries/tables'
 import SpecificationsList from '@/components/Admin/SpecificationsList.vue'
 import { VDoubleButtons, VInputText, VButton, VSelect } from '@/components/UI'
 import type { CategorySpecificationCreate } from '@/types/tables/categorySpecifications.types'

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { StorageError, removeFromStorage } from '@/utils/queries/storage'
-import { deleteOneById } from '@/utils/queries/db'
+import { StorageError, removeFromStorage } from '@/db/queries/storage'
+import { deleteOneById } from '@/db/queries/tables'
 import { VButton, VLoader, VConfirm } from '@/components/UI'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'

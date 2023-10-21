@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import { supabase } from '@/supabase'
-import { createOne } from '@/utils/queries/db'
+import { supabase } from '@/db/supabase'
+import { createOne } from '@/db/queries/tables'
 import { VButton } from '@/components/UI'
 
 const router = useRouter()

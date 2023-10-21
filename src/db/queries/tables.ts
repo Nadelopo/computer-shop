@@ -1,5 +1,5 @@
-import { supabase } from '@/supabase'
-import { formatSearch } from '../formatSearch'
+import { supabase } from '@/db/supabase'
+import { formatSearch } from '../../utils/formatSearch'
 import type { GetAllParams, Id, UpdateMany } from './types'
 import type { CreateData, Table, UpdateData } from '@/types/database.types'
 

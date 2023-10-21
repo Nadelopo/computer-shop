@@ -2,7 +2,7 @@
 import { onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
-import { getAll, updateOneById } from '@/utils/queries/db'
+import { getAll, updateOneById } from '@/db/queries/tables'
 import { VButton } from '@/components/UI'
 import ProductCard from '@/components/ProductCard.vue'
 import SkeletonCard from '@/components/SkeletonCard.vue'

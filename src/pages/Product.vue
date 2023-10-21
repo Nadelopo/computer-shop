@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { updateOneById } from '@/utils/queries/db'
+import { updateOneById } from '@/db/queries/tables'
 import { useProductsStore } from '@/stores/productsStore'
 import ProductHeader from '@/components/Product/ProductHeader.vue'
 import ProductSpecifications from '@/components/Product/ProductSpecifications.vue'

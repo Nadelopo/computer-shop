@@ -17,7 +17,7 @@ const emit = defineEmits<{
   onClick: []
 }>()
 
-const modelValue = defineModel<number>({ required: true })
+const currentPage = defineModel<number>({ required: true })
 
 const pageCount = computed(() => {
   return Math.ceil(props.itemCount / props.pageSize)
@@ -26,7 +26,7 @@ const pageCount = computed(() => {
 // -1 = prevAction, 0 = nextAction
 const items = computed(() => {
   const count = pageCount.value
-  const currentPage = modelValue.value
+  const currentPageValue = currentPage.value
   const pageSlots = props.pageSlots ?? 7
   const isSlotsEven = pageSlots % 2 === 0 ? true : false
   const withOtherPrefPages = Math.ceil(pageSlots / 2)
@@ -35,14 +35,14 @@ const items = computed(() => {
 
   if (count <= pageSlots) return arrayRange(1, count + 1)
 
-  const isStartPosition = currentPage < withOtherPrefPages
+  const isStartPosition = currentPageValue < withOtherPrefPages
   const isMiddlePosition =
-    currentPage <= count - (withOtherPrefPages + (isSlotsEven ? 2 : 1))
+    currentPageValue <= count - (withOtherPrefPages + (isSlotsEven ? 2 : 1))
   if (isStartPosition) {
     return [...arrayRange(1, pageSlots - 1), 0, count]
   } else if (isMiddlePosition) {
-    let minPage = currentPage - middlePageIndex + 1
-    const maxPage = currentPage + middlePageIndex + 2
+    let minPage = currentPageValue - middlePageIndex + 1
+    const maxPage = currentPageValue + middlePageIndex + 2
     if (isSlotsEven) {
       minPage += 1
     }
@@ -66,17 +66,17 @@ const otherNextPages = computed(() => {
 })
 
 const setPrev = () => {
-  modelValue.value--
+  currentPage.value--
   emit('onClick')
 }
 
 const setNext = () => {
-  modelValue.value++
+  currentPage.value++
   emit('onClick')
 }
 
 const setPage = (page: number) => {
-  modelValue.value = page
+  currentPage.value = page
   emit('onClick')
 }
 </script>
@@ -87,8 +87,8 @@ const setPage = (page: number) => {
     class="pagination"
   >
     <button
-      v-wave="modelValue !== 0"
-      :disabled="modelValue === 0"
+      v-wave="currentPage !== 0"
+      :disabled="currentPage === 0"
       class="prev"
       @click="setPrev"
     >
@@ -101,7 +101,7 @@ const setPage = (page: number) => {
       <button
         v-if="value > 0"
         v-wave
-        :class="{ active: modelValue + 1 === value }"
+        :class="{ active: currentPage + 1 === value }"
         @click="setPage(value - 1)"
       >
         {{ value }}
@@ -129,8 +129,8 @@ const setPage = (page: number) => {
       </template>
     </template>
     <button
-      v-wave="modelValue !== pageCount - 1"
-      :disabled="modelValue === pageCount - 1"
+      v-wave="currentPage !== pageCount - 1"
+      :disabled="currentPage === pageCount - 1"
       class="next"
       @click="setNext"
     >

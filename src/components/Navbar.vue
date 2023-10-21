@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { supabase } from '@/supabase'
+import { supabase } from '@/db/supabase'
 import { useUserStore } from '../stores/userStore'
 import { VPopup } from '@/components/UI'
 import Sidebar from './Sidebar.mobile.vue'
@@ -309,3 +309,4 @@ header
       &__active
         opacity: 0
 </style>
+@/db/supabase

@@ -10,7 +10,7 @@ import {
   getAll,
   getOneById,
   updateOneById
-} from '@/utils/queries/db'
+} from '@/db/queries/tables'
 import type { PostgrestError } from '@supabase/supabase-js'
 import type { DataError } from '@/types'
 

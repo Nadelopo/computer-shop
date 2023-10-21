@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { VButton, VLoader, VInputText, VInputFile } from '@/components/UI'
-import { getOneById } from '@/utils/queries/db'
+import { getOneById } from '@/db/queries/tables'
 import type { CategoryUpdate } from '@/types/tables/categories.types'
 import type { Loading } from '@/types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
@@ -114,4 +114,3 @@ const back = async () => {
     </v-button>
   </div>
 </template>
-@/components/UI/VInputFile/types

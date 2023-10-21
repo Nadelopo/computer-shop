@@ -7,7 +7,7 @@ import {
   getAll,
   getOneById,
   updateOneById
-} from '@/utils/queries/db'
+} from '@/db/queries/tables'
 import { localStorageGet, localStorageSet } from '@/utils/localStorage'
 import type { ProductRead } from '@/types/tables/products.types'
 import type { PostgrestError } from '@supabase/supabase-js'

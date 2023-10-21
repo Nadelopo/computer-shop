@@ -30,14 +30,13 @@ const color = ref('#a9a9a9')
 watch(
   modelValue,
   () => {
-    const findSelectedValue = props.options.find(
-      (e) => e.value === modelValue.value
-    )
+    const value = modelValue.value
+    const findSelectedValue = props.options.find((e) => e.value === value)
     if (findSelectedValue) {
       selected.value = findSelectedValue.title
       color.value = '#fff'
-    } else if (modelValue.value) {
-      selected.value = String(modelValue.value)
+    } else if (value) {
+      selected.value = String(value)
     } else {
       selected.value = 'выберите значение'
     }
@@ -85,17 +84,18 @@ const stopScrollDocument = (e: KeyboardEvent) => {
 }
 
 const onFocus = () => {
-  if (optionsRefs.value) {
+  const optionsRefsValue = optionsRefs.value
+  if (optionsRefsValue) {
     const isValue = props.options.find((e) => e.value === modelValue.value)
     if (isValue) {
-      const selectedElement = optionsRefs.value.filter(
+      const selectedElement = optionsRefsValue.filter(
         (e) => e.textContent === isValue.title
       )[0]
       setTimeout(() => selectedElement.focus(), 100)
     } else {
       setTimeout(() => {
-        if (optionsRefs.value) {
-          const firstChildren = optionsRefs.value[0]
+        if (optionsRefsValue) {
+          const firstChildren = optionsRefsValue[0]
           firstChildren.focus()
         }
       }, 100)

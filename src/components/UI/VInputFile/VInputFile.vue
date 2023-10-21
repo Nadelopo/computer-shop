@@ -5,8 +5,8 @@ import {
   insertInStorage,
   removeFromStorage,
   type Folder
-} from '@/utils/queries/storage'
-import { supabase } from '@/supabase'
+} from '@/db/queries/storage'
+import { supabase } from '@/db/supabase'
 
 type Props = {
   folder: Folder
@@ -38,22 +38,22 @@ const onUpdate = async (e: Event) => {
 }
 
 const onSave = async () => {
-  if (!files.value.length) {
+  const filesValue = files.value
+  if (!filesValue.length) {
     return { url: props.fileUrl }
   }
-
   let url: string | string[] | null = null
   if (Array.isArray(props.fileUrl)) {
-    url = files.value.map((f) => URL.createObjectURL(f))
+    url = filesValue.map((f) => URL.createObjectURL(f))
   } else {
-    url = URL.createObjectURL(files.value[0])
+    url = URL.createObjectURL(filesValue[0])
   }
   const insertFiles: ReturnType<typeof insertInStorage>[] = []
 
   let error: StorageError | null = null
   if (Array.isArray(url)) {
     url.forEach((_, i) => {
-      insertFiles.push(insertInStorage(props.folder, files.value[i]))
+      insertFiles.push(insertInStorage(props.folder, filesValue[i]))
     })
     const data = await Promise.all(insertFiles)
     error = data.find((e) => e.error !== null)?.error ?? null
@@ -64,7 +64,7 @@ const onSave = async () => {
           data: { publicUrl }
         } = supabase.storage
           .from('storage')
-          .getPublicUrl(`${props.folder}/${files.value[i].name}`)
+          .getPublicUrl(`${props.folder}/${filesValue[i].name}`)
         d.url = publicUrl
       }
     })
@@ -73,7 +73,7 @@ const onSave = async () => {
   } else {
     const { error: errorImg, url: urlImg } = await insertInStorage(
       props.folder,
-      files.value[0]
+      filesValue[0]
     )
     url = urlImg
     error = errorImg
@@ -82,7 +82,7 @@ const onSave = async () => {
         data: { publicUrl }
       } = supabase.storage
         .from('storage')
-        .getPublicUrl(`${props.folder}/${files.value[0].name}`)
+        .getPublicUrl(`${props.folder}/${filesValue[0].name}`)
       url = publicUrl
     }
   }

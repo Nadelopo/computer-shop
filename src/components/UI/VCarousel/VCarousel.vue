@@ -59,6 +59,7 @@ const touchMoveDirection = ref<'vertical' | 'horizontal' | null>(null)
 const isMovableOnEvents = ref(false)
 const onMove = (e: MouseEvent | TouchEvent) => {
   const { clientX } = e instanceof MouseEvent ? e : e.touches[0]
+  const touchMoveDirectionValue = touchMoveDirection.value
   if (e instanceof MouseEvent) {
     touchMoveDirection.value = null
   } else if (e instanceof TouchEvent && !isMovableOnEvents.value) {
@@ -66,8 +67,8 @@ const onMove = (e: MouseEvent | TouchEvent) => {
       Math.abs(clientX - startPosX.value) > 4 ? 'horizontal' : 'vertical'
   }
   isMovableOnEvents.value = true
-  if (touchMoveDirection.value === 'vertical') return
-  if (touchMoveDirection.value === 'horizontal') e.preventDefault()
+  if (touchMoveDirectionValue === 'vertical') return
+  if (touchMoveDirectionValue === 'horizontal') e.preventDefault()
   const currentPosXValue = currentPosX.value
   if (clientX > currentPosXValue || clientX < currentPosXValue) {
     translate.value += clientX - currentPosXValue
@@ -144,20 +145,23 @@ watch(isMovableOnEvents, () => {
     translate.value = -lastTranslate.value
     return
   }
-  const direction = currentPosX.value > startPosX.value ? 'right' : 'left'
+  const currentPosXValue = currentPosX.value
+  const startPosXValue = startPosX.value
+  const swipeTranslateValue = swipeTranslate.value
+  const direction = currentPosXValue > startPosXValue ? 'right' : 'left'
   const difference =
-    Math.abs(currentPosX.value - startPosX.value) % swipeTranslate.value
-  const isLessHalf = difference < swipeTranslate.value / 2
+    Math.abs(currentPosXValue - startPosXValue) % swipeTranslateValue
+  const isLessHalf = difference < swipeTranslateValue / 2
   let offsetBlocks = Math.floor(
-    Math.abs(currentPosX.value - startPosX.value) / swipeTranslate.value
+    Math.abs(currentPosXValue - startPosXValue) / swipeTranslateValue
   )
   offsetBlocks += isLessHalf ? 0 : 1
   if (direction === 'right') {
-    translate.value = startTranslate.value + swipeTranslate.value * offsetBlocks
+    translate.value = startTranslate.value + swipeTranslateValue * offsetBlocks
     return
   }
   if (direction === 'left') {
-    translate.value = startTranslate.value - swipeTranslate.value * offsetBlocks
+    translate.value = startTranslate.value - swipeTranslateValue * offsetBlocks
     return
   }
 })

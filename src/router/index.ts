@@ -1,7 +1,7 @@
 import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { useUserStore } from '@/stores/userStore'
-import { getOneById } from '@/utils/queries/db'
+import { getOneById } from '@/db/queries/tables'
 import { adminRoutes } from './admin'
 import { mainRoutes } from './main'
 import MainVue from '@/layouts/Main.vue'

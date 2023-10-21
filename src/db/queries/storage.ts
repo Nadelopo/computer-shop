@@ -1,5 +1,5 @@
-import { supabase } from '@/supabase'
-import { getImgName } from '../getImgName'
+import { supabase } from '@/db/supabase'
+import { getImgName } from '../../utils/getImgName'
 
 export type Folder = 'categories' | 'manufacturers' | 'products'
 

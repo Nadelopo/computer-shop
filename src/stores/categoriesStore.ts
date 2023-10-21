@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { createOne, getAll, updateOneById } from '@/utils/queries/db'
+import { createOne, getAll, updateOneById } from '@/db/queries/tables'
 import type {
   CategoryCreate,
   CategoryRead,

@@ -20,8 +20,8 @@ import {
   getOneById,
   updateManyById,
   updateOneById
-} from '@/utils/queries/db'
-import type { UpdateMany } from '@/utils/queries/types'
+} from '@/db/queries/tables'
+import type { UpdateMany } from '@/db/queries/types'
 import type { PostgrestError } from '@supabase/supabase-js'
 import type { DataError } from '@/types'
 

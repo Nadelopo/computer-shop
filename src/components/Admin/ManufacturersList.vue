@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useToast } from 'vue-toastification'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { VButton, VConfirm } from '../UI'
-import { ref } from 'vue'
+import { deleteOneById } from '@/db/queries/tables'
+import { removeFromStorage } from '@/db/queries/storage'
 import type { Loading } from '@/types'
-import { deleteOneById } from '@/utils/queries/db'
-import { removeFromStorage } from '@/utils/queries/storage'
-import { useToast } from 'vue-toastification'
 
 const { manufacturers } = storeToRefs(useManufacturersStore())
 

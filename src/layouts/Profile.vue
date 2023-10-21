@@ -3,7 +3,7 @@ import { onBeforeMount, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
-import { getAll } from '@/utils/queries/db'
+import { getAll } from '@/db/queries/tables'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 
 const { user } = storeToRefs(useUserStore())

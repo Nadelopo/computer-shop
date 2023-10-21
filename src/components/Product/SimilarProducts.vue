@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { getAll } from '@/utils/queries/db'
+import { getAll } from '@/db/queries/tables'
 import { VCarousel, VCarouselSlide } from '../UI'
 import type { ProductRead } from '@/types/tables/products.types'
 
