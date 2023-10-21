@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { computed, onUnmounted, ref, watchEffect } from 'vue'
+import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
 import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
 import { ArrowSvg } from '@/assets/icons'
 
 type Props = {
-  modelValue: string | number | boolean | null
   options: { title: string; value: string | number | boolean }[]
   required?: boolean
 }
@@ -13,9 +12,9 @@ const props = withDefaults(defineProps<Props>(), {
   required: true
 })
 
-const emit = defineEmits<{
-  'update:modelValue': [string | number | boolean]
-}>()
+const modelValue = defineModel<string | number | boolean | null>({
+  required: true
+})
 
 defineOptions({
   inheritAttrs: false
@@ -28,21 +27,29 @@ const optionsRefs = ref<HTMLButtonElement[]>([])
 
 const color = ref('#a9a9a9')
 
-const findSelectedValue = props.options.find(
-  (e) => e.value === props.modelValue
+watch(
+  modelValue,
+  () => {
+    const findSelectedValue = props.options.find(
+      (e) => e.value === modelValue.value
+    )
+    if (findSelectedValue) {
+      selected.value = findSelectedValue.title
+      color.value = '#fff'
+    } else if (modelValue.value) {
+      selected.value = String(modelValue.value)
+    } else {
+      selected.value = 'выберите значение'
+    }
+  },
+  {
+    immediate: true
+  }
 )
-if (findSelectedValue) {
-  selected.value = findSelectedValue.title
-  color.value = '#fff'
-} else if (props.modelValue) {
-  selected.value = String(props.modelValue)
-} else {
-  selected.value = 'выберите значение'
-}
 
 const onOptionClick = (selectValue: string | number | boolean, i: number) => {
   selected.value = props.options[i].title
-  emit('update:modelValue', selectValue)
+  modelValue.value = selectValue
   if (color.value === '#a9a9a9') {
     color.value = '#fff'
   }
@@ -79,7 +86,7 @@ const stopScrollDocument = (e: KeyboardEvent) => {
 
 const onFocus = () => {
   if (optionsRefs.value) {
-    const isValue = props.options.find((e) => e.value === props.modelValue)
+    const isValue = props.options.find((e) => e.value === modelValue.value)
     if (isValue) {
       const selectedElement = optionsRefs.value.filter(
         (e) => e.textContent === isValue.title
@@ -112,7 +119,7 @@ onUnmounted(() => {
 const required = computed(() => {
   if (props.required) {
     let value = true
-    if (props.options.find((e) => e.value === props.modelValue)) value = false
+    if (props.options.find((e) => e.value === modelValue.value)) value = false
     return value
   } else {
     return false

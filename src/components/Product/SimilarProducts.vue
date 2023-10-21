@@ -76,7 +76,7 @@ watch(() => props.productId, loadSimilarProducts)
           class="similar"
         >
           <img
-            :src="similarProduct.img"
+            :src="similarProduct.img[0]"
             alt=""
           />
           <span> {{ similarProduct.name }}</span>

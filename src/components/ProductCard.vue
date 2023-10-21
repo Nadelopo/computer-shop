@@ -50,7 +50,7 @@ const titleActive = ref(true)
     </div>
     <div class="justify-self-center self-center">
       <img
-        :src="item.img"
+        :src="item.img[0]"
         alt=""
       />
     </div>

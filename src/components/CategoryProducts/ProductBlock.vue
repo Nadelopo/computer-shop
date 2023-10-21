@@ -24,7 +24,7 @@ defineProps<{
     <div class="card__wrapper">
       <div class="img__wrapper">
         <img
-          :src="item.img"
+          :src="item.img[0]"
           alt=""
         />
       </div>

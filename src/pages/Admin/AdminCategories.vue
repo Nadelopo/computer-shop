@@ -5,6 +5,7 @@ import CategoriesList from '@/components/Admin/CategoriesList.vue'
 import { VButton, VInputFile, VInputText } from '@/components/UI'
 import type { CategoryCreate } from '@/types/tables/categories.types'
 import type { Loading } from '@/types'
+import type { InputFileActions } from '@/components/UI/VInputFile/types'
 
 const { createCategory } = useCategoriesStore()
 
@@ -14,8 +15,17 @@ let form = ref<CategoryCreate>({
   enTitle: ''
 })
 
+const inputFileRef = ref<InputFileActions>()
 const loading = ref<Loading>('loading')
 const create = async () => {
+  const { error: errorImage, url } = (await inputFileRef.value?.onSave()) || {}
+  if (errorImage) {
+    loading.value = 'error'
+    return
+  }
+  if (url) {
+    form.value.img = url
+  }
   const { error } = await createCategory(form.value)
   if (error) {
     loading.value = 'error'
@@ -39,7 +49,8 @@ const create = async () => {
       <div>
         <label>загрузить изображение</label>
         <v-input-file
-          v-model="form.img"
+          ref="inputFileRef"
+          :file-url="form.img"
           class="mt-4"
           folder="categories"
         />

@@ -5,6 +5,7 @@ import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { VButton, VLoader, VInputText, VInputFile } from '@/components/UI'
 import type { ManufacturerUpdate } from '@/types/tables/manufacturers.types'
 import type { Loading } from '@/types'
+import type { InputFileActions } from '@/components/UI/VInputFile/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -30,8 +31,17 @@ onBeforeMount(async () => {
   loading.value = 'success'
 })
 
-const update = async () => {
+const inputFileRef = ref<InputFileActions>()
+const save = async () => {
   if (!manufacturer.value) return
+  const { error: errorImage, url } = (await inputFileRef.value?.onSave()) || {}
+  if (errorImage) {
+    loading.value = 'error'
+    return
+  }
+  if (url) {
+    manufacturer.value.img = url
+  }
   loading.value = 'loading'
   const { error } = await updateManufacturer(manufactuerId, manufacturer.value)
   if (error) {
@@ -53,7 +63,7 @@ const update = async () => {
       <form
         v-if="manufacturer"
         class="list__form pt-10"
-        @submit.prevent="update"
+        @submit.prevent="save"
       >
         <div>
           <label>наименование</label>
@@ -69,7 +79,8 @@ const update = async () => {
           <label>изображение</label>
           <div>
             <v-input-file
-              v-model="manufacturer.img"
+              ref="inputFileRef"
+              :file-url="manufacturer.img"
               folder="manufacturers"
               :required="false"
             />

@@ -1,12 +1,19 @@
 import { supabase } from '@/supabase'
+import { getImgName } from '../getImgName'
 
 export type Folder = 'categories' | 'manufacturers' | 'products'
+
+export type StorageError = {
+  error: string
+  message: string
+  statusCode: string
+}
 
 export const insertInStorage = async (
   folder: Folder,
   imageData: File
 ): Promise<
-  { url: string; error: null } | { url: null; error: NonNullable<typeof error> }
+  { url: string; error: null } | { url: null; error: StorageError }
 > => {
   const { error } = await supabase.storage
     .from('storage')
@@ -18,7 +25,7 @@ export const insertInStorage = async (
     console.log(error)
     return {
       url: null,
-      error
+      error: error as any
     }
   }
 
@@ -33,19 +40,19 @@ export const insertInStorage = async (
 
 export const removeFromStorage = async (
   folder: Folder,
-  imgName: string
+  imgUrl: string
 ): Promise<
   | { data: NonNullable<typeof data>; error: null }
-  | { data: null; error: NonNullable<typeof error> }
+  | { data: null; error: StorageError }
 > => {
   const { data, error } = await supabase.storage
     .from('storage')
-    .remove([`${folder}/${imgName}`])
+    .remove([`${folder}/${getImgName(imgUrl)}`])
   if (error) {
     console.log(error)
     return {
       data: null,
-      error
+      error: error as any
     }
   }
 

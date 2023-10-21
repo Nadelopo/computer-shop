@@ -13,7 +13,7 @@ export type ProductReadWithDetails = {
   description: string
   discount: number
   id: number
-  img: string
+  img: string[]
   manufacturers: {
     id: number
     title: string
@@ -35,7 +35,7 @@ export type ProductCreate = {
   description: string
   discount?: number
   id?: number
-  img: string
+  img: string[]
   manufacturerId: number
   name: string
   popularity?: number

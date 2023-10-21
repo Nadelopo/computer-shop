@@ -42,7 +42,7 @@ onBeforeMount(async () => {
         >
           <div>
             <img
-              :src="product.img"
+              :src="product.img[0]"
               alt="..."
             />
           </div>

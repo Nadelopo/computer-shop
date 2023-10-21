@@ -37,30 +37,29 @@ const onOk = () => {
 </script>
 
 <template>
-  <span @click="showModal = true">
-    <v-button
-      :variant="type"
-      :width="width"
-      v-bind="$attrs"
-    >
-      {{ label }}
-    </v-button>
-  </span>
-  <v-modal v-model="showModal">
-    <div class="confirm">
-      <div class="label">{{ title }}</div>
-      <div class="message">{{ message }}</div>
-      <div class="buttons">
-        <v-button
-          variant="noactive"
-          @click="onCancel"
-        >
-          отменить
-        </v-button>
-        <v-button @click="onOk">подтвердить</v-button>
+  <v-button
+    :variant="type"
+    :width="width"
+    v-bind="$attrs"
+    @click="showModal = true"
+  >
+    {{ label }}
+    <v-modal v-model="showModal">
+      <div class="confirm">
+        <div class="label">{{ title }}</div>
+        <div class="message">{{ message }}</div>
+        <div class="buttons">
+          <v-button
+            variant="noactive"
+            @click="onCancel"
+          >
+            отменить
+          </v-button>
+          <v-button @click="onOk">подтвердить</v-button>
+        </div>
       </div>
-    </div>
-  </v-modal>
+    </v-modal>
+  </v-button>
 </template>
 
 <style scoped lang="sass">

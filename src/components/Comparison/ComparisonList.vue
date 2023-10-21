@@ -85,7 +85,7 @@ const productTopData = computed(() => {
   return [
     {
       title: '',
-      value: categoryProducts.value.map((e) => e.img)
+      value: categoryProducts.value.map((e) => e.img[0])
     },
     {
       title: 'Наименование',

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { removeFromStorage } from '@/utils/queries/storage'
-import { getImgName } from '@/utils/getImgName'
+import { StorageError, removeFromStorage } from '@/utils/queries/storage'
 import { deleteOneById } from '@/utils/queries/db'
 import { VButton, VLoader, VConfirm } from '@/components/UI'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
@@ -26,11 +25,9 @@ const emit = defineEmits<{
   'update:products': [ProductWithSpecifications[]]
 }>()
 
-const showModal = ref(false)
 const loadingDeletion = ref<Loading>('loading')
-const deleteProduct = async (id: number, img: string) => {
+const deleteProduct = async (id: number, img: string[]) => {
   loadingDeletion.value = 'loading'
-  showModal.value = true
   const { data, error } = await deleteOneById('products', id)
   if (error) return
 
@@ -38,10 +35,12 @@ const deleteProduct = async (id: number, img: string) => {
     'update:products',
     props.products.filter((e) => e.id !== data.id)
   )
-  const { error: errorDelete } = await removeFromStorage(
-    'products',
-    getImgName(img)
-  )
+  const deleteImages: Promise<{ error: null | StorageError }>[] = []
+  img.forEach((url) => {
+    deleteImages.push(removeFromStorage('products', url))
+  })
+  const errorDelete = (await Promise.all(deleteImages)).some((e) => e === null)
+
   if (errorDelete) {
     loadingDeletion.value = 'error'
   }
@@ -58,7 +57,7 @@ const basicData = computed((): BasicData => {
     },
     imgs: {
       title: 'Изображение',
-      value: props.products.map((e) => e.img)
+      value: props.products.map((e) => e.img[0])
     },
     warranties: {
       title: 'Гарантия',

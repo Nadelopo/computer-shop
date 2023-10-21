@@ -4,6 +4,7 @@ import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { VButton, VInputFile, VInputText } from '@/components/UI'
 import ManufacturersList from '@/components/Admin/ManufacturersList.vue'
 import type { ManufacturerCreate } from '@/types/tables/manufacturers.types'
+import type { InputFileActions } from '@/components/UI/VInputFile/types'
 
 const { createManufacturer } = useManufacturersStore()
 
@@ -13,7 +14,15 @@ const form = ref<ManufacturerCreate>({
   description: ''
 })
 
+const inputFileRef = ref<InputFileActions>()
 const create = async () => {
+  const { error: errorImage, url } = (await inputFileRef.value?.onSave()) || {}
+  if (errorImage) {
+    return
+  }
+  if (url) {
+    form.value.img = url
+  }
   const data = await createManufacturer(form.value)
   if (data) {
     form.value = {
@@ -22,6 +31,7 @@ const create = async () => {
       description: ''
     }
   }
+  inputFileRef.value?.clear()
 }
 </script>
 
@@ -42,7 +52,8 @@ const create = async () => {
       <div>
         <label>наименование</label>
         <v-input-file
-          v-model.trim="form.img"
+          ref="inputFileRef"
+          :file-url="form.img"
           folder="manufacturers"
         />
       </div>

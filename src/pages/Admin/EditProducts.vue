@@ -5,8 +5,6 @@ import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/productsStore'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { getAll, getOneById } from '@/utils/queries/db'
-import { getImgName } from '@/utils/getImgName'
-import { removeFromStorage } from '@/utils/queries/storage'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import type { Loading } from '@/types'
 import {
@@ -25,6 +23,7 @@ import type {
   ProductReadWithDetails,
   ProductUpdate
 } from '@/types/tables/products.types'
+import type { InputFileActions } from '@/components/UI/VInputFile/types'
 
 type ProductSpecificationOnEdit = SpecificationRead & {
   category_specifications: Omit<
@@ -51,7 +50,7 @@ const categoryId = Number(route.params.categoryId)
 const categoryTitle = route.params.category
 
 const product = ref<ProductWithSpecificationsOnEdit | null>(null)
-const img = ref('')
+const img = ref<string[]>([])
 const manufacturerSelect = ref(0)
 const loading = ref<Loading>('loading')
 
@@ -86,17 +85,19 @@ onBeforeMount(async () => {
   }
 })
 
+const inputFileRef = ref<InputFileActions<string[]>>()
 const save = async () => {
   if (product.value) {
     loading.value = 'loading'
-    const imgName = getImgName(img.value)
-    if (imgName !== getImgName(product.value.img)) {
-      const { error } = await removeFromStorage('products', imgName)
-      if (error) {
-        loading.value = 'error'
-        return
-      }
+    const { url, error: errorImage } =
+      (await inputFileRef.value?.onSave()) || {}
+    if (errorImage) {
+      loading.value = 'error'
     }
+    if (url) {
+      product.value.img = url
+    }
+
     const productU: ProductUpdate = {
       name: product.value.name,
       description: product.value.description,
@@ -124,7 +125,7 @@ const save = async () => {
       updateProduct(id, productU)
     ])
 
-    const error = response.some((e) => e !== null)
+    const error = response.some((e) => e === null)
     if (error) {
       loading.value = 'error'
       return
@@ -158,12 +159,7 @@ const manufacturersSelect = computed(() => {
 
 const back = async () => {
   loading.value = 'loading'
-  if (product.value) {
-    const imgName = getImgName(img.value)
-    if (imgName !== getImgName(product.value.img)) {
-      await removeFromStorage('products', getImgName(product.value.img))
-    }
-  }
+
   router.push({
     name: 'AdminProducts',
     params: { category: categoryTitle, id: categoryId }
@@ -227,7 +223,7 @@ const back = async () => {
         <div>
           <label>изображение</label>
           <v-input-file
-            v-model.trim="product.img"
+            :file-url="product.img"
             folder="products"
             :required="false"
           />

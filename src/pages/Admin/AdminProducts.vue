@@ -8,11 +8,11 @@ import { useManufacturersStore } from '@/stores/manufacturersStore'
 import ProdctsList from '@/components/Admin/ProductsList.vue'
 import {
   VInputText,
-  VInputFile,
   VPagination,
   VLoader,
   VButton,
-  VSelect
+  VSelect,
+  VInputFile
 } from '@/components/UI'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import type { SpecificationCreate } from '@/types/tables/specifications.types'
@@ -21,6 +21,7 @@ import type {
   ProductWithSpecifications
 } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
+import type { InputFileActions } from '@/components/UI/VInputFile/types'
 
 type ProductSpecificationForm = Omit<SpecificationCreate, 'productId'> & {
   productId: number | null
@@ -36,7 +37,6 @@ const { manufacturers } = storeToRefs(useManufacturersStore())
 const { getCategorySpecifications } = useCategoriesStore()
 const { createProduct, createSpecifications, getProducts } = useProductsStore()
 
-const manufacturerSelect = ref<number | string>('')
 const categoryId = computed(() => Number(route.params.id))
 const categorySpecifications = ref<CategorySpecificationRead[]>([])
 const loadingSpecifications = ref<Loading>('loading')
@@ -90,7 +90,7 @@ const copyForm: ProductCreate = {
   categoryId: categoryId.value,
   name: '',
   description: '',
-  img: '',
+  img: [],
   manufacturerId: 0,
   warranty: 0,
   price: 0,
@@ -100,6 +100,7 @@ const copyForm: ProductCreate = {
 
 const product = ref<ProductCreate>({ ...copyForm })
 
+const inputFileRef = ref<InputFileActions<string[]>>()
 const setCategorySpecifications = async () => {
   loadingSpecifications.value = 'loading'
   const { data, error } = await getCategorySpecifications(categoryId.value)
@@ -146,13 +147,15 @@ watch(
   { immediate: true }
 )
 
-watch(manufacturerSelect, (cur) => {
-  if (typeof cur !== 'string') {
-    product.value.manufacturerId = cur
-  }
-})
-
 const create = async () => {
+  const { url, error: errorImage } = (await inputFileRef.value?.onSave()) || {}
+  if (errorImage) {
+    loadingCreateProduct.value = 'error'
+    return
+  }
+  if (url) {
+    product.value.img = url
+  }
   const { data, error } = await createProduct(product.value)
   if (error) {
     loadingCreateProduct.value = 'error'
@@ -171,6 +174,8 @@ const create = async () => {
   }
   setProducts()
   product.value = { ...copyForm }
+  inputFileRef.value?.clear()
+
   categoryFormSpecifications.value = categoryFormSpecifications.value.map(
     (e, i) => {
       const specificationsValue = categorySpecifications.value[i]
@@ -232,9 +237,15 @@ const create = async () => {
         </div>
         <div>
           <label>изображение</label>
-          <v-input-file
+          <!-- <v-input-file
             v-model.trim="product.img"
             folder="products"
+          /> -->
+          <v-input-file
+            ref="inputFileRef"
+            :file-url="product.img"
+            folder="products"
+            multiple
           />
         </div>
 
@@ -242,7 +253,7 @@ const create = async () => {
           <label>производитель</label>
           <div>
             <v-select
-              v-model="manufacturerSelect"
+              v-model="product.manufacturerId"
               :options="
                 manufacturers.map((e) => ({ value: e.id, title: e.title }))
               "

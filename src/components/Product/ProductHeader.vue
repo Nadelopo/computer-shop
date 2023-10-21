@@ -42,7 +42,7 @@ const buttonCartWidth = computed(() => {
   <div class="product__top wrapper">
     <img
       class="align-middle sm:max-h-80 max-h-64"
-      :src="product.img"
+      :src="product.img[0]"
       alt="..."
     />
     <div class="w-full">
