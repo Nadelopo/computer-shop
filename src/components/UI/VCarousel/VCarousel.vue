@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, toRef, watch } from 'vue'
-import { useElementSize } from '@vueuse/core'
+import { useElementSize, useMutationObserver } from '@vueuse/core'
 //prettier-ignore
 import { useFeatureMouseUpListener, useFeatureMoveListener } from './useFeatureListeners'
 //prettier-ignore
@@ -130,8 +130,10 @@ const swipeTranslate = computed(() => {
       props.countSwipeSlides || 1
   )
 })
+const swipeDuration = ref(Date.now())
 watch(isMovableOnEvents, () => {
   if (isMovableOnEvents.value) {
+    swipeDuration.value = Date.now()
     carouselWrapperTransition.value = 0
     return
   }
@@ -151,11 +153,13 @@ watch(isMovableOnEvents, () => {
   const direction = currentPosXValue > startPosXValue ? 'right' : 'left'
   const difference =
     Math.abs(currentPosXValue - startPosXValue) % swipeTranslateValue
-  const isLessHalf = difference < swipeTranslateValue / 2
+  swipeDuration.value = Date.now() - swipeDuration.value
+  const isNeedSwipe =
+    swipeDuration.value < 200 ? true : difference >= swipeTranslateValue / 2
   let offsetBlocks = Math.floor(
     Math.abs(currentPosXValue - startPosXValue) / swipeTranslateValue
   )
-  offsetBlocks += isLessHalf ? 0 : 1
+  offsetBlocks += isNeedSwipe ? 1 : 0
   if (direction === 'right') {
     translate.value = startTranslate.value + swipeTranslateValue * offsetBlocks
     return
@@ -176,17 +180,19 @@ const { breakPoints } = useFeatureBreakpoints(props.breakpoints, {
     default: toRef(props, 'spaceBetween')
   }
 })
-watch(
-  [() => props.slidesPerView, breakPoints],
-  () => {
-    slidesPerView.value = props.slidesPerView
-    translate.value = 0
-    dotsRef.value?.setCurrentSlideIndex()
-  },
-  {
-    deep: true
-  }
-)
+
+const resetCarouselPosition = () => {
+  slidesPerView.value = props.slidesPerView
+  translate.value = 0
+  dotsRef.value?.setCurrentSlideIndex()
+}
+watch([() => props.slidesPerView, breakPoints], resetCarouselPosition, {
+  deep: true
+})
+useMutationObserver(carouselSlidesRef, resetCarouselPosition, {
+  childList: true
+})
+
 watch(notMovable, () => {
   if (!notMovable.value) return
   mouseUpListener.remove()
