@@ -100,7 +100,7 @@ onBeforeMount(async () => {
           'categoryId',
           [...new Set(products.value.map((e) => e.categoryId))]
         ],
-        select: 'categoryId, title, units'
+        select: 'categoryId, title, units, id'
       }
     )
     if (error) {
@@ -217,7 +217,7 @@ const deleteItem = async (item: ComparisonProduct) => {
           title="Показывать только отличия"
         />
       </div>
-      <ComparisonList
+      <comparison-list
         :current-category-id="currentCategoryId"
         :current-category-specifications="currentCategorySpecifications"
         :products="products"

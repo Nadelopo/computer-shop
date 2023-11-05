@@ -51,14 +51,12 @@ const clickOnPaginate = () => {
         <Sort />
         <template v-if="loading === 'success'">
           <div class="product__list">
-            <transition-group name="list">
-              <ProductBlock
-                v-for="product in products"
-                :key="product.id"
-                :item="product"
-                :class="styles"
-              />
-            </transition-group>
+            <ProductBlock
+              v-for="product in products"
+              :key="product.id"
+              :item="product"
+              :class="styles"
+            />
           </div>
         </template>
         <div

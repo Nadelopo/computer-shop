@@ -1,82 +1,50 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { storeToRefs } from 'pinia'
-import { useMediaQuery } from '@vueuse/core'
-import { useCategoriesStore } from '@/stores/categoriesStore'
+import { useBreakpoints } from '@/utils/useBreakpoints'
 import { useProductsStore } from '@/stores/productsStore'
-import { useManufacturersStore } from '@/stores/manufacturersStore'
-import { debounce } from '@/utils/debounce'
-import ProdctsList from '@/components/Admin/ProductsList.vue'
-import {
-  VInputText,
-  VPagination,
-  VLoader,
-  VButton,
-  VSelect,
-  VInputFile
-} from '@/components/UI'
+import ProductsForm from '@/components/Admin/AdminProductsForm.vue'
+import ProductsList from '@/components/Admin/ProductsList.vue'
+import { VPagination } from '@/components/UI'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
-import type { SpecificationCreate } from '@/types/tables/specifications.types'
-import type {
-  ProductCreate,
-  ProductWithSpecifications
-} from '@/types/tables/products.types'
+import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
-import type { InputFileActions } from '@/components/UI/VInputFile/types'
 
-type ProductSpecificationForm = Omit<SpecificationCreate, 'productId'> & {
-  productId: number | null
-}
+const { getProducts } = useProductsStore()
 
-const route = useRoute()
-
-const loadingProducts = ref<Loading>('loading')
-const loadingCreateProduct = ref<Loading>('loading')
-const products = ref<ProductWithSpecifications[]>([])
-
-const { manufacturers } = storeToRefs(useManufacturersStore())
-const { getCategorySpecifications } = useCategoriesStore()
-const { createProduct, createSpecifications, getProducts } = useProductsStore()
-
-const categoryId = computed(() => Number(route.params.id))
-const categorySpecifications = ref<CategorySpecificationRead[]>([])
-const loadingSpecifications = ref<Loading>('loading')
-const categoryFormSpecifications = ref<ProductSpecificationForm[]>([])
 const page = ref(0)
 const limit = ref(6)
-const productCount = ref(0)
-
-const breakpoints = reactive([
-  { point: useMediaQuery(`(width <= 1850px)`), limit: 5 },
-  { point: useMediaQuery(`(width <= 1570px)`), limit: 4 },
-  { point: useMediaQuery(`(width <= 1340px)`), limit: 3 },
-  { point: useMediaQuery(`(width <= 1140px)`), limit: 2 },
-  { point: useMediaQuery(`(width <= 940px)`), limit: 1 }
-])
-const onPoints = debounce(() => {
-  for (const breakpoint of breakpoints) {
-    if (breakpoint.point) {
-      limit.value = breakpoint.limit
+const loadingProducts = ref<Loading>('loading')
+useBreakpoints(
+  [5, 4, 3, 2, 1],
+  (current) => {
+    page.value = 0
+    if (current === 'noOne') {
+      limit.value = 6
+      return
     }
-  }
-  if (breakpoints.every((e) => !e.point)) {
-    limit.value = 6
-  }
-  page.value = 0
-})
-watch(
-  () => breakpoints.map((b) => b.point),
-  () => {
-    console.log()
-    loadingProducts.value = 'loading'
-    onPoints()
+    limit.value = current
   },
   {
-    immediate: true
+    points: [1850, 1570, 1340, 1140, 940],
+    onUpdate: (current) => {
+      if (current === 'noOne' && limit.value === 6) {
+        loadingProducts.value = 'success'
+        return
+      }
+      if (current === limit.value) {
+        loadingProducts.value = 'success'
+        return
+      }
+      loadingProducts.value = 'loading'
+    },
+    delay: 500
   }
 )
 
+const products = ref<ProductWithSpecifications[]>([])
+const productCount = ref(0)
+const route = useRoute()
 const setProducts = async () => {
   const categoryId = Number(route.params.id)
   if (categoryId) {
@@ -103,205 +71,26 @@ const setProducts = async () => {
 }
 watch([page, limit], setProducts)
 
-const copyForm: ProductCreate = {
-  categoryId: categoryId.value,
-  name: '',
-  description: '',
-  img: [],
-  manufacturerId: 0,
-  warranty: 0,
-  price: 0,
-  quantity: 100,
-  discount: 0
-}
-
-const product = ref<ProductCreate>({ ...copyForm })
-
-const inputFileRef = ref<InputFileActions<string[]>>()
-const setCategorySpecifications = async () => {
-  loadingSpecifications.value = 'loading'
-  const { data, error } = await getCategorySpecifications(categoryId.value)
-  if (error) {
-    loadingSpecifications.value = 'error'
-    return error
-  }
-  categorySpecifications.value = data
-  categoryFormSpecifications.value = data.map((e) => {
-    if (e.type) {
-      return {
-        categorySpecificationsId: e.id,
-        productId: null,
-        valueString: null,
-        valueNumber: 0
-      }
-    } else {
-      return {
-        categorySpecificationsId: e.id,
-        productId: null,
-        valueString: '',
-        valueNumber: null
-      }
-    }
-  })
-  if (data.length === 0) {
-    loadingSpecifications.value = 'empty'
-    categoryFormSpecifications.value = []
-    return
-  }
-  loadingSpecifications.value = 'success'
-}
-
 watch(
   () => route.params.id,
-  (cur) => {
-    if (cur) {
-      categorySpecifications.value = []
-      setCategorySpecifications()
-      product.value.categoryId = categoryId.value
+  (id) => {
+    if (id) {
       setProducts()
     }
   },
   { immediate: true }
 )
 
-const create = async () => {
-  const { url, error: errorImage } = (await inputFileRef.value?.onSave()) || {}
-  if (errorImage) {
-    loadingCreateProduct.value = 'error'
-    return
-  }
-  if (url) {
-    product.value.img = url
-  }
-  const { data, error } = await createProduct(product.value)
-  if (error) {
-    loadingCreateProduct.value = 'error'
-    return
-  }
-
-  const productSpecifications = categoryFormSpecifications.value.map((e) => {
-    return { ...e, productId: data.id }
-  })
-  const { error: errorSpecifications } = await createSpecifications(
-    productSpecifications
-  )
-  if (errorSpecifications) {
-    loadingCreateProduct.value = 'error'
-    return
-  }
-  setProducts()
-  product.value = { ...copyForm }
-  inputFileRef.value?.clear()
-
-  categoryFormSpecifications.value = categoryFormSpecifications.value.map(
-    (e, i) => {
-      const specificationsValue = categorySpecifications.value[i]
-      if (specificationsValue.type) {
-        return { ...e, valueNumber: specificationsValue.min }
-      } else {
-        return { ...e, valueString: '' }
-      }
-    }
-  )
-}
+const categorySpecifications = ref<CategorySpecificationRead[]>([])
 </script>
 
 <template>
   <div>
-    <form
-      v-if="loadingSpecifications === 'success'"
-      class="list__form mb-8"
-      @submit.prevent="create"
-    >
-      <div
-        v-for="(specification, i) in categorySpecifications"
-        :key="specification.id"
-      >
-        <label>
-          {{ specification.title }}
-        </label>
-        <template v-if="specification.type">
-          <v-input-text
-            v-model="categoryFormSpecifications[i].valueNumber"
-            type="number"
-            :step="specification.step"
-            :min="specification.min"
-            :max="specification.max"
-          />
-        </template>
-        <template v-else-if="specification.variantsValues">
-          <br />
-          <v-select
-            v-model="categoryFormSpecifications[i].valueString"
-            :options="
-              specification.variantsValues.map((e) => ({
-                title: e,
-                value: e
-              }))
-            "
-            class="mt-4"
-          />
-        </template>
-      </div>
-      <template v-if="product">
-        <div>
-          <label>наименование</label>
-          <v-input-text v-model.trim="product.name" />
-        </div>
-        <div>
-          <label>описание</label>
-          <v-input-text v-model.trim="product.description" />
-        </div>
-        <div>
-          <label>изображение</label>
-          <!-- <v-input-file
-            v-model.trim="product.img"
-            folder="products"
-          /> -->
-          <v-input-file
-            ref="inputFileRef"
-            :file-url="product.img"
-            folder="products"
-            multiple
-          />
-        </div>
-
-        <div>
-          <label>производитель</label>
-          <div>
-            <v-select
-              v-model="product.manufacturerId"
-              :options="
-                manufacturers.map((e) => ({ value: e.id, title: e.title }))
-              "
-              class="mt-4"
-            />
-          </div>
-        </div>
-        <div>
-          <label>гарантия</label>
-          <v-input-text
-            v-model="product.warranty"
-            type="number"
-          />
-        </div>
-        <div>
-          <label>цена</label>
-          <v-input-text
-            v-model="product.price"
-            type="number"
-          />
-        </div>
-      </template>
-      <div><v-button>создать</v-button></div>
-    </form>
-    <div
-      v-else
-      class="h-[50vh] flex items-center"
-    >
-      <v-loader />
-    </div>
-    <ProdctsList
+    <products-form
+      v-model="categorySpecifications"
+      @create-product="setProducts"
+    />
+    <products-list
       v-model:products="products"
       :specifications="categorySpecifications"
       :loading="loadingProducts"

@@ -309,4 +309,3 @@ header
       &__active
         opacity: 0
 </style>
-@/db/supabase

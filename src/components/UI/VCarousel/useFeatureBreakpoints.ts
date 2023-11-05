@@ -1,10 +1,5 @@
-import { useMediaQuery } from '@vueuse/core'
-import { type Ref, reactive, watch } from 'vue'
-
-type Breakpoints = {
-  point: string
-  mediaQuery: Ref<boolean>
-}
+import { useBreakpoints } from '@/utils/useBreakpoints'
+import type { Ref } from 'vue'
 
 export type PropsBreakpoints = {
   [key: number]: {
@@ -26,39 +21,23 @@ export const useFeatureBreakpoints = (
     }
   }
 ) => {
-  const breakPoints: Breakpoints[] = reactive([])
-
-  watch(
-    () => breakPoints.map((e) => e.mediaQuery),
-    () => {
+  const { breakpoints } = useBreakpoints(
+    Object.values(propsBreakpoints).toReversed(),
+    (current) => {
       const { slidesPerView, spaceBetween } = options
-      for (const item of breakPoints) {
-        if (item.mediaQuery) {
-          const point = propsBreakpoints[Number(item.point)]
-          if (point.slidesPerView) {
-            slidesPerView.ref.value = point.slidesPerView
-          }
-          if (point.spaceBetween) {
-            spaceBetween.ref.value = point.spaceBetween
-          }
-        }
-      }
-      if (breakPoints.every((e) => !e.mediaQuery)) {
+      if (current === 'noOne') {
         slidesPerView.ref.value = slidesPerView.default.value
         spaceBetween.ref.value = spaceBetween.default.value
+        return
       }
-    }
+      if (current.slidesPerView) {
+        slidesPerView.ref.value = current.slidesPerView
+      }
+      if (current.spaceBetween) {
+        spaceBetween.ref.value = current.spaceBetween
+      }
+    },
+    { points: Object.keys(propsBreakpoints).map(Number).toReversed() }
   )
-
-  const points = Object.keys(propsBreakpoints)
-  if (points.length) {
-    for (const point of points) {
-      const media = useMediaQuery(`(width < ${point}px)`)
-      breakPoints.unshift({
-        point,
-        mediaQuery: media
-      })
-    }
-  }
-  return { breakPoints }
+  return { breakpoints }
 }

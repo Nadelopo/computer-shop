@@ -85,7 +85,7 @@ const updateProductRating = (newData: UpdateProductRating) => {
     </div>
     <v-loader
       v-else
-      class="h-[75vh]"
+      class="h-[50vh]"
     />
   </div>
 </template>

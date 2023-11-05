@@ -170,7 +170,7 @@ watch(isMovableOnEvents, () => {
   }
 })
 
-const { breakPoints } = useFeatureBreakpoints(props.breakpoints, {
+const { breakpoints } = useFeatureBreakpoints(props.breakpoints, {
   slidesPerView: {
     ref: slidesPerView,
     default: toRef(props, 'slidesPerView')
@@ -186,7 +186,7 @@ const resetCarouselPosition = () => {
   translate.value = 0
   dotsRef.value?.setCurrentSlideIndex()
 }
-watch([() => props.slidesPerView, breakPoints], resetCarouselPosition, {
+watch([() => props.slidesPerView, breakpoints], resetCarouselPosition, {
   deep: true
 })
 useMutationObserver(carouselSlidesRef, resetCarouselPosition, {

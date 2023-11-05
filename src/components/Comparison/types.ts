@@ -5,6 +5,7 @@ export type CategorySpecifications = {
   title: string
   categoryId: number
   units: string
+  id: number
 }
 
 export type Category = {
@@ -28,5 +29,5 @@ export type ComparisonProduct = Omit<
 export type BasicProductData = {
   title: string
   value: (string | number)[]
-  units?: string
+  units: string
 }
