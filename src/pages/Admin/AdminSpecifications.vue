@@ -24,7 +24,8 @@ const form = ref<CategorySpecificationCreate>({
   step: 1,
   min: 0,
   max: 64,
-  variantsValues: null
+  variantsValues: null,
+  condition: 'greater'
 })
 
 const setInitialSpecificationValue = ref(false)
@@ -80,7 +81,8 @@ const create = async () => {
     step: 1,
     min: 0,
     max: 64,
-    variantsValues: null
+    variantsValues: null,
+    condition: 'greater'
   }
   select.value = 'выберите категорию'
 }
@@ -107,7 +109,8 @@ watch(
         step: 1,
         min: 0,
         max: 64,
-        variantsValues: null
+        variantsValues: null,
+        condition: 'greater'
       }
     } else {
       form.value = {
@@ -116,7 +119,8 @@ watch(
         step: null,
         min: null,
         max: null,
-        variantsValues: ['']
+        variantsValues: [''],
+        condition: null
       }
     }
   }
@@ -182,6 +186,19 @@ watch(
             v-model="form.max"
             type="number"
             :min="0"
+          />
+        </div>
+        <div>
+          <label>
+            условия для лучшего значения
+            <span class="text-xs"> (больще значит лучше или наоборот) </span>
+          </label>
+          <v-double-buttons
+            class="mt-2"
+            text-first="больше"
+            text-second="меньше"
+            :model-value="form.condition === 'greater'"
+            @update:model-value="form.condition = $event ? 'greater' : 'less'"
           />
         </div>
       </template>

@@ -142,7 +142,7 @@ const onDrop = (e: DragEvent, i: string | number) => {
           :style="{ translate: translateCells + 'px' }"
         >
           <div
-            v-for="(value, j) in data.value"
+            v-for="(value, j) in data.values"
             :key="j"
             :ref="j === 0 && i === 0 && !cellRef ? (e) => (cellRef = e as HTMLElement) : undefined"
             :draggable="i === 0 ? true : undefined"
@@ -176,7 +176,9 @@ const onDrop = (e: DragEvent, i: string | number) => {
               />
             </template>
             <template v-else>
-              <span>{{ value }} {{ data.units }}</span>
+              <span :class="{ best__value: data.max === value }">
+                {{ value }} {{ data.units }}
+              </span>
               <label
                 v-if="data.title === 'Рейтинг'"
                 class="rating"
@@ -243,6 +245,8 @@ const onDrop = (e: DragEvent, i: string | number) => {
     min-width: 235px
     display: flex
     align-items: center
+    .best__value
+      color: var(--color-text)
     a
       max-width: 70%
     img

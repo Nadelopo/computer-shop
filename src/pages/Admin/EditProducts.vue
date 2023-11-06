@@ -28,7 +28,7 @@ import type { InputFileActions } from '@/components/UI/VInputFile/types'
 type ProductSpecificationOnEdit = SpecificationRead & {
   category_specifications: Omit<
     CategorySpecificationRead,
-    'created_at' | 'categoryId' | 'enTitle'
+    'created_at' | 'categoryId' | 'enTitle' | 'condition'
   >
 }
 

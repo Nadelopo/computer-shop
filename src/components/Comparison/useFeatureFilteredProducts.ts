@@ -4,8 +4,9 @@ import { formatPrice } from '@/utils/formatPrice'
 
 type FieldsData = {
   title: string
-  value: Array<string | number>
+  values: Array<string | number>
   units: string | number
+  max?: number
 }
 
 export const useFeatureFilteredProducts = (
@@ -17,50 +18,53 @@ export const useFeatureFilteredProducts = (
     const fields: FieldsData[] = [
       {
         title: '',
-        value: [],
+        values: [],
         units: ''
       },
       {
         title: 'Наименование',
-        value: [],
+        values: [],
         units: ''
       },
       {
         title: 'Рейтинг',
-        value: [],
+        values: [],
         units: ''
       },
       {
         title: 'Цена',
-        value: [],
+        values: [],
         units: ''
       }
     ]
-    for (const category of currentCategorySpecifications.value) {
+    const currentCategorySpecificationsValue =
+      currentCategorySpecifications.value
+    for (const category of currentCategorySpecificationsValue) {
       fields.push({
         title: category.title,
-        value: [],
+        values: [],
         units: category.units
       })
     }
     fields.push({
       title: 'Производитель',
-      value: [],
+      values: [],
       units: ''
     })
     fields.push({
       title: 'Гарантия',
-      value: [],
+      values: [],
       units: 'мес'
     })
-    for (let i = 0; i < categoryProducts.value.length; i++) {
-      const product = categoryProducts.value[i]
-      fields[0].value.push(product.img[0])
-      fields[1].value.push(product.name)
-      fields[2].value.push(Number(product.rating.toFixed(1)))
-      fields[3].value.push(formatPrice(product.price))
-      for (let j = 0; j < currentCategorySpecifications.value.length; j++) {
-        const category = currentCategorySpecifications.value[j]
+    const categoryProductsValue = categoryProducts.value
+    for (let i = 0; i < categoryProductsValue.length; i++) {
+      const product = categoryProductsValue[i]
+      fields[0].values.push(product.img[0])
+      fields[1].values.push(product.name)
+      fields[2].values.push(Number(product.rating.toFixed(1)))
+      fields[3].values.push(formatPrice(product.price))
+      for (let j = 0; j < currentCategorySpecificationsValue.length; j++) {
+        const category = currentCategorySpecificationsValue[j]
         let index = 4
         const specification = product.specifications.find((e, i) => {
           index = i + 4
@@ -69,11 +73,22 @@ export const useFeatureFilteredProducts = (
         if (!specification) continue
         const value = specification.valueNumber ?? specification.valueString
         if (!value) continue
-        fields[index].value.push(value)
+        fields[index].values.push(value)
       }
-      fields.at(-2)?.value.push(product.manufacturers.title)
-      fields.at(-1)?.value.push(product.warranty)
+      fields.at(-2)?.values.push(product.manufacturers.title)
+      fields.at(-1)?.values.push(product.warranty)
     }
+    fields.forEach((f) => {
+      if (typeof f.values[0] === 'string') {
+        return f
+      }
+      const { condition } =
+        currentCategorySpecificationsValue.find((s) => s.title === f.title) ||
+        {}
+      const choiseMethod = !condition || condition === 'greater' ? 'max' : 'min'
+      f.max = Math[choiseMethod](...(f.values as number[]))
+      return f
+    })
     return fields
   })
 
@@ -85,7 +100,7 @@ export const useFeatureFilteredProducts = (
     let filtered = productsDataValue
     for (let i = 4; i < productsDataValue.length; i++) {
       const data = productsDataValue[i]
-      if (data.value.every((e) => e === data.value[0])) {
+      if (data.values.every((e) => e === data.values[0])) {
         filtered = filtered.filter((e) => e.title !== data.title)
       }
     }

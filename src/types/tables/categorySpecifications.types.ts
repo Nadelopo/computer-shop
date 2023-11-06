@@ -14,6 +14,7 @@ export type CategorySpecificationCreate = {
       max: number
       min: number
       step: number
+      condition: 'greater' | 'less'
       variantsValues: null
     }
   | {
@@ -21,6 +22,7 @@ export type CategorySpecificationCreate = {
       max: null
       min: null
       step: null
+      condition: null
       variantsValues: string[]
     }
 )

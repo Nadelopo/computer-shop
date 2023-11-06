@@ -100,7 +100,7 @@ onBeforeMount(async () => {
           'categoryId',
           [...new Set(products.value.map((e) => e.categoryId))]
         ],
-        select: ' title, units, id, categories(id, enTitle)'
+        select: 'condition, title, units, id, categories(id, enTitle)'
       }
     )
     if (error) {
