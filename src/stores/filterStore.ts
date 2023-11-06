@@ -45,10 +45,10 @@ export const useFilterStore = defineStore('filter', () => {
 
   const sortAscents = reactive({
     price: true,
-    countReviews: false,
+    countReviews: true,
     discount: true,
     popularity: false,
-    rating: false
+    rating: true
   })
   const sortColumn = ref<SortType>('popularity')
   const search = ref('')

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useFilterStore } from '@/stores/filterStore'
@@ -48,6 +49,11 @@ const sortData: { type: SortType; text: string }[] = [
     text: 'оценке'
   }
 ]
+
+onUnmounted(() => {
+  sortColumn.value = 'popularity'
+  sortAscents['popularity'] = false
+})
 </script>
 
 <template>
@@ -60,7 +66,12 @@ const sortData: { type: SortType; text: string }[] = [
       @click="sort(item.type)"
     >
       <span class="mr-3">{{ item.text }}</span>
-      <arrow-svg :class="sortAscents[item.type] === false && 'down'" />
+      <arrow-svg
+        :class="{
+          down: sortAscents[item.type] === false,
+          active: sortColumn === item.type
+        }"
+      />
     </v-button>
   </div>
 </template>
@@ -72,8 +83,9 @@ const sortData: { type: SortType; text: string }[] = [
   margin-top: 32px
   align-items: center
   svg
-    fill: var(--bright)
     transition: .2s
+    &.active
+      fill: var(--bright)
     &.down
       transform: rotate(180deg)
 </style>

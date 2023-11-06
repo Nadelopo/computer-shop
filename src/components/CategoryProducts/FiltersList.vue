@@ -20,18 +20,24 @@ function isSortType(key: string): key is SortType {
 const { getCategorySpecifications } = useCategoriesStore()
 
 const { setQueryParams, setFilteredProducts, sortAscents } = useFilterStore()
-const { specificationsValues, productsPrice, search, currentPage, sortColumn } =
-  storeToRefs(useFilterStore())
+const {
+  specificationsValues,
+  productsPrice,
+  search,
+  currentPage,
+  sortColumn,
+  loading
+} = storeToRefs(useFilterStore())
 
 const route = useRoute()
 const router = useRouter()
 
 const categoryId = Number(route.params.id)
-const loading = ref<Loading>('loading')
+const loadingProperties = ref<Loading>('loading')
 const setFilterProperties = async () => {
   const { data, error } = await getCategorySpecifications(categoryId)
   if (error) {
-    loading.value = 'error'
+    loadingProperties.value = 'error'
     return
   }
   specificationsValues.value = data
@@ -98,7 +104,7 @@ const setFilterProperties = async () => {
       value.values = [...(Array.isArray(field) ? field : [field])].map(String)
     }
   }
-  loading.value = 'success'
+  loadingProperties.value = 'success'
 }
 
 const apply = () => {
@@ -128,6 +134,7 @@ const cancel = () => {
 watch(
   () => route.params,
   async () => {
+    loading.value = 'loading'
     await setFilterProperties()
     setFilteredProducts(categoryId)
   },
@@ -141,7 +148,7 @@ watch(
 <template>
   <div>
     <div
-      v-if="loading === 'success'"
+      v-if="loadingProperties === 'success'"
       class="filters"
     >
       <input-filter
@@ -200,10 +207,10 @@ watch(
         </v-button>
       </div>
     </div>
-    <div v-else-if="loading === 'loading'">
+    <div v-else-if="loadingProperties === 'loading'">
       <SkeletonFiltersVue />
     </div>
-    <div v-else-if="loading === 'error'">ошибка</div>
+    <div v-else-if="loadingProperties === 'error'">ошибка</div>
   </div>
 </template>
 
