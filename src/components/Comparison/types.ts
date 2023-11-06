@@ -3,7 +3,10 @@ import type { SpecificationRead } from '@/types/tables/specifications.types'
 
 export type CategorySpecifications = {
   title: string
-  categoryId: number
+  categories: {
+    id: number
+    enTitle: string
+  }
   units: string
   id: number
 }

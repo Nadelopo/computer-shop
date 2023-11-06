@@ -96,6 +96,25 @@ const deleteItem = async (index: number) => {
   emit('deleteItem', item)
   translateCells.value = 0
 }
+
+const onDrag = (e: DragEvent, i: string | number) => {
+  if (!e.dataTransfer) return
+  e.dataTransfer.dropEffect = 'move'
+  e.dataTransfer.effectAllowed = 'move'
+  e.dataTransfer.setData('itemId', String(i))
+}
+
+const onDrop = (e: DragEvent, i: string | number) => {
+  if (!e.dataTransfer) return
+  const propsProducts = props.products
+  const itemId = e.dataTransfer.getData('itemId')
+  const index1 = propsProducts.findIndex((e) => e.img[0] === i)
+  const index2 = propsProducts.findIndex((e) => e.img[0] === itemId)
+  ;[propsProducts[index1], propsProducts[index2]] = [
+    propsProducts[index2],
+    propsProducts[index1]
+  ]
+}
 </script>
 
 <template>
@@ -125,14 +144,32 @@ const deleteItem = async (index: number) => {
           <div
             v-for="(value, j) in data.value"
             :key="j"
-            v-bind="j === 0 && i === 0 && { ref: (e) => (cellRef = e as HTMLElement) }"
+            :ref="j === 0 && i === 0 && !cellRef ? (e) => (cellRef = e as HTMLElement) : undefined"
+            :draggable="i === 0 ? true : undefined"
             class="cell"
+            v-on="i === 0 ? {
+              dragstart: (e: DragEvent) => onDrag(e, value),
+              drop: (e: DragEvent) => onDrop(e, value),
+              dragover: (e: DragEvent) => e.preventDefault(),
+              dragenter: (e: DragEvent) => e.preventDefault()
+            } : {}"
           >
             <template v-if="i === 0">
-              <img
-                :src="String(value)"
-                alt=""
-              />
+              <router-link
+                :to="{
+                  name: 'Product',
+                  params: {
+                    category: currentCategorySpecifications[0].categories.enTitle,
+                    categoryId: currentCategoryId,
+                    productId: products.find(p => p.img[0] === (value as string))?.id
+                  }
+                }"
+              >
+                <img
+                  :src="String(value)"
+                  alt=""
+                />
+              </router-link>
               <cross-svg
                 class="cross"
                 @click="deleteItem(j)"
@@ -206,9 +243,10 @@ const deleteItem = async (index: number) => {
     min-width: 235px
     display: flex
     align-items: center
+    a
+      max-width: 70%
     img
       max-height: 150px
-      max-width: 70%
     @media (width <= 767px)
       padding-top: 0px
       min-width: auto

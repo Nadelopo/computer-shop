@@ -100,7 +100,7 @@ onBeforeMount(async () => {
           'categoryId',
           [...new Set(products.value.map((e) => e.categoryId))]
         ],
-        select: 'categoryId, title, units, id'
+        select: ' title, units, id, categories(id, enTitle)'
       }
     )
     if (error) {
@@ -110,7 +110,7 @@ onBeforeMount(async () => {
 
     for (const category of categories.value) {
       const categorySpecifications = categoriesSpecifications.filter(
-        (e) => e.categoryId === category.id
+        (e) => e.categories.id === category.id
       )
       if (categorySpecifications) {
         category.specifications = categorySpecifications.map((e) => {
