@@ -70,18 +70,6 @@ const showNextBtn = computed(() => {
   return true
 })
 
-let previousColor = '#fff'
-const setRowColor = (e: Event, value: 'add' | 'remove') => {
-  const target = e.target as HTMLElement
-  if (value === 'add') {
-    previousColor = target.style.backgroundColor
-    target.style.background = 'var(--light)'
-  }
-  if (value === 'remove') {
-    target.style.background = previousColor
-  }
-}
-
 const updateItemsList = (action: 'prev' | 'next') => {
   if (action === 'next') {
     translateCells.value -= widthCell.value
@@ -125,12 +113,7 @@ const onDrop = (e: DragEvent, i: string | number) => {
     <div
       v-for="(data, i) in filteredProducts"
       :key="i"
-      :class="{ 'bg-white': i % 2 === 0 }"
       class="row"
-      v-on="i > 1 ? { 
-          mouseenter: (e: MouseEvent) => setRowColor(e, 'add'),
-          mouseleave: (e: MouseEvent) => setRowColor(e, 'remove') 
-         } : {}"
     >
       <div class="cell__title">
         {{ data.title }}
@@ -217,6 +200,11 @@ const onDrop = (e: DragEvent, i: string | number) => {
     transition: v-bind(transition) linear
     padding: 0 5px
     position: relative
+    &:nth-child(odd)
+      background: #fff
+    &:not(:first-child):not(:has(button)):hover
+      background: var(--light)
+
   .wrapper__cells
     position: relative
     overflow: hidden

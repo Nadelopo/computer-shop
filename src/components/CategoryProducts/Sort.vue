@@ -62,7 +62,7 @@ onUnmounted(() => {
     <v-button
       v-for="(item, i) in sortData"
       :key="i"
-      :min-width="i === 0 ? 'auto' : undefined"
+      width="auto"
       @click="sort(item.type)"
     >
       <span class="mr-3">{{ item.text }}</span>

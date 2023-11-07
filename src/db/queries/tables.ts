@@ -3,13 +3,9 @@ import { formatSearch } from '../../utils/formatSearch'
 import type { GetAllParams, Id, UpdateMany } from './types'
 import type { CreateData, Table, UpdateData } from '@/types/database.types'
 
-type ForeignWithoutNull<T> = T extends Array<any>
-  ? {
-      [K in keyof T[0]]: K extends Table ? NonNullable<T[0][K]> : T[0][K]
-    }[]
-  : {
-      [K in keyof T]: K extends Table ? NonNullable<T[K]> : T[K]
-    }
+type ForeignWithoutNull<T> = T extends Array<infer U>
+  ? { [K in keyof U]: K extends Table ? NonNullable<U[K]> : U[K] }[]
+  : { [K in keyof T]: K extends Table ? NonNullable<T[K]> : T[K] }
 
 type ReturnType<D> = {
   [K in keyof D]: K extends 'data' ? ForeignWithoutNull<D[K]> : D[K]
@@ -29,11 +25,7 @@ export async function getOneById<T extends Table, S extends string = '*'>(
   return response as ReturnType<typeof response>
 }
 
-export const getAll = async <
-  R extends object = never,
-  T extends Table = Table,
-  S extends string = [R] extends [never] ? '*' : string
->(
+export const getAll = async <T extends Table = Table, S extends string = '*'>(
   table: T,
   params?: GetAllParams<S>
 ): Promise<ReturnType<typeof response>> => {

@@ -12,7 +12,9 @@ const props = withDefaults(defineProps<Props>(), {
   required: true
 })
 
-const modelValue = defineModel<string | number | boolean | null>({
+const modelValue = defineModel<
+  [string | number | boolean | null] extends readonly (infer e)[] ? e : never
+>({
   required: true
 })
 
@@ -119,7 +121,9 @@ onUnmounted(() => {
 const required = computed(() => {
   if (props.required) {
     let value = true
-    if (props.options.find((e) => e.value === modelValue.value)) value = false
+    if (props.options.find((e) => e.value === modelValue.value)) {
+      value = false
+    }
     return value
   } else {
     return false

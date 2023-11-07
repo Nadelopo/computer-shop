@@ -5,32 +5,16 @@ import VLoader from './VLoader.vue'
 type Props = {
   variant?: 'primary' | 'danger' | 'noactive'
   loading?: boolean
-  minWidth?: number | 'auto'
   width?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   variant: 'primary',
-  width: 'auto',
+  width: '100px',
   loading: false
 })
 
-let minWidth = '100px'
 const width = computed(() => props.width ?? 'auto')
-
-if (props.minWidth === 'auto') {
-  minWidth = 'auto'
-} else if (props.minWidth) {
-  minWidth = props.minWidth + 'px'
-}
-
-// if (props.minWidth) {
-//   if (props.minWidth == 'auto') {
-//     minWidth = 'auto'
-//   } else {
-//     minWidth = props.minWidth + 'px'
-//   }
-// }
 </script>
 
 <template>
@@ -69,8 +53,7 @@ if (props.minWidth === 'auto') {
     transform: scale(0.9)
 
 .btn
-  min-width: v-bind(minWidth)
-  width: v-bind(width)
+  min-width: v-bind(width)
   background: var(--color-main)
   :slotted(svg)
     fill: #fff

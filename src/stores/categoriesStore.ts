@@ -10,7 +10,6 @@ import type {
   CategorySpecificationCreate,
   CategorySpecificationRead
 } from '@/types/tables/categorySpecifications.types'
-import type { PostgrestError } from '@supabase/supabase-js'
 import type { DataError } from '@/types'
 
 export const useCategoriesStore = defineStore('categories', () => {
@@ -52,23 +51,16 @@ export const useCategoriesStore = defineStore('categories', () => {
     form: CategorySpecificationCreate
   ): Promise<DataError<CategorySpecificationRead>> {
     const { data, error } = await createOne('category_specifications', form)
-    return { data, error } as
-      | { data: CategorySpecificationRead; error: null }
-      | { data: null; error: PostgrestError }
+    return { data, error } as DataError<CategorySpecificationRead>
   }
 
   async function getCategorySpecifications(
     categoryId: number
   ): Promise<DataError<CategorySpecificationRead[]>> {
-    const { data, error } = await getAll<CategorySpecificationRead>(
-      'category_specifications',
-      {
-        match: { categoryId: categoryId }
-      }
-    )
-    return { data, error } as
-      | { data: CategorySpecificationRead[]; error: null }
-      | { data: null; error: PostgrestError }
+    const { data, error } = await getAll('category_specifications', {
+      match: { categoryId: categoryId }
+    })
+    return { data, error } as DataError<CategorySpecificationRead[]>
   }
 
   setCategories()
