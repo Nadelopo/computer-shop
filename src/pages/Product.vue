@@ -64,19 +64,19 @@ const updateProductRating = (newData: UpdateProductRating) => {
 <template>
   <div class="container">
     <div v-if="product && loading === 'success'">
-      <ProductHeader :product="product" />
+      <product-header :product="product" />
       <div class="wrapper grid">
         <div>Описание</div>
         <div class="description">
           {{ product.description }}
         </div>
       </div>
-      <ProductSpecifications :product="product" />
-      <SimilarProducts
+      <product-specifications :product="product" />
+      <similar-products
         :product-price="product.price"
         :product-id="product.id"
       />
-      <ProductReviews
+      <product-reviews
         :product-id="product.id"
         :count-reviews="product.countReviews"
         :product-rating="product.rating"

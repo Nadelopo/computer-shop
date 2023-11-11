@@ -4,14 +4,16 @@ import { VModal, VButton } from '@/components/UI'
 
 type Props = {
   label: string
-  title: string
   message: string
+  title?: string
   type?: 'primary' | 'danger' | 'noactive'
   width?: string
+  loading?: boolean
 }
 
 withDefaults(defineProps<Props>(), {
-  type: 'primary'
+  type: 'primary',
+  title: 'Подтвердите действие'
 })
 
 const emit = defineEmits<{
@@ -40,6 +42,7 @@ const onOk = () => {
   <v-button
     :variant="type"
     :width="width"
+    :loading="loading"
     v-bind="$attrs"
     @click="showModal = true"
   >

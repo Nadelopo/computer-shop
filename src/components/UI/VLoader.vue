@@ -1,6 +1,6 @@
 <script setup lang="ts">
-const props = defineProps<{ color?: string }>()
-const color = props.color ?? 'var(--bright)'
+const props = defineProps<{ color?: string | false }>()
+const color = props.color || 'var(--bright)'
 </script>
 
 <template>
