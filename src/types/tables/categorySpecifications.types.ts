@@ -1,7 +1,7 @@
 export type CategorySpecificationRead = Required<CategorySpecificationCreate>
 
 export type CategorySpecificationCreate = {
-  categoryId?: number
+  categoryId: number
   created_at?: string
   id?: number
   title: string

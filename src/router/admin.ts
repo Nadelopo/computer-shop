@@ -46,5 +46,11 @@ export const adminRoutes: RouteRecordRaw[] = [
     name: 'EditManufacturer',
     component: () => import('@/pages/Admin/EditManufacturer.vue'),
     meta: { auth: true, admin: true }
+  },
+  {
+    path: '/admin/edit/specification/:categoryId/:id',
+    name: 'EditSpecification',
+    component: () => import('@/pages/Admin/EditSpecification.vue'),
+    meta: { auth: true, admin: true }
   }
 ]

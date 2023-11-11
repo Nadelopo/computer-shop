@@ -31,17 +31,16 @@ export const getAll = async <T extends Table = Table, S extends string = '*'>(
 ): Promise<ReturnType<typeof response>> => {
   const { order, search, between, limit, match, neq, range, select } =
     params || {}
-  const orderColumn = order?.[0] ?? 'id'
 
-  const query = supabase
-    .from(table)
-    .select(select, {
-      count: 'exact'
-    })
-    .order(orderColumn, {
-      ascending: order?.[1] ?? true
-    })
+  const query = supabase.from(table).select(select, {
+    count: 'estimated',
+    head: params?.onlyCount
+  })
 
+  if (!params?.onlyCount) {
+    const [orderColumn, ascending] = order ?? ['id', true]
+    query.order(orderColumn, { ascending })
+  }
   if (match) {
     query.match(match)
   }

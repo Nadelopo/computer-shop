@@ -14,6 +14,7 @@ export type GetAllParams<S> = {
   limit?: number
   neq?: [column: string, value: number | string]
   range?: [from: number, to: number]
+  onlyCount?: boolean
 }
 
 export type UpdateMany<T> = T & Required<Pick<T, keyof T & 'id'>>
