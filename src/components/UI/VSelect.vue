@@ -13,7 +13,9 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const modelValue = defineModel<
-  [string | number | boolean | null] extends readonly (infer e)[] ? e : never
+  [string | number | boolean | null | undefined] extends readonly (infer e)[]
+    ? e
+    : never
 >({
   required: true
 })
@@ -30,7 +32,7 @@ const optionsRefs = ref<HTMLButtonElement[]>([])
 const color = ref('#a9a9a9')
 
 watch(
-  modelValue,
+  [modelValue, () => props.options],
   () => {
     const value = modelValue.value
     const findSelectedValue = props.options.find((e) => e.value === value)
@@ -41,6 +43,7 @@ watch(
       selected.value = String(value)
     } else {
       selected.value = 'выберите значение'
+      color.value = '#a9a9a9'
     }
   },
   {
@@ -132,7 +135,7 @@ const required = computed(() => {
 </script>
 
 <template>
-  <span v-if="modelValue !== null">
+  <span>
     <span
       class="root"
       v-bind="$attrs"
