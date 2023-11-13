@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import RatingStars from '../RatingStars.vue'
+import RatingStars from './RatingStars.vue'
 import { AvatarSvg, ArrowSvg } from '@/assets/icons'
 import type { ReviewReadWithDetails } from '@/types/tables/reviews.types'
 

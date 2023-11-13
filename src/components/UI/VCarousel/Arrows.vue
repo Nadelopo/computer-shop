@@ -55,7 +55,7 @@ defineExpose({ swipeSlideByClick })
     v-for="arrowDirection in (['prev', 'next'] as const)"
     :key="arrowDirection"
   >
-    <ArrowSvg
+    <arrow-svg
       v-show="showArrows"
       class="action"
       :class="{ hover: showArrows === 'hover', [arrowDirection]: true }"

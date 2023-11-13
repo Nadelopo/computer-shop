@@ -6,8 +6,8 @@ import { useToast } from 'vue-toastification'
 import { useMediaQuery } from '@vueuse/core'
 import { useUserStore } from '@/stores/userStore'
 import { getAll, updateOneById } from '@/db/queries/tables'
-import ReviewsBlock from './ReviewsBlock.vue'
-import ReviewForm from './ReviewForm.vue'
+import ReviewBlock from '@/components/ReviewBlock.vue'
+import FormCreateReview from './FormCreateReview.vue'
 import { VLoader, VPagination } from '@/components/UI'
 import type {
   ReviewReadWithDetails,
@@ -165,7 +165,7 @@ const isPageSmall = useMediaQuery('(width < 400px)')
   <div class="wrapper grid">
     <div>Отзывы</div>
     <div>
-      <ReviewForm
+      <form-create-review
         :product-id="productId"
         :product-rating="productRating"
         :count-reviews="countReviews"
@@ -181,7 +181,7 @@ const isPageSmall = useMediaQuery('(width < 400px)')
             v-for="review in reviews"
             :key="review.id"
           >
-            <reviews-block
+            <review-block
               :id="'comment_' + review.id"
               :review="review"
               :class="{ active: commId === String(review.id) }"

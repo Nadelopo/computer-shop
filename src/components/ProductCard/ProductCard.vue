@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { formatPrice } from '@/utils/formatPrice'
-import IconButtonFavouritesComparison from './IconButtonFavouritesComparison.vue'
+import IconButtonFavouritesComparison from '../IconButtonFavouritesComparison.vue'
 import ButtonCart from '@/components/ButtonCart.vue'
 import { CrossSvg } from '@/assets/icons'
-import type { ProductCardData } from '@/pages/Favourites/types'
+import type { ProductCardData } from './types'
 
 type Props = {
   item: ProductCardData
@@ -105,3 +105,4 @@ const titleActive = ref(true)
     &:hover
       transform: scale(1.3)
 </style>
+@/components/ProductCard/types

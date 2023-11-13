@@ -7,8 +7,8 @@ import { VPagination } from '@/components/UI'
 import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
 import Search from '@/components/CategoryProducts/Search.vue'
 import Sort from '@/components/CategoryProducts/Sort.vue'
-import FiltersList from '@/components/CategoryProducts/FiltersList.vue'
-import Skeleton from '@/components/CategoryProducts/SkeletonProducts.vue'
+import Filters from '@/components/CategoryProducts/Filters.vue'
+import ProductBlockSkeleton from '@/components/CategoryProducts/ProductBlockSkeleton.vue'
 
 const { products, loading, productCount, currentPage, limit, productsPrice } =
   storeToRefs(useFilterStore())
@@ -45,13 +45,13 @@ const clickOnPaginate = () => {
 <template>
   <div class="container">
     <div class="grid">
-      <filters-list />
+      <filters />
       <div>
         <Search />
         <Sort />
         <template v-if="loading === 'success'">
           <div class="product__list">
-            <ProductBlock
+            <product-block
               v-for="product in products"
               :key="product.id"
               :item="product"
@@ -67,7 +67,7 @@ const clickOnPaginate = () => {
             v-for="_ in limit"
             :key="_"
           >
-            <Skeleton />
+            <product-block-skeleton />
           </template>
         </div>
         <template v-else>

@@ -3,7 +3,7 @@ import { deleteOneById, getAll } from '@/db/queries/tables'
 import type { Loading } from '@/types'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import { computed, onBeforeMount, ref, watch } from 'vue'
-import { VTabs, VTable, VLoader, VButton, VConfirm } from '../UI'
+import { VTabs, VTable, VLoader, VButton, VConfirm } from '@/components/UI'
 
 type Category = {
   enTitle: string
@@ -100,7 +100,7 @@ watch(currentCategoryId, async () => {
           v-if="loadingGetSpecifications === 'loading'"
           class="py-4"
         >
-          <VLoader />
+          <v-loader />
         </div>
         <div
           v-else-if="loadingGetSpecifications === 'empty'"
@@ -196,7 +196,7 @@ watch(currentCategoryId, async () => {
         </template>
       </v-table>
     </div>
-    <VLoader v-else-if="loadingGetCategories === 'loading'" />
+    <v-loader v-else-if="loadingGetCategories === 'loading'" />
     <div v-else-if="loadingGetCategories === 'error'"> Произошла ошибка </div>
   </div>
 </template>

@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
 import { useUserStore } from '../stores/userStore'
 import { VPopup } from '@/components/UI'
-import Sidebar from './Sidebar.mobile.vue'
+import SidebarMobile from './Sidebar.mobile.vue'
 import { AvatarSvg, FavouriteSvg, CartSvg, ComparisonSvg } from '@/assets/icons'
 import { Role } from '@/types/tables/users.types'
 
@@ -167,7 +167,7 @@ const links = [
     </div>
   </header>
   <Transition name="v">
-    <Sidebar
+    <sidebar-mobile
       v-if="open"
       v-model:is-open="open"
       :links="links"

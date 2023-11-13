@@ -121,7 +121,7 @@ const createReview = async () => {
         <textarea v-model.trim="form.comment" />
       </div>
       <div>
-        <RatingStars
+        <rating-stars
           v-model="form.rating"
           :static="false"
           class="mb-4 mt-8"

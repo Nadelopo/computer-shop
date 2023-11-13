@@ -2,19 +2,19 @@
 import { ref } from 'vue'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { createMany, getAll } from '@/db/queries/tables'
-import AdminSpecificationsForm from '@/components/Admin/AdminSpecificationsForm.vue'
-import SpecificationsList from '@/components/Admin/SpecificationsList.vue'
+import AdminSpecificationsForm from '@/components/Admin/Specifications/SpecificationsForm.vue'
+import SpecificationsList from '@/components/Admin/Specifications/SpecificationsList.vue'
 import type {
   CategorySpecificationCreate,
   CategorySpecificationRead
 } from '@/types/tables/categorySpecifications.types'
 import type { SpecificationCreate } from '@/types/tables/specifications.types'
 import type { Loading } from '@/types'
-import type { CategorySpecificationForm } from '@/components/Admin/types'
+import type { CategorySpecificationForm } from '@/components/Admin/Specifications/types'
 
 const { createCategorySpecifications } = useCategoriesStore()
 
-const form = ref<CategorySpecificationForm>({
+const initialFormValue: CategorySpecificationForm = {
   categoryId: null,
   title: '',
   enTitle: '',
@@ -26,7 +26,9 @@ const form = ref<CategorySpecificationForm>({
   max: 64,
   variantsValues: null,
   condition: 'greater'
-})
+}
+
+const form = ref<CategorySpecificationForm>({ ...initialFormValue })
 
 const specifications = ref<CategorySpecificationRead[]>([])
 const loading = ref<Loading>('success')
@@ -41,19 +43,7 @@ const create = async (setValue: boolean) => {
     return
   }
   specifications.value.push(data)
-  form.value = {
-    categoryId: null,
-    title: '',
-    enTitle: '',
-    type: true,
-    visible: false,
-    units: '',
-    step: 1,
-    min: 0,
-    max: 64,
-    variantsValues: null,
-    condition: 'greater'
-  }
+  form.value = { ...initialFormValue }
   loading.value = 'success'
 
   const { data: products, error: errorProducts } = await getAll('products', {

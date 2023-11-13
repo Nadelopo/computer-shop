@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Sidebar from '@/components/Admin/AdminSidebar.vue'
+import AdminSidebar from '@/components/Admin/AdminSidebar.vue'
 </script>
 
 <template>
   <div class="roottt">
-    <Sidebar />
+    <admin-sidebar />
     <div class="p-4">
       <router-view />
     </div>

@@ -16,7 +16,7 @@ const fill = computed(() =>
     : 'var(--gray)'
 )
 
-const Icon = props.listTitle === 'favourites' ? FavouriteSvg : ComparisonSvg
+const ListIcon = props.listTitle === 'favourites' ? FavouriteSvg : ComparisonSvg
 </script>
 
 <template>
@@ -26,7 +26,7 @@ const Icon = props.listTitle === 'favourites' ? FavouriteSvg : ComparisonSvg
       changeUserListValueOnClick(props.listTitle, props.productId)
     "
   >
-    <Icon width="24" />
+    <list-icon width="24" />
   </button>
 </template>
 

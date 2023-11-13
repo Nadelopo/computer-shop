@@ -33,7 +33,7 @@ defineProps<{
           <div class="card__head">
             <div class="card__title">{{ item.name }}</div>
             <div>
-              <RatingStars :model-value="item.rating" />
+              <rating-stars :model-value="item.rating" />
             </div>
           </div>
           <div

@@ -4,10 +4,10 @@ import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import { getAll, updateOneById } from '@/db/queries/tables'
 import { VButton } from '@/components/UI'
-import ProductCard from '@/components/ProductCard.vue'
-import SkeletonCard from '@/components/SkeletonCard.vue'
+import ProductCard from '@/components/ProductCard'
+import ProductCardSkeleton from '@/components/ProductCard/ProductCardSkeleton.vue'
 import { TrashSvg } from '@/assets/icons'
-import type { ProductCardData } from './types'
+import type { ProductCardData } from '@/components/ProductCard/types'
 import type { Loading } from '@/types'
 
 const { userLists, setUserListsValue, deleteItemFromUserList } = useUserStore()
@@ -89,7 +89,7 @@ const deleteItem = async (id: number) => {
           />
         </template>
         <template v-else-if="loading === 'loading'">
-          <skeleton-card
+          <product-card-skeleton
             v-for="i in 8"
             :key="i"
           />

@@ -12,7 +12,7 @@ import {
   VSelect,
   VInputFile
 } from '@/components/UI'
-import type { InputFileActions } from '../UI/VInputFile/types'
+import type { InputFileActions } from '@/components/UI/VInputFile/types'
 import type { ProductCreate } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'

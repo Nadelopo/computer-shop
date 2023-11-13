@@ -6,7 +6,7 @@ import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useFilterStore } from '@/stores/filterStore'
 import InputFilter from '@/components/CategoryProducts/InputFilter.vue'
 import { VCheckbox, VButton } from '@/components/UI'
-import SkeletonFiltersVue from './SkeletonFilters.vue'
+import FilterListSkeleton from './FilterSkeleton.vue'
 import type { Loading } from '@/types'
 
 type SortType = keyof typeof sortAscents
@@ -208,7 +208,7 @@ watch(
       </div>
     </div>
     <div v-else-if="loadingProperties === 'loading'">
-      <SkeletonFiltersVue />
+      <filter-list-skeleton />
     </div>
     <div v-else-if="loadingProperties === 'error'">ошибка</div>
   </div>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import CategoriesList from '@/components/Admin/CategoriesList.vue'
+import CategoriesList from '@/components/Admin/Categories/CategoriesList.vue'
 import { VButton, VInputFile, VInputText } from '@/components/UI'
 import type { CategoryCreate } from '@/types/tables/categories.types'
 import type { Loading } from '@/types'
@@ -69,6 +69,6 @@ const create = async () => {
     </form>
     <hr class="my-8" />
     <div class="text-2xl font-bold mb-16">Изменение категоирии</div>
-    <CategoriesList />
+    <categories-list />
   </div>
 </template>

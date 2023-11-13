@@ -57,7 +57,7 @@ const buttonCartWidth = computed(() => {
       </div>
 
       <div class="text-4xl my-1 mb-4 font-medium">{{ productPrice }}</div>
-      <RatingStars
+      <rating-stars
         class="mb-4"
         :model-value="product.rating"
       />

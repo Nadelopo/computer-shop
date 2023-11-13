@@ -3,10 +3,10 @@ import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { updateOneById } from '@/db/queries/tables'
 import { useProductsStore } from '@/stores/productsStore'
-import ProductHeader from '@/components/Product/ProductHeader.vue'
+import Header from '@/components/Product/Header.vue'
 import ProductSpecifications from '@/components/Product/ProductSpecifications.vue'
 import SimilarProducts from '@/components/Product/SimilarProducts.vue'
-import ProductReviews from '@/components/Product/ProductReviews.vue'
+import Reviews from '@/components/Product/Reviews.vue'
 import { VLoader } from '@/components/UI'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
@@ -64,7 +64,7 @@ const updateProductRating = (newData: UpdateProductRating) => {
 <template>
   <div class="container">
     <div v-if="product && loading === 'success'">
-      <product-header :product="product" />
+      <Header :product="product" />
       <div class="wrapper grid">
         <div>Описание</div>
         <div class="description">
@@ -76,7 +76,7 @@ const updateProductRating = (newData: UpdateProductRating) => {
         :product-price="product.price"
         :product-id="product.id"
       />
-      <product-reviews
+      <reviews
         :product-id="product.id"
         :count-reviews="product.countReviews"
         :product-rating="product.rating"

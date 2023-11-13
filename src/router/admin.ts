@@ -10,22 +10,22 @@ export const adminRoutes: RouteRecordRaw[] = [
       {
         path: 'categories',
         name: 'AdminCategories',
-        component: () => import('@/pages/Admin/AdminCategories.vue')
+        component: () => import('@/pages/Admin/CategoriesManagement.vue')
       },
       {
         path: 'products/:category/:id',
         name: 'AdminProducts',
-        component: () => import('@/pages/Admin//AdminProducts.vue')
+        component: () => import('@/pages/Admin/ProductsManagement.vue')
       },
       {
         path: 'manufacturers',
         name: 'AdminManufacturers',
-        component: () => import('@/pages/Admin//AdminManufacturers.vue')
+        component: () => import('@/pages/Admin/ManufacturersManagement.vue')
       },
       {
         path: 'Specifications',
         name: 'AdminSpecifications',
-        component: () => import('@/pages/Admin//AdminSpecifications.vue')
+        component: () => import('@/pages/Admin/SpecificationsManagement.vue')
       }
     ]
   },

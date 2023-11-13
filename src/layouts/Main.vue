@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Navbar from '@/components/Navbar.vue'
-import MainNavMobile from '@/components/MainNav.mobile.vue'
+import NavbarMobile from '@/components/Navbar.mobile.vue'
 </script>
 
 <template>
@@ -8,5 +8,5 @@ import MainNavMobile from '@/components/MainNav.mobile.vue'
   <main>
     <router-view />
   </main>
-  <MainNavMobile />
+  <navbar-mobile />
 </template>

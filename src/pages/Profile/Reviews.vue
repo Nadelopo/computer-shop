@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount } from 'vue'
-import ReviewsBlock from '@/components/Product/ReviewsBlock.vue'
+import ReviewBlock from '@/components/ReviewBlock.vue'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 
 const props = defineProps<{
@@ -32,7 +32,7 @@ onBeforeMount(async () => {
           }
         }"
       >
-        <reviews-block
+        <review-block
           :review="review"
           color="#fff"
         />

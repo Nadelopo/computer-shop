@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { VButton, VInputFile, VInputText } from '@/components/UI'
-import ManufacturersList from '@/components/Admin/ManufacturersList.vue'
+import ManufacturersList from '@/components/Admin/Manufacturers/ManufacturersList.vue'
 import type { ManufacturerCreate } from '@/types/tables/manufacturers.types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 
@@ -61,6 +61,6 @@ const create = async () => {
         <v-button>добавить</v-button>
       </div>
     </form>
-    <ManufacturersList />
+    <manufacturers-list />
   </div>
 </template>

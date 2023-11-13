@@ -20,7 +20,7 @@ const add = async () => {
   await changeUserListValueOnClick(props.listTitle, props.productId)
   loading.value = false
 }
-const Icon = props.listTitle === 'favourites' ? FavouriteSvg : ComparisonSvg
+const ListIcon = props.listTitle === 'favourites' ? FavouriteSvg : ComparisonSvg
 const notInListTitle =
   props.listTitle === 'favourites' ? 'в избранное' : 'в сравнение'
 const inListTitle =
@@ -37,7 +37,7 @@ const routerTitle =
     :loading="loading"
     @click="add"
   >
-    <Icon />
+    <list-icon />
     {{ notInListTitle }}
   </v-button>
   <v-button
@@ -45,7 +45,7 @@ const routerTitle =
     class="product__button"
     @click="$router.push({ name: routerTitle })"
   >
-    <Icon fill="#60efe1" />
+    <list-icon fill="#60efe1" />
     {{ inListTitle }}
   </v-button>
 </template>

@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { getOneById, updateOneById } from '@/db/queries/tables'
-import AdminSpecificationsForm from '@/components/Admin/AdminSpecificationsForm.vue'
+import SpecificationsForm from '@/components/Admin/Specifications/SpecificationsForm.vue'
 import { VButton, VLoader } from '@/components/UI'
 import type { CategorySpecificationUpdate } from '@/types/tables/categorySpecifications.types'
 import type { Loading } from '@/types'
@@ -69,7 +69,7 @@ const save = async () => {
       v-if="loading === 'success' && categories.length"
       class="py-10"
     >
-      <admin-specifications-form
+      <specifications-form
         v-if="form"
         v-model="form"
         type="update"
@@ -82,7 +82,7 @@ const save = async () => {
         назад
       </v-button>
     </div>
-    <VLoader
+    <v-loader
       v-else
       class="h-[75vh]"
     />
