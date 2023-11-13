@@ -76,7 +76,7 @@ const updateProductRating = (newData: UpdateProductRating) => {
         :product-price="product.price"
         :product-id="product.id"
       />
-      <reviews
+      <Reviews
         :product-id="product.id"
         :count-reviews="product.countReviews"
         :product-rating="product.rating"

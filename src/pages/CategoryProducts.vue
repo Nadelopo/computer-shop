@@ -45,7 +45,7 @@ const clickOnPaginate = () => {
 <template>
   <div class="container">
     <div class="grid">
-      <filters />
+      <Filters />
       <div>
         <Search />
         <Sort />

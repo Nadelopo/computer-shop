@@ -6,7 +6,7 @@ import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useFilterStore } from '@/stores/filterStore'
 import InputFilter from '@/components/CategoryProducts/InputFilter.vue'
 import { VCheckbox, VButton } from '@/components/UI'
-import FilterListSkeleton from './FilterSkeleton.vue'
+import FilterListSkeleton from './FiltersSkeleton.vue'
 import type { Loading } from '@/types'
 
 type SortType = keyof typeof sortAscents
