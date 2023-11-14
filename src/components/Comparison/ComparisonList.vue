@@ -3,6 +3,8 @@ import { computed, ref, toRef } from 'vue'
 import { useElementSize, useResizeObserver } from '@vueuse/core'
 import { ArrowSvg, CrossSvg } from '@/assets/icons'
 import { useFeatureFilteredProducts } from './useFeatureFilteredProducts'
+import IconButtonFavouritesComparison from '../IconButtonFavouritesComparison.vue'
+import ButtonCart from '../ButtonCart.vue'
 import type { ComparisonProduct, CategorySpecifications } from './types'
 
 const props = defineProps<{
@@ -138,8 +140,9 @@ const onDrop = (e: DragEvent, i: string | number) => {
             } : {}"
           >
             <template v-if="i === 0">
-              <router-link
-                :to="{
+              <div class="flex">
+                <router-link
+                  :to="{
                   name: 'Product',
                   params: {
                     category: currentCategorySpecifications[0].categories.enTitle,
@@ -147,16 +150,27 @@ const onDrop = (e: DragEvent, i: string | number) => {
                     productId: products.find(p => p.img[0] === (value as string))?.id
                   }
                 }"
-              >
-                <img
-                  :src="String(value)"
-                  alt=""
+                >
+                  <img
+                    :src="String(value)"
+                    alt=""
+                  />
+                </router-link>
+                <cross-svg
+                  class="cross"
+                  @click="deleteItem(j)"
                 />
-              </router-link>
-              <cross-svg
-                class="cross"
-                @click="deleteItem(j)"
-              />
+              </div>
+              <div class="flex gap-x-2 mt-4">
+                <button-cart
+                  :product-id="categoryProducts[j].id"
+                  watch
+                />
+                <icon-button-favourites-comparison
+                  list-title="favourites"
+                  :product-id="categoryProducts[j].id"
+                />
+              </div>
             </template>
             <template v-else>
               <span :class="{ best__value: data.max === value }">
@@ -204,6 +218,8 @@ const onDrop = (e: DragEvent, i: string | number) => {
       background: #fff
     &:not(:first-child):not(:has(button)):hover
       background: var(--light)
+    &:first-child .cell
+      display: block
 
   .wrapper__cells
     position: relative

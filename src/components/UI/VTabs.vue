@@ -26,6 +26,10 @@ const tabLineStyles = ref({
 
 const setTab = async () => {
   await nextTick()
+  if (!props.options.length) {
+    tabLineStyles.value.width = '0px'
+    return
+  }
   const tabIndex = props.options.findIndex((e) => e.value === modelValue.value)
   const el = tabsRefs.value[tabIndex].$el
   if (el.offsetLeft > parseInt(tabLineStyles.value.marginLeft)) {

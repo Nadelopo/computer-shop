@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { ref, watch, computed, onBeforeMount } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
-import { getAll, updateOneById } from '@/db/queries/tables'
-import { localStorageSet } from '@/utils/localStorage'
+import { getAll } from '@/db/queries/tables'
 import ComparisonList from '@/components/Comparison/ComparisonList.vue'
-import { VTabs, VCheckbox, VLoader, VButton } from '@/components/UI'
-import { TrashSvg } from '@/assets/icons'
+import ActionsWithList from '@/components/Comparison/ActionsWithList.vue'
+import { VTabs, VLoader } from '@/components/UI'
 import type {
   Category,
   CategorySpecifications,
@@ -15,12 +13,7 @@ import type {
 } from '@/components/Comparison/types'
 import type { Loading } from '@/types'
 
-const route = useRoute()
-const router = useRouter()
-
-const { user } = storeToRefs(useUserStore())
 const { userLists, setUserListsValue, deleteItemFromUserList } = useUserStore()
-
 const categories = ref<Category[]>([])
 const currentCategoryId = ref<number | null>(null)
 
@@ -34,24 +27,25 @@ const currentCategorySpecifications = computed((): CategorySpecifications[] => {
 const products = ref<ComparisonProduct[]>([])
 const showDifferences = ref(false)
 const loading = ref<Loading>('loading')
-
+const route = useRoute()
 onBeforeMount(async () => {
   await setUserListsValue()
-  if (userLists.comparison.length === 0) {
+  const queryIds = route.query.ids ? String(route.query.ids) : null
+  const ids = queryIds?.split(' ').map(Number) ?? userLists.comparison
+  if (ids.length === 0 || (!ids && userLists.comparison.length === 0)) {
     loading.value = 'empty'
     return
   }
-
   const [
     { data: productData, error: errorData },
     { data: specificationsData, error: errorSpecifications }
   ] = await Promise.all([
     getAll('products', {
       select: '*, categories(id, title), manufacturers(id, title)',
-      in: ['id', userLists.comparison]
+      in: ['id', ids]
     }),
     getAll('specifications', {
-      in: ['productId', userLists.comparison],
+      in: ['productId', ids],
       order: ['categorySpecificationsId']
     })
   ])
@@ -124,44 +118,6 @@ onBeforeMount(async () => {
   loading.value = 'success'
 })
 
-const clearList = async () => {
-  const remainProducts = products.value.filter(
-    (e) => e.categoryId !== currentCategoryId.value
-  )
-  const remainProductIds = remainProducts.map((e) => e.id)
-
-  if (user.value) {
-    const { data, error } = await updateOneById('users', user.value.id, {
-      comparison: remainProductIds
-    })
-    if (error) {
-      loading.value = 'error'
-      return
-    }
-    user.value.comparison = data.comparison
-    userLists.comparison = data.comparison
-  } else {
-    localStorageSet('compareList', remainProductIds)
-    userLists.comparison = remainProductIds
-  }
-
-  products.value = remainProducts
-  categories.value = categories.value.filter(
-    (e) => e.id !== currentCategoryId.value
-  )
-  currentCategoryId.value = remainProducts.length
-    ? categories.value[0].id
-    : null
-
-  let query = {}
-  if (currentCategoryId.value) {
-    query = { category_id: String(currentCategoryId.value) }
-  }
-  router.push({ query })
-
-  loading.value = products.value.length ? 'success' : 'empty'
-}
-
 // нужно следить за route т.к. пользователь может перемещаться по истории, без кликов на нужную категорию
 watch(
   () => route.query.category_id,
@@ -202,21 +158,14 @@ const deleteItem = async (item: ComparisonProduct) => {
         "
         query-param-name="category_id"
       />
-      <div class="compare__actions">
-        <v-button
-          variant="noactive"
-          class="button"
-          @click="clearList"
-        >
-          <trash-svg />
-          очистить список
-        </v-button>
-        <v-checkbox
-          :id="1"
-          v-model="showDifferences"
-          title="Показывать только отличия"
-        />
-      </div>
+      <actions-with-list
+        v-model="showDifferences"
+        v-model:products="products"
+        v-model:current-category-id="currentCategoryId"
+        v-model:categories="categories"
+        @update-loading="loading = $event"
+      />
+
       <comparison-list
         :current-category-id="currentCategoryId"
         :current-category-specifications="currentCategorySpecifications"
@@ -236,14 +185,3 @@ const deleteItem = async (item: ComparisonProduct) => {
     </div>
   </div>
 </template>
-
-<style scoped lang="sass">
-.compare__actions
-  display: flex
-  gap: 16px
-  align-items: center
-  margin-bottom: 16px
-  @media (width < 500px)
-    flex-direction: column-reverse
-    align-items: start
-</style>
