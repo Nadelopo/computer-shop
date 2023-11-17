@@ -225,11 +225,15 @@ watchEffect(() => {
     </div>
   </form>
   <div
-    v-else
+    v-else-if="loadingSpecifications === 'loading'"
     class="h-[50vh] flex items-center"
   >
     <v-loader />
   </div>
+  <div
+    v-else-if="loadingSpecifications === 'empty'"
+    class="text-2xl text-center font-normal mt-16"
+  >
+    Характеристики категории отсутствуют
+  </div>
 </template>
-
-<style scoped lang="sass"></style>

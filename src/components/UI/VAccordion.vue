@@ -84,7 +84,7 @@ const transition = props.transition + 's'
   visibility: hidden
   opacity: 0
   transition: v-bind(transition)
-  div, button, a
+  & > div, & > button, & > a
     display: block
     transition: v-bind(transition)
     height: 0px

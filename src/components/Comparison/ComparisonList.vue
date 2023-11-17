@@ -81,9 +81,8 @@ const updateItemsList = (action: 'prev' | 'next') => {
   }
 }
 
-const deleteItem = async (index: number) => {
-  const item = categoryProducts.value[index]
-  emit('deleteItem', item)
+const deleteItem = async (product: ComparisonProduct) => {
+  emit('deleteItem', product)
   translateCells.value = 0
 }
 
@@ -158,7 +157,7 @@ const onDrop = (e: DragEvent, i: string | number) => {
                 </router-link>
                 <cross-svg
                   class="cross"
-                  @click="deleteItem(j)"
+                  @click="deleteItem(categoryProducts[j])"
                 />
               </div>
               <div class="flex gap-x-2 mt-4">
