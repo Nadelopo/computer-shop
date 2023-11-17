@@ -48,7 +48,7 @@ watchEffect(() => {
           title="Продукты категорий"
         >
           <img
-            src="/public/icons/list.svg"
+            src="/icons/list.svg"
             alt=""
             class="invert"
           />
@@ -78,7 +78,7 @@ watchEffect(() => {
                 :title="category.title"
               >
                 <img
-                  :src="'/public/icons/' + category.enTitle + '.svg'"
+                  :src="'/icons/' + category.enTitle + '.svg'"
                   alt=""
                 />
                 <!-- <Component :is="category.icon" /> -->
@@ -101,7 +101,7 @@ watchEffect(() => {
         >
           <div class="icon">
             <img
-              src="/public/icons/category.svg"
+              src="/icons/category.svg"
               alt=""
               class="invert"
               style="width: 32px"
@@ -121,7 +121,7 @@ watchEffect(() => {
         >
           <div class="icon">
             <img
-              src="/public/icons/list.svg"
+              src="/icons/list.svg"
               alt=""
               class="invert"
             />
@@ -141,7 +141,7 @@ watchEffect(() => {
         >
           <div class="icon">
             <img
-              src="/public/icons/manufacturer.svg"
+              src="/icons/manufacturer.svg"
               alt=""
               class="invert"
             />
