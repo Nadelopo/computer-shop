@@ -74,7 +74,7 @@ const share = () => {
     (e) => e.categoryId === currentCategoryId.value
   )
   href = href + '?ids=' + categoryProducts.map((e) => e.id).join(' ')
-  navigator.clipboard.writeText(href)
+  navigator.clipboard.writeText(encodeURI(href))
 }
 </script>
 
