@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, toRef } from 'vue'
-import { useElementSize, useResizeObserver } from '@vueuse/core'
+import { useElementSize, useMediaQuery, useResizeObserver } from '@vueuse/core'
 import { ArrowSvg, CrossSvg } from '@/assets/icons'
 import { useFeatureFilteredProducts } from './useFeatureFilteredProducts'
 import IconButtonFavouritesComparison from '../IconButtonFavouritesComparison.vue'
@@ -105,6 +105,8 @@ const onDrop = (e: DragEvent, i: string | number) => {
     propsProducts[index1]
   ]
 }
+
+const isSmall = useMediaQuery('(max-width: 420px)')
 </script>
 
 <template>
@@ -112,6 +114,64 @@ const onDrop = (e: DragEvent, i: string | number) => {
     ref="comparisonRef"
     class="comparison"
   >
+    <div class="row">
+      <div class="cell__title" />
+      <div class="wrapper__cells">
+        <div class="title__mobile" />
+        <div
+          class="cells"
+          :style="{ translate: translateCells + 'px' }"
+        >
+          <div
+            v-for="(product, i) in categoryProducts"
+            :key="product.id"
+            :ref="i === 0 && !cellRef ? (e) => (cellRef = e as HTMLElement) : undefined"
+            :draggable="true"
+            class="cell img"
+            @dragstart="onDrag($event, product.img[0])"
+            @drop="onDrop($event, product.img[0])"
+            @dragover.prevent
+            @dragenter.prevent
+          >
+            <div class="flex w-full">
+              <router-link
+                :to="{
+                  name: 'Product',
+                  params: {
+                    category:
+                      currentCategorySpecifications[0].categories.enTitle,
+                    categoryId: currentCategoryId,
+                    productId: product.id
+                  }
+                }"
+              >
+                <img
+                  :src="String(product.img[0])"
+                  alt=""
+                />
+              </router-link>
+              <span class="ml-auto pr-4">
+                <cross-svg
+                  class="cross"
+                  @click="deleteItem(product)"
+                />
+                <icon-button-favourites-comparison
+                  list-title="favourites"
+                  :product-id="product.id"
+                />
+              </span>
+            </div>
+            <div class="flex gap-x-2 mt-4">
+              <button-cart
+                :product-id="product.id"
+                :width="isSmall ? 'auto' : undefined"
+                watch
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div
       v-for="(data, i) in filteredProducts"
       :key="i"
@@ -129,50 +189,9 @@ const onDrop = (e: DragEvent, i: string | number) => {
           <div
             v-for="(value, j) in data.values"
             :key="j"
-            :ref="j === 0 && i === 0 && !cellRef ? (e) => (cellRef = e as HTMLElement) : undefined"
-            :draggable="i === 0 ? true : undefined"
             class="cell"
-            v-on="i === 0 ? {
-              dragstart: (e: DragEvent) => onDrag(e, value),
-              drop: (e: DragEvent) => onDrop(e, value),
-              dragover: (e: DragEvent) => e.preventDefault(),
-              dragenter: (e: DragEvent) => e.preventDefault()
-            } : {}"
           >
-            <template v-if="i === 0">
-              <div class="flex">
-                <router-link
-                  :to="{
-                  name: 'Product',
-                  params: {
-                    category: currentCategorySpecifications[0].categories.enTitle,
-                    categoryId: currentCategoryId,
-                    productId: products.find(p => p.img[0] === (value as string))?.id
-                  }
-                }"
-                >
-                  <img
-                    :src="String(value)"
-                    alt=""
-                  />
-                </router-link>
-                <cross-svg
-                  class="cross"
-                  @click="deleteItem(categoryProducts[j])"
-                />
-              </div>
-              <div class="flex gap-x-2 mt-4">
-                <button-cart
-                  :product-id="categoryProducts[j].id"
-                  watch
-                />
-                <icon-button-favourites-comparison
-                  list-title="favourites"
-                  :product-id="categoryProducts[j].id"
-                />
-              </div>
-            </template>
-            <template v-else-if="data.title === 'Цена'">
+            <template v-if="data.title === 'Цена'">
               <div class="flex flex-col">
                 <span
                   class="price"
@@ -234,8 +253,6 @@ const onDrop = (e: DragEvent, i: string | number) => {
       background: #fff
     &:not(:first-child):not(:has(button)):hover
       background: var(--light)
-    &:first-child .cell
-      display: block
 
   .wrapper__cells
     position: relative
@@ -265,6 +282,10 @@ const onDrop = (e: DragEvent, i: string | number) => {
     min-width: 235px
     display: flex
     align-items: center
+    &.img
+      flex-direction: column
+      justify-content: space-between
+      align-items: start
     .best__value
       color: var(--color-text)
     a
@@ -318,7 +339,7 @@ const onDrop = (e: DragEvent, i: string | number) => {
   .cross
     transition: .2s
     cursor: pointer
-    margin: 0 20px auto auto
+    margin-bottom: 10px
     &:hover
       transform: scale(1.3)
 </style>

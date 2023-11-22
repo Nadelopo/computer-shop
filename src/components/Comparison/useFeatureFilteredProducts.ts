@@ -17,11 +17,6 @@ export const useFeatureFilteredProducts = (
   const productsData = computed(() => {
     const fields: FieldsData[] = [
       {
-        title: '',
-        values: [],
-        units: ''
-      },
-      {
         title: 'Наименование',
         values: [],
         units: ''
@@ -59,15 +54,14 @@ export const useFeatureFilteredProducts = (
     const categoryProductsValue = categoryProducts.value
     for (let i = 0; i < categoryProductsValue.length; i++) {
       const product = categoryProductsValue[i]
-      fields[0].values.push(product.img[0])
-      fields[1].values.push(product.name)
-      fields[2].values.push(formatPrice(product.price))
-      fields[3].values.push(Number(product.rating.toFixed(1)))
+      fields[0].values.push(product.name)
+      fields[1].values.push(formatPrice(product.price))
+      fields[2].values.push(Number(product.rating.toFixed(1)))
       for (let j = 0; j < currentCategorySpecificationsValue.length; j++) {
         const category = currentCategorySpecificationsValue[j]
-        let index = 4
+        let index = 3
         const specification = product.specifications.find((e, i) => {
-          index = i + 4
+          index = i + 3
           return e.categorySpecificationsId === category.id
         })
         if (!specification) continue
@@ -98,7 +92,7 @@ export const useFeatureFilteredProducts = (
       return productsDataValue
     }
     let filtered = productsDataValue
-    for (let i = 4; i < productsDataValue.length; i++) {
+    for (let i = 3; i < productsDataValue.length; i++) {
       const data = productsDataValue[i]
       if (data.values.every((e) => e === data.values[0])) {
         filtered = filtered.filter((e) => e.title !== data.title)
