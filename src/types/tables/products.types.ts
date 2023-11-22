@@ -22,6 +22,7 @@ export type ProductReadWithDetails = {
   name: string
   popularity: number
   price: number
+  priceWithoutDiscount: number
   quantity: number
   rating: number
   sell: boolean
@@ -40,6 +41,7 @@ export type ProductCreate = {
   name: string
   popularity?: number
   price: number
+  priceWithoutDiscount: number
   quantity: number
   rating?: number
   sell?: boolean

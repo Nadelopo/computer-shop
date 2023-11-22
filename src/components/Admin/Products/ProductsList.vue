@@ -71,6 +71,11 @@ const basicData = computed((): BasicData => {
     },
     prices: {
       title: 'Цена',
+      value: props.products.map((e) => e.priceWithoutDiscount),
+      units: '₽'
+    },
+    discountPrice: {
+      title: 'Цена со скидкой',
       value: props.products.map((e) => e.price),
       units: '₽'
     }

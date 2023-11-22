@@ -66,7 +66,18 @@ defineProps<{
           />
         </div>
         <div>
-          <div class="text-end mb-2 text-xl font-medium">
+          <div
+            class="text-end mb-2 price"
+            :class="{
+              discounted: item.discount
+            }"
+          >
+            {{ formatPrice(item.priceWithoutDiscount) }}
+          </div>
+          <div
+            v-if="item.discount"
+            class="text-end mb-2 price coloured"
+          >
             {{ formatPrice(item.price) }}
           </div>
           <div>

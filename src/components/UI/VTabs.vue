@@ -88,6 +88,17 @@ const clickOnTab = (value: number | string) => {
   display: flex
   position: relative
   margin-bottom: 20px
+  overflow-y: auto
+  &::-webkit-scrollbar
+    height: 6px
+    opacity: 0
+  &::-webkit-scrollbar-track
+    border-radius: 0 0 8px 0
+    opacity: 0
+  &::-webkit-scrollbar-thumb
+    background: #7b7b7b
+    border-radius: 10px
+    opacity: 0
   &::before, &::after
     border-bottom: 2px solid #dfdfe1
     bottom: 0
@@ -115,5 +126,6 @@ const clickOnTab = (value: number | string) => {
         color: var(--color-text)
         font-weight: 700
       .link
+        white-space: nowrap
         margin-right: 20px
 </style>

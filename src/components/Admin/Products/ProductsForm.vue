@@ -81,6 +81,7 @@ const copyForm: ProductCreate = {
   manufacturerId: 0,
   warranty: 0,
   price: 0,
+  priceWithoutDiscount: 0,
   quantity: 100,
   discount: 0
 }
@@ -97,6 +98,12 @@ const create = async () => {
   if (url) {
     product.value.img = url
   }
+  product.value.price = Math.round(
+    product.value.discount
+      ? product.value.priceWithoutDiscount -
+          (product.value.priceWithoutDiscount * product.value.discount) / 100
+      : product.value.priceWithoutDiscount
+  )
   const { data, error } = await createProduct(product.value)
   if (error) {
     loadingCreateProduct.value = 'error'
@@ -215,7 +222,7 @@ watchEffect(() => {
       <div>
         <label>цена</label>
         <v-input-text
-          v-model="product.price"
+          v-model="product.priceWithoutDiscount"
           type="number"
         />
       </div>

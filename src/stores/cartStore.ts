@@ -143,7 +143,8 @@ export const useCartStore = defineStore('cart', () => {
     const idList: number[] = cartItems.map((e) => e.productId)
 
     const { data, error } = await getAll('products', {
-      select: 'categoryId, discount, id, img, name, price, quantity, rating',
+      select:
+        'categoryId, discount, id, img, name, price, priceWithoutDiscount, quantity, rating',
       in: ['id', idList]
     })
     if (error) {

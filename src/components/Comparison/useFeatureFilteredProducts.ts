@@ -27,12 +27,12 @@ export const useFeatureFilteredProducts = (
         units: ''
       },
       {
-        title: 'Рейтинг',
+        title: 'Цена',
         values: [],
         units: ''
       },
       {
-        title: 'Цена',
+        title: 'Рейтинг',
         values: [],
         units: ''
       }
@@ -61,8 +61,8 @@ export const useFeatureFilteredProducts = (
       const product = categoryProductsValue[i]
       fields[0].values.push(product.img[0])
       fields[1].values.push(product.name)
-      fields[2].values.push(Number(product.rating.toFixed(1)))
-      fields[3].values.push(formatPrice(product.price))
+      fields[2].values.push(formatPrice(product.price))
+      fields[3].values.push(Number(product.rating.toFixed(1)))
       for (let j = 0; j < currentCategorySpecificationsValue.length; j++) {
         const category = currentCategorySpecificationsValue[j]
         let index = 4

@@ -141,14 +141,8 @@ export const useProductsStore = defineStore('products', () => {
     params: ProductUpdate
   ): Promise<DataError<ProductRead>> {
     const { data, error } = await updateOneById('products', id, params)
-    if (error) return { data: null, error }
-    const { data: productData, error: productError } = await getProduct(data.id)
-    if (productError) return { data: null, error: productError }
-    productData.specifications.sort(
-      (a, b) => a.category_specifications.id - b.category_specifications.id
-    )
 
-    return { data, error }
+    return { data, error } as DataError<ProductRead>
   }
 
   async function updateProductSpecifications(

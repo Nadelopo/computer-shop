@@ -87,7 +87,8 @@ onBeforeMount(async () => {
 
 const inputFileRef = ref<InputFileActions<string[]>>()
 const save = async () => {
-  if (product.value) {
+  const productValue = product.value
+  if (productValue) {
     loading.value = 'loading'
     const { url, error: errorImage } =
       (await inputFileRef.value?.onSave()) || {}
@@ -95,23 +96,30 @@ const save = async () => {
       loading.value = 'error'
     }
     if (url) {
-      product.value.img = url
+      productValue.img = url
     }
 
-    const productU: ProductUpdate = {
-      name: product.value.name,
-      description: product.value.description,
-      img: product.value.img,
+    const price = Math.round(
+      productValue.discount
+        ? productValue.priceWithoutDiscount -
+            (productValue.priceWithoutDiscount * productValue.discount) / 100
+        : productValue.priceWithoutDiscount
+    )
+    const productUpdate: ProductUpdate = {
+      name: productValue.name,
+      description: productValue.description,
+      img: productValue.img,
       manufacturerId: manufacturerSelect.value,
-      warranty: product.value.warranty,
-      price: product.value.price,
-      discount: product.value.discount,
-      quantity: product.value.quantity,
-      sell: product.value.sell
+      warranty: productValue.warranty,
+      price,
+      priceWithoutDiscount: productValue.priceWithoutDiscount,
+      discount: productValue.discount,
+      quantity: productValue.quantity,
+      sell: productValue.sell
     }
 
     const newSpecifications: SpecificationUpdateMany[] =
-      product.value.specifications.map((spec) => {
+      productValue.specifications.map((spec) => {
         return {
           id: spec.id,
           valueNumber: spec.valueNumber,
@@ -122,7 +130,7 @@ const save = async () => {
     product.value = null
     const response = await Promise.all([
       updateProductSpecifications(newSpecifications),
-      updateProduct(id, productU)
+      updateProduct(id, productUpdate)
     ])
 
     const error = response.some((e) => e === null)
@@ -256,7 +264,7 @@ const back = async () => {
         <div>
           <label>цена</label>
           <v-input-text
-            v-model="product.price"
+            v-model="product.priceWithoutDiscount"
             type="number"
           />
         </div>

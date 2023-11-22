@@ -67,10 +67,22 @@ const titleActive = ref(true)
         :product-id="props.item.id"
       />
     </div>
-    <div class="flex justify-between">
-      <b class="text-xl self-center">{{ formatPrice(item.price) }}</b>
-      <div>
-        <button-cart :product-id="item.id" />
+    <div>
+      <div class="self-center price min-h-[18px] discounted">
+        {{ item.discount ? formatPrice(item.priceWithoutDiscount) : '' }}
+      </div>
+      <div class="flex justify-between">
+        <div
+          class="self-center price"
+          :class="{ coloured: item.discount }"
+        >
+          {{
+            formatPrice(item.discount ? item.price : item.priceWithoutDiscount)
+          }}
+        </div>
+        <div>
+          <button-cart :product-id="item.id" />
+        </div>
       </div>
     </div>
   </router-link>

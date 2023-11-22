@@ -5,6 +5,7 @@ import { ArrowSvg, CrossSvg } from '@/assets/icons'
 import { useFeatureFilteredProducts } from './useFeatureFilteredProducts'
 import IconButtonFavouritesComparison from '../IconButtonFavouritesComparison.vue'
 import ButtonCart from '../ButtonCart.vue'
+import { formatPrice } from '@/utils/formatPrice'
 import type { ComparisonProduct, CategorySpecifications } from './types'
 
 const props = defineProps<{
@@ -169,6 +170,22 @@ const onDrop = (e: DragEvent, i: string | number) => {
                   list-title="favourites"
                   :product-id="categoryProducts[j].id"
                 />
+              </div>
+            </template>
+            <template v-else-if="data.title === 'Цена'">
+              <div class="flex flex-col">
+                <span
+                  class="price"
+                  :class="categoryProducts[j].discount ? 'discounted' : 'auto'"
+                >
+                  {{ formatPrice(categoryProducts[j].priceWithoutDiscount) }}
+                </span>
+                <span
+                  v-if="categoryProducts[j].discount"
+                  class="price coloured"
+                >
+                  {{ value }}
+                </span>
               </div>
             </template>
             <template v-else>

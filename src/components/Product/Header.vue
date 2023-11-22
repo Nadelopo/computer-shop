@@ -27,10 +27,6 @@ onBeforeMount(async () => {
   manufacturer.value = data
 })
 
-const productPrice = computed(() => {
-  return formatPrice(props.product.price)
-})
-
 const isLargeScreen = useMediaQuery('(width >= 1024px)')
 
 const buttonCartWidth = computed(() => {
@@ -56,7 +52,15 @@ const buttonCartWidth = computed(() => {
         </div>
       </div>
 
-      <div class="text-4xl my-1 mb-4 font-medium">{{ productPrice }}</div>
+      <div class="mt-2 price discounted">
+        {{ formatPrice(product.price) }}
+      </div>
+      <div
+        class="price coloured"
+        style="font-size: 36px"
+      >
+        {{ formatPrice(product.price) }}
+      </div>
       <rating-stars
         class="mb-4"
         :model-value="product.rating"
@@ -86,6 +90,7 @@ const buttonCartWidth = computed(() => {
 .product__top
   display: grid
   grid-template-columns: 1fr 1fr
+  gap: 20px
   justify-items: center
   min-height: 350px
   align-items: center
