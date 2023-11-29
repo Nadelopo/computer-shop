@@ -52,10 +52,15 @@ const buttonCartWidth = computed(() => {
         </div>
       </div>
 
-      <div class="mt-2 price discounted">
+      <div
+        class="mt-2 price"
+        :class="{ discounted: product.discount }"
+        :style="{ fontSize: product.discount ? '' : '36px' }"
+      >
         {{ formatPrice(product.price) }}
       </div>
       <div
+        v-if="product.discount"
         class="price coloured"
         style="font-size: 36px"
       >

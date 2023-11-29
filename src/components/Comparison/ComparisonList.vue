@@ -125,7 +125,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
           <div
             v-for="(product, i) in categoryProducts"
             :key="product.id"
-            :ref="i === 0 && !cellRef ? (e) => (cellRef = e as HTMLElement) : undefined"
+            :ref="i === 0 && (!cellRef || !widthCell) ? (e) => (cellRef = e as HTMLElement) : undefined"
             :draggable="true"
             class="cell img"
             @dragstart="onDrag($event, product.img[0])"
