@@ -165,7 +165,13 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      distinct_categories: {
+        Row: CategoryRead & {
+          manufacturerId: number
+          repetitionCount: number
+        }
+        Relationships: []
+      }
     }
     Functions: {
       gtrgm_compress: {
@@ -231,3 +237,6 @@ export type CreateData<T extends Table> =
 
 export type UpdateData<T extends Table> =
   Database['public']['Tables'][T]['Update']
+
+export type View<T extends keyof Database['public']['Views']> =
+  Database['public']['Views'][T]['Row']

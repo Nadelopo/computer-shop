@@ -52,6 +52,7 @@ export const useManufacturersStore = defineStore('manufacturers', () => {
     return { data, error }
   }
 
+  setManufacturers()
   return {
     manufacturers,
     createManufacturer,

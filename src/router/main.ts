@@ -35,5 +35,10 @@ export const mainRoutes: RouteRecordRaw[] = [
     name: 'Comparison',
     component: () => import('@/pages/Comparison.vue')
   },
+  {
+    path: '/manufacturer/:title/:id',
+    name: 'Manufacturer',
+    component: () => import('@/pages/Manufacturer.vue')
+  },
   ...profileRoutes
 ]
