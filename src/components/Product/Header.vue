@@ -57,7 +57,7 @@ const buttonCartWidth = computed(() => {
         :class="{ discounted: product.discount }"
         :style="{ fontSize: product.discount ? '' : '36px' }"
       >
-        {{ formatPrice(product.price) }}
+        {{ formatPrice(product.priceWithoutDiscount) }}
       </div>
       <div
         v-if="product.discount"

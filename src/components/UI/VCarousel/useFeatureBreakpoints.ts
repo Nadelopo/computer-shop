@@ -1,7 +1,7 @@
 import { useBreakpoints } from '@/utils/useBreakpoints'
 import type { Ref } from 'vue'
 
-export type PropsBreakpoints = {
+export type CarouselBreakpoints = {
   [key: number]: {
     spaceBetween?: number
     slidesPerView?: number
@@ -9,7 +9,7 @@ export type PropsBreakpoints = {
 }
 
 export const useFeatureBreakpoints = (
-  propsBreakpoints: PropsBreakpoints,
+  propsBreakpoints: CarouselBreakpoints,
   options: {
     slidesPerView: {
       ref: Ref<number>

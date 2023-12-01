@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, ref, toRef, watch } from 'vue'
-import { useElementSize, useMutationObserver } from '@vueuse/core'
+import { useElementSize, useResizeObserver } from '@vueuse/core'
 //prettier-ignore
 import { useFeatureMouseUpListener, useFeatureMoveListener } from './useFeatureListeners'
 //prettier-ignore
-import { useFeatureBreakpoints, type PropsBreakpoints } from './useFeatureBreakpoints'
+import { useFeatureBreakpoints, type CarouselBreakpoints } from './useFeatureBreakpoints'
 import { useFeatureAutoPlay } from './useFeatureAutoplay'
 import { useFeatureNotMovable } from './useFeatureNotMovable'
 import Arrows from './Arrows.vue'
@@ -20,7 +20,7 @@ type Props = {
   dotType?: 'dot' | 'line'
   autoplay?: boolean | number
   direction?: 'vertical' | 'horizontal'
-  breakpoints?: PropsBreakpoints
+  breakpoints?: CarouselBreakpoints
   slidePosition?: 'start' | 'center' | 'end'
 }
 
@@ -78,10 +78,7 @@ const onMove = (e: MouseEvent | TouchEvent) => {
 
 const moveListener = useFeatureMoveListener(onMove)
 const carouselSlidesRef = ref<HTMLElement>()
-const notMovable = useFeatureNotMovable(
-  carouselSlidesRef,
-  toRef(props, 'slidesPerView')
-)
+const notMovable = useFeatureNotMovable(carouselSlidesRef, slidesPerView)
 const startTranslate = ref(0)
 const swipeSlide = (e: MouseEvent | TouchEvent) => {
   if (!props.draggable || notMovable.value) return
@@ -182,16 +179,14 @@ const { breakpoints } = useFeatureBreakpoints(props.breakpoints, {
 })
 
 const resetCarouselPosition = () => {
-  slidesPerView.value = props.slidesPerView
   translate.value = 0
   dotsRef.value?.setCurrentSlideIndex()
 }
 watch([() => props.slidesPerView, breakpoints], resetCarouselPosition, {
   deep: true
 })
-useMutationObserver(carouselSlidesRef, resetCarouselPosition, {
-  childList: true
-})
+
+useResizeObserver(carouselRef, resetCarouselPosition)
 
 watch(notMovable, () => {
   if (!notMovable.value) return

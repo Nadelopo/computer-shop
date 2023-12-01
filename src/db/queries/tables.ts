@@ -27,10 +27,22 @@ export async function getOneById<T extends Table, S extends string = '*'>(
 
 export const getAll = async <T extends Table = Table, S extends string = '*'>(
   table: T,
-  params?: GetAllParams<S>
+  params?: GetAllParams<S, T>
 ): Promise<ReturnType<typeof response>> => {
-  const { order, search, between, limit, match, neq, range, select } =
-    params || {}
+  const {
+    order,
+    search,
+    between,
+    limit,
+    match,
+    neq,
+    range,
+    select,
+    gt,
+    gte,
+    lt,
+    lte
+  } = params || {}
 
   const query = supabase.from(table).select(select, {
     count: 'estimated',
@@ -39,29 +51,41 @@ export const getAll = async <T extends Table = Table, S extends string = '*'>(
 
   if (!params?.onlyCount) {
     const [orderColumn, ascending] = order ?? ['id', true]
-    query.order(orderColumn, { ascending })
+    query.order(orderColumn as string, { ascending })
   }
   if (match) {
     query.match(match)
   }
   if (params?.in) {
-    query.in(params.in[0], params.in[1])
+    query.in(params.in[0] as string, params.in[1])
   }
   if (search) {
-    query.ilike(search[0], formatSearch(search[1]))
+    query.ilike(search[0] as string, formatSearch(search[1]))
   }
   if (between) {
-    query.gte(between.column, between.begin)
-    query.lte(between.column, between.end)
+    query.gte(between.column as string, between.begin)
+    query.lte(between.column as string, between.end)
   }
   if (limit) {
     query.limit(limit)
   }
   if (neq) {
-    query.neq(neq[0], neq[1])
+    query.neq(neq[0] as string, neq[1])
   }
   if (range) {
     query.range(range[0], range[1])
+  }
+  if (gt) {
+    query.gt(gt[0] as string, gt[1])
+  }
+  if (gte) {
+    query.gte(gte[0] as string, gte[1])
+  }
+  if (lt) {
+    query.lt(lt[0] as string, lt[1])
+  }
+  if (lte) {
+    query.lte(lte[0] as string, lte[1])
   }
 
   const response = await query
