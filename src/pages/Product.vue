@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { updateOneById } from '@/db/queries/tables'
 import { useProductsStore } from '@/stores/productsStore'
+import { localStorageGet, localStorageSet } from '@/utils/localStorage'
 import Header from '@/components/Product/Header.vue'
 import ProductSpecifications from '@/components/Product/ProductSpecifications.vue'
 import SimilarProducts from '@/components/Product/SimilarProducts.vue'
@@ -19,7 +20,6 @@ export type UpdateProductRating = {
 const { getProduct } = useProductsStore()
 
 const route = useRoute()
-
 const product = ref<ProductWithSpecifications>()
 const loading = ref<Loading>('loading')
 
@@ -59,6 +59,19 @@ const updateProductRating = (newData: UpdateProductRating) => {
     }
   }
 }
+
+onBeforeMount(() => {
+  let recentlyProducts = localStorageGet<number[]>('recentlyProducts') ?? []
+  const productId = Number(route.params.productId)
+  if (recentlyProducts.includes(productId)) {
+    recentlyProducts = recentlyProducts.filter((p) => p !== productId)
+  }
+  recentlyProducts.unshift(productId)
+  if (recentlyProducts.length > 12) {
+    recentlyProducts.pop()
+  }
+  localStorageSet('recentlyProducts', recentlyProducts)
+})
 </script>
 
 <template>

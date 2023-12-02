@@ -17,11 +17,8 @@ const carouselBreakpoints: CarouselBreakpoints = {
 </script>
 
 <template>
-  <div
-    v-if="manufacturers.length"
-    class="mt-8"
-  >
-    <div class="text-3xl font-medium mb-4">Бренды</div>
+  <div v-if="manufacturers.length">
+    <div class="text-3xl font-semibold mb-4">Бренды</div>
     <div
       v-if="manufacturers.length"
       class="manufacturers"

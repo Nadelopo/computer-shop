@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { formatPrice } from '@/utils/formatPrice'
+import RatingStars from '../RatingStars.vue'
 import IconButtonFavouritesComparison from '../IconButtonFavouritesComparison.vue'
 import ButtonCart from '@/components/ButtonCart.vue'
+import { formatPrice } from '@/utils/formatPrice'
 import { CrossSvg } from '@/assets/icons'
 import type { ProductCardData } from './types'
 
@@ -54,7 +55,13 @@ const titleActive = ref(true)
         alt=""
       />
     </div>
-    <div :class="{ title__active: titleActive }">{{ item.name }}</div>
+    <div
+      class="title"
+      :class="{ title__active: titleActive }"
+    >
+      {{ item.name }}
+    </div>
+    <rating-stars :model-value="item.rating" />
     <div class="flex gap-x-4">
       <icon-button-favourites-comparison
         v-if="props.favourites"
@@ -106,8 +113,13 @@ const titleActive = ref(true)
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px
     .title__active
       color: var(--color-text)
-  .title__active
-    transition: .3s
+  .title
+    display: -webkit-box
+    -webkit-box-orient: vertical
+    -webkit-line-clamp: 2
+    overflow: hidden
+    &__active
+      transition: .3s
   img
     max-width: 190px
     max-height: 190px
@@ -117,4 +129,3 @@ const titleActive = ref(true)
     &:hover
       transform: scale(1.3)
 </style>
-@/components/ProductCard/types

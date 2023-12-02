@@ -1,4 +1,4 @@
-type Key = 'products' | 'compareList' | 'adminSidebar'
+type Key = 'products' | 'compareList' | 'adminSidebar' | 'recentlyProducts'
 
 export const localStorageSet = (key: Key, value: unknown): void => {
   localStorage.setItem(key, JSON.stringify(value))
