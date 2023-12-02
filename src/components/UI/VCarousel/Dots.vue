@@ -64,7 +64,7 @@ defineExpose({ setCurrentSlideIndex })
   gap: 4px
   user-select: none
   .line
-    background-color: rgba(255, 255, 255, .3)
+    background-color: rgba(0, 0, 0, .1)
     border-radius: 4px
     cursor: pointer
     height: 4px
@@ -72,14 +72,14 @@ defineExpose({ setCurrentSlideIndex })
     width: 12px
     &.active
       width: 40px
-      background: #fff
+      background-color: var(--color-text)
   .dot
     height: 8px
     width: 8px
-    background-color: rgba(255, 255, 255, .3)
+    background-color: rgba(0, 0, 0, .1)
     border-radius: 50%
     cursor: pointer
     transition: width .3s,background-color .3s cubic-bezier(.4,0,.2,1)
     &.active
-      background-color: #fff
+      background-color: var(--color-text)
 </style>

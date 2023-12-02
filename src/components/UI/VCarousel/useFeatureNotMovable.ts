@@ -19,5 +19,5 @@ export const useFeatureNotMovable = (
   onMounted(() => {
     countItems.value = carouselSlidesRef.value?.children.length ?? 0
   })
-  return notMovable
+  return { notMovable, countItems }
 }

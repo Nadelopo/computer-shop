@@ -24,7 +24,7 @@ const arr = [5, 4, 3, 2, 1]
 <template>
   <div
     v-if="static"
-    class="flex"
+    class="flex items-center"
   >
     <div>
       <template v-if="modelValue === 0">
@@ -40,7 +40,7 @@ const arr = [5, 4, 3, 2, 1]
         />
       </template>
     </div>
-    <div class="self-center">
+    <div>
       {{ modelValue ? modelValue.toFixed(2) : 'нет отзывов' }}
     </div>
   </div>

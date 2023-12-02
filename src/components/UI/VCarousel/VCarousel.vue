@@ -78,7 +78,10 @@ const onMove = (e: MouseEvent | TouchEvent) => {
 
 const moveListener = useFeatureMoveListener(onMove)
 const carouselSlidesRef = ref<HTMLElement>()
-const notMovable = useFeatureNotMovable(carouselSlidesRef, slidesPerView)
+const { notMovable, countItems } = useFeatureNotMovable(
+  carouselSlidesRef,
+  slidesPerView
+)
 const startTranslate = ref(0)
 const swipeSlide = (e: MouseEvent | TouchEvent) => {
   if (!props.draggable || notMovable.value) return
@@ -112,10 +115,10 @@ const slideWidth = computed((): string => {
     carouselWidth.value - spaceBetween.value * (slidesPerView.value - 1)
   return carouselWidthValue / slidesPerView.value + 'px'
 })
+
 const lastTranslate = computed((): number => {
   if (!carouselSlidesRef.value) return 0
-  const countOffsetItems =
-    carouselSlidesRef.value.children.length - slidesPerView.value
+  const countOffsetItems = countItems.value - slidesPerView.value
   return (
     countOffsetItems * parseInt(slideWidth.value) +
     countOffsetItems * spaceBetween.value
