@@ -1,12 +1,16 @@
 import { useBreakpoints } from '@/utils/useBreakpoints'
 import type { Ref } from 'vue'
 
-export type CarouselBreakpoints = {
-  [key: number]: {
-    spaceBetween?: number
-    slidesPerView?: number
-  }
+type TailwindPoints = 1536 | 1280 | 1024 | 768 | 640
+
+type CarouselBreakpointsOptions = {
+  spaceBetween?: number
+  slidesPerView?: number
 }
+
+export type CarouselBreakpoints = {
+  [key in number]: CarouselBreakpointsOptions
+} & Partial<Record<TailwindPoints, CarouselBreakpointsOptions>>
 
 export const useFeatureBreakpoints = (
   propsBreakpoints: CarouselBreakpoints,
