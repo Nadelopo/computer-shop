@@ -59,8 +59,7 @@ export const getAll = async <T extends Table = Table, S extends string = '*'>(
   if (params?.in) {
     for (const key in params.in) {
       const value = params.in[key]
-      if (!value?.length) continue
-      query.in(key, value)
+      query.in(key, value as [])
     }
   }
   if (search) {

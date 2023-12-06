@@ -3,6 +3,10 @@ import { defineStore } from 'pinia'
 import { supabase } from '@/db/supabase'
 import { getAll } from '@/db/queries/tables'
 import { formatSearch } from '@/utils/formatSearch'
+import {
+  useFeatureNumberStaticFilter,
+  useFeatureStringStaticFilter
+} from '@/components/CategoryProducts/useFeatureStaticFilter'
 import type { RouteLocationNormalizedLoaded, Router } from 'vue-router'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
@@ -40,12 +44,6 @@ type QueryData = {
   }
 }
 
-export type ManufacturerFilter = {
-  visibility: boolean
-  values: number[]
-  variantsValues: { id: number; title: string }[]
-}
-
 export const useFilterStore = defineStore('filter', () => {
   type SortType = keyof typeof sortAscents
   const specificationsValues = ref<SpecificationsValues[]>([])
@@ -59,18 +57,11 @@ export const useFilterStore = defineStore('filter', () => {
   })
   const sortColumn = ref<SortType>('popularity')
   const search = ref('')
-  const productsPrice = ref<{ min: number; max: number; visibility: boolean }>({
-    min: 0,
-    max: 300_000,
-    visibility: true
+  const productsPrice = useFeatureNumberStaticFilter({
+    max: 300_000
   })
-  const manufacturer = ref<ManufacturerFilter>({
-    values: [],
-    variantsValues: [],
-    visibility: true
-  })
-  const warranty = ref<{ min: number; max: number; visibility: boolean }>({
-    min: 0,
+  const manufacturer = useFeatureStringStaticFilter()
+  const warranty = useFeatureNumberStaticFilter({
     max: 72,
     visibility: false
   })
@@ -78,7 +69,7 @@ export const useFilterStore = defineStore('filter', () => {
   const products = ref<ProductWithSpecifications[]>([])
   const productCount = ref(0)
   const limit = ref(5)
-  const currentPage = ref<number>(0)
+  const currentPage = ref(0)
   const loading = ref<Loading>('loading')
 
   function setQueryParams(
@@ -100,9 +91,9 @@ export const useFilterStore = defineStore('filter', () => {
       query: {
         ...route.query,
         ...query,
-        price: `${productsPrice.value.min}_${productsPrice.value.max}`,
-        manufacturer: manufacturer.value.values,
-        warranty: `${warranty.value.min}_${warranty.value.max}`
+        price: productsPrice.getQueryRow(),
+        manufacturer: manufacturer.values.value,
+        warranty: warranty.getQueryRow()
       }
     })
   }
@@ -153,25 +144,30 @@ export const useFilterStore = defineStore('filter', () => {
     const filteredProductsId = idList.reduce((a, b) =>
       a.filter((c) => b.includes(c))
     )
-
+    const productsIn: Partial<Record<'id' | 'manufacturerId', number[]>> = {
+      id: filteredProductsId
+    }
+    if (manufacturer.values.value.length) {
+      productsIn.manufacturerId = manufacturer.values.value
+    }
     const {
       data: productsData,
       count,
       error
     } = await getAll('products', {
       select: '*, categories(id, enTitle), manufacturers(id, title)',
-      in: { id: filteredProductsId, manufacturerId: manufacturer.value.values },
+      in: productsIn,
       order: [sortColumn.value, sortAscents[sortColumn.value]],
       between: [
         {
           column: 'price',
-          begin: productsPrice.value.min,
-          end: productsPrice.value.max
+          begin: productsPrice.min.value,
+          end: productsPrice.max.value
         },
         {
           column: 'warranty',
-          begin: warranty.value.min,
-          end: warranty.value.max
+          begin: warranty.min.value,
+          end: warranty.max.value
         }
       ],
       range: [

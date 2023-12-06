@@ -1,4 +1,4 @@
-import { type Ref, reactive, watchEffect } from 'vue'
+import { type Ref, watchEffect } from 'vue'
 
 //prettier-ignore
 export type ArrowRef =  Ref<{
@@ -9,7 +9,7 @@ export const useFeatureAutoPlay = (
   arrowRef: ArrowRef,
   propsAutoplay: Ref<boolean | number>
 ) => {
-  const autoplay = reactive({
+  const autoplay = {
     value: 0,
     stop() {
       if (!propsAutoplay.value) return
@@ -25,7 +25,7 @@ export const useFeatureAutoPlay = (
         arrowRef.value?.swipeSlideByClick('next')
       }, timeInterval)
     }
-  })
+  }
   watchEffect(() => {
     if (propsAutoplay.value) autoplay.start()
     else autoplay.stop()

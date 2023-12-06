@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, ref, watch } from 'vue'
+import { nextTick, onBeforeMount, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
@@ -9,6 +9,7 @@ import { VButton } from '@/components/UI'
 import InputFilter from '@/components/CategoryProducts/InputFilter.vue'
 import CheckboxFilter from './CheckboxFilter.vue'
 import FilterListSkeleton from './FiltersSkeleton.vue'
+import { getValuesFromQuery } from './useFeatureStaticFilter'
 import type { Loading } from '@/types'
 
 type SortType = keyof typeof sortAscents
@@ -20,38 +21,37 @@ function isSortType(key: string): key is SortType {
 }
 
 const { getCategorySpecifications } = useCategoriesStore()
-
-const { setQueryParams, setFilteredProducts, sortAscents } = useFilterStore()
 const {
-  specificationsValues,
+  setQueryParams,
+  setFilteredProducts,
+  sortAscents,
   productsPrice,
-  search,
-  currentPage,
-  sortColumn,
-  loading,
-  manufacturer,
-  warranty
-} = storeToRefs(useFilterStore())
+  warranty,
+  manufacturer
+} = useFilterStore()
+const { specificationsValues, search, currentPage, sortColumn, loading } =
+  storeToRefs(useFilterStore())
 
 const route = useRoute()
-const router = useRouter()
-
 const categoryId = Number(route.params.id)
 const loadingProperties = ref<Loading>('loading')
-
-const setFilterProperties = async () => {
+const manufacturers = ref<
+  { manufacturerId: number; manufacturerTitle: string }[]
+>([])
+onBeforeMount(async () => {
   const [{ data }, { data: manufacturersData }] = await Promise.all([
     getCategorySpecifications(categoryId),
     supabase
       .from('distinct_categories')
       .select('manufacturerId, manufacturerTitle')
       .eq('id', categoryId)
+      .order('manufacturerId')
   ])
   if (!data || !manufacturersData) {
     loadingProperties.value = 'error'
     return
   }
-
+  manufacturers.value = manufacturersData
   specificationsValues.value = data
     .map((e) => {
       const { id, enTitle, visible } = e
@@ -82,7 +82,11 @@ const setFilterProperties = async () => {
       }
     })
     .sort((a, b) => Number(b.type) - Number(a.type))
+  await setFilterProperties()
+  setFilteredProducts(categoryId)
+})
 
+const setFilterProperties = async () => {
   const query = route.query
   currentPage.value = query.page ? Number(query.page) - 1 : 0
   search.value = query.q ? String(query.q) : ''
@@ -92,61 +96,37 @@ const setFilterProperties = async () => {
   if (querySort) {
     const querySortTitle = querySort[0]
     const querySortValue: boolean = !(querySort[1] == 'false')
-
     if (isSortType(querySortTitle)) {
       sortAscents[querySortTitle] = querySortValue
       sortColumn.value = querySortTitle
     }
   }
-
-  const price = query.price
-  if (typeof price === 'string') {
-    const [min, max] = price.split('_').map(Number)
-    productsPrice.value = {
-      min,
-      max,
-      visibility: productsPrice.value.visibility
-    }
-  }
-  const warrantyValue = query.warranty
-  if (typeof warrantyValue === 'string') {
-    const [min, max] = warrantyValue.split('_').map(Number)
-    warranty.value = {
-      min,
-      max,
-      visibility: warranty.value.visibility
-    }
-  }
-
-  let manufacturerValues: number[] = []
-  const manufacturerIds = query.manufacturer
-  if (query.manufacturer) {
-    manufacturerValues = (
-      Array.isArray(manufacturerIds) ? manufacturerIds : [manufacturerIds]
-    ).map(Number)
-  }
-  manufacturer.value = {
-    variantsValues: manufacturersData.map((e) => ({
+  productsPrice.setValues(query.price)
+  warranty.setValues(query.warranty)
+  manufacturer.setValues(
+    route.query.manufacturer,
+    manufacturers.value.map((e) => ({
       id: e.manufacturerId,
       title: e.manufacturerTitle
-    })),
-    visibility: manufacturer.value.visibility,
-    values: manufacturerValues
-  }
+    }))
+  )
   for (const value of specificationsValues.value) {
     const field = query[value.enTitle]
-    if (field && value.type && typeof field === 'string') {
-      const [min, max] = field.split('_').map(Number)
-      value.minValue = min
-      value.maxValue = max
-    }
-    if (field && !value.type) {
-      value.values = [...(Array.isArray(field) ? field : [field])].map(String)
+    const values = getValuesFromQuery(field, value.type)
+    if (!values) continue
+    if (value.type) {
+      if ('min' in values) {
+        value.minValue = values.min
+        value.maxValue = values.max
+      }
+    } else if ('values' in values) {
+      value.values = values.values
     }
   }
   loadingProperties.value = 'success'
 }
 
+const router = useRouter()
 const apply = () => {
   setQueryParams(router, route)
   currentPage.value = 0
@@ -162,17 +142,9 @@ const cancel = () => {
       spec.values = []
     }
   })
-  productsPrice.value = {
-    min: 0,
-    max: 300000,
-    visibility: warranty.value.visibility
-  }
-  warranty.value = {
-    min: 0,
-    max: 72,
-    visibility: warranty.value.visibility
-  }
-  manufacturer.value.values = []
+  productsPrice.clear()
+  warranty.clear()
+  manufacturer.clear()
   search.value = ''
   currentPage.value = 0
   router.push({ query: {} })
@@ -186,7 +158,6 @@ watch(
     setFilteredProducts(categoryId)
   },
   {
-    immediate: true,
     flush: 'post'
   }
 )
@@ -217,7 +188,7 @@ const watcher = watch(
         v-model:min-value="productsPrice.min"
         v-model:max-value="productsPrice.max"
         v-model:visibility="productsPrice.visibility"
-        :max="300000"
+        :max="productsPrice.maxStatic"
         :step="500"
         title="Цена"
       />
@@ -255,7 +226,7 @@ const watcher = watch(
         v-model:min-value="warranty.min"
         v-model:max-value="warranty.max"
         v-model:visibility="warranty.visibility"
-        :max="72"
+        :max="warranty.maxStatic"
         :step="1"
         title="Гарантия"
       />
