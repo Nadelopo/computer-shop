@@ -10,8 +10,16 @@ import Sort from '@/components/CategoryProducts/Sort.vue'
 import Filters from '@/components/CategoryProducts/Filters.vue'
 import ProductBlockSkeleton from '@/components/CategoryProducts/ProductBlockSkeleton.vue'
 
-const { products, loading, productCount, currentPage, limit, productsPrice } =
-  storeToRefs(useFilterStore())
+const {
+  products,
+  loading,
+  productCount,
+  currentPage,
+  limit,
+  productsPrice,
+  warranty,
+  manufacturer
+} = storeToRefs(useFilterStore())
 
 const router = useRouter()
 const route = useRoute()
@@ -21,7 +29,10 @@ onUnmounted(() => {
   productCount.value = 0
   productsPrice.value.min = 0
   productsPrice.value.max = 300_000
+  warranty.value.min = 0
+  warranty.value.max = 72
   loading.value = 'loading'
+  manufacturer.value.values = []
 })
 
 watch(

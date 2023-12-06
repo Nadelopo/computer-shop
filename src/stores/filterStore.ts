@@ -12,6 +12,7 @@ type SpecificationsValues = {
   id: number
   enTitle: string
   title: string
+  visible: boolean
 } & (
   | {
       min: number
@@ -39,6 +40,12 @@ type QueryData = {
   }
 }
 
+export type ManufacturerFilter = {
+  visibility: boolean
+  values: number[]
+  variantsValues: { id: number; title: string }[]
+}
+
 export const useFilterStore = defineStore('filter', () => {
   type SortType = keyof typeof sortAscents
   const specificationsValues = ref<SpecificationsValues[]>([])
@@ -52,9 +59,20 @@ export const useFilterStore = defineStore('filter', () => {
   })
   const sortColumn = ref<SortType>('popularity')
   const search = ref('')
-  const productsPrice = ref<{ min: number; max: number }>({
+  const productsPrice = ref<{ min: number; max: number; visibility: boolean }>({
     min: 0,
-    max: 300_000
+    max: 300_000,
+    visibility: true
+  })
+  const manufacturer = ref<ManufacturerFilter>({
+    values: [],
+    variantsValues: [],
+    visibility: true
+  })
+  const warranty = ref<{ min: number; max: number; visibility: boolean }>({
+    min: 0,
+    max: 72,
+    visibility: false
   })
 
   const products = ref<ProductWithSpecifications[]>([])
@@ -82,7 +100,9 @@ export const useFilterStore = defineStore('filter', () => {
       query: {
         ...route.query,
         ...query,
-        price: `${productsPrice.value.min}_${productsPrice.value.max}`
+        price: `${productsPrice.value.min}_${productsPrice.value.max}`,
+        manufacturer: manufacturer.value.values,
+        warranty: `${warranty.value.min}_${warranty.value.max}`
       }
     })
   }
@@ -129,9 +149,7 @@ export const useFilterStore = defineStore('filter', () => {
       loading.value = 'error'
       return
     }
-
     const idList = data.map((e) => e.map((e) => e.products.id))
-
     const filteredProductsId = idList.reduce((a, b) =>
       a.filter((c) => b.includes(c))
     )
@@ -142,13 +160,20 @@ export const useFilterStore = defineStore('filter', () => {
       error
     } = await getAll('products', {
       select: '*, categories(id, enTitle), manufacturers(id, title)',
-      in: ['id', filteredProductsId],
+      in: { id: filteredProductsId, manufacturerId: manufacturer.value.values },
       order: [sortColumn.value, sortAscents[sortColumn.value]],
-      between: {
-        column: 'price',
-        begin: productsPrice.value.min,
-        end: productsPrice.value.max
-      },
+      between: [
+        {
+          column: 'price',
+          begin: productsPrice.value.min,
+          end: productsPrice.value.max
+        },
+        {
+          column: 'warranty',
+          begin: warranty.value.min,
+          end: warranty.value.max
+        }
+      ],
       range: [
         currentPage.value * limit.value,
         currentPage.value * limit.value + limit.value - 1
@@ -162,7 +187,7 @@ export const useFilterStore = defineStore('filter', () => {
     const { data: specificationsData, error: errorSpecifications } =
       await getAll('specifications', {
         select: '*, category_specifications(id, title, units, visible)',
-        in: ['productId', productsData?.map((e) => e.id) || []]
+        in: { productId: productsData?.map((e) => e.id) || [] }
       })
     if (errorSpecifications) {
       loading.value = 'error'
@@ -202,6 +227,8 @@ export const useFilterStore = defineStore('filter', () => {
     productsPrice,
     productCount,
     currentPage,
-    limit
+    limit,
+    manufacturer,
+    warranty
   }
 })

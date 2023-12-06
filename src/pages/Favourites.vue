@@ -21,7 +21,7 @@ onBeforeMount(async () => {
   await setUserListsValue()
   const { data, error } = await getAll('products', {
     select: '*, categories(id, enTitle)',
-    in: ['id', userLists.favourites]
+    in: { id: userLists.favourites }
   })
   if (error) {
     loading.value = 'error'

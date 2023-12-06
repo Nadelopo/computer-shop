@@ -15,16 +15,12 @@ onBeforeMount(async () => {
     return
   }
   const { data, error } = await getAll('products', {
-    in: ['id', recentlyProducts],
+    in: { id: recentlyProducts },
     select:
       'id, name, price, priceWithoutDiscount, img, discount, rating, categories(id, enTitle)'
   })
   if (error) {
     loading.value = 'error'
-    return
-  }
-  if (!data.length) {
-    loading.value = 'empty'
     return
   }
   products.value = data.toSorted((a, b) => {
@@ -38,6 +34,7 @@ onBeforeMount(async () => {
 
 <template>
   <product-list-carousel
+    v-if="loading !== 'error' && loading !== 'empty'"
     title="Недавно просмотренные товары"
     :loading="loading"
     :products="products"

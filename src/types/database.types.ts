@@ -169,6 +169,7 @@ export type Database = {
         Row: CategoryRead & {
           manufacturerId: number
           repetitionCount: number
+          manufacturerTitle: string
         }
         Relationships: []
       }

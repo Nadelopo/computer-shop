@@ -6,7 +6,7 @@ type ReadData<T extends keyof Database['public']['Tables']> =
 
 export type GetAllParams<S, T extends Table> = {
   match?: Partial<Record<ReadData<T>, unknown>>
-  in?: [column: ReadData<T>, values: (number | string)[]]
+  in?: Partial<Record<ReadData<T>, (number | string)[]>>
   select?: S
   order?: [column: ReadData<T>, ascending?: boolean]
   search?: [column: ReadData<T>, value?: string]
@@ -14,7 +14,7 @@ export type GetAllParams<S, T extends Table> = {
     column: ReadData<T>
     begin: number
     end: number
-  }
+  }[]
   limit?: number
   neq?: [column: ReadData<T>, value: number | string]
   range?: [from: number, to: number]

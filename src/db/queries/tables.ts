@@ -57,14 +57,20 @@ export const getAll = async <T extends Table = Table, S extends string = '*'>(
     query.match(match)
   }
   if (params?.in) {
-    query.in(params.in[0] as string, params.in[1])
+    for (const key in params.in) {
+      const value = params.in[key]
+      if (!value?.length) continue
+      query.in(key, value)
+    }
   }
   if (search) {
     query.ilike(search[0] as string, formatSearch(search[1]))
   }
   if (between) {
-    query.gte(between.column as string, between.begin)
-    query.lte(between.column as string, between.end)
+    for (const value of between) {
+      query.gte(value.column as string, value.begin)
+      query.lte(value.column as string, value.end)
+    }
   }
   if (limit) {
     query.limit(limit)

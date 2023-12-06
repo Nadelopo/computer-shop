@@ -42,10 +42,10 @@ onBeforeMount(async () => {
   ] = await Promise.all([
     getAll('products', {
       select: '*, categories(id, title), manufacturers(id, title)',
-      in: ['id', ids]
+      in: { id: ids }
     }),
     getAll('specifications', {
-      in: ['productId', ids],
+      in: { productId: ids },
       order: ['categorySpecificationsId']
     })
   ])
@@ -90,10 +90,9 @@ onBeforeMount(async () => {
     const { data: categoriesSpecifications, error } = await getAll(
       'category_specifications',
       {
-        in: [
-          'categoryId',
-          [...new Set(products.value.map((e) => e.categoryId))]
-        ],
+        in: {
+          categoryId: [...new Set(products.value.map((e) => e.categoryId))]
+        },
         select: 'condition, title, units, id, categories(id, enTitle)'
       }
     )

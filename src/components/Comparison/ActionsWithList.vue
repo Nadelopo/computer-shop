@@ -92,7 +92,7 @@ const share = () => {
     <v-checkbox
       :id="1"
       v-model="showDifferences"
-      title="Показывать только отличия"
+      value="Показывать только отличия"
     />
     <div class="share">
       <v-button

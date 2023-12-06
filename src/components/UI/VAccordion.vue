@@ -1,69 +1,33 @@
 <script setup lang="ts">
-import { onMounted, onUpdated, ref, watch } from 'vue'
-
-type Childrens = {
-  element: HTMLElement
-  height: number
-}
+import { ref, watchEffect } from 'vue'
 
 type Props = {
-  visible: boolean
-  paddingTop?: number
-  paddingBottom?: number
+  visibility: boolean
   transition?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  paddingTop: 5,
-  paddingBottom: 5,
-  transition: 0.3
+  transition: 0.2
 })
 
-const parent = ref()
-const childrenns = ref<Childrens[]>([])
-
-const isUpdate = ref(true)
-
-const setChildrens = () => {
-  const childs: HTMLElement[] = [...parent.value.children]
-
-  childs.forEach(async (el) => {
-    el.style.paddingTop = '0'
-    el.style.paddingBottom = '0'
-    childrenns.value.push({ element: el, height: el.scrollHeight })
-  })
-}
-
-onMounted(() => setChildrens())
-
-onUpdated(async () => {
-  if (isUpdate.value && !childrenns.value.length) {
-    setChildrens()
-  }
-  isUpdate.value = false
-})
-
-watch(
-  () => props.visible,
-  (cur) => {
-    childrenns.value.forEach((element) => {
-      const el = element.element
-      if (cur) {
-        const height = element.height + props.paddingTop + props.paddingBottom
-        el.style.cssText = `
-          padding-bottom: ${props.paddingBottom}px;
-          padding-top: ${props.paddingTop}px;
-          height:  ${height}px;
-        `
-      } else {
-        el.style.cssText = `
-        padding-bottom: 0;
-        padding-top: 0;
-        `
+const parent = ref<HTMLElement>()
+const height = ref(props.visibility ? 'auto' : '0')
+watchEffect(async () => {
+  if (!parent.value) return
+  if (props.visibility) {
+    height.value = parent.value.scrollHeight + 'px'
+    setTimeout(() => {
+      if (props.visibility) {
+        height.value = 'auto'
       }
+    }, props.transition * 1000)
+  } else {
+    height.value = parent.value.scrollHeight + 'px'
+    setTimeout(() => {
+      height.value = '0'
     })
   }
-)
+})
 
 const transition = props.transition + 's'
 </script>
@@ -71,23 +35,24 @@ const transition = props.transition + 's'
 <template>
   <div
     ref="parent"
-    class="accordion__daskk231fas2"
-    :class="{ active: visible }"
+    class="accordion"
+    :class="{ active: visibility }"
   >
     <slot></slot>
   </div>
 </template>
 
-<style lang="sass">
+<style scoped lang="sass">
 
-.accordion__daskk231fas2
+.accordion
   visibility: hidden
-  opacity: 0
+  opacity: 0.2
   transition: v-bind(transition)
+  overflow: hidden
+  height: v-bind(height)
   & > div, & > button, & > a
     display: block
     transition: v-bind(transition)
-    height: 0px
   &.active
     visibility: visible
     opacity: 1

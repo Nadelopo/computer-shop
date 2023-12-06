@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { supabase } from '@/db/supabase'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useFilterStore } from '@/stores/filterStore'
+import { VButton } from '@/components/UI'
 import InputFilter from '@/components/CategoryProducts/InputFilter.vue'
-import { VCheckbox, VButton } from '@/components/UI'
+import CheckboxFilter from './CheckboxFilter.vue'
 import FilterListSkeleton from './FiltersSkeleton.vue'
 import type { Loading } from '@/types'
 
@@ -26,7 +28,9 @@ const {
   search,
   currentPage,
   sortColumn,
-  loading
+  loading,
+  manufacturer,
+  warranty
 } = storeToRefs(useFilterStore())
 
 const route = useRoute()
@@ -34,43 +38,52 @@ const router = useRouter()
 
 const categoryId = Number(route.params.id)
 const loadingProperties = ref<Loading>('loading')
+
 const setFilterProperties = async () => {
-  const { data, error } = await getCategorySpecifications(categoryId)
-  if (error) {
+  const [{ data }, { data: manufacturersData }] = await Promise.all([
+    getCategorySpecifications(categoryId),
+    supabase
+      .from('distinct_categories')
+      .select('manufacturerId, manufacturerTitle')
+      .eq('id', categoryId)
+  ])
+  if (!data || !manufacturersData) {
     loadingProperties.value = 'error'
     return
   }
+
   specificationsValues.value = data
     .map((e) => {
-      const { id, enTitle, title } = e
+      const { id, enTitle, visible } = e
       if (e.type) {
         const { min, max, step } = e
         return {
           id,
           enTitle,
-          title,
+          title: e.title[0].toUpperCase() + e.title.slice(1),
           type: e.type,
           min,
           max,
           minValue: min,
           maxValue: max,
-          step
+          step,
+          visible
         }
       } else {
         return {
           id,
           enTitle,
-          title,
+          title: e.title[0].toUpperCase() + e.title.slice(1),
           type: e.type,
           variantsValues: e.variantsValues,
-          values: []
+          values: [],
+          visible
         }
       }
     })
     .sort((a, b) => Number(b.type) - Number(a.type))
 
   const query = route.query
-  const price = query.price
   currentPage.value = query.page ? Number(query.page) - 1 : 0
   search.value = query.q ? String(query.q) : ''
   const querySort =
@@ -86,12 +99,39 @@ const setFilterProperties = async () => {
     }
   }
 
+  const price = query.price
   if (typeof price === 'string') {
     const [min, max] = price.split('_').map(Number)
     productsPrice.value = {
       min,
-      max
+      max,
+      visibility: productsPrice.value.visibility
     }
+  }
+  const warrantyValue = query.warranty
+  if (typeof warrantyValue === 'string') {
+    const [min, max] = warrantyValue.split('_').map(Number)
+    warranty.value = {
+      min,
+      max,
+      visibility: warranty.value.visibility
+    }
+  }
+
+  let manufacturerValues: number[] = []
+  const manufacturerIds = query.manufacturer
+  if (query.manufacturer) {
+    manufacturerValues = (
+      Array.isArray(manufacturerIds) ? manufacturerIds : [manufacturerIds]
+    ).map(Number)
+  }
+  manufacturer.value = {
+    variantsValues: manufacturersData.map((e) => ({
+      id: e.manufacturerId,
+      title: e.manufacturerTitle
+    })),
+    visibility: manufacturer.value.visibility,
+    values: manufacturerValues
   }
   for (const value of specificationsValues.value) {
     const field = query[value.enTitle]
@@ -124,8 +164,15 @@ const cancel = () => {
   })
   productsPrice.value = {
     min: 0,
-    max: 300000
+    max: 300000,
+    visibility: warranty.value.visibility
   }
+  warranty.value = {
+    min: 0,
+    max: 72,
+    visibility: warranty.value.visibility
+  }
+  manufacturer.value.values = []
   search.value = ''
   currentPage.value = 0
   router.push({ query: {} })
@@ -143,70 +190,91 @@ watch(
     flush: 'post'
   }
 )
+
+const visibilityFilters = ref<boolean[]>([])
+const watcher = watch(
+  () => specificationsValues.value.length,
+  async () => {
+    if (!specificationsValues.value.length) return
+    visibilityFilters.value = Array(specificationsValues.value.length)
+      .fill(null)
+      .map((_, i) => (specificationsValues.value[i].visible ? true : false))
+    await nextTick()
+    watcher()
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
   <div>
-    <div
+    <form
       v-if="loadingProperties === 'success'"
       class="filters"
+      @submit.prevent="apply"
     >
       <input-filter
         v-model:min-value="productsPrice.min"
         v-model:max-value="productsPrice.max"
+        v-model:visibility="productsPrice.visibility"
         :max="300000"
         :step="500"
-        title="цена"
-        class="mb-6"
+        title="Цена"
       />
 
       <template
-        v-for="value in specificationsValues"
+        v-for="(value, i) in specificationsValues"
         :key="value.id"
       >
         <template v-if="value.type">
           <input-filter
             v-model:min-value="value.minValue"
             v-model:max-value="value.maxValue"
+            v-model:visibility="visibilityFilters[i]"
             :max="value.max"
             :min="value.min"
             :step="value.step"
             :title="value.title"
-            class="mb-6"
           />
         </template>
-        <template v-else>
-          <div class="text-center">{{ value.title }}</div>
-          <div
-            v-for="variant in value.variantsValues"
-            :key="variant"
-          >
-            <div>
-              <v-checkbox
-                :id="value.id"
-                v-model="value.values"
-                :title="variant"
-              />
-            </div>
-          </div>
-        </template>
+        <checkbox-filter
+          v-else
+          v-model="visibilityFilters[i]"
+          v-model:values="value.values"
+          :variants-values="value.variantsValues"
+          :title="value.title"
+        />
       </template>
-      <div>
+      <checkbox-filter
+        v-model="manufacturer.visibility"
+        v-model:values="manufacturer.values"
+        :variants-values="manufacturer.variantsValues"
+        title="Производитель"
+      />
+      <input-filter
+        v-model:min-value="warranty.min"
+        v-model:max-value="warranty.max"
+        v-model:visibility="warranty.visibility"
+        :max="72"
+        :step="1"
+        title="Гарантия"
+      />
+      <div class="py-2 px-4">
         <v-button
-          class="my-4"
+          class="mb-4"
           width="100%"
-          @click="apply"
         >
           применить
         </v-button>
         <v-button
+          type="button"
           width="100%"
           @click="cancel"
         >
           сбросить
         </v-button>
       </div>
-    </div>
+    </form>
     <div v-else-if="loadingProperties === 'loading'">
       <filter-list-skeleton />
     </div>
@@ -215,10 +283,24 @@ watch(
 </template>
 
 <style scoped lang="sass">
-
 .filters
   background-color: #fff
   transition: .4s
-  padding: 20px
+  overflow: hidden
   border-radius: 12px
+  :deep(.filter__head)
+    @apply flex justify-between font-medium cursor-pointer select-none
+    padding: 8px 16px
+    transition: .2s
+    border-radius: 4px
+    &:hover, &.active
+      color: var(--color-text)
+      svg
+        fill: var(--color-text)
+    &:hover
+      background: var(--light)
+  :deep(.filter__content)
+    padding: 0 16px
+    > div
+      margin: 12px 0
 </style>

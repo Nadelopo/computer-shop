@@ -47,7 +47,7 @@ const breakpoints: CarouselBreakpoints = {
         </template>
         <template v-else>
           <v-carousel-slide
-            v-for="i in 12"
+            v-for="i in 4"
             :key="i"
           >
             <product-card-skeleton />

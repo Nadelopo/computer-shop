@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { VAccordion } from '../UI'
+import { ArrowSvg } from '@/assets/icons'
+
 type Props = {
   min?: number
   max: number
@@ -38,40 +42,63 @@ const onChange = (e: Event) => {
     maxValue.value = props.max
   }
 }
+
+const visibility = defineModel('visibility', { required: true })
+
+const isActive = computed(
+  () => maxValue.value < props.max || minValue.value > props.min
+)
 </script>
 
 <template>
   <div>
-    <div class="title">{{ title }}</div>
-    <div class="grid">
-      <div>
-        <input
-          ref="minRef"
-          v-model.number="minValue"
-          :step="step"
-          :min="props.min"
-          :max="props.max"
-          class="filter_price"
-          placeholder="0"
-          type="number"
-          @change="onChange"
-        />
+    <div
+      class="filter__head"
+      :class="{ active: isActive }"
+      @click="visibility = !visibility"
+    >
+      <div class="title">
+        {{ title }}
       </div>
-      <div class="line"></div>
-      <div class="text-end">
-        <input
-          ref="maxRef"
-          v-model.number="maxValue"
-          :step="step"
-          :min="props.min"
-          :max="props.max"
-          class="filter_price"
-          :placeholder="String(props.max)"
-          type="number"
-          @change="onChange"
-        />
-      </div>
+      <arrow-svg
+        :transform="visibility ? '' : 'rotate(180)'"
+        class="duration-200"
+      />
     </div>
+    <v-accordion
+      :visibility="visibility"
+      class="filter__content"
+    >
+      <div class="grid">
+        <div>
+          <input
+            ref="minRef"
+            v-model.number="minValue"
+            :step="step"
+            :min="props.min"
+            :max="props.max"
+            class="filter_price"
+            placeholder="0"
+            type="number"
+            @change="onChange"
+          />
+        </div>
+        <div class="line"></div>
+        <div class="text-end">
+          <input
+            ref="maxRef"
+            v-model.number="maxValue"
+            :step="step"
+            :min="props.min"
+            :max="props.max"
+            class="filter_price"
+            :placeholder="String(props.max)"
+            type="number"
+            @change="onChange"
+          />
+        </div>
+      </div>
+    </v-accordion>
   </div>
 </template>
 
@@ -98,6 +125,6 @@ const onChange = (e: Event) => {
   width: 12px
   background-color: #000
 .title
-  text-align: center
-  margin-bottom: 8px
+  user-select: none
+  font-weight: 500
 </style>

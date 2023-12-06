@@ -55,40 +55,37 @@ watchEffect(() => {
         </div>
         <span> Продукты категорий </span>
       </div>
+
       <v-accordion
-        :visible="isVisible"
-        :padding-bottom="10"
-        :padding-top="10"
+        :visibility="isVisible"
+        :transition="0.3"
       >
-        <template v-if="categories">
-          <div
-            v-for="category in categories"
-            :key="category.title"
-            ref="listRef"
-            class="li"
+        <div
+          v-for="category in categories"
+          :key="category.title"
+          ref="listRef"
+          class="li"
+        >
+          <router-link
+            :to="{
+              name: 'AdminProducts',
+              params: { category: category.enTitle, id: category.id }
+            }"
           >
-            <router-link
-              :to="{
-                name: 'AdminProducts',
-                params: { category: category.enTitle, id: category.id }
-              }"
+            <div
+              class="icon"
+              :title="category.title"
             >
-              <div
-                class="icon"
-                :title="category.title"
-              >
-                <img
-                  :src="'/icons/' + category.enTitle + '.svg'"
-                  alt=""
-                />
-                <!-- <Component :is="category.icon" /> -->
-              </div>
-              <span>
-                {{ category.title }}
-              </span>
-            </router-link>
-          </div>
-        </template>
+              <img
+                :src="'/icons/' + category.enTitle + '.svg'"
+                alt=""
+              />
+            </div>
+            <span>
+              {{ category.title }}
+            </span>
+          </router-link>
+        </div>
       </v-accordion>
       <div
         class="head"
@@ -229,10 +226,9 @@ $transition: .3s
     width: 40px
 
 .li
-  transition: $transition
   overflow: hidden
   white-space: nowrap
-  padding: 0 10px
+  padding: 10px
   user-select: none
   cursor: pointer
   display: flex
@@ -247,4 +243,5 @@ $transition: .3s
     transition: $transition
   .icon img
     width: 30px
+    height: 30px
 </style>
