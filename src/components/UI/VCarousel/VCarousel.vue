@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, toRef, watch } from 'vue'
-import { useElementSize, useResizeObserver } from '@vueuse/core'
+import { useElementSize } from '@vueuse/core'
 //prettier-ignore
 import { useFeatureMouseUpListener, useFeatureMoveListener } from './useFeatureListeners'
 //prettier-ignore
@@ -189,7 +189,7 @@ watch([() => props.slidesPerView, breakpoints], resetCarouselPosition, {
   deep: true
 })
 
-useResizeObserver(carouselRef, resetCarouselPosition)
+watch(countItems, resetCarouselPosition)
 
 watch(notMovable, () => {
   if (!notMovable.value) return

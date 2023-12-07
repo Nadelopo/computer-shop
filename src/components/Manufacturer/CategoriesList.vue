@@ -27,7 +27,8 @@ const categoriesFormat = computed(() => {
         :key="category.id"
         :to="{
           name: 'CategoryProducts',
-          params: { category: category.enTitle, id: category.id }
+          params: { category: category.enTitle, id: category.id },
+          query: { manufacturer: category.manufacturerId }
         }"
         class="category shadow"
       >

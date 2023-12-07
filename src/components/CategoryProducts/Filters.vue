@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onBeforeMount, ref, watch } from 'vue'
+import { nextTick, onBeforeMount, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
@@ -175,6 +175,9 @@ const watcher = watch(
   },
   { immediate: true }
 )
+onUnmounted(() => {
+  specificationsValues.value = []
+})
 </script>
 
 <template>

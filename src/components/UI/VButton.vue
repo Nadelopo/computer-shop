@@ -27,10 +27,7 @@ const width = computed(() => props.width ?? 'auto')
     }"
   >
     <template v-if="loading">
-      <v-loader
-        height="24px"
-        :color="variant === 'danger' && '#f96464'"
-      />
+      <v-loader :color="variant === 'danger' && '#f96464'" />
     </template>
     <template v-else>
       <slot />
@@ -54,6 +51,10 @@ const width = computed(() => props.width ?? 'auto')
     font-size: 14px
   &:active
     transform: scale(0.9)
+  svg
+    width: 24px
+    @media (width < 426px)
+      width: 21px
 
 .btn
   min-width: v-bind(width)
