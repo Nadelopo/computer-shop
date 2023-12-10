@@ -6,6 +6,7 @@ type Props = {
   type?: 'text' | 'number'
   required?: boolean
   autofocus?: boolean
+  id?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -43,6 +44,7 @@ onMounted(() => {
   <div v-if="modelValue !== undefined || modelValue !== null">
     <span class="wrapper">
       <input
+        :id="id"
         v-bind="$attrs"
         ref="inputRef"
         :value="modelValue"

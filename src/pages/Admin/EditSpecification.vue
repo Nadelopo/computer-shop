@@ -7,7 +7,10 @@ import { useCategoriesStore } from '@/stores/categoriesStore'
 import { getOneById, updateOneById } from '@/db/queries/tables'
 import SpecificationsForm from '@/components/Admin/Specifications/SpecificationsForm.vue'
 import { VButton, VLoader } from '@/components/UI'
-import type { CategorySpecificationUpdate } from '@/types/tables/categorySpecifications.types'
+import type {
+  CategorySpecificationRead,
+  CategorySpecificationUpdate
+} from '@/types/tables/categorySpecifications.types'
 import type { Loading } from '@/types'
 import type { SpecificationRead } from '@/types/tables/specifications.types'
 
@@ -16,7 +19,7 @@ const form = ref<CategorySpecificationUpdate>()
 const route = useRoute()
 const router = useRouter()
 const loading = ref<Loading>('loading')
-let formInitType = false
+let formInitType: CategorySpecificationRead['type'] = 'string'
 onBeforeMount(async () => {
   const { data, error } = await getOneById(
     'category_specifications',
@@ -45,10 +48,10 @@ const save = async () => {
       valueNumber: form.value.min!,
       valueString: null
     }
-    if (!form.value.type) {
+    if (form.value.type !== 'number') {
       updateValues = {
         valueNumber: null,
-        valueString: form.value.variantsValues![0]
+        valueString: form.value.variantsValues!
       }
     }
 

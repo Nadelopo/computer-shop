@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getSpecificationValue } from '@/utils/getSpecificationValue'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 
 const props = defineProps<{
@@ -33,7 +34,7 @@ const defaultSpecifications = [
           {{ specification.category_specifications.title }}
         </div>
         <div class="flex items-end">
-          {{ specification.valueNumber ?? specification.valueString }}
+          {{ getSpecificationValue(specification) }}
           {{ specification.category_specifications.units }}
         </div>
       </div>
@@ -59,7 +60,7 @@ const defaultSpecifications = [
   font-size: 18px
   padding: 7px 4px
   display: grid
-  grid-template-columns: 1fr minmax(140px, auto)
+  grid-template-columns: 1fr minmax(140px, min-content)
   gap: 20px
   border-radius: 6px
   @media (width < 640px)

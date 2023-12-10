@@ -1,3 +1,5 @@
+import type { DbEnums } from '../database.types'
+
 export type CategorySpecificationRead = Required<CategorySpecificationCreate>
 
 export type CategorySpecificationCreate = {
@@ -10,15 +12,15 @@ export type CategorySpecificationCreate = {
   visible?: boolean
 } & (
   | {
-      type: true
+      type: 'number'
       max: number
       min: number
       step: number
-      condition: 'greater' | 'less'
+      condition: DbEnums<'category_specification_condition'>
       variantsValues: null
     }
   | {
-      type: false
+      type: Exclude<DbEnums<'category_specification_type'>, 'number'>
       max: null
       min: null
       step: null

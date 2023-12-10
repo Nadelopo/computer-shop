@@ -5,16 +5,16 @@ import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/productsStore'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { getAll, getOneById } from '@/db/queries/tables'
-import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
-import type { Loading } from '@/types'
 import {
   VButton,
   VLoader,
   VInputText,
   VInputFile,
   VSelect,
-  VDoubleButtons
+  VButtons
 } from '@/components/UI'
+import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
+import type { Loading } from '@/types'
 import type {
   SpecificationRead,
   SpecificationUpdate
@@ -189,11 +189,14 @@ const back = async () => {
           v-for="(specification, i) in product.specifications"
           :key="specification.category_specifications.id"
         >
-          <label>
+          <label :for="String(specification.id)">
             {{ specification.category_specifications.title }}
           </label>
-          <template v-if="specification.category_specifications.type">
+          <template
+            v-if="specification.category_specifications.type === 'number'"
+          >
             <v-input-text
+              :id="String(specification.id)"
               v-model="specification.valueNumber"
               :step="Number(specification.category_specifications.step)"
               :min="Number(specification.category_specifications.min)"
@@ -201,14 +204,23 @@ const back = async () => {
               type="number"
             />
           </template>
-          <template v-else>
-            <div>
-              <v-select
-                v-model="specification.valueString"
-                :options="specificationsVariantsValues(i)"
-              />
-            </div>
-          </template>
+          <div
+            v-else-if="specification.category_specifications.type === 'string'"
+          >
+            <v-select
+              v-model="specification.valueString![0]"
+              class="mt-2"
+              :options="specificationsVariantsValues(i)"
+            />
+          </div>
+          <div v-else>
+            <v-buttons
+              v-if="specification.valueString"
+              v-model="specification.valueString"
+              :options="specificationsVariantsValues(i)"
+              class="mt-2"
+            />
+          </div>
         </div>
         <div>
           <label>наименование</label>
@@ -242,16 +254,20 @@ const back = async () => {
           <div>
             <v-select
               v-model="manufacturerSelect"
+              class="mt-2"
               :options="manufacturersSelect"
             />
           </div>
         </div>
         <div>
           <label>продажи</label>
-          <v-double-buttons
+          <v-buttons
             v-model="product.sell"
-            text-first="продавать"
-            text-second="остановить продажи"
+            class="mt-2"
+            :options="[
+              { title: 'продавать', value: true },
+              { title: 'остановить продажи', value: false }
+            ]"
           />
         </div>
         <div>

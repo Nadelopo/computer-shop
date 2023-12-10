@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { StorageError, removeFromStorage } from '@/db/queries/storage'
 import { deleteOneById } from '@/db/queries/tables'
 import { VButton, VLoader, VConfirm } from '@/components/UI'
+import { getSpecificationValue } from '@/utils/getSpecificationValue'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
@@ -112,10 +113,7 @@ const basicData = computed((): BasicData => {
           :key="j"
           class="cell"
         >
-          {{
-            products[j].specifications[i]?.valueNumber ??
-            products[j].specifications[i]?.valueString
-          }}
+          {{ getSpecificationValue(products[j].specifications[i]) }}
           {{ specifications[i].units }}
         </div>
       </div>

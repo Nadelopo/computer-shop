@@ -223,7 +223,8 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      category_specification_condition: 'greater' | 'less'
+      category_specification_type: 'number' | 'string' | 'union'
     }
     CompositeTypes: {
       [_ in never]: never
@@ -241,3 +242,6 @@ export type UpdateData<T extends Table> =
 
 export type View<T extends keyof Database['public']['Views']> =
   Database['public']['Views'][T]['Row']
+
+export type DbEnums<T extends keyof Database['public']['Enums']> =
+  Database['public']['Enums'][T]

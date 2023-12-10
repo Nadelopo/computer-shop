@@ -10,7 +10,8 @@ import {
   VLoader,
   VButton,
   VSelect,
-  VInputFile
+  VInputFile,
+  VButtons
 } from '@/components/UI'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 import type { ProductCreate } from '@/types/tables/products.types'
@@ -49,7 +50,7 @@ const setCategorySpecifications = async () => {
   }
   categorySpecifications.value = data
   categoryFormSpecifications.value = data.map((e) => {
-    if (e.type) {
+    if (e.type === 'number') {
       return {
         categorySpecificationsId: e.id,
         productId: null,
@@ -60,7 +61,7 @@ const setCategorySpecifications = async () => {
       return {
         categorySpecificationsId: e.id,
         productId: null,
-        valueString: '',
+        valueString: [''],
         valueNumber: null
       }
     }
@@ -128,10 +129,10 @@ const create = async () => {
   categoryFormSpecifications.value = categoryFormSpecifications.value.map(
     (e, i) => {
       const specificationsValue = categorySpecifications.value[i]
-      if (specificationsValue.type) {
+      if (specificationsValue.type === 'number') {
         return { ...e, valueNumber: specificationsValue.min }
       } else {
-        return { ...e, valueString: '' }
+        return { ...e, valueString: [''] }
       }
     }
   )
@@ -158,7 +159,7 @@ watchEffect(() => {
       <label>
         {{ specification.title }}
       </label>
-      <template v-if="specification.type">
+      <template v-if="specification.type === 'number'">
         <v-input-text
           v-model="categoryFormSpecifications[i].valueNumber"
           type="number"
@@ -167,10 +168,10 @@ watchEffect(() => {
           :max="specification.max"
         />
       </template>
-      <template v-else-if="specification.variantsValues">
+      <template v-else-if="specification.type === 'string'">
         <br />
         <v-select
-          v-model="categoryFormSpecifications[i].valueString"
+          v-model="categoryFormSpecifications[i].valueString![0]"
           :options="
             specification.variantsValues.map((e) => ({
               title: e,
@@ -178,6 +179,17 @@ watchEffect(() => {
             }))
           "
           class="mt-4"
+        />
+      </template>
+      <template v-else>
+        <v-buttons
+          :model-value="categoryFormSpecifications[i].valueString!"
+          :options="
+            specification.variantsValues.map((v) => ({ title: v, value: v }))
+          "
+          @update:model-value="
+            categoryFormSpecifications[i].valueString = $event
+          "
         />
       </template>
     </div>

@@ -3,6 +3,7 @@ import { formatPrice } from '@/utils/formatPrice'
 import ButtonCart from '../ButtonCart.vue'
 import RatingStars from '../RatingStars.vue'
 import IconBtnFavouritesComparison from '../IconButtonFavouritesComparison.vue'
+import { getSpecificationValue } from '@/utils/getSpecificationValue'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 
 defineProps<{
@@ -47,7 +48,7 @@ defineProps<{
             >
               <div>{{ specification.category_specifications.title }}:</div>
               <div>
-                {{ specification.valueNumber ?? specification.valueString }}
+                {{ getSpecificationValue(specification) }}
                 {{ specification.category_specifications.units }}
               </div>
             </div>

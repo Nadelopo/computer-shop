@@ -71,7 +71,8 @@ export const useProductsStore = defineStore('products', () => {
       promises.push(
         getAll('specifications', {
           match: { productId: product.id },
-          select: '*,  category_specifications(id, title, units, visible)',
+          select:
+            '*,  category_specifications(id, title, units, visible, type)',
           order: ['categorySpecificationsId']
         })
       )

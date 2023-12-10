@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import { VDoubleButtons, VInputText, VButton, VSelect } from '@/components/UI'
+import { VButtons, VInputText, VButton, VSelect } from '@/components/UI'
 import type { CategorySpecificationForm } from './types'
 import type { CategorySpecificationUpdate } from '@/types/tables/categorySpecifications.types'
 
@@ -32,27 +32,29 @@ const deleteVarianValues = () => {
   }
 }
 
+const savedVarianValues = ref<string[]>(form.value.variantsValues ?? [''])
 watch(
   () => form.value.type,
   (cur) => {
-    if (cur) {
+    if (cur === 'number') {
+      savedVarianValues.value = form.value.variantsValues ?? ['']
       form.value = {
         ...form.value,
-        type: true,
+        type: 'number',
         step: 1,
         min: 0,
         max: 64,
         variantsValues: null,
         condition: 'greater'
       }
-    } else {
+    } else if (cur) {
       form.value = {
         ...form.value,
-        type: false,
+        type: cur,
         step: null,
         min: null,
         max: null,
-        variantsValues: [''],
+        variantsValues: savedVarianValues.value,
         condition: null
       }
     }
@@ -87,16 +89,19 @@ watch(
       />
     </div>
     <div>
-      <label>тип поля</label>
-      <v-double-buttons
+      <label>тип поля </label>
+      <v-buttons
         v-if="form.type !== undefined"
         v-model="form.type"
+        :options="[
+          { value: 'number', title: 'числовой' },
+          { value: 'string', title: 'текстовый' },
+          { value: 'union', title: 'объединение' }
+        ]"
         class="mt-2"
-        text-first="числовой"
-        text-second="текстовый"
       />
     </div>
-    <template v-if="form.type">
+    <template v-if="form.type === 'number'">
       <div>
         <label>шаг изменения числа для поля ввода</label>
         <v-input-text
@@ -126,12 +131,14 @@ watch(
           условия для лучшего значения
           <span class="text-xs"> (больще значит лучше или наоборот) </span>
         </label>
-        <v-double-buttons
+        <v-buttons
+          v-if="form.condition"
+          v-model="form.condition"
           class="mt-2"
-          text-first="больше"
-          text-second="меньше"
-          :model-value="form.condition === 'greater'"
-          @update:model-value="form.condition = $event ? 'greater' : 'less'"
+          :options="[
+            { value: 'greater', title: 'больше' },
+            { value: 'less', title: 'меньше' }
+          ]"
         />
       </div>
     </template>
@@ -161,22 +168,26 @@ watch(
       </div>
     </div>
     <div>
-      <label>отображать на карточке товара</label>
-      <v-double-buttons
+      <label>отображать на карточке товара </label>
+      <v-buttons
         v-if="form.visible !== undefined"
         v-model="form.visible"
         class="mt-2"
-        text-first="да"
-        text-second="нет"
+        :options="[
+          { value: true, title: 'да' },
+          { value: false, title: 'нет' }
+        ]"
       />
     </div>
     <div v-if="props.type === 'create'">
       <label>задать значение по умолчанию для товаров</label>
-      <v-double-buttons
+      <v-buttons
         v-model="setInitialValue"
+        :options="[
+          { value: true, title: 'да' },
+          { value: false, title: 'нет' }
+        ]"
         class="mt-2"
-        text-first="да"
-        text-second="нет"
       />
     </div>
     <div>

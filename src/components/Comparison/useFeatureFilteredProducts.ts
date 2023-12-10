@@ -65,7 +65,14 @@ export const useFeatureFilteredProducts = (
           return e.categorySpecificationsId === category.id
         })
         if (!specification) continue
-        const value = specification.valueNumber ?? specification.valueString
+        let value: string | number | null | undefined =
+          specification.valueNumber
+        if (value === null) {
+          value =
+            specification.valueString?.length === 1
+              ? specification.valueString[0]
+              : specification.valueString?.join(', ')
+        }
         if (!value) continue
         fields[index].values.push(value)
       }

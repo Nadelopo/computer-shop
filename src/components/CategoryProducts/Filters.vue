@@ -52,36 +52,34 @@ onBeforeMount(async () => {
     return
   }
   manufacturers.value = manufacturersData
-  specificationsValues.value = data
-    .map((e) => {
-      const { id, enTitle, visible } = e
-      if (e.type) {
-        const { min, max, step } = e
-        return {
-          id,
-          enTitle,
-          title: e.title[0].toUpperCase() + e.title.slice(1),
-          type: e.type,
-          min,
-          max,
-          minValue: min,
-          maxValue: max,
-          step,
-          visible
-        }
-      } else {
-        return {
-          id,
-          enTitle,
-          title: e.title[0].toUpperCase() + e.title.slice(1),
-          type: e.type,
-          variantsValues: e.variantsValues,
-          values: [],
-          visible
-        }
+  specificationsValues.value = data.map((e) => {
+    const { id, enTitle, visible } = e
+    if (e.type === 'number') {
+      const { min, max, step } = e
+      return {
+        id,
+        enTitle,
+        title: e.title[0].toUpperCase() + e.title.slice(1),
+        type: e.type,
+        min,
+        max,
+        minValue: min,
+        maxValue: max,
+        step,
+        visible
       }
-    })
-    .sort((a, b) => Number(b.type) - Number(a.type))
+    } else {
+      return {
+        id,
+        enTitle,
+        title: e.title[0].toUpperCase() + e.title.slice(1),
+        type: e.type,
+        variantsValues: e.variantsValues,
+        values: [],
+        visible
+      }
+    }
+  })
   await setFilterProperties()
   setFilteredProducts(categoryId)
 })
@@ -112,9 +110,9 @@ const setFilterProperties = async () => {
   )
   for (const value of specificationsValues.value) {
     const field = query[value.enTitle]
-    const values = getValuesFromQuery(field, value.type)
+    const values = getValuesFromQuery(field, value.type === 'number')
     if (!values) continue
-    if (value.type) {
+    if (value.type === 'number') {
       if ('min' in values) {
         value.minValue = values.min
         value.maxValue = values.max
@@ -134,11 +132,10 @@ const apply = () => {
 
 const cancel = () => {
   specificationsValues.value.forEach((spec) => {
-    if (spec.type) {
+    if (spec.type === 'number') {
       spec.minValue = spec.min
       spec.maxValue = spec.max
-    }
-    if (!spec.type && !spec.type) {
+    } else {
       spec.values = []
     }
   })
@@ -200,17 +197,16 @@ onUnmounted(() => {
         v-for="(value, i) in specificationsValues"
         :key="value.id"
       >
-        <template v-if="value.type">
-          <input-filter
-            v-model:min-value="value.minValue"
-            v-model:max-value="value.maxValue"
-            v-model:visibility="visibilityFilters[i]"
-            :max="value.max"
-            :min="value.min"
-            :step="value.step"
-            :title="value.title"
-          />
-        </template>
+        <input-filter
+          v-if="value.type === 'number'"
+          v-model:min-value="value.minValue"
+          v-model:max-value="value.maxValue"
+          v-model:visibility="visibilityFilters[i]"
+          :max="value.max"
+          :min="value.min"
+          :step="value.step"
+          :title="value.title"
+        />
         <checkbox-filter
           v-else
           v-model="visibilityFilters[i]"

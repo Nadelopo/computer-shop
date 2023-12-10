@@ -55,7 +55,10 @@ export const useFeatureNumberStaticFilter = (options?: Options) => {
   const min = ref(0)
   const max = ref(maxStatic)
   const visibility = ref(options?.visibility ?? true)
-  const getQueryRow = () => `${min.value}_${max.value}`
+  const getQueryRow = () => {
+    if (min.value === 0 && max.value === maxStatic) return
+    return `${min.value}_${max.value}`
+  }
   const clear = () => {
     min.value = 0
     max.value = maxStatic

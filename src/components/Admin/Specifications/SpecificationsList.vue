@@ -153,7 +153,7 @@ watch(currentCategoryId, async () => {
                 }}
               </td>
               <td>
-                <div class="grid grid-cols-3 gap-x-2">
+                <div class="variant__values">
                   <span
                     v-for="value in specification.variantsValues"
                     :key="value"
@@ -200,3 +200,11 @@ watch(currentCategoryId, async () => {
     <div v-else-if="loadingGetCategories === 'error'"> Произошла ошибка </div>
   </div>
 </template>
+
+<style scoped>
+.variant__values {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 8px;
+}
+</style>

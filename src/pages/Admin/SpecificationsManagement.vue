@@ -18,7 +18,7 @@ const initialFormValue: CategorySpecificationForm = {
   categoryId: null,
   title: '',
   enTitle: '',
-  type: true,
+  type: 'number',
   visible: false,
   units: '',
   step: 1,
@@ -60,8 +60,8 @@ const create = async (setValue: boolean) => {
       initialSpecificationsValue.push({
         productId: product.id,
         categorySpecificationsId: data.id,
-        valueNumber: data.type ? data.min : null,
-        valueString: data.type ? null : data.variantsValues[0]
+        valueNumber: data.type === 'number' ? data.min : null,
+        valueString: data.type === 'number' ? null : [data.variantsValues[0]]
       })
     }
 

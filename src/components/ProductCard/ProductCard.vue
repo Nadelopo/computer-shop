@@ -9,19 +9,18 @@ import type { ProductCardData } from './types'
 
 type Props = {
   item: ProductCardData
-  delete?: boolean
+  onDelete?: (id: number) => void
   favourites?: boolean
   comparison?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  delete: false,
   favourites: true,
   comparison: true
 })
 
 const emit = defineEmits<{
-  onDelete: [id: number]
+  delete: [id: number]
 }>()
 
 const titleActive = ref(true)
@@ -42,10 +41,10 @@ const titleActive = ref(true)
     <div class="flex">
       <button class="cross">
         <cross-svg
-          v-if="props.delete"
+          v-if="props.onDelete"
           @mouseenter="titleActive = false"
           @mouseleave="titleActive = true"
-          @click.prevent="emit('onDelete', item.id)"
+          @click.prevent="emit('delete', item.id)"
         />
       </button>
     </div>

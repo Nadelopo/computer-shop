@@ -11,27 +11,27 @@ import type { RouteLocationNormalizedLoaded, Router } from 'vue-router'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
 import type { PostgrestError } from '@supabase/supabase-js'
+import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 
-type SpecificationsValues = {
-  id: number
-  enTitle: string
-  title: string
-  visible: boolean
-} & (
-  | {
-      min: number
-      max: number
-      step: number
-      minValue: number
-      maxValue: number
-      type: true
-    }
-  | {
-      variantsValues: string[]
-      values: string[]
-      type: false
-    }
-)
+type SpecificationsValues = Pick<
+  CategorySpecificationRead,
+  'id' | 'enTitle' | 'title' | 'visible'
+> &
+  (
+    | {
+        min: number
+        max: number
+        step: number
+        minValue: number
+        maxValue: number
+        type: 'number'
+      }
+    | {
+        variantsValues: string[]
+        values: string[]
+        type: 'string' | 'union'
+      }
+  )
 
 export type CheckboxData = {
   id: number
@@ -81,7 +81,7 @@ export const useFilterStore = defineStore('filter', () => {
       [key: string]: number | string | string[]
     } = { page: 1, q: search.value }
     for (const value of specificationsValues.value) {
-      if (value.type) {
+      if (value.type === 'number') {
         query[value.enTitle] = `${value.minValue}_${value.maxValue}`
       } else {
         query[value.enTitle] = value.values
@@ -103,23 +103,23 @@ export const useFilterStore = defineStore('filter', () => {
     products.value = []
 
     const promises = []
-    for (const spec of specificationsValues.value) {
+    for (const specification of specificationsValues.value) {
       const query = supabase
         .from('specifications')
         .select('products!inner(id)')
         .match({
           'products.categoryId': categoryId,
-          categorySpecificationsId: spec.id
+          categorySpecificationsId: specification.id
         })
         .ilike('products.name', formatSearch(search.value))
 
-      if (spec.type) {
+      if (specification.type === 'number') {
         query
-          .gte('valueNumber', spec.minValue)
-          .lte('valueNumber', spec.maxValue)
+          .gte('valueNumber', specification.minValue)
+          .lte('valueNumber', specification.maxValue)
       } else {
-        if (spec.values.length) {
-          query.in('valueString', spec.values)
+        if (specification.values.length) {
+          query.overlaps('valueString', specification.values)
         }
       }
       promises.push(query.returns<QueryData[]>())
@@ -182,20 +182,25 @@ export const useFilterStore = defineStore('filter', () => {
 
     const { data: specificationsData, error: errorSpecifications } =
       await getAll('specifications', {
-        select: '*, category_specifications(id, title, units, visible)',
+        select: '*, category_specifications(id, title, units, visible, type)',
         in: { productId: productsData?.map((e) => e.id) || [] }
       })
     if (errorSpecifications) {
       loading.value = 'error'
       return
     }
-
     productCount.value = count ?? 0
 
     if (productsData && specificationsData) {
       products.value = productsData.map((p) => {
         const specifications = specificationsData
           .filter((s) => p.id === s.productId)
+          .map((s) => {
+            s.category_specifications.title =
+              s.category_specifications.title[0].toUpperCase() +
+              s.category_specifications.title.slice(1)
+            return s
+          })
           .sort((a, b) =>
             a.category_specifications.title.localeCompare(
               b.category_specifications.title

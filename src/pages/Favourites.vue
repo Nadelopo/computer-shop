@@ -83,9 +83,8 @@ const deleteItem = async (id: number) => {
             v-for="item in favourites"
             :key="item.id"
             :item="item"
-            :delete="true"
             :favourites="false"
-            @on-delete="deleteItem"
+            @delete="deleteItem"
           />
         </template>
         <template v-else-if="loading === 'loading'">
