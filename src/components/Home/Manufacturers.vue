@@ -17,12 +17,14 @@ const carouselBreakpoints: CarouselBreakpoints = {
 </script>
 
 <template>
-  <div v-if="manufacturers.length">
-    <div class="text-3xl font-semibold mb-4">Бренды</div>
+  <div>
     <div
       v-if="manufacturers.length"
-      class="manufacturers"
+      class="text-3xl font-semibold mb-4"
     >
+      Бренды
+    </div>
+    <div class="manufacturers">
       <v-carousel
         :slides-per-view="8"
         :space-between="20"
@@ -30,26 +32,35 @@ const carouselBreakpoints: CarouselBreakpoints = {
         show-arrows="hover"
         draggable
       >
-        <v-carousel-slide
-          v-for="manufacturer in manufacturers"
-          :key="manufacturer.id"
-        >
-          <router-link
-            :to="{
-              name: 'Manufacturer',
-              params: {
-                id: manufacturer.id,
-                title: manufacturer.title.toLowerCase()
-              }
-            }"
-            class="manufacturer__card"
+        <template v-if="manufacturers.length">
+          <v-carousel-slide
+            v-for="(manufacturer, i) in manufacturers"
+            :key="i"
           >
-            <img
-              :src="manufacturer.img"
-              alt=""
-            />
-          </router-link>
-        </v-carousel-slide>
+            <router-link
+              :to="{
+                name: 'Manufacturer',
+                params: {
+                  id: manufacturer.id,
+                  title: manufacturer.title.toLowerCase()
+                }
+              }"
+              class="manufacturer__card"
+            >
+              <img
+                :src="manufacturer.img"
+                alt=""
+              />
+            </router-link>
+          </v-carousel-slide>
+        </template>
+        <template v-else>
+          <v-carousel-slide
+            v-for="i in 8"
+            :key="i"
+            class="manufacturer__card"
+          />
+        </template>
       </v-carousel>
     </div>
   </div>

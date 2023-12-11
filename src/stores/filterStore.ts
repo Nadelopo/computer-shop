@@ -77,12 +77,17 @@ export const useFilterStore = defineStore('filter', () => {
     route: RouteLocationNormalizedLoaded
   ) {
     const query: {
-      q: string
-      [key: string]: number | string | string[]
-    } = { page: 1, q: search.value }
+      q: string | undefined
+      page: number | undefined
+      [key: string]: undefined | number | string | string[]
+    } = { page: currentPage.value || undefined, q: search.value || undefined }
     for (const value of specificationsValues.value) {
       if (value.type === 'number') {
-        query[value.enTitle] = `${value.minValue}_${value.maxValue}`
+        const isNotDefaultValues =
+          value.minValue !== 0 || value.maxValue !== value.max
+        query[value.enTitle] = isNotDefaultValues
+          ? `${value.minValue}_${value.maxValue}`
+          : undefined
       } else {
         query[value.enTitle] = value.values
       }

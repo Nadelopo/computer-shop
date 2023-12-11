@@ -16,8 +16,7 @@ type Props = {
   spaceBetween?: number
   draggable?: boolean
   showArrows?: boolean | 'hover'
-  showDots?: boolean
-  dotType?: 'dot' | 'line'
+  showDots?: boolean | 'dot' | 'line'
   autoplay?: boolean | number
   direction?: 'vertical' | 'horizontal'
   breakpoints?: CarouselBreakpoints
@@ -31,7 +30,6 @@ const props = withDefaults(defineProps<Props>(), {
   draggable: false,
   showArrows: false,
   showDots: false,
-  dotType: 'line',
   autoplay: false,
   direction: 'horizontal',
   breakpoints: () => ({}),
@@ -250,7 +248,6 @@ const countSlides = computed(() => {
         ref="dotsRef"
         v-model:translate="translate"
         :show-dots="showDots"
-        :dot-type="dotType"
         :last-translate="lastTranslate"
         :swipe-translate="swipeTranslate"
         :count-slides="countSlides"

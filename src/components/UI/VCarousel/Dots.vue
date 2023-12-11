@@ -6,8 +6,7 @@ const props = defineProps<{
   lastTranslate: number
   swipeTranslate: number
   countSlides: number
-  showDots: boolean
-  dotType: 'dot' | 'line'
+  showDots: boolean | 'dot' | 'line'
 }>()
 
 const emit = defineEmits<{
@@ -41,12 +40,14 @@ defineExpose({ setCurrentSlideIndex })
   <div
     v-if="showDots"
     class="dots"
-    @click="''"
   >
     <div
       v-for="(_, i) in countSlides"
       :key="i"
-      :class="[{ active: i === currentSlideIndex }, dotType]"
+      :class="[
+        { active: i === currentSlideIndex },
+        showDots === true ? 'line' : showDots
+      ]"
       @click="setCurrentSlide(i)"
       @mousedown.stop
       @touchstart.stop.passive

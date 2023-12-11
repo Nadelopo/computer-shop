@@ -198,9 +198,9 @@ const back = async () => {
             <v-input-text
               :id="String(specification.id)"
               v-model="specification.valueNumber"
-              :step="Number(specification.category_specifications.step)"
-              :min="Number(specification.category_specifications.min)"
-              :max="Number(specification.category_specifications.max)"
+              :step="specification.category_specifications.step"
+              :min="specification.category_specifications.min"
+              :max="specification.category_specifications.max"
               type="number"
             />
           </template>

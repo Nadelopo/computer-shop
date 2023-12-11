@@ -32,7 +32,6 @@ const breakpoints: CarouselBreakpoints = {
         :slides-per-view="4"
         :breakpoints="breakpoints"
         :show-dots="loading === 'success'"
-        dot-type="line"
         :show-arrows="loading === 'success' && 'hover'"
         draggable
         class="pt-6 pb-10"

@@ -6,37 +6,43 @@ const { categories } = storeToRefs(useCategoriesStore())
 </script>
 
 <template>
-  <div
-    v-if="categories"
-    class="grid"
-  >
-    <div
-      v-for="category in categories"
-      :key="category.id"
-    >
-      <router-link
-        class="lev"
-        :to="{
-          name: 'CategoryProducts',
-          params: { category: category.enTitle, id: category.id }
-        }"
+  <div class="grid">
+    <template v-if="categories.length">
+      <div
+        v-for="category in categories"
+        :key="category.id"
       >
-        <div class="wrap">
-          <img
-            :src="category.img"
-            alt=""
-            class="mx-auto mb-auto"
-          />
+        <router-link
+          class="link__wrap"
+          :to="{
+            name: 'CategoryProducts',
+            params: { category: category.enTitle, id: category.id }
+          }"
+        >
+          <div class="wrap">
+            <img
+              :src="category.img"
+              alt=""
+              class="mx-auto mb-auto"
+            />
 
-          <div class="text-center text1">{{ category.title }}</div>
-        </div>
-      </router-link>
-    </div>
+            <div class="text-center text">{{ category.title }}</div>
+          </div>
+        </router-link>
+      </div>
+    </template>
+    <template v-else>
+      <div
+        v-for="i in 8"
+        :key="i"
+        class="link__wrap"
+      />
+    </template>
   </div>
 </template>
 
 <style scoped lang="sass">
-.lev
+.link__wrap
   width: 100%
   height: 220px
   background-color: #fff
@@ -47,11 +53,11 @@ const { categories } = storeToRefs(useCategoriesStore())
   align-content: center
   cursor: pointer
 
-.text1
+.text
   font-weight: 600
   font-size: 20px
   transition: .2s
-  .lev:hover &
+  .link__wrap:hover &
     color: var(--color-text)
 
 .grid
