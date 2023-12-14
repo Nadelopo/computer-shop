@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import CategorySkeleton from '@/components/Manufacturer/CategorySkeleton.vue'
 import type { Loading } from '@/types'
 import type { View } from '@/types/database.types'
-import { computed } from 'vue'
 
 const props = defineProps<{
   loading: Loading

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
-import { VButton, VInputFile, VInputText } from '@/components/UI'
 import ManufacturersList from '@/components/Admin/Manufacturers/ManufacturersList.vue'
+import ManufacturersForm from '@/components/Admin/Manufacturers/ManufacturersForm.vue'
 import type { ManufacturerCreate } from '@/types/tables/manufacturers.types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
+import type { Loading } from '@/types'
 
 const { createManufacturer } = useManufacturersStore()
 
@@ -14,10 +15,12 @@ const form = ref<ManufacturerCreate>({
   description: ''
 })
 
-const inputFileRef = ref<InputFileActions>()
-const create = async () => {
-  const { error: errorImage, url } = (await inputFileRef.value?.onSave()) || {}
+const loading = ref<Loading>('success')
+const create = async (fileActions: InputFileActions | undefined) => {
+  loading.value = 'loading'
+  const { error: errorImage, url } = (await fileActions?.onSave()) || {}
   if (errorImage) {
+    loading.value = 'error'
     return
   }
   if (url) {
@@ -31,36 +34,19 @@ const create = async () => {
       description: ''
     }
   }
-  inputFileRef.value?.clear()
+  fileActions?.clear()
+  loading.value = 'success'
 }
 </script>
 
 <template>
   <div>
-    <form
-      class="list__form"
-      @submit.prevent="create"
-    >
-      <div>
-        <label>наименование</label>
-        <v-input-text v-model.trim="form.title" />
-      </div>
-      <div>
-        <label>описание</label>
-        <v-input-text v-model.trim="form.description" />
-      </div>
-      <div>
-        <label>наименование</label>
-        <v-input-file
-          ref="inputFileRef"
-          :file-url="form.img"
-          folder="manufacturers"
-        />
-      </div>
-      <div>
-        <v-button>добавить</v-button>
-      </div>
-    </form>
+    <manufacturers-form
+      v-model="form"
+      :loading="loading === 'loading'"
+      type="create"
+      @submit="create"
+    />
     <manufacturers-list />
   </div>
 </template>

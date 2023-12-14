@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { computed, onBeforeMount, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { deleteOneById, getAll } from '@/db/queries/tables'
+import { VTabs, VTable, VLoader, VButton, VConfirm } from '@/components/UI'
 import type { Loading } from '@/types'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
-import { computed, onBeforeMount, ref, watch } from 'vue'
-import { VTabs, VTable, VLoader, VButton, VConfirm } from '@/components/UI'
 
 type Category = {
   enTitle: string
@@ -15,7 +16,11 @@ const specifications = defineModel<CategorySpecificationRead[]>({
   required: true,
   local: true
 })
-const currentCategoryId = ref<number | null>(null)
+
+const route = useRoute()
+const currentCategoryId = ref<number | null>(
+  route.query.specificationId ? Number(route.query.specificationId) : null
+)
 const categories = ref<Category[]>([])
 const categorySpecifications = computed(() => {
   return specifications.value.filter(
@@ -36,7 +41,7 @@ onBeforeMount(async () => {
     return
   }
   categories.value = categoriesData
-  currentCategoryId.value = categoriesData[0].id
+  currentCategoryId.value = currentCategoryId.value ?? categoriesData[0].id
   loadingGetCategories.value = 'success'
 })
 
@@ -55,28 +60,34 @@ const remove = async (id: number) => {
 }
 
 const loadingGetSpecifications = ref<Loading>('success')
-watch(currentCategoryId, async () => {
-  const findedSpecifications = specifications.value.find(
-    (e) => e.categoryId === currentCategoryId.value
-  )
-  loadingGetSpecifications.value = 'loading'
-  if (!currentCategoryId.value || findedSpecifications) {
-    loadingGetSpecifications.value = 'success'
-    return
-  }
-  const { data, error } = await getAll('category_specifications', {
-    match: {
-      categoryId: currentCategoryId.value
+watch(
+  currentCategoryId,
+  async () => {
+    const findedSpecifications = specifications.value.find(
+      (e) => e.categoryId === currentCategoryId.value
+    )
+    loadingGetSpecifications.value = 'loading'
+    if (!currentCategoryId.value || findedSpecifications) {
+      loadingGetSpecifications.value = 'success'
+      return
     }
-  })
-  if (error) return
-  if (!data.length) {
-    loadingGetSpecifications.value = 'empty'
-    return
+    const { data, error } = await getAll('category_specifications', {
+      match: {
+        categoryId: currentCategoryId.value
+      }
+    })
+    if (error) return
+    if (!data.length) {
+      loadingGetSpecifications.value = 'empty'
+      return
+    }
+    specifications.value.push(...data)
+    loadingGetSpecifications.value = 'success'
+  },
+  {
+    immediate: true
   }
-  specifications.value.push(...data)
-  loadingGetSpecifications.value = 'success'
-})
+)
 </script>
 
 <template>
@@ -90,6 +101,7 @@ watch(currentCategoryId, async () => {
             value: e.id
           }))
         "
+        query-param-name="specificationId"
       />
       <v-table
         title="Характеристики категории"

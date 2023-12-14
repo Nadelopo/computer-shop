@@ -1,60 +1,87 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
+import { VTable, VButton, VConfirm } from '@/components/UI'
+import { removeFromStorage } from '@/db/queries/storage'
+import { deleteOneById } from '@/db/queries/tables'
+import type { Loading } from '@/types'
 
 const { categories } = storeToRefs(useCategoriesStore())
+
+const loadingRemove = ref<Loading>('success')
+const currentRemoveCategoryId = ref(0)
+const remove = async (id: number, img: string) => {
+  currentRemoveCategoryId.value = id
+  loadingRemove.value = 'loading'
+  const { data, error } = await deleteOneById('categories', id)
+  if (error) {
+    loadingRemove.value = 'error'
+    return
+  }
+  categories.value = categories.value.filter((e) => e.id !== data.id)
+  const { data: imageData } = await removeFromStorage('categories', img)
+  if (!imageData?.length) {
+    loadingRemove.value = 'error'
+    return
+  }
+  loadingRemove.value = 'success'
+}
 </script>
 
 <template>
-  <div class="grid">
-    <router-link
-      v-for="category in categories"
-      :key="category.id"
-      :to="{
-        name: 'EditCategory',
-        params: { id: category.id, category: category.enTitle }
-      }"
-      class="wrapper"
-      title="нажмите для изменения"
-    >
-      <div class="text-xl font-bold">{{ category.title }}</div>
-      <div>
-        <img
-          :src="category.img"
-          alt="img"
-        />
-      </div>
-    </router-link>
-  </div>
+  <v-table
+    class="mt-6"
+    line
+  >
+    <thead>
+      <tr>
+        <th>Наименование</th>
+        <th>Наименование на английском</th>
+        <th>Изображение</th>
+        <th class="w-1">Действия</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        v-for="category in categories"
+        :key="category.id"
+      >
+        <td>{{ category.title }}</td>
+        <td>{{ category.enTitle }}</td>
+        <td>
+          <img
+            class="max-w-[120px]"
+            :src="category.img"
+            alt=""
+          />
+        </td>
+        <td>
+          <v-button class="mb-2">
+            <router-link
+              :to="{
+                name: 'EditCategory',
+                params: {
+                  category: category.title,
+                  id: category.id
+                }
+              }"
+            >
+              изменить
+            </router-link>
+          </v-button>
+          <v-confirm
+            :message="'Вы точно хотите удалить категорю - ' + category.title"
+            :loading="
+              loadingRemove === 'loading' &&
+              currentRemoveCategoryId === category.id
+            "
+            type="danger"
+            label="удалить"
+            @ok="remove(category.id, category.img)"
+          />
+        </td>
+      </tr>
+    </tbody>
+  </v-table>
 </template>
-
-<style scoped lang="sass">
-.grid
-  margin-top: 20px
-  display: grid
-  grid-template-columns: repeat(4, 1fr)
-  justify-items: center
-  gap: 100px
-
-.wrapper
-  cursor: pointer
-  background: #fff
-  padding: 20px 20px
-  width: 100%
-  display: flex
-  justify-content: center
-  flex-direction: column
-  justify-content: space-between
-  box-shadow: 0 0 6px 3px rgb(1,1,1,0.1)
-  border-radius: 6px
-  transition: .2s
-  div
-    align-self: center
-    transition: .3s
-    img
-      max-height: 150px
-  &:hover div
-    color: var(--color-text)
-  &:hover
-    box-shadow: 0 0 10px 3px rgb(1,1,1,0.2)
-</style>

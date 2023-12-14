@@ -3,11 +3,12 @@ import { ref, onBeforeMount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import { VButton, VLoader, VInputText, VInputFile } from '@/components/UI'
+import { VButton, VLoader } from '@/components/UI'
 import { getOneById } from '@/db/queries/tables'
 import type { CategoryUpdate } from '@/types/tables/categories.types'
 import type { Loading } from '@/types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
+import CategoriesForm from '@/components/Admin/Categories/CategoriesForm.vue'
 
 //type
 const categoryHasId = (
@@ -27,12 +28,12 @@ const { updateCategory } = useCategoriesStore()
 const categoryId = Number(route.params.id)
 
 const loading = ref<Loading>('loading')
-const category = ref<CategoryUpdate | null>(null)
+const form = ref<CategoryUpdate>({})
 
-const setCategoryData = async () => {
+onBeforeMount(async () => {
   const currentCategory = categories.value.find((c) => c.id === categoryId)
   if (currentCategory) {
-    category.value = currentCategory
+    form.value = currentCategory
     loading.value = 'success'
     return
   }
@@ -41,29 +42,26 @@ const setCategoryData = async () => {
     loading.value = 'error'
     return
   }
-  category.value = data
+  form.value = data
   loading.value = 'success'
-}
-
-onBeforeMount(async () => {
-  await setCategoryData()
 })
 
-const inputFileRef = ref<InputFileActions>()
-const save = async () => {
-  if (categoryHasId(category.value)) {
-    loading.value = 'loading'
-    const data = await inputFileRef.value?.onSave()
+const loadingSave = ref<Loading>('success')
+const save = async (fileActions: InputFileActions | undefined) => {
+  loadingSave.value = 'loading'
+  if (categoryHasId(form.value)) {
+    const data = await fileActions?.onSave()
     if (!data) return
     if (data.error) {
-      loading.value = 'error'
+      loadingSave.value = 'error'
       return
     }
-    category.value.img = data.url
-    await updateCategory(category.value)
-    router.push({
+    form.value.img = data.url
+    await updateCategory(form.value)
+    await router.push({
       name: 'AdminCategories'
     })
+    loadingSave.value = 'success'
   }
 }
 
@@ -74,32 +72,14 @@ const back = async () => {
 
 <template>
   <div class="container">
-    <form
-      v-if="loading === 'success' && category"
-      class="list__form mt-16"
-      @submit.prevent="save"
-    >
-      <div>
-        <label>наименование на русском</label>
-        <v-input-text v-model="category.title" />
-      </div>
-      <div>
-        <label>наименование на английском</label>
-        <v-input-text v-model="category.enTitle" />
-      </div>
-      <div>
-        <label>изображение</label>
-        <v-input-file
-          ref="inputFileRef"
-          :file-url="category.img"
-          :required="false"
-          folder="categories"
-        />
-      </div>
-      <div>
-        <v-button>сохранить</v-button>
-      </div>
-    </form>
+    <categories-form
+      v-if="loading === 'success' && form.id"
+      v-model="form"
+      type="update"
+      :loading="loadingSave === 'loading'"
+      class="pt-16"
+      @submit="save"
+    />
     <div
       v-else
       class="min-h-screen flex justify-center items-center"

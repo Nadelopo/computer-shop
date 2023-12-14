@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import CategoriesList from '@/components/Admin/Categories/CategoriesList.vue'
-import { VButton, VInputFile, VInputText } from '@/components/UI'
+import CategoriesForm from '@/components/Admin/Categories/CategoriesForm.vue'
 import type { CategoryCreate } from '@/types/tables/categories.types'
 import type { Loading } from '@/types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
@@ -15,12 +15,12 @@ let form = ref<CategoryCreate>({
   enTitle: ''
 })
 
-const inputFileRef = ref<InputFileActions>()
-const loading = ref<Loading>('loading')
-const create = async () => {
-  const { error: errorImage, url } = (await inputFileRef.value?.onSave()) || {}
+const loadingCreate = ref<Loading>('success')
+const create = async (fileActions: InputFileActions | undefined) => {
+  loadingCreate.value = 'loading'
+  const { error: errorImage, url } = (await fileActions?.onSave()) || {}
   if (errorImage) {
-    loading.value = 'error'
+    loadingCreate.value = 'error'
     return
   }
   if (url) {
@@ -28,7 +28,7 @@ const create = async () => {
   }
   const { error } = await createCategory(form.value)
   if (error) {
-    loading.value = 'error'
+    loadingCreate.value = 'error'
     return
   }
   form.value = {
@@ -36,39 +36,17 @@ const create = async () => {
     title: '',
     enTitle: ''
   }
-  loading.value = 'success'
+  fileActions?.clear()
+  loadingCreate.value = 'success'
 }
 </script>
 
 <template>
-  <div>
-    <form
-      class="list__form"
-      @submit.prevent="create"
-    >
-      <div>
-        <label>загрузить изображение</label>
-        <v-input-file
-          ref="inputFileRef"
-          :file-url="form.img"
-          class="mt-4"
-          folder="categories"
-        />
-      </div>
-      <div>
-        <label>наименование на английском</label>
-        <v-input-text v-model="form.enTitle" />
-      </div>
-      <div>
-        <label>наименование на русском</label>
-        <v-input-text v-model="form.title" />
-      </div>
-      <div>
-        <v-button>создать категорию</v-button>
-      </div>
-    </form>
-    <hr class="my-8" />
-    <div class="text-2xl font-bold mb-16">Изменение категоирии</div>
-    <categories-list />
-  </div>
+  <categories-form
+    v-model="form"
+    type="create"
+    :loading="loadingCreate === 'loading'"
+    @submit="create"
+  />
+  <categories-list />
 </template>

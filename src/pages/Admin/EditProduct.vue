@@ -1,177 +1,143 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/productsStore'
-import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { getAll, getOneById } from '@/db/queries/tables'
-import {
-  VButton,
-  VLoader,
-  VInputText,
-  VInputFile,
-  VSelect,
-  VButtons
-} from '@/components/UI'
-import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
+import ProductsForm from '@/components/Admin/Products/ProductsForm.vue'
+import { VButton, VLoader } from '@/components/UI'
 import type { Loading } from '@/types'
+import type { SpecificationUpdate } from '@/types/tables/specifications.types'
 import type {
-  SpecificationRead,
-  SpecificationUpdate
-} from '@/types/tables/specifications.types'
-import type {
-  ProductReadWithDetails,
+  ProductCreate,
   ProductUpdate
 } from '@/types/tables/products.types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
-
-type ProductSpecificationOnEdit = SpecificationRead & {
-  category_specifications: Omit<
-    CategorySpecificationRead,
-    'created_at' | 'categoryId' | 'enTitle' | 'condition'
-  >
-}
-
-type ProductWithSpecificationsOnEdit = ProductReadWithDetails & {
-  specifications: ProductSpecificationOnEdit[]
-}
+import type { SpecificationUpdateForm } from '@/components/Admin/Products/types'
 
 type SpecificationUpdateMany = SpecificationUpdate &
   Required<Pick<SpecificationUpdate, 'id'>>
 
-const router = useRouter()
-const route = useRoute()
-
 const { updateProduct, updateProductSpecifications } = useProductsStore()
-const { manufacturers } = storeToRefs(useManufacturersStore())
 
-const id = Number(route.params.id)
-const categoryId = Number(route.params.categoryId)
-const categoryTitle = route.params.category
-
-const product = ref<ProductWithSpecificationsOnEdit | null>(null)
-const img = ref<string[]>([])
-const manufacturerSelect = ref(0)
+const route = useRoute()
+const productId = Number(route.params.id)
+const product = ref<ProductCreate | null>(null)
+const specifications = ref<SpecificationUpdateForm[]>([])
 const loading = ref<Loading>('loading')
-
 onBeforeMount(async () => {
   const [
     { data: productData, error: errorData },
-    { data: specifications, error: errorSpecifications }
+    { data: specificationsData, error: errorSpecifications }
   ] = await Promise.all([
     getOneById(
       'products',
-      id,
+      productId,
       '*, manufacturers(id, title), categories(id, enTitle)'
     ),
     getAll('specifications', {
-      match: { productId: id },
+      match: { productId: productId },
       select:
         '*, category_specifications(id, title, visible, units, type, step, min, max, variantsValues)',
       order: ['categorySpecificationsId']
     })
   ])
-
   if (errorData || errorSpecifications) {
     loading.value = 'error'
     return
   }
-
-  if (productData && specifications) {
-    img.value = productData.img
-    manufacturerSelect.value = productData.manufacturers.id
-    product.value = { ...productData, specifications }
-    loading.value = 'success'
-  }
+  product.value = productData
+  specifications.value = specificationsData.map((s) => {
+    const staticFields = {
+      id: s.id,
+      productId,
+      categorySpecificationsId: s.categorySpecificationsId,
+      title: s.category_specifications.title
+    }
+    if (s.category_specifications.type === 'number') {
+      return {
+        ...staticFields,
+        type: 'number',
+        valueNumber: s.valueNumber!,
+        valueString: null
+      }
+    } else {
+      return {
+        ...staticFields,
+        valueNumber: null,
+        type: s.category_specifications.type,
+        valueString: s.valueString!,
+        variantsValues: s.category_specifications.variantsValues!
+      }
+    }
+  })
+  loading.value = 'success'
 })
 
-const inputFileRef = ref<InputFileActions<string[]>>()
-const save = async () => {
-  const productValue = product.value
-  if (productValue) {
-    loading.value = 'loading'
-    const { url, error: errorImage } =
-      (await inputFileRef.value?.onSave()) || {}
-    if (errorImage) {
-      loading.value = 'error'
-    }
-    if (url) {
-      productValue.img = url
-    }
-
-    const price = Math.round(
-      productValue.discount
-        ? productValue.priceWithoutDiscount -
-            (productValue.priceWithoutDiscount * productValue.discount) / 100
-        : productValue.priceWithoutDiscount
-    )
-    const productUpdate: ProductUpdate = {
-      name: productValue.name,
-      description: productValue.description,
-      img: productValue.img,
-      manufacturerId: manufacturerSelect.value,
-      warranty: productValue.warranty,
-      price,
-      priceWithoutDiscount: productValue.priceWithoutDiscount,
-      discount: productValue.discount,
-      quantity: productValue.quantity,
-      sell: productValue.sell
-    }
-
-    const newSpecifications: SpecificationUpdateMany[] =
-      productValue.specifications.map((spec) => {
-        return {
-          id: spec.id,
-          valueNumber: spec.valueNumber,
-          valueString: spec.valueString
-        }
-      })
-
-    product.value = null
-    const response = await Promise.all([
-      updateProductSpecifications(newSpecifications),
-      updateProduct(id, productUpdate)
-    ])
-
-    const error = response.some((e) => e === null)
-    if (error) {
-      loading.value = 'error'
-      return
-    }
-
-    router.push({
-      name: 'AdminProducts',
-      params: { category: categoryTitle, id: categoryId }
-    })
-  }
-}
-
-const specificationsVariantsValues = (i: number) => {
-  let arr: { value: string; title: string }[] = []
-  const varinsValues =
-    product.value?.specifications[i].category_specifications.variantsValues
-  if (varinsValues) {
-    arr = varinsValues.map((e) => ({
-      value: e,
-      title: e
-    }))
-  }
-  return arr
-}
-
-const manufacturersSelect = computed(() => {
-  let arr = []
-  arr = manufacturers.value.map((e) => ({ value: e.id, title: e.title }))
-  return arr
-})
-
+const router = useRouter()
 const back = async () => {
   loading.value = 'loading'
-
   router.push({
     name: 'AdminProducts',
-    params: { category: categoryTitle, id: categoryId }
+    params: {
+      category: route.params.category,
+      id: Number(route.params.categoryId)
+    }
   })
+}
+
+const save = async (fileActions: InputFileActions<string[]> | undefined) => {
+  const productValue = product.value
+  if (!productValue) return
+  loading.value = 'loading'
+  const { url, error: errorImage } = (await fileActions?.onSave()) || {}
+  if (errorImage) {
+    loading.value = 'error'
+  }
+  if (url) {
+    productValue.img = url
+  }
+
+  const price = Math.round(
+    productValue.discount
+      ? productValue.priceWithoutDiscount -
+          (productValue.priceWithoutDiscount * productValue.discount) / 100
+      : productValue.priceWithoutDiscount
+  )
+  const productUpdate: ProductUpdate = {
+    name: productValue.name,
+    description: productValue.description,
+    img: productValue.img,
+    manufacturerId: productValue.manufacturerId,
+    warranty: productValue.warranty,
+    price,
+    priceWithoutDiscount: productValue.priceWithoutDiscount,
+    discount: productValue.discount,
+    quantity: productValue.quantity,
+    sell: productValue.sell
+  }
+  const newSpecifications: SpecificationUpdateMany[] = specifications.value.map(
+    ({ id, valueNumber, valueString }) => {
+      return {
+        id,
+        valueNumber,
+        valueString
+      }
+    }
+  )
+
+  product.value = null
+  const response = await Promise.all([
+    updateProductSpecifications(newSpecifications),
+    updateProduct(productId, productUpdate)
+  ])
+
+  const error = response.some((e) => e === null)
+  if (error) {
+    loading.value = 'error'
+    return
+  }
+
+  back()
 }
 </script>
 
@@ -181,119 +147,14 @@ const back = async () => {
       v-if="product && loading === 'success'"
       class="container"
     >
-      <form
-        class="list__form pt-10"
-        @submit.prevent="save"
-      >
-        <div
-          v-for="(specification, i) in product.specifications"
-          :key="specification.category_specifications.id"
-        >
-          <label :for="String(specification.id)">
-            {{ specification.category_specifications.title }}
-          </label>
-          <template
-            v-if="specification.category_specifications.type === 'number'"
-          >
-            <v-input-text
-              :id="String(specification.id)"
-              v-model="specification.valueNumber"
-              :step="specification.category_specifications.step"
-              :min="specification.category_specifications.min"
-              :max="specification.category_specifications.max"
-              type="number"
-            />
-          </template>
-          <div
-            v-else-if="specification.category_specifications.type === 'string'"
-          >
-            <v-select
-              v-model="specification.valueString![0]"
-              class="mt-2"
-              :options="specificationsVariantsValues(i)"
-            />
-          </div>
-          <div v-else>
-            <v-buttons
-              v-if="specification.valueString"
-              v-model="specification.valueString"
-              :options="specificationsVariantsValues(i)"
-              class="mt-2"
-            />
-          </div>
-        </div>
-        <div>
-          <label>наименование</label>
-          <v-input-text v-model.trim="product.name" />
-        </div>
-        <div>
-          <label>описание</label>
-          <v-input-text v-model.trim="product.description" />
-        </div>
-        <div>
-          <label>скидка</label>
-          <v-input-text
-            v-model.number="product.discount"
-            type="number"
-            min="0"
-            max="100"
-          />
-        </div>
-
-        <div>
-          <label>изображение</label>
-          <v-input-file
-            :file-url="product.img"
-            folder="products"
-            :required="false"
-          />
-        </div>
-
-        <div>
-          <label>производитель</label>
-          <div>
-            <v-select
-              v-model="manufacturerSelect"
-              class="mt-2"
-              :options="manufacturersSelect"
-            />
-          </div>
-        </div>
-        <div>
-          <label>продажи</label>
-          <v-buttons
-            v-model="product.sell"
-            class="mt-2"
-            :options="[
-              { title: 'продавать', value: true },
-              { title: 'остановить продажи', value: false }
-            ]"
-          />
-        </div>
-        <div>
-          <label>гарантия</label>
-          <v-input-text
-            v-model="product.warranty"
-            type="number"
-          />
-        </div>
-        <div>
-          <label>цена</label>
-          <v-input-text
-            v-model="product.priceWithoutDiscount"
-            type="number"
-          />
-        </div>
-        <div>
-          <v-button>сохранить</v-button>
-        </div>
-      </form>
-      <v-button
-        class="mt-6"
-        @click="back"
-      >
-        назад
-      </v-button>
+      <products-form
+        v-model="product"
+        v-model:specifications="specifications"
+        type="update"
+        :loading-data="loading"
+        @submit="save"
+      />
+      <v-button @click="back"> назад </v-button>
     </div>
     <div
       v-else

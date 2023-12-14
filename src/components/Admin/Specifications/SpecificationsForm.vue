@@ -191,10 +191,7 @@ watch(
       />
     </div>
     <div>
-      <v-button
-        :loading="loading"
-        class="mt-4"
-      >
+      <v-button :loading="loading">
         {{ type === 'create' ? 'создать характеристику' : 'сохранить' }}
       </v-button>
     </div>

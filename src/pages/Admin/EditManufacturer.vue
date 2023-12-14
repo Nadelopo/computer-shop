@@ -2,7 +2,8 @@
 import { onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
-import { VButton, VLoader, VInputText, VInputFile } from '@/components/UI'
+import { VButton, VLoader } from '@/components/UI'
+import ManufacturersForm from '@/components/Admin/Manufacturers/ManufacturersForm.vue'
 import type { ManufacturerUpdate } from '@/types/tables/manufacturers.types'
 import type { Loading } from '@/types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
@@ -13,39 +14,38 @@ const router = useRouter()
 const { getManufacturer, updateManufacturer } = useManufacturersStore()
 
 const manufactuerId = Number(route.params.id)
-const manufacturer = ref<ManufacturerUpdate | null>(null)
+const form = ref<ManufacturerUpdate>({})
 
-const loading = ref<Loading>('loading')
-
+const loadingGet = ref<Loading>('loading')
 onBeforeMount(async () => {
   const { data, error } = await getManufacturer(manufactuerId)
   if (error) {
-    loading.value = 'error'
+    loadingGet.value = 'error'
     return
   }
-  manufacturer.value = {
+  form.value = {
     title: data.title,
     description: data.description,
     img: data.img
   }
-  loading.value = 'success'
+  loadingGet.value = 'success'
 })
 
-const inputFileRef = ref<InputFileActions>()
-const save = async () => {
-  if (!manufacturer.value) return
-  const { error: errorImage, url } = (await inputFileRef.value?.onSave()) || {}
+// const inputFileRef = ref<InputFileActions>()
+const loadingSave = ref<Loading>('success')
+const save = async (fileActions: InputFileActions | undefined) => {
+  loadingSave.value = 'loading'
+  const { error: errorImage, url } = (await fileActions?.onSave()) || {}
   if (errorImage) {
-    loading.value = 'error'
+    loadingSave.value = 'error'
     return
   }
   if (url) {
-    manufacturer.value.img = url
+    form.value.img = url
   }
-  loading.value = 'loading'
-  const { error } = await updateManufacturer(manufactuerId, manufacturer.value)
+  const { error } = await updateManufacturer(manufactuerId, form.value)
   if (error) {
-    loading.value = 'error'
+    loadingGet.value = 'error'
     return
   }
   router.push({
@@ -55,53 +55,27 @@ const save = async () => {
 </script>
 
 <template>
-  <div>
-    <div
-      v-if="loading === 'success'"
-      class="container"
-    >
-      <form
-        v-if="manufacturer"
-        class="list__form pt-10"
-        @submit.prevent="save"
+  <div class="container">
+    <template v-if="loadingGet === 'success'">
+      <manufacturers-form
+        v-model="form"
+        :loading="loadingSave === 'loading'"
+        type="update"
+        class="pt-10"
+        @submit="save"
+      />
+      <v-button
+        class="mt-4"
+        @click="
+          router.push({
+            name: 'AdminManufacturers',
+            params: { id: manufactuerId }
+          })
+        "
       >
-        <div>
-          <label>наименование</label>
-          <v-input-text v-model="manufacturer.title" />
-        </div>
-        <div>
-          <label>описание</label>
-          <div>
-            <textarea v-model="manufacturer.description" />
-          </div>
-        </div>
-        <div>
-          <label>изображение</label>
-          <div>
-            <v-input-file
-              ref="inputFileRef"
-              :file-url="manufacturer.img"
-              folder="manufacturers"
-              :required="false"
-            />
-          </div>
-        </div>
-        <div>
-          <v-button> сохранить </v-button>
-        </div>
-      </form>
-      <div class="mt-4">
-        <v-button
-          @click="
-            $router.push({
-              name: 'AdminManufacturers'
-            })
-          "
-        >
-          назад
-        </v-button>
-      </div>
-    </div>
+        назад
+      </v-button>
+    </template>
     <div
       v-else
       class="h-screen flex justify-center item-center"
@@ -110,10 +84,3 @@ const save = async () => {
     </div>
   </div>
 </template>
-
-<style scoped lang="sass">
-textarea
-  width: 100%
-  min-height: 50px
-  background: inherit
-</style>
