@@ -35,18 +35,24 @@ const router = createRouter({
 router.beforeEach(async (to, from) => {
   const requireAuth = to.matched.some((record) => record.meta.auth)
   if (!requireAuth) return true
-  const { isUserAuthenticated } = useUserStore()
-  const user = await isUserAuthenticated()
-  if (!user) {
+  const userStore = useUserStore()
+  const isAuth = await userStore.isUserAuthenticated()
+  if (!isAuth) {
     useToast().warning('Требуется авторизация')
     if (!from.name) return { name: 'Home' }
     else return false
   }
   const requireAdmin = to.matched.some((record) => record.meta.admin)
   if (!requireAdmin) return true
-  const { data, error } = await getOneById('users', user.id, 'role')
-  if (error) return false
-  if (data.role !== Role.ADMIN) return { name: 'Home' }
+  let role: number | undefined
+  if (userStore.user) {
+    role = userStore.user.role
+  } else {
+    const { data, error } = await getOneById('users', isAuth.id, 'role')
+    if (error) return { name: 'Home' }
+    role = data.role
+  }
+  if (role !== Role.ADMIN) return { name: 'Home' }
   return true
 })
 
