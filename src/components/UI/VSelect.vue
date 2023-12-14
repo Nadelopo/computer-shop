@@ -135,64 +135,61 @@ const required = computed(() => {
 </script>
 
 <template>
-  <span>
-    <span
-      class="root"
-      v-bind="$attrs"
+  <div
+    class="root__select"
+    v-bind="$attrs"
+  >
+    <button
+      ref="btn"
+      class="select"
+      type="button"
+      :class="{ active }"
+      @focus="onFocus"
     >
-      <button
-        ref="btn"
-        class="select"
-        type="button"
-        :class="{ active }"
-        @focus="onFocus"
+      <div class="head">
+        <span>{{ selected ?? 'Select' }}</span>
+        <arrow-svg
+          class="svg"
+          :class="{ active }"
+        />
+      </div>
+    </button>
+    <transition name="list">
+      <div
+        v-show="active"
+        class="list"
       >
-        <div class="head">
-          <span>{{ selected ?? 'Select' }}</span>
-          <arrow-svg
-            class="svg"
-            :class="{ active }"
-          />
+        <div class="scroll">
+          <button
+            v-for="(option, i) in options"
+            :key="i"
+            ref="optionsRefs"
+            class="option"
+            type="button"
+            :class="modelValue === option.value && 'active '"
+            @click="onOptionClick(option.value, i)"
+            @keyup.arrow-down="onOptionDown(i)"
+            @keyup.arrow-up="onOptionUp(i)"
+          >
+            {{ option.title }}
+          </button>
         </div>
-      </button>
-      <transition name="list">
-        <div
-          v-show="active"
-          class="list"
-        >
-          <div class="scroll">
-            <button
-              v-for="(option, i) in options"
-              :key="i"
-              ref="optionsRefs"
-              class="option"
-              type="button"
-              :class="modelValue === option.value && 'active '"
-              @click="onOptionClick(option.value, i)"
-              @keyup.arrow-down="onOptionDown(i)"
-              @keyup.arrow-up="onOptionUp(i)"
-            >
-              {{ option.title }}
-            </button>
-          </div>
-        </div>
-      </transition>
-      <select
-        :required="required"
-        class="required"
-      />
-    </span>
-  </span>
+      </div>
+    </transition>
+    <select
+      :required="required"
+      class="required"
+    />
+  </div>
 </template>
 
 <style scoped lang="sass">
 $transition: .2s
 $back: var(--back-sec)
 
-.root
+.root__select
   position: relative
   height: 38px
-  display: inline-block
   width: 200px
 
 .select

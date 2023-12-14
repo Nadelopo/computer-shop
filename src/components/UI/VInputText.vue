@@ -32,7 +32,6 @@ const onChange = (e: Event) => {
 }
 
 const inputRef = ref<HTMLInputElement | null>(null)
-
 onMounted(() => {
   if (props.autofocus) {
     inputRef.value?.focus()

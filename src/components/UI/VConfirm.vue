@@ -82,7 +82,7 @@ const onOk = () => {
     padding-top: 0
 .buttons
   display: flex
-  gap: 4px
+  gap: 8px
   padding: 8px
   margin-left: auto
   button:first-child

@@ -14,7 +14,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  onClick: []
+  click: []
 }>()
 
 const currentPage = defineModel<number>({ required: true })
@@ -67,17 +67,17 @@ const otherNextPages = computed(() => {
 
 const setPrev = () => {
   currentPage.value--
-  emit('onClick')
+  emit('click')
 }
 
 const setNext = () => {
   currentPage.value++
-  emit('onClick')
+  emit('click')
 }
 
 const setPage = (page: number) => {
   currentPage.value = page
-  emit('onClick')
+  emit('click')
 }
 </script>
 

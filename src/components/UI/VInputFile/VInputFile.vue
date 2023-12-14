@@ -121,6 +121,15 @@ defineExpose({
 const generateImage = (file: File) => {
   return URL.createObjectURL(file)
 }
+
+const isRequired = computed(() => {
+  if (!props.required) return false
+  if (Array.isArray(props.fileUrl)) {
+    return props.fileUrl.length === 0 || !props.fileUrl[0]
+  } else {
+    return !props.fileUrl
+  }
+})
 </script>
 
 <template>
@@ -144,13 +153,12 @@ const generateImage = (file: File) => {
           {{ file.name }}
         </label>
       </div>
-
       <input
         :id="id"
         ref="inputRef"
         type="file"
         class="input input__hidden"
-        :required="required"
+        :required="isRequired"
         :multiple="multiple"
         @input="onUpdate"
       />

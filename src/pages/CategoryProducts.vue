@@ -83,7 +83,7 @@ const clickOnPaginate = () => {
           :item-count="productCount"
           :page-size="limit"
           class="mb-8"
-          @on-click="clickOnPaginate"
+          @click="clickOnPaginate"
         />
       </div>
     </div>

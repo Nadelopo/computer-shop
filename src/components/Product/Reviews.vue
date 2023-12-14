@@ -199,7 +199,7 @@ const isPageSmall = useMediaQuery('(width < 400px)')
         :page-size="reviewsLimit"
         :page-slots="isPageSmall ? 5 : 7"
         class="mb-8 justify-center md:justify-start"
-        @on-click="clickOnPaginate"
+        @click="clickOnPaginate"
       />
     </div>
   </div>
