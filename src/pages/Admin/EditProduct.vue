@@ -41,8 +41,9 @@ onBeforeMount(async () => {
       order: ['categorySpecificationsId']
     })
   ])
-  if (errorData || errorSpecifications) {
+  if (!productData || !specificationsData) {
     loading.value = 'error'
+    console.log(errorData, errorSpecifications)
     return
   }
   product.value = productData
