@@ -5,14 +5,17 @@ import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { VButton, VLoader } from '@/components/UI'
 import { getOneById } from '@/db/queries/tables'
-import type { CategoryUpdate } from '@/types/tables/categories.types'
+import type {
+  CategoryCreate,
+  CategoryUpdate
+} from '@/types/tables/categories.types'
 import type { Loading } from '@/types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 import CategoriesForm from '@/components/Admin/Categories/CategoriesForm.vue'
 
 //type
 const categoryHasId = (
-  category: CategoryUpdate | null
+  category: CategoryUpdate | undefined
 ): category is Omit<CategoryUpdate, 'id'> & { id: number } => {
   if (category?.id) {
     return true
@@ -28,7 +31,7 @@ const { updateCategory } = useCategoriesStore()
 const categoryId = Number(route.params.id)
 
 const loading = ref<Loading>('loading')
-const form = ref<CategoryUpdate>({})
+const form = ref<CategoryCreate>()
 
 onBeforeMount(async () => {
   const currentCategory = categories.value.find((c) => c.id === categoryId)
@@ -73,7 +76,7 @@ const back = async () => {
 <template>
   <div class="container">
     <categories-form
-      v-if="loading === 'success' && form.id"
+      v-if="loading === 'success' && form"
       v-model="form"
       type="update"
       :loading="loadingSave === 'loading'"

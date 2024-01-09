@@ -138,7 +138,7 @@ const onSubmit = () => {
         type="number"
       />
     </div>
-    <div>
+    <div v-if="product.discount !== undefined">
       <label>скидка %</label>
       <v-input-text
         v-model="product.discount"

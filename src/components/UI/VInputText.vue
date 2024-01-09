@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 
 type Props = {
-  modelValue: string | number | undefined | null
+  modelValue: string | number
   type?: 'text' | 'number'
   required?: boolean
   autofocus?: boolean
@@ -40,7 +40,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="modelValue !== undefined || modelValue !== null">
+  <div>
     <span class="wrapper">
       <input
         :id="id"

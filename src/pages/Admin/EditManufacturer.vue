@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { VButton, VLoader } from '@/components/UI'
 import ManufacturersForm from '@/components/Admin/Manufacturers/ManufacturersForm.vue'
-import type { ManufacturerUpdate } from '@/types/tables/manufacturers.types'
+import type { ManufacturerCreate } from '@/types/tables/manufacturers.types'
 import type { Loading } from '@/types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 
@@ -14,7 +14,7 @@ const router = useRouter()
 const { getManufacturer, updateManufacturer } = useManufacturersStore()
 
 const manufactuerId = Number(route.params.id)
-const form = ref<ManufacturerUpdate>({})
+const form = ref<ManufacturerCreate>()
 
 const loadingGet = ref<Loading>('loading')
 onBeforeMount(async () => {
@@ -34,6 +34,7 @@ onBeforeMount(async () => {
 // const inputFileRef = ref<InputFileActions>()
 const loadingSave = ref<Loading>('success')
 const save = async (fileActions: InputFileActions | undefined) => {
+  if (!form.value) return
   loadingSave.value = 'loading'
   const { error: errorImage, url } = (await fileActions?.onSave()) || {}
   if (errorImage) {
@@ -56,7 +57,7 @@ const save = async (fileActions: InputFileActions | undefined) => {
 
 <template>
   <div class="container">
-    <template v-if="loadingGet === 'success'">
+    <template v-if="loadingGet === 'success' && form">
       <manufacturers-form
         v-model="form"
         :loading="loadingSave === 'loading'"

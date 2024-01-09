@@ -4,7 +4,6 @@ import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { VButtons, VInputText, VButton, VSelect } from '@/components/UI'
 import type { CategorySpecificationForm } from './types'
-import type { CategorySpecificationUpdate } from '@/types/tables/categorySpecifications.types'
 
 const props = defineProps<{
   loading?: boolean
@@ -18,9 +17,7 @@ const emit = defineEmits<{
 const { categories } = storeToRefs(useCategoriesStore())
 const setInitialValue = ref(props.type === 'create')
 
-const form = defineModel<
-  CategorySpecificationForm | CategorySpecificationUpdate
->({ required: true })
+const form = defineModel<CategorySpecificationForm>({ required: true })
 const addVarianValues = () => {
   if (Array.isArray(form.value.variantsValues)) {
     form.value.variantsValues[form.value.variantsValues.length] = ''
@@ -105,6 +102,7 @@ watch(
       <div>
         <label>шаг изменения числа для поля ввода</label>
         <v-input-text
+          v-if="form.step !== null"
           v-model="form.step"
           type="number"
           :step="0.1"
@@ -113,6 +111,7 @@ watch(
       <div>
         <label>минимальное значение для поля ввода</label>
         <v-input-text
+          v-if="form.min !== null"
           v-model="form.min"
           type="number"
           :min="0"
@@ -121,6 +120,7 @@ watch(
       <div>
         <label>максимальное значение для поля ввода</label>
         <v-input-text
+          v-if="form.max !== null"
           v-model="form.max"
           type="number"
           :min="0"

@@ -8,14 +8,14 @@ import { getOneById, updateOneById } from '@/db/queries/tables'
 import SpecificationsForm from '@/components/Admin/Specifications/SpecificationsForm.vue'
 import { VButton, VLoader } from '@/components/UI'
 import type {
-  CategorySpecificationRead,
-  CategorySpecificationUpdate
+  CategorySpecificationCreate,
+  CategorySpecificationRead
 } from '@/types/tables/categorySpecifications.types'
 import type { Loading } from '@/types'
 import type { SpecificationRead } from '@/types/tables/specifications.types'
 
 const { categories } = storeToRefs(useCategoriesStore())
-const form = ref<CategorySpecificationUpdate>()
+const form = ref<CategorySpecificationCreate>()
 const route = useRoute()
 const router = useRouter()
 const loading = ref<Loading>('loading')
@@ -59,8 +59,9 @@ const save = async () => {
       .from('specifications')
       .update(updateValues)
       .eq('categorySpecificationsId', form.value.id)
-    console.log('change')
-    console.log(errorUpdate)
+    if (errorUpdate) {
+      console.log(errorUpdate)
+    }
   }
   router.push({ name: 'AdminSpecifications' })
 }

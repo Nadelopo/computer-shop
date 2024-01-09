@@ -2,10 +2,7 @@
 import { ref } from 'vue'
 import { VButton, VInputFile, VInputText, VTextarea } from '@/components/UI'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
-import type {
-  ManufacturerCreate,
-  ManufacturerUpdate
-} from '@/types/tables/manufacturers.types'
+import type { ManufacturerCreate } from '@/types/tables/manufacturers.types'
 
 defineProps<{
   loading?: boolean
@@ -16,7 +13,7 @@ const emit = defineEmits<{
   submit: [FileActions: InputFileActions | undefined]
 }>()
 
-const form = defineModel<ManufacturerCreate | ManufacturerUpdate>({
+const form = defineModel<ManufacturerCreate>({
   required: true
 })
 

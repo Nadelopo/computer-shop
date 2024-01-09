@@ -2,17 +2,14 @@
 import { ref } from 'vue'
 import { VInputText, VInputFile, VButton } from '@/components/UI'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
-import type {
-  CategoryCreate,
-  CategoryUpdate
-} from '@/types/tables/categories.types'
+import type { CategoryCreate } from '@/types/tables/categories.types'
 
 defineProps<{
   type: 'create' | 'update'
   loading: boolean
 }>()
 
-const form = defineModel<CategoryCreate | CategoryUpdate>({ required: true })
+const form = defineModel<CategoryCreate>({ required: true })
 
 const emit = defineEmits<{
   submit: [FileActions: InputFileActions | undefined]
