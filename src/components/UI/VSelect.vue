@@ -6,9 +6,11 @@ import { ArrowSvg } from '@/assets/icons'
 type Props = {
   options: { title: string; value: string | number | boolean }[]
   required?: boolean
+  width?: 'max' | 'static'
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  width: 'static',
   required: true
 })
 
@@ -23,6 +25,8 @@ const modelValue = defineModel<
 defineOptions({
   inheritAttrs: false
 })
+
+const widthValue = computed(() => (props.width === 'max' ? '100%' : '200px'))
 
 const btn = ref<HTMLElement>()
 const active = onClickOutsideClose(btn)
@@ -144,6 +148,7 @@ const required = computed(() => {
       class="select"
       type="button"
       :class="{ active }"
+      :title="options.find((e) => e.value === modelValue)?.title"
       @focus="onFocus"
     >
       <div class="head">
@@ -190,13 +195,13 @@ $back: var(--back-sec)
 .root__select
   position: relative
   height: 38px
-  width: 200px
+  width: v-bind(widthValue)
 
 .select
   border-radius: 12px
   background: $back
   border: 2px solid transparent
-  width: 200px
+  width: v-bind(widthValue)
   height: 38px
   color: v-bind(color)
   padding: 7px 13px
@@ -245,7 +250,7 @@ $back: var(--back-sec)
   z-index: 100
   .scroll
     max-height: 200px
-    overflow: auto
+    overflow-y: auto
     &::-webkit-scrollbar
       width: 4px
     &::-webkit-scrollbar-track
@@ -272,11 +277,13 @@ $back: var(--back-sec)
   transition: $transition
   cursor: pointer
   text-align: start
-  width: 94%
+  width: calc(100% - 6px)
   border-radius: 7px
   margin-bottom: 2px
   &:hover, &:focus, &.active
     transform: translateX(6px)
+    width: calc( 100% - 12px )
+    margin-right: 6px
     outline: none
     color: var(--color-text)
   &:hover, &:focus

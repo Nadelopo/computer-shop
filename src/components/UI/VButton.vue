@@ -6,12 +6,14 @@ type Props = {
   variant?: 'primary' | 'danger' | 'noactive'
   loading?: boolean
   width?: string
+  size?: 'normal' | 'small'
 }
 
 const props = withDefaults(defineProps<Props>(), {
   variant: 'primary',
   width: '100px',
-  loading: false
+  loading: false,
+  size: 'normal'
 })
 
 const width = computed(() => props.width ?? 'auto')
@@ -21,10 +23,13 @@ const width = computed(() => props.width ?? 'auto')
   <button
     v-wave
     class="btn"
-    :class="{
-      danger: variant === 'danger',
-      noactive: variant === 'noactive'
-    }"
+    :class="[
+      {
+        danger: variant === 'danger',
+        noactive: variant === 'noactive'
+      },
+      size
+    ]"
   >
     <template v-if="loading">
       <v-loader :color="variant === 'danger' && '#f96464'" />
@@ -54,7 +59,9 @@ const width = computed(() => props.width ?? 'auto')
   svg
     width: 24px
     @media (width < 426px)
-      width: 21px
+      width: 16px
+  &.small svg
+    width: 16px
 
 .btn
   min-width: v-bind(width)

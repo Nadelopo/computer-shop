@@ -4,10 +4,12 @@ import { ref, watch } from 'vue'
 type Props = {
   modelValue: number
   static?: boolean
+  size?: 'normal' | 'small'
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  static: true
+  static: true,
+  size: 'normal'
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -36,17 +38,17 @@ const arr = [5, 4, 3, 2, 1]
           :key="i"
           :title="`Оценка «${i}»`"
           class="rating__static"
-          :class="{ coloured: Math.round(modelValue) + 1 > i }"
+          :class="[{ coloured: Math.round(modelValue) + 1 > i }, size]"
         />
       </template>
     </div>
-    <div>
+    <div :class="[size === 'normal' ? 'text-lg' : 'text-base']">
       {{ modelValue ? modelValue.toFixed(2) : 'нет отзывов' }}
     </div>
   </div>
   <div
     v-else
-    class="rating area"
+    class="rating"
   >
     <template
       v-for="i in arr"
@@ -62,6 +64,7 @@ const arr = [5, 4, 3, 2, 1]
       <label
         :for="'star-' + i"
         :title="`Оценка «${i}»`"
+        :class="[size]"
       />
     </template>
   </div>
@@ -71,8 +74,7 @@ const arr = [5, 4, 3, 2, 1]
 
 .rating
   overflow: hidden
-  &.area
-    width: 210px
+  width: max-content
   &:not(:checked)
     >
       input
@@ -87,6 +89,9 @@ const arr = [5, 4, 3, 2, 1]
         color: lightgrey
         text-shadow: 1px 1px #bbb
         transition: 0.3s
+        &.small
+          font-size: 16px
+          width: 16px
         &:before
           content: '★'
 
@@ -125,10 +130,13 @@ const arr = [5, 4, 3, 2, 1]
   font-size: 32px
   line-height: 32px
   text-shadow: 1px 1px #bbb
-  transition: 0.3s
+  transition: transform 0.3s, color 0.3s
   color: lightgrey
   &:before
     content: '★'
   &.coloured
     color: var(--color-main)
+  &.small
+    font-size: 16px
+    width: 16px
 </style>
