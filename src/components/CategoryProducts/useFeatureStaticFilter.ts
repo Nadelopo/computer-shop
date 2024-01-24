@@ -35,8 +35,11 @@ export const useFeatureStringStaticFilter = (options?: Options) => {
   ) => {
     if (valuesData) variantsValues.value = valuesData
     const queryValues = getValuesFromQuery(value, false)
-    if (!queryValues) return
-    values.value = queryValues.values.map(Number)
+    if (queryValues) {
+      values.value = queryValues.values.map(Number)
+    } else {
+      values.value = []
+    }
   }
   const clear = () => {
     values.value = []
