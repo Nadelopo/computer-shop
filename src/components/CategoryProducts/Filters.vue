@@ -1,129 +1,30 @@
 <script setup lang="ts">
-import { nextTick, onBeforeMount, onUnmounted, ref, watch } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { supabase } from '@/db/supabase'
-import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useFilterStore } from '@/stores/filterStore'
 import { VButton } from '@/components/UI'
 import InputFilter from '@/components/CategoryProducts/InputFilter.vue'
 import CheckboxFilter from './CheckboxFilter.vue'
 import FilterListSkeleton from './FiltersSkeleton.vue'
-import { getValuesFromQuery } from './useFeatureStaticFilter'
 import type { Loading } from '@/types'
 
-type SortType = keyof typeof sortAscents
-function isSortType(key: string): key is SortType {
-  if (key in sortAscents) {
-    return true
-  }
-  return false
+type Props = {
+  loadingProperties: Loading
+  type?: 'mobile' | 'desktop'
 }
 
-const { getCategorySpecifications } = useCategoriesStore()
-const {
-  setQueryParams,
-  setFilteredProducts,
-  sortAscents,
-  productsPrice,
-  warranty,
-  manufacturer
-} = useFilterStore()
-const { specificationsValues, search, currentPage, sortColumn, loading } =
-  storeToRefs(useFilterStore())
-
-const route = useRoute()
-const categoryId = Number(route.params.id)
-const loadingProperties = ref<Loading>('loading')
-const manufacturers = ref<
-  { manufacturerId: number; manufacturerTitle: string }[]
->([])
-onBeforeMount(async () => {
-  const [{ data }, { data: manufacturersData }] = await Promise.all([
-    getCategorySpecifications(categoryId),
-    supabase
-      .from('distinct_categories')
-      .select('manufacturerId, manufacturerTitle')
-      .eq('id', categoryId)
-      .order('manufacturerId')
-  ])
-  if (!data || !manufacturersData) {
-    loadingProperties.value = 'error'
-    return
-  }
-  manufacturers.value = manufacturersData
-  specificationsValues.value = data.map((e) => {
-    const { id, enTitle, visible } = e
-    if (e.type === 'number') {
-      const { min, max, step } = e
-      return {
-        id,
-        enTitle,
-        title: e.title[0].toUpperCase() + e.title.slice(1),
-        type: e.type,
-        min,
-        max,
-        minValue: min,
-        maxValue: max,
-        step,
-        visible
-      }
-    } else {
-      return {
-        id,
-        enTitle,
-        title: e.title[0].toUpperCase() + e.title.slice(1),
-        type: e.type,
-        variantsValues: e.variantsValues,
-        values: [],
-        visible
-      }
-    }
-  })
-  await setFilterProperties()
-  setFilteredProducts(categoryId)
+const props = withDefaults(defineProps<Props>(), {
+  type: 'desktop'
 })
 
-const setFilterProperties = async () => {
-  const query = route.query
-  currentPage.value = query.page ? Number(query.page) - 1 : 0
-  search.value = query.q ? String(query.q) : ''
-  const querySort =
-    typeof query.sort === 'string' ? query.sort.split('_') : null
+const { setQueryParams, productsPrice, warranty, manufacturer } =
+  useFilterStore()
+const { specificationsValues, search, currentPage } = storeToRefs(
+  useFilterStore()
+)
 
-  if (querySort) {
-    const querySortTitle = querySort[0]
-    const querySortValue: boolean = !(querySort[1] == 'false')
-    if (isSortType(querySortTitle)) {
-      sortAscents[querySortTitle] = querySortValue
-      sortColumn.value = querySortTitle
-    }
-  }
-  productsPrice.setValues(query.price)
-  warranty.setValues(query.warranty)
-  manufacturer.setValues(
-    route.query.manufacturer,
-    manufacturers.value.map((e) => ({
-      id: e.manufacturerId,
-      title: e.manufacturerTitle
-    }))
-  )
-  for (const value of specificationsValues.value) {
-    const field = query[value.enTitle]
-    const values = getValuesFromQuery(field, value.type === 'number')
-    if (!values) continue
-    if (value.type === 'number') {
-      if ('min' in values) {
-        value.minValue = values.min
-        value.maxValue = values.max
-      }
-    } else if ('values' in values) {
-      value.values = values.values
-    }
-  }
-  loadingProperties.value = 'success'
-}
-
+const route = useRoute()
 const router = useRouter()
 const apply = () => {
   setQueryParams(router, route)
@@ -147,18 +48,6 @@ const cancel = () => {
   router.push({ query: {} })
 }
 
-watch(
-  () => route.params,
-  async () => {
-    loading.value = 'loading'
-    await setFilterProperties()
-    setFilteredProducts(categoryId)
-  },
-  {
-    flush: 'post'
-  }
-)
-
 const visibilityFilters = ref<boolean[]>([])
 const watcher = watch(
   () => specificationsValues.value.length,
@@ -166,22 +55,109 @@ const watcher = watch(
     if (!specificationsValues.value.length) return
     visibilityFilters.value = Array(specificationsValues.value.length)
       .fill(null)
-      .map((_, i) => (specificationsValues.value[i].visible ? true : false))
+      // .map(() => true)
+      .map((_, i) => specificationsValues.value[i].visible)
     await nextTick()
     watcher()
   },
   { immediate: true }
 )
+
+const filtersRef = ref<HTMLFormElement>()
+// const isFiltersBottomVisible = ref(false)
+
+let isScrollingDown = false
+let prevSCrollY = window.scrollY
+const setScrollPosition = () => {
+  const currentScrollY = window.scrollY
+  if (currentScrollY > prevSCrollY) {
+    isScrollingDown = true
+  } else {
+    isScrollingDown = false
+  }
+  prevSCrollY = currentScrollY
+}
+
+//refactor
+const classes = ref('')
+const onScroll = () => {
+  if (props.type === 'mobile') return
+  const filtersRefValue = filtersRef.value
+  if (!filtersRefValue) return
+  setScrollPosition()
+  let isFiltersBottomVisible = false
+  if (window.innerHeight > filtersRefValue.scrollHeight) {
+    classes.value = 'sticky top-5'
+    return
+  }
+  const isFiltersTopVisible = window.scrollY < filtersRefValue.offsetTop
+  if (filtersRefValue.parentElement!.getBoundingClientRect().top > 0) {
+    classes.value = 'relative'
+    filtersRefValue.removeAttribute('style')
+    return
+  }
+  const filtersBoundingRect = filtersRefValue.getBoundingClientRect()
+  if (
+    window.innerHeight + Math.abs(filtersBoundingRect.y) >
+    filtersRefValue.scrollHeight
+  ) {
+    isFiltersBottomVisible = true
+  } else {
+    isFiltersBottomVisible = false
+  }
+
+  if (isScrollingDown) {
+    if (
+      isFiltersBottomVisible &&
+      !isFiltersTopVisible &&
+      !filtersRefValue.classList.contains('fixed')
+    ) {
+      filtersRefValue.removeAttribute('style')
+      classes.value = 'fixed bottom-5'
+    } else if (
+      !filtersRefValue.classList.contains('absolute') &&
+      !isFiltersBottomVisible
+    ) {
+      classes.value = 'absolute'
+      filtersRefValue.style.top = `${
+        window.scrollY + filtersBoundingRect.top
+      }px`
+    }
+  } else {
+    if (isFiltersTopVisible && !isFiltersBottomVisible) {
+      filtersRefValue.removeAttribute('style')
+      classes.value = 'fixed top-5'
+    }
+    if (
+      isFiltersBottomVisible &&
+      !isFiltersTopVisible &&
+      !filtersRefValue.classList.contains('absolute')
+    ) {
+      classes.value = 'absolute'
+      filtersRefValue.style.top = `${
+        filtersBoundingRect.top + window.scrollY
+      }px`
+    }
+  }
+}
+
+onMounted(() => {
+  if (props.type === 'desktop') {
+    window.addEventListener('scroll', onScroll)
+  }
+})
 onUnmounted(() => {
-  specificationsValues.value = []
+  window.removeEventListener('scroll', onScroll)
 })
 </script>
 
 <template>
-  <div>
+  <div class="lg:pb-[100px]">
     <form
       v-if="loadingProperties === 'success'"
+      ref="filtersRef"
       class="filters"
+      :class="[classes, type]"
       @submit.prevent="apply"
     >
       <input-filter
@@ -254,10 +230,16 @@ onUnmounted(() => {
 
 <style scoped lang="sass">
 .filters
+  width: 290px
   background-color: #fff
-  transition: .4s
   overflow: hidden
   border-radius: 12px
+  color: #000
+  @media (width < 1280px)
+    width: 260px
+  &.mobile
+    width: 100%
+    overflow: visible
   :deep(.filter__head)
     @apply flex justify-between font-medium cursor-pointer select-none
     padding: 8px 16px

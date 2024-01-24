@@ -89,11 +89,13 @@ const share = () => {
         очистить список
       </v-button>
     </div>
-    <v-checkbox
-      :id="1"
-      v-model="showDifferences"
-      value="Показывать только отличия"
-    />
+    <div>
+      <v-checkbox
+        :id="1"
+        v-model="showDifferences"
+        value="Показывать только отличия"
+      />
+    </div>
     <div class="share">
       <v-button
         variant="noactive"

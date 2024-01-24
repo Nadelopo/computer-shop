@@ -1,6 +1,7 @@
 export { default as ArrowSvg } from './icons/arrow.svg?component'
 export { default as CartSvg } from './icons/cart.svg?component'
 export { default as CartInButtonSvg } from './icons/cartInButton.svg?component'
+export { default as InCartSvg } from './icons/inCart.svg?component'
 export { default as AvatarSvg } from './icons/avatar.svg?component'
 export { default as ComparisonSvg } from './icons/comparison.svg?component'
 export { default as CrossSvg } from './icons/cross.svg?component'

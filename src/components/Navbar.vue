@@ -166,7 +166,7 @@ const links = [
       </div>
     </div>
   </header>
-  <Transition name="v">
+  <Transition name="sidebar">
     <sidebar-mobile
       v-if="open"
       v-model:is-open="open"
@@ -176,17 +176,17 @@ const links = [
 </template>
 
 <style scoped lang="sass">
-.v-enter-active,
-.v-leave-active
-  transition: .5s ease
+.sidebar-enter-active,
+.sidebar-leave-active
+  transition: .4s ease
   overflow: hidden
   position: fixed
 
-.v-enter-from,
-.v-leave-to
+.sidebar-enter-from,
+.sidebar-leave-to
   translate: -320px
   width: 3000px
-  transition: .5s ease
+  transition: .4s ease
   opacity: 0
 
 header

@@ -2,7 +2,6 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
-import { onClickOutside } from '@/utils/onClickOutside'
 import { useUserStore } from '@/stores/userStore'
 
 defineProps<{
@@ -29,8 +28,6 @@ const logout = async () => {
   if (error) console.log(error)
 }
 
-onClickOutside(sidebarRef, closeSidebar)
-
 onMounted(() => {
   document.body.style.overflow = 'hidden'
 })
@@ -41,10 +38,14 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="wrapper">
+  <div
+    class="wrapper"
+    @click="closeSidebar"
+  >
     <div
       ref="sidebarRef"
       class="sidebar"
+      @click.stop
     >
       <div class="grid grid-cols-2 items-center">
         <div>
@@ -129,4 +130,3 @@ onUnmounted(() => {
   &-l
     transform: rotate(-45deg)
 </style>
-@/db/supabase

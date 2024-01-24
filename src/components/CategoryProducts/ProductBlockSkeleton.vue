@@ -10,6 +10,7 @@ import { ContentLoader } from 'vue-content-loader'
     viewBox="0 0 1128 259"
     primary-color="#e8e8e8"
     secondary-color="#e8e8e882"
+    width="100%"
   >
     <rect x="0" y="20" rx="8" ry="8" width="200" height="220" />
     <rect x="260" y="50" rx="8" ry="8" width="350" height="18" />

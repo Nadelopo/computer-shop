@@ -4,11 +4,14 @@ import ButtonCart from '../ButtonCart.vue'
 import RatingStars from '../RatingStars.vue'
 import IconBtnFavouritesComparison from '../IconButtonFavouritesComparison.vue'
 import { getSpecificationValue } from '@/utils/getSpecificationValue'
+import { useMediaQuery } from '@vueuse/core'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 
 defineProps<{
   item: ProductWithSpecifications
 }>()
+
+const isSmall = useMediaQuery('(width < 520px)')
 </script>
 
 <template>
@@ -32,31 +35,31 @@ defineProps<{
       <div>
         <div class="card__link">
           <div class="card__head">
-            <div class="card__title">{{ item.name }}</div>
+            <div class="card__head__title">{{ item.name }}</div>
             <div>
-              <rating-stars :model-value="item.rating" />
+              <rating-stars
+                :model-value="item.rating"
+                :size="isSmall ? 'small' : 'normal'"
+              />
             </div>
           </div>
           <div
             v-for="specification in item.specifications"
             :key="specification.category_specifications.id"
-            class="flex flex-col gap-2"
+            class="flex gap-x-1"
           >
-            <div
-              v-if="specification.category_specifications.visible"
-              class="flex gap-2"
-            >
+            <template v-if="specification.category_specifications.visible">
               <div>{{ specification.category_specifications.title }}:</div>
-              <div>
+              <div class="text-end">
                 {{ getSpecificationValue(specification) }}
                 {{ specification.category_specifications.units }}
               </div>
-            </div>
+            </template>
           </div>
         </div>
       </div>
-      <div class="flex justify-around items-end flex-col h-full">
-        <div class="flex gap-4">
+      <div class="actions">
+        <div class="flex gap-4 justify-center md:mb-auto">
           <icon-btn-favourites-comparison
             list-title="comparison"
             :product-id="item.id"
@@ -66,9 +69,9 @@ defineProps<{
             :product-id="item.id"
           />
         </div>
-        <div>
+        <div class="price__wrapper">
           <div
-            class="text-end mb-2 price"
+            class="text-end lg:mb-2 price"
             :class="{
               discounted: item.discount
             }"
@@ -77,13 +80,17 @@ defineProps<{
           </div>
           <div
             v-if="item.discount"
-            class="text-end mb-2 price coloured"
+            class="text-end lg:mb-2 price coloured"
           >
             {{ formatPrice(item.price) }}
           </div>
-          <div>
-            <button-cart :product-id="item.id" />
-          </div>
+        </div>
+        <div>
+          <button-cart
+            :size="isSmall ? 'small' : 'normal'"
+            :product-id="item.id"
+            class="ml-auto"
+          />
         </div>
       </div>
     </div>
@@ -93,30 +100,66 @@ defineProps<{
 <style scoped lang="sass">
 .card__wrapper
   background-color: #fff
-  transition: 0.4s
+  transition: box-shadow 0.4s
   padding: 20px 20px 20px 0
   border-radius: 8px
   padding: 20px 40px
   display: grid
-  grid-template-columns: 20% auto 14%
-  grid-gap: 40px
+  grid-template-columns: 20% auto 1fr
+  gap: 10px 40px
   align-items: center
   box-shadow: 0px 0px 10px 4px rgba(0,0,0, 0.1 )
-  height: 250px
+  min-height: 250px
+  grid-template-areas: '. . actions'
   &:hover
-    transition: 0.5s
+    transition: box-shadow 0.5s
     box-shadow: rgb(0, 0, 0 , .25) 0px 0px 15px 5px
+  @media (width < 768px)
+    font-size: 12px
+    grid-template-areas: '. .' 'actions actions'
+    grid-template-columns:  minmax(20%, 80px) 1fr
+    height: auto
+    padding: 20px
+  @media (width < 520px)
+    gap: 10px
+    padding: 10px
   .img__wrapper
     display: flex
     justify-content: center
     img
       max-height: 210px
+  .actions
+    grid-area: actions
+    display: flex
+    justify-content: end
+    align-items: end
+    flex-direction: column
+    height: 100%
+    @media (width < 768px)
+      display: grid
+      grid-template-columns: minmax(20%, 80px) auto 1fr
+      gap: 40px
+    @media (width < 520px)
+      gap: 0
+    .price__wrapper
+      @media (width < 768px)
+        div
+          font-size: 18px
+        display: flex
+        flex-direction: row-reverse
+        align-items: center
+        gap: 8px
+        .discounted
+          font-size: 12px
+      @media (width < 520px)
+        gap: 2px
+        margin-left: 10px
 
 .card__link
   cursor: pointer
-  transition: 1s
+  transition: color 1s
   &:hover
-    transition: .3s
+    transition: color .3s
     color: var(--color-text)
   .card__head
     display: grid
@@ -125,6 +168,14 @@ defineProps<{
     align-items: center
     margin-bottom: 16px
     font-size: 18px
-    .card__title
+    @media (width < 1536px)
+      grid-template-columns: 1fr
+      gap: 4px
+    @media (width < 1280px)
+      grid-template-columns: 1fr
+      gap: 4px
+    &__title
       max-width: 370px
+      @media (width < 768px)
+        font-size: 16px
 </style>
