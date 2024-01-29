@@ -67,7 +67,10 @@ const setCategorySpecifications = async () => {
   categorySpecifications.value = data
   loadingSpecifications.value = 'success'
 }
-watch(() => route.params.id, setCategorySpecifications, { immediate: true })
+watch(() => route.params.id, setCategorySpecifications, {
+  immediate: true,
+  flush: 'post'
+})
 
 const emptyProductFields: ProductCreate = {
   name: '',

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
 import { VButton } from '@/components/UI'
@@ -8,7 +8,6 @@ import { CartInButtonSvg, InCartSvg } from '@/assets/icons'
 type Props = {
   productId: number
   width?: string
-  watch?: boolean
   size?: 'normal' | 'small'
 }
 
@@ -22,25 +21,14 @@ const loading = ref(false)
 const { addToCart } = useCartStore()
 const { cartItems } = storeToRefs(useCartStore())
 
-const product = cartItems.value.find((e) => e.productId === props.productId)
-
-const isProductInCart = ref(product ? true : false)
-if (props.watch) {
-  watch(
-    () => props.productId,
-    (productId) => {
-      isProductInCart.value = Boolean(
-        cartItems.value.find((e) => e.productId === productId)
-      )
-    }
-  )
-}
+const isProductInCart = computed(() =>
+  cartItems.value.find((e) => e.productId === props.productId)
+)
 
 const add = async () => {
   loading.value = true
   await addToCart(props.productId)
   loading.value = false
-  isProductInCart.value = true
 }
 
 const width = computed(() => {

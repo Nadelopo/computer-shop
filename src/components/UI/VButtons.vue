@@ -1,10 +1,21 @@
-<script setup lang="ts" generic="T extends boolean | string | string[]">
+<script
+  setup
+  lang="ts"
+  generic="T extends boolean | string | string[] | number"
+>
 import { VButton } from '@/components/UI'
+
+type Value = T extends string | string[]
+  ? string
+  : T extends boolean
+  ? boolean
+  : number
+type ValueArg = string | boolean | number
 
 const props = defineProps<{
   modelValue: T
   options: {
-    value: T extends string | string[] ? string : boolean
+    value: Value
     title: string
   }[]
 }>()
@@ -13,7 +24,7 @@ const emit = defineEmits<{
   'update:modelValue': [T]
 }>()
 
-const onClick = (value: { value: string | boolean; title: string }) => {
+const onClick = (value: { value: ValueArg; title: string }) => {
   if (Array.isArray(props.modelValue)) {
     let updatedValues: string[] = []
     if (props.modelValue.includes(value.value as string)) {
@@ -27,7 +38,7 @@ const onClick = (value: { value: string | boolean; title: string }) => {
   }
 }
 
-const isActive = (value: { value: string | boolean; title: string }) => {
+const isActive = (value: { value: ValueArg; title: string }) => {
   if (Array.isArray(props.modelValue)) {
     return props.modelValue.includes(value.value as string)
   } else {
