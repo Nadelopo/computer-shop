@@ -1,34 +1,52 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends string | number">
 import { onMounted, ref } from 'vue'
 
 type Props = {
-  modelValue: string | number
+  modelValue: T
   type?: 'text' | 'number'
   required?: boolean
   autofocus?: boolean
   id?: string
+  showSpinButtons?: boolean
+  max?: number | string
+  min?: number | string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   type: 'text',
   required: true,
-  autofocus: false
+  autofocus: false,
+  showSpinButtons: true,
+  max: Infinity,
+  min: -Infinity
 })
 
 const emit = defineEmits<{
-  'update:modelValue': [string | number]
+  'update:modelValue': [T]
 }>()
 
 defineOptions({
   inheritAttrs: false
 })
 
-const onChange = (e: Event) => {
-  if (e.target instanceof HTMLInputElement) {
-    const value: number | string =
-      props.type === 'number' ? Number(e.target.value) : e.target.value
-    emit('update:modelValue', value)
+const onInput = (e: Event) => {
+  const el = e.target as HTMLInputElement
+  let value: number | string =
+    props.type === 'number' ? Number(el.value) : el.value
+  if (props.type === 'number') {
+    if (el.value[0] === '0') {
+      el.value = el.value.replace(/^0+/, '')
+    }
+    if (value > props.max) {
+      el.value = String(props.max)
+      value = props.max
+    }
+    if (value < props.min) {
+      el.value = String(props.min)
+      value = props.min
+    }
   }
+  emit('update:modelValue', value as T)
 }
 
 const inputRef = ref<HTMLInputElement | null>(null)
@@ -48,9 +66,12 @@ onMounted(() => {
         ref="inputRef"
         :value="modelValue"
         :type="type"
+        :max="max"
+        :min="min"
         class="input"
+        :class="{ hidden__spin__buttons: !showSpinButtons }"
         :required="required"
-        @input="onChange"
+        @input="onInput"
       />
     </span>
   </div>
@@ -77,6 +98,13 @@ onMounted(() => {
   width: 100%
   height: 30px
   border-bottom: 1px solid #9e9e9e
-  transition: 0.4s
+  // transition: 0.4s
   background: initial
+  &.hidden__spin__buttons
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button
+      -webkit-appearance: none
+      margin: 0
+  &:disabled
+    opacity: .5
 </style>
