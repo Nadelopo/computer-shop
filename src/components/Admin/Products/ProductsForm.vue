@@ -81,6 +81,9 @@ const onSubmit = () => {
         v-if="specification.type === 'number'"
         v-model="specification.valueNumber"
         type="number"
+        :max="specification.max"
+        :min="specification.min"
+        :step="specification.step"
       />
       <v-select
         v-else-if="specification.type === 'string'"

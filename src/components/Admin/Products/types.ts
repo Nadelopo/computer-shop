@@ -12,12 +12,18 @@ export type SpecificationCreateForm = Omit<
         type: 'number'
         valueNumber: number
         valueString: null
+        max: number
+        min: number
+        step: number
       }
     | {
         type: Exclude<DbEnums<'category_specification_type'>, 'number'>
         valueNumber: null
         valueString: string[]
         variantsValues: string[]
+        max: null
+        min: null
+        step: null
       }
   )
 

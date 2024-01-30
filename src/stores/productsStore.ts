@@ -118,7 +118,7 @@ export const useProductsStore = defineStore('products', () => {
       ),
       getAll('specifications', {
         match: { productId: productId },
-        select: '*, category_specifications(id, title, units, visible)',
+        select: '*, category_specifications(id, title, units, visible, type)',
         order: ['categorySpecificationsId']
       })
     ])
@@ -130,8 +130,8 @@ export const useProductsStore = defineStore('products', () => {
 
     return {
       data: {
-        ...(data as ProductWithSpecifications),
-        specifications: specifications as SpecificationReadWithDetails[]
+        ...data!,
+        specifications: specifications!
       },
       error: null
     }

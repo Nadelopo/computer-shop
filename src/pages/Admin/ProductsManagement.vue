@@ -96,11 +96,15 @@ watchEffect(() => {
         title: categorySpecification.title
       }
       if (categorySpecification.type === 'number') {
+        const { max, min, step } = categorySpecification
         return {
           ...staticFields,
           type: categorySpecification.type,
           valueNumber: 0,
-          valueString: null
+          valueString: null,
+          max,
+          min,
+          step
         }
       } else {
         return {
@@ -108,7 +112,10 @@ watchEffect(() => {
           valueNumber: null,
           type: categorySpecification.type,
           valueString: [],
-          variantsValues: categorySpecification.variantsValues
+          variantsValues: categorySpecification.variantsValues,
+          max: null,
+          min: null,
+          step: null
         }
       }
     }
