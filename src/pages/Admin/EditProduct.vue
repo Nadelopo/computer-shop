@@ -55,11 +55,15 @@ onBeforeMount(async () => {
       title: s.category_specifications.title
     }
     if (s.category_specifications.type === 'number') {
+      const { max, min, step } = s.category_specifications
       return {
         ...staticFields,
         type: 'number',
         valueNumber: s.valueNumber!,
-        valueString: null
+        valueString: null,
+        max: max!,
+        min: min!,
+        step: step!
       }
     } else {
       return {
@@ -67,7 +71,10 @@ onBeforeMount(async () => {
         valueNumber: null,
         type: s.category_specifications.type,
         valueString: s.valueString!,
-        variantsValues: s.category_specifications.variantsValues!
+        variantsValues: s.category_specifications.variantsValues!,
+        min: null,
+        max: null,
+        step: null
       }
     }
   })
