@@ -165,7 +165,6 @@ const isSmall = useMediaQuery('(max-width: 420px)')
               <button-cart
                 :product-id="product.id"
                 :width="isSmall ? 'auto' : undefined"
-                watch
               />
             </div>
           </div>

@@ -197,7 +197,6 @@ const create = async (fileActions: InputFileActions<string[]> | undefined) => {
       :specifications="categorySpecifications"
       :loading="loadingProducts"
     />
-
     <v-pagination
       v-model="page"
       :page-size="limit"

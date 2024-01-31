@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
@@ -8,8 +8,10 @@ import { VPopup } from '@/components/UI'
 import SidebarMobile from './Sidebar.mobile.vue'
 import { AvatarSvg, FavouriteSvg, CartSvg, ComparisonSvg } from '@/assets/icons'
 import { Role } from '@/types/tables/users.types'
+import { useCartStore } from '@/stores/cartStore'
 
 const { user, userLists } = storeToRefs(useUserStore())
+const { cartItems } = storeToRefs(useCartStore())
 
 const router = useRouter()
 
@@ -44,6 +46,10 @@ const links = [
     page: 'Home'
   }
 ]
+
+const countCartItems = computed(() =>
+  cartItems.value.reduce((total, item) => total + item.count, 0)
+)
 </script>
 
 <template>
@@ -161,6 +167,12 @@ const links = [
           </router-link>
           <router-link :to="{ name: 'Cart' }">
             <cart-svg height="25" />
+            <span
+              v-if="countCartItems"
+              class="count"
+            >
+              {{ countCartItems }}
+            </span>
           </router-link>
         </div>
       </div>

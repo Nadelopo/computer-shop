@@ -21,12 +21,16 @@ type QueryProduct = Omit<
   | 'manufacturerId'
   | 'popularity'
   | 'sell'
-  | 'warranty'
 >
 
-type ProductCart = QueryProduct & {
+export type ProductCart = QueryProduct & {
   count: number
   cartItemId?: number
+  additionalWarranty: number
+  servicePrice: number
+  categories: {
+    enTitle: string
+  }
 }
 
 type ProductInStorage = {
@@ -45,10 +49,12 @@ export const useCartStore = defineStore('cart', () => {
   async function addToCart(
     productId: number
   ): Promise<{ error: PostgrestError | null }> {
-    const user = await isUserAuthenticated()
-    const { error: errerGet } = await getOneById('products', productId)
-    if (errerGet) {
-      return { error: errerGet }
+    const [user, { error: errorGetProduct }] = await Promise.all([
+      isUserAuthenticated(),
+      getOneById('products', productId)
+    ])
+    if (errorGetProduct) {
+      return { error: errorGetProduct }
     }
     let error: PostgrestError | null = null
     if (user) {
@@ -98,7 +104,6 @@ export const useCartStore = defineStore('cart', () => {
       const checkProductInCart = productsCart.find(
         (e) => e.productId === productId
       )
-
       if (checkProductInCart) {
         cartItems.value = productsCart.map((e) =>
           e.productId === productId
@@ -108,7 +113,6 @@ export const useCartStore = defineStore('cart', () => {
       } else {
         cartItems.value = [...productsCart, { count: 1, productId }]
       }
-
       localStorageSet('products', cartItems.value)
     }
     return { error }
@@ -144,13 +148,11 @@ export const useCartStore = defineStore('cart', () => {
 
     const { data, error } = await getAll('products', {
       select:
-        'categoryId, discount, id, img, name, price, priceWithoutDiscount, quantity, rating',
+        'categoryId, discount, id, img, name, price, priceWithoutDiscount, quantity, rating, warranty, categories(enTitle)',
       in: { id: idList }
     })
     if (error) {
-      return {
-        error
-      }
+      return { error }
     }
 
     const modifiedData: ProductCart[] = []
@@ -160,7 +162,9 @@ export const useCartStore = defineStore('cart', () => {
         modifiedData.push({
           ...product,
           count: item.count,
-          cartItemId: item.id
+          cartItemId: item.id,
+          additionalWarranty: 0,
+          servicePrice: 0
         })
       }
     }
@@ -176,66 +180,105 @@ export const useCartStore = defineStore('cart', () => {
     return { error: null }
   }
 
-  async function increaseItemCount(
-    product: ProductCart
+  // async function increaseItemCount(
+  //   product: ProductCart
+  // ): Promise<{ error: PostgrestError | null }> {
+  //   const user = await isUserAuthenticated()
+  //   if (user) {
+  //     if (product.cartItemId) {
+  //       const { error } = await updateOneById('cart', product.cartItemId, {
+  //         count: product.count + 1
+  //       })
+  //       if (error) return { error }
+  //     }
+  //   } else {
+  //     const storageData = localStorageGet<ProductInStorage[]>('products') ?? []
+  //     cartItems.value = storageData
+  //     localStorageSet('products', cartItems.value)
+  //   }
+  //   cartItems.value = cartItems.value.map((p) =>
+  //     p.productId === product.id ? { ...p, count: p.count + 1 } : p
+  //   )
+  //   cartItemsWithDetails.value = cartItemsWithDetails.value.map((p) =>
+  //     p.id === product.id ? { ...p, count: p.count + 1 } : p
+  //   )
+  //   return { error: null }
+  // }
+
+  // async function reduceItemCount(
+  //   product: ProductCart
+  // ): Promise<{ error: PostgrestError | null }> {
+  //   const user = await isUserAuthenticated()
+  //   if (user) {
+  //     if (product.cartItemId) {
+  //       if (product.count > 1) {
+  //         const { error } = await updateOneById('cart', product.cartItemId, {
+  //           count: product.count - 1
+  //         })
+  //         if (error) return { error }
+  //       } else {
+  //         const { error } = await deleteOneById('cart', product.cartItemId)
+  //         if (error) return { error }
+  //       }
+  //     }
+  //   } else {
+  //     const data = localStorageGet<ProductInStorage[]>('products') ?? []
+  //     cartItems.value = data
+  //     localStorageSet('products', cartItems.value)
+  //   }
+  //   if (product.count > 1) {
+  //     cartItemsWithDetails.value = cartItemsWithDetails.value.map((p) =>
+  //       p.id === product.id ? { ...p, count: p.count - 1 } : p
+  //     )
+  //     cartItems.value = cartItems.value.map((p) =>
+  //       p.productId === product.id ? { ...p, count: p.count - 1 } : p
+  //     )
+  //   } else {
+  //     cartItemsWithDetails.value = cartItemsWithDetails.value.filter(
+  //       (p) => p.id !== product.id
+  //     )
+  //     cartItems.value = cartItems.value.filter(
+  //       (p) => p.productId !== product.id
+  //     )
+  //   }
+  //   return { error: null }
+  // }
+
+  async function setItemCount(
+    product: ProductCart,
+    count: number
   ): Promise<{ error: PostgrestError | null }> {
     const user = await isUserAuthenticated()
     if (user) {
       if (product.cartItemId) {
-        const { error } = await updateOneById('cart', product.cartItemId, {
-          count: product.count + 1
-        })
-        if (error) return { error }
-      }
-    } else {
-      const storageData = localStorageGet<ProductInStorage[]>('products') ?? []
-
-      cartItems.value = storageData.map((p) =>
-        p.productId === product.id ? { ...p, count: p.count + 1 } : p
-      )
-      localStorageSet('products', cartItems.value)
-    }
-
-    cartItemsWithDetails.value = cartItemsWithDetails.value.map((p) =>
-      p.id === product.id ? { ...p, count: p.count + 1 } : p
-    )
-    return { error: null }
-  }
-
-  async function reduceItemCount(
-    product: ProductCart
-  ): Promise<{ error: PostgrestError | null }> {
-    const user = await isUserAuthenticated()
-    if (user) {
-      if (product.cartItemId) {
-        if (product.count > 1) {
-          const { error } = await updateOneById('cart', product.cartItemId, {
-            count: product.count - 1
-          })
+        if (count === 0) {
+          const { error } = await deleteOneById('cart', product.cartItemId)
           if (error) return { error }
         } else {
-          const { error } = await deleteOneById('cart', product.cartItemId)
+          const { error } = await updateOneById('cart', product.cartItemId, {
+            count
+          })
           if (error) return { error }
         }
       }
     } else {
       const data = localStorageGet<ProductInStorage[]>('products') ?? []
-      if (product.count > 1) {
-        cartItems.value = data.map((p) =>
-          p.productId === product.id ? { ...p, count: p.count - 1 } : p
-        )
-      } else {
-        cartItems.value = data.filter((p) => p.productId !== product.id)
-      }
+      cartItems.value = data
       localStorageSet('products', cartItems.value)
     }
-    if (product.count > 1) {
-      cartItemsWithDetails.value = cartItemsWithDetails.value.map((p) =>
-        p.id === product.id ? { ...p, count: p.count - 1 } : p
-      )
-    } else {
+    if (count === 0) {
       cartItemsWithDetails.value = cartItemsWithDetails.value.filter(
         (p) => p.id !== product.id
+      )
+      cartItems.value = cartItems.value.filter(
+        (p) => p.productId !== product.id
+      )
+    } else {
+      cartItemsWithDetails.value = cartItemsWithDetails.value.map((p) =>
+        p.id === product.id ? { ...p, count } : p
+      )
+      cartItems.value = cartItems.value.map((p) =>
+        p.productId === product.id ? { ...p, count } : p
       )
     }
     return { error: null }
@@ -261,7 +304,6 @@ export const useCartStore = defineStore('cart', () => {
       if (errorDelete) return { error: errorDelete }
     } else {
       const data = localStorageGet<ProductInStorage[]>('products') ?? []
-
       localStorageSet(
         'products',
         data.filter((e) => e.productId !== productId)
@@ -281,8 +323,9 @@ export const useCartStore = defineStore('cart', () => {
     setCartItems,
     cartItemsWithDetails,
     setCartItemsWithDetails,
-    increaseItemCount,
-    reduceItemCount,
+    // increaseItemCount,
+    // reduceItemCount,
+    setItemCount,
     deleteItem
   }
 })

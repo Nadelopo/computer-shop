@@ -9,7 +9,11 @@ module.exports = {
       xl: '1280px',
       '2xl': '1536px'
     },
-    extend: {}
+    extend: {
+      colors: {
+        text: 'var(--color-text)'
+      }
+    }
   },
   plugins: []
 }

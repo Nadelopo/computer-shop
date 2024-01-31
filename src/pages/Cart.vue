@@ -1,18 +1,15 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue'
+import { computed, onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
-import { VButton, VLoader } from '@/components/UI'
-import { TrashSvg } from '@/assets/icons'
+import { VLoader, VButton, VButtons, VSelect } from '@/components/UI'
+import ItemActions from '@/components/Cart/ItemActions.vue'
+import { formatPrice } from '@/utils/formatPrice'
+import { useMediaQuery } from '@vueuse/core'
+import type { ProductCart } from '@/stores/cartStore'
 import type { Loading } from '@/types'
 
-const {
-  setCartItemsWithDetails,
-  increaseItemCount,
-  reduceItemCount,
-  setCartItems,
-  deleteItem
-} = useCartStore()
+const { setCartItemsWithDetails, setCartItems } = useCartStore()
 const { cartItemsWithDetails } = storeToRefs(useCartStore())
 
 const loading = ref<Loading>('loading')
@@ -23,9 +20,59 @@ onBeforeMount(async () => {
     loading.value = 'error'
     return
   }
+  if (data.length === 0) {
+    loading.value = 'empty'
+    return
+  }
   await setCartItemsWithDetails(data)
   loading.value = 'success'
 })
+
+const sumPrice = computed(() => {
+  return cartItemsWithDetails.value.reduce((a, b) => {
+    return a + b.price * b.count + b.servicePrice
+  }, 0)
+})
+
+const warrantyOptions = [
+  {
+    title: 'нет',
+    value: 0
+  },
+  {
+    title: '+12 мес.',
+    value: 12
+  },
+  {
+    title: '+24 мес.',
+    value: 24
+  },
+  {
+    title: '+36 мес.',
+    value: 36
+  }
+]
+
+const setServicePrice = (warranty: number, product: ProductCart) => {
+  const markup = Math.min(product.price * 0.01, 1000)
+  let price = 0
+  if (warranty === 12) price = 1000 + markup
+  if (warranty === 24) price = 1500 + markup
+  if (warranty === 36) price = 2500 + markup
+  product.servicePrice = Math.floor(price)
+}
+
+const countCartItems = computed(() =>
+  cartItemsWithDetails.value.reduce((total, item) => total + item.count, 0)
+)
+
+const chooseWord = computed(() => {
+  if (countCartItems.value === 1) return 'товар'
+  if (countCartItems.value >= 2 && countCartItems.value <= 4) return 'товара'
+  return 'товаров'
+})
+
+const isMobile = useMediaQuery('(width < 640px)')
 </script>
 
 <template>
@@ -40,38 +87,82 @@ onBeforeMount(async () => {
           :key="product.id"
           class="product__wrapper"
         >
-          <div>
-            <img
-              :src="product.img[0]"
-              alt="..."
-            />
+          <div class="img">
+            <router-link
+              :to="{
+                name: 'Product',
+                params: {
+                  productId: product.id,
+                  categoryId: product.categoryId,
+                  category: product.categories.enTitle
+                }
+              }"
+            >
+              <img
+                :src="product.img[0]"
+                alt="..."
+                class="max-h-24 max-w-[100px] cursor-pointer"
+              />
+            </router-link>
           </div>
-          <div>{{ product.name }}</div>
-          <div class="management">
-            <v-button @click="reduceItemCount(product)">
-              <!-- <svg width="40" viewBox="0 0 40 10">
-                <line
-                  x1="5"
-                  y1="5"
-                  x2="36"
-                  y2="5"
-                  stroke="#26a69a"
-                  stroke-width="4"
-                  stroke-linecap="round"
-                />
-              </svg> -->
-              -
-            </v-button>
-            <div>{{ product.count }}</div>
-            <v-button @click="increaseItemCount(product)"> + </v-button>
-            <v-button @click="deleteItem(product.id)">
-              <trash-svg />
-            </v-button>
+
+          <div class="title">
+            <router-link
+              class="text-xl text-black font-medium duration-200 cursor-pointer hover:text-text"
+              :to="{
+                name: 'Product',
+                params: {
+                  productId: product.id,
+                  categoryId: product.categoryId,
+                  category: product.categories.enTitle
+                }
+              }"
+            >
+              {{ product.name }}
+            </router-link>
+          </div>
+          <div class="price">{{ formatPrice(product.price) }}</div>
+          <item-actions
+            v-model="product.count"
+            :product="product"
+          />
+          <div
+            v-if="product.warranty <= 48"
+            class="warranty"
+          >
+            <template v-if="!isMobile">
+              Дополнительная гарантия
+              <v-buttons
+                v-model="product.additionalWarranty"
+                :options="warrantyOptions"
+                class="mt-2"
+                @update:model-value="setServicePrice($event, product)"
+              />
+            </template>
+            <template v-else>
+              <v-select
+                v-model="product.additionalWarranty"
+                :options="warrantyOptions"
+                @update:model-value="setServicePrice($event, product)"
+              />
+            </template>
           </div>
         </div>
       </div>
       <div>
-        <!-- <v-button> итого: </v-button> -->
+        <div class="bg-white rounded p-3">
+          <div class=""> Итого: </div>
+          <div class="flex justify-between font-medium text-lg mb-2">
+            <div>
+              {{ countCartItems }}
+              {{ chooseWord }}
+            </div>
+            <div>
+              {{ formatPrice(sumPrice) }}
+            </div>
+          </div>
+          <v-button width="100%"> Перейти к оформлению </v-button>
+        </div>
       </div>
     </div>
     <div
@@ -80,35 +171,58 @@ onBeforeMount(async () => {
     >
       <v-loader />
     </div>
+    <div
+      v-else-if="loading === 'empty'"
+      class="text-center font-medium text-xl mt-16"
+    >
+      <div> В корзине нет товаров </div>
+      <div> Посмотрите предложения на главной странице </div>
+      <div class="flex justify-center mt-2 text-base font-normal">
+        <v-button>
+          <router-link :to="{ name: 'Home' }">
+            Вернуться к покупкам
+          </router-link>
+        </v-button>
+      </div>
+    </div>
     <div v-else-if="loading === 'error'"> ошибка </div>
   </div>
 </template>
 
 <style scoped lang="sass">
-
 .cart
   display: grid
   grid-template-columns: 1fr 300px
   gap: 40px
-
+  @media (width < 1024px)
+    grid-template-columns: 1fr
+    gap: 0
 
 .product__wrapper
   background: #fff
+  min-height: 136px
   box-shadow: 0px 0px 10px 4px rgba(0,0,0, 0.1 )
   border-radius: 8px
   display: grid
-  grid-template-columns: 25% 1fr auto
-  align-items: center
+  grid-template-columns: auto 1fr auto auto auto
+  grid-template-areas: 'img title price actions .'  'img warranty warranty warranty warranty'
+  gap: 0 20px
   transition: .3s
   padding: 20px
   margin-bottom: 30px
+  img
+    grid-area: img
+  .warranty
+    grid-area: warranty
+  .price
+    grid-area: price
+  :deep(.actions)
+    grid-area: actions
+  .title
+    grid-area: title
   &:hover
       box-shadow: rgb(0, 0, 0 , .25) 0px 0px 15px 5px
-  img
-    max-height: 200px
-
-.management
-  display: flex
-  align-items: center
-  gap: 10px
+  @media (width < 640px)
+    gap: 10px 20px
+    grid-template-areas: 'img title title title .' 'actions price price price price' 'warranty warranty warranty warranty warranty '
 </style>
