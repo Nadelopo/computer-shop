@@ -198,7 +198,8 @@ $back: var(--back-sec)
   width: v-bind(widthValue)
 
 .select
-  border-radius: 12px
+  // border-radius: 12px
+  border-radius: 4px
   background: $back
   border: 2px solid transparent
   width: v-bind(widthValue)
@@ -212,7 +213,8 @@ $back: var(--back-sec)
   position: absolute
   z-index: 50
   &.active
-    border-radius: 12px 12px 0 0
+    // border-radius: 12px 12px 0 0
+    border-radius: 4px 4px 0 0
   .head
     display: flex
     justify-content: space-between
@@ -238,7 +240,8 @@ $back: var(--back-sec)
 
 .list
   padding: 5px
-  border-radius: 0 0 12px 12px
+  // border-radius: 0 0 12px 12px
+  border-radius: 0 0 4px 4px
   position: absolute
   top: 36px
   left: 0
