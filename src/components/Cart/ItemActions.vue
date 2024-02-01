@@ -8,9 +8,8 @@ type Action = 'increase' | 'reduce' | 'delete'
 
 const props = defineProps<{
   product: ProductCart
+  productCount: number
 }>()
-const productCount = defineModel<number>({ required: true })
-// const loading = defineModel<boolean>('loading', { required: true })
 const loading = ref(false)
 
 const { setItemCount, deleteItem } = useCartStore()

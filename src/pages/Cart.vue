@@ -67,8 +67,15 @@ const countCartItems = computed(() =>
 )
 
 const chooseWord = computed(() => {
-  if (countCartItems.value === 1) return 'товар'
-  if (countCartItems.value >= 2 && countCartItems.value <= 4) return 'товара'
+  const countCartItemsValue = countCartItems.value
+  if (countCartItemsValue < 20) {
+    if (countCartItemsValue === 1) return 'товар'
+    if (countCartItemsValue >= 2 && countCartItemsValue <= 4) return 'товара'
+  } else {
+    const lastChar = Number(countCartItemsValue.toString().at(-1))
+    if (lastChar === 1) return 'товар'
+    if (lastChar >= 2 && lastChar <= 4) return 'товара'
+  }
   return 'товаров'
 })
 
@@ -78,7 +85,24 @@ const isMobile = useMediaQuery('(width < 640px)')
 <template>
   <div class="container">
     <div
-      v-if="loading === 'success'"
+      v-if="
+        loading === 'empty' ||
+        (loading === 'success' && cartItemsWithDetails.length === 0)
+      "
+      class="text-center font-medium text-xl mt-16"
+    >
+      <div> В корзине нет товаров </div>
+      <div> Посмотрите предложения на главной странице </div>
+      <div class="flex justify-center mt-2 text-base font-normal">
+        <v-button>
+          <router-link :to="{ name: 'Home' }">
+            Вернуться к покупкам
+          </router-link>
+        </v-button>
+      </div>
+    </div>
+    <div
+      v-else-if="loading === 'success'"
       class="cart"
     >
       <div>
@@ -123,7 +147,7 @@ const isMobile = useMediaQuery('(width < 640px)')
           </div>
           <div class="price">{{ formatPrice(product.price) }}</div>
           <item-actions
-            v-model="product.count"
+            :product-count="product.count"
             :product="product"
           />
           <div
@@ -171,20 +195,7 @@ const isMobile = useMediaQuery('(width < 640px)')
     >
       <v-loader />
     </div>
-    <div
-      v-else-if="loading === 'empty'"
-      class="text-center font-medium text-xl mt-16"
-    >
-      <div> В корзине нет товаров </div>
-      <div> Посмотрите предложения на главной странице </div>
-      <div class="flex justify-center mt-2 text-base font-normal">
-        <v-button>
-          <router-link :to="{ name: 'Home' }">
-            Вернуться к покупкам
-          </router-link>
-        </v-button>
-      </div>
-    </div>
+
     <div v-else-if="loading === 'error'"> ошибка </div>
   </div>
 </template>
