@@ -1,15 +1,18 @@
 <script setup lang="ts" generic="T extends string | number">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref, useAttrs } from 'vue'
+import { vMaska } from 'maska'
+import { debounce } from '@/utils/debounce'
 
 type Props = {
   modelValue: T
-  type?: 'text' | 'number'
+  type?: 'text' | 'number' | 'phone'
   required?: boolean
   autofocus?: boolean
   id?: string
   showSpinButtons?: boolean
   max?: number | string
   min?: number | string
+  debounce?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -18,7 +21,8 @@ const props = withDefaults(defineProps<Props>(), {
   autofocus: false,
   showSpinButtons: true,
   max: Infinity,
-  min: -Infinity
+  min: -Infinity,
+  debounce: 0
 })
 
 const emit = defineEmits<{
@@ -29,7 +33,7 @@ defineOptions({
   inheritAttrs: false
 })
 
-const onInput = (e: Event) => {
+const onInput = debounce((e: Event) => {
   const el = e.target as HTMLInputElement
   let value: number | string =
     props.type === 'number' ? Number(el.value) : el.value
@@ -47,13 +51,22 @@ const onInput = (e: Event) => {
     }
   }
   emit('update:modelValue', value as T)
-}
+}, props.debounce)
 
 const inputRef = ref<HTMLInputElement | null>(null)
 onMounted(() => {
   if (props.autofocus) {
     inputRef.value?.focus()
   }
+})
+
+const attrs = useAttrs()
+const bindOptions = computed(() => {
+  const options = { ...attrs }
+  if (props.type === 'phone') {
+    options['data-maska'] = '7 (###) ###-##-##'
+  }
+  return options
 })
 </script>
 
@@ -62,8 +75,8 @@ onMounted(() => {
     <span class="wrapper">
       <input
         :id="id"
-        v-bind="$attrs"
         ref="inputRef"
+        v-maska
         :value="modelValue"
         :type="type"
         :max="max"
@@ -71,6 +84,7 @@ onMounted(() => {
         class="input"
         :class="{ hidden__spin__buttons: !showSpinButtons }"
         :required="required"
+        v-bind="bindOptions"
         @input="onInput"
       />
     </span>
@@ -98,7 +112,6 @@ onMounted(() => {
   width: 100%
   height: 30px
   border-bottom: 1px solid #9e9e9e
-  // transition: 0.4s
   background: initial
   &.hidden__spin__buttons
     &::-webkit-inner-spin-button,
