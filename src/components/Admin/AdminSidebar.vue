@@ -126,7 +126,6 @@ watchEffect(() => {
           <span> Характеристики категорий </span>
         </router-link>
       </div>
-
       <div
         class="head"
         title="Производители"
@@ -141,13 +140,33 @@ watchEffect(() => {
               src="/icons/manufacturer.svg"
               alt=""
               class="invert"
+              style="width: 32px"
             />
           </div>
           <span> Производители </span>
         </router-link>
       </div>
+      <div
+        class="head"
+        title="Магазины"
+      >
+        <router-link
+          :to="{
+            name: 'AdminShops'
+          }"
+        >
+          <div class="icon">
+            <img
+              src="/icons/stores.svg"
+              alt=""
+              class="invert"
+              style="width: 32px"
+            />
+          </div>
+          <span> Магазины </span>
+        </router-link>
+      </div>
     </div>
-
     <button
       class="toggle"
       @click="isCollapsed = !isCollapsed"

@@ -38,6 +38,7 @@ import type {
   UserRead,
   UserUpdate
 } from '@/types/tables/users.types'
+import type { ShopCreate, ShopRead, ShopUpdate } from './tables/shops.types'
 
 export type Json =
   | string
@@ -161,6 +162,12 @@ export type Database = {
         Row: UserRead
         Insert: UserCreate
         Update: UserUpdate
+        Relationships: []
+      }
+      shops: {
+        Row: ShopRead
+        Insert: ShopCreate
+        Update: ShopUpdate
         Relationships: []
       }
     }
