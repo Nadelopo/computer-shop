@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T extends string | number">
 import { computed, onMounted, ref, useAttrs } from 'vue'
-import { vMaska } from 'maska'
+import { vMaska, MaskInputOptions, MaskaDetail } from 'maska'
 import { debounce } from '@/utils/debounce'
 
 type Props = {
@@ -21,19 +21,24 @@ const props = withDefaults(defineProps<Props>(), {
   autofocus: false,
   showSpinButtons: true,
   max: Infinity,
-  min: -Infinity,
-  debounce: 0
+  min: -Infinity
 })
 
 const emit = defineEmits<{
-  'update:modelValue': [T]
+  'update:modelValue': [model: T, MaskaDetail?: MaskaDetail]
 }>()
 
 defineOptions({
   inheritAttrs: false
 })
 
-const onInput = debounce((e: Event) => {
+const maskaDetails = ref<MaskaDetail>({
+  completed: false,
+  masked: '',
+  unmasked: ''
+})
+
+const onInput = (e: Event) => {
   const el = e.target as HTMLInputElement
   let value: number | string =
     props.type === 'number' ? Number(el.value) : el.value
@@ -50,8 +55,12 @@ const onInput = debounce((e: Event) => {
       value = props.min
     }
   }
+  if (props.type === 'phone') {
+    emit('update:modelValue', value as T, maskaDetails.value)
+    return
+  }
   emit('update:modelValue', value as T)
-}, props.debounce)
+}
 
 const inputRef = ref<HTMLInputElement | null>(null)
 onMounted(() => {
@@ -60,32 +69,47 @@ onMounted(() => {
   }
 })
 
-const attrs = useAttrs()
-const bindOptions = computed(() => {
-  const options = { ...attrs }
-  if (props.type === 'phone') {
-    options['data-maska'] = '7 (###) ###-##-##'
-  }
-  return options
+const maskaOptions = computed<MaskInputOptions>(() => {
+  return props.type === 'phone'
+    ? { eager: true, mask: '7 (###) ### ##-##' }
+    : {}
 })
+
+const chooseOnInputFunc = computed(() =>
+  props.debounce ? debounce(onInput, props.debounce) : onInput
+)
+
+const attrs = useAttrs()
+const bindOptions = computed(() => ({
+  ...attrs,
+  class: [
+    'input',
+    { hidden__spin__buttons: !props.showSpinButtons },
+    attrs.class
+  ],
+  id: props.id,
+  ref: inputRef,
+  value: props.modelValue,
+  type: props.type,
+  max: props.max,
+  min: props.min,
+  required: props.required
+}))
 </script>
 
 <template>
   <div>
     <span class="wrapper">
       <input
-        :id="id"
-        ref="inputRef"
-        v-maska
-        :value="modelValue"
-        :type="type"
-        :max="max"
-        :min="min"
-        class="input"
-        :class="{ hidden__spin__buttons: !showSpinButtons }"
-        :required="required"
+        v-if="type === 'phone'"
+        v-maska:[maskaOptions]="maskaDetails"
         v-bind="bindOptions"
-        @input="onInput"
+        @input="chooseOnInputFunc"
+      />
+      <input
+        v-else
+        v-bind="bindOptions"
+        @input="chooseOnInputFunc"
       />
     </span>
   </div>

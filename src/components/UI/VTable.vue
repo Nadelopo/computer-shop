@@ -63,7 +63,7 @@ $border: 1px solid rgba(239, 239, 245, 1)
     :slotted(th), :slotted(td)
       border-right: $border
   .header
-    padding: 20px 24px
+    padding: 20px 12px
     border: 1px solid rgba(239, 239, 245, 1)
     border-bottom: unset
     font-size: 28px
