@@ -1,11 +1,11 @@
 <script setup lang="ts" generic="T extends string | number">
 import { computed, onMounted, ref, useAttrs } from 'vue'
-import { vMaska, MaskInputOptions, MaskaDetail } from 'maska'
+import { vMaska, MaskaDetail } from 'maska'
 import { debounce } from '@/utils/debounce'
 
 type Props = {
-  modelValue: T
-  type?: 'text' | 'number' | 'phone'
+  modelValue: T | null
+  type?: 'text' | 'number' | 'tel'
   required?: boolean
   autofocus?: boolean
   id?: string
@@ -55,7 +55,7 @@ const onInput = (e: Event) => {
       value = props.min
     }
   }
-  if (props.type === 'phone') {
+  if (props.type === 'tel') {
     emit('update:modelValue', value as T, maskaDetails.value)
     return
   }
@@ -67,12 +67,6 @@ onMounted(() => {
   if (props.autofocus) {
     inputRef.value?.focus()
   }
-})
-
-const maskaOptions = computed<MaskInputOptions>(() => {
-  return props.type === 'phone'
-    ? { eager: true, mask: '7 (###) ### ##-##' }
-    : {}
 })
 
 const chooseOnInputFunc = computed(() =>
@@ -101,8 +95,9 @@ const bindOptions = computed(() => ({
   <div>
     <span class="wrapper">
       <input
-        v-if="type === 'phone'"
-        v-maska:[maskaOptions]="maskaDetails"
+        v-if="type === 'tel'"
+        v-maska="maskaDetails"
+        data-maska="7 (###) ### ##-##"
         v-bind="bindOptions"
         @input="chooseOnInputFunc"
       />
