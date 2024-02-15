@@ -131,8 +131,8 @@ const isSmall = useMediaQuery('(width < 520px)')
   .actions
     grid-area: actions
     display: flex
-    justify-content: end
-    align-items: end
+    justify-content: flex-end
+    align-items: flex-end
     flex-direction: column
     height: 100%
     @media (width < 768px)

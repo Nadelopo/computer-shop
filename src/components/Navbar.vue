@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
@@ -11,7 +11,7 @@ import { Role } from '@/types/tables/users.types'
 import { useCartStore } from '@/stores/cartStore'
 
 const { user, userLists } = storeToRefs(useUserStore())
-const { cartItems } = storeToRefs(useCartStore())
+const { countCartItems } = storeToRefs(useCartStore())
 
 const router = useRouter()
 
@@ -46,10 +46,6 @@ const links = [
     page: 'Home'
   }
 ]
-
-const countCartItems = computed(() =>
-  cartItems.value.reduce((total, item) => total + item.count, 0)
-)
 </script>
 
 <template>

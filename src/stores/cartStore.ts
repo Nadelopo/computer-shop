@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useUserStore } from './userStore'
 import {
@@ -21,6 +21,7 @@ type QueryProduct = Omit<
   | 'manufacturerId'
   | 'popularity'
   | 'sell'
+  | 'rating'
 >
 
 export type ProductCart = QueryProduct & {
@@ -39,6 +40,7 @@ type ProductInStorage = {
   userId?: string
   productId: number
   count: number
+  additionalWarranty: number
 }
 
 export const useCartStore = defineStore('cart', () => {
@@ -91,7 +93,8 @@ export const useCartStore = defineStore('cart', () => {
         const { data, error: errorCreate } = await createOne('cart', {
           userId: user.id,
           productId,
-          count: 1
+          count: 1,
+          additionalWarranty: 0
         })
         if (errorCreate) {
           error = errorCreate
@@ -100,7 +103,7 @@ export const useCartStore = defineStore('cart', () => {
         cartItems.value.push(data)
       }
     } else {
-      const productsCart = localStorageGet<ProductInStorage[]>('products') ?? []
+      const productsCart = localStorageGet<ProductInStorage[]>('cart') ?? []
       const checkProductInCart = productsCart.find(
         (e) => e.productId === productId
       )
@@ -111,9 +114,12 @@ export const useCartStore = defineStore('cart', () => {
             : e
         )
       } else {
-        cartItems.value = [...productsCart, { count: 1, productId }]
+        cartItems.value = [
+          ...productsCart,
+          { count: 1, productId, additionalWarranty: 0 }
+        ]
       }
-      localStorageSet('products', cartItems.value)
+      localStorageSet('cart', cartItems.value)
     }
     return { error }
   }
@@ -131,7 +137,7 @@ export const useCartStore = defineStore('cart', () => {
       }
       cartItems.value = data
     } else {
-      const data = localStorageGet<ProductInStorage[]>('products')
+      const data = localStorageGet<ProductInStorage[]>('cart')
       if (data) {
         cartItems.value = data
       }
@@ -148,7 +154,7 @@ export const useCartStore = defineStore('cart', () => {
 
     const { data, error } = await getAll('products', {
       select:
-        'categoryId, discount, id, img, name, price, priceWithoutDiscount, quantity, rating, warranty, categories(enTitle)',
+        'categoryId, discount, id, img, name, price, priceWithoutDiscount, quantity, warranty, categories(enTitle)',
       in: { id: idList }
     })
     if (error) {
@@ -163,7 +169,7 @@ export const useCartStore = defineStore('cart', () => {
           ...product,
           count: item.count,
           cartItemId: item.id,
-          additionalWarranty: 0,
+          additionalWarranty: item.additionalWarranty,
           servicePrice: 0
         })
       }
@@ -179,70 +185,6 @@ export const useCartStore = defineStore('cart', () => {
     cartItemsWithDetails.value = orderedData
     return { error: null }
   }
-
-  // async function increaseItemCount(
-  //   product: ProductCart
-  // ): Promise<{ error: PostgrestError | null }> {
-  //   const user = await isUserAuthenticated()
-  //   if (user) {
-  //     if (product.cartItemId) {
-  //       const { error } = await updateOneById('cart', product.cartItemId, {
-  //         count: product.count + 1
-  //       })
-  //       if (error) return { error }
-  //     }
-  //   } else {
-  //     const storageData = localStorageGet<ProductInStorage[]>('products') ?? []
-  //     cartItems.value = storageData
-  //     localStorageSet('products', cartItems.value)
-  //   }
-  //   cartItems.value = cartItems.value.map((p) =>
-  //     p.productId === product.id ? { ...p, count: p.count + 1 } : p
-  //   )
-  //   cartItemsWithDetails.value = cartItemsWithDetails.value.map((p) =>
-  //     p.id === product.id ? { ...p, count: p.count + 1 } : p
-  //   )
-  //   return { error: null }
-  // }
-
-  // async function reduceItemCount(
-  //   product: ProductCart
-  // ): Promise<{ error: PostgrestError | null }> {
-  //   const user = await isUserAuthenticated()
-  //   if (user) {
-  //     if (product.cartItemId) {
-  //       if (product.count > 1) {
-  //         const { error } = await updateOneById('cart', product.cartItemId, {
-  //           count: product.count - 1
-  //         })
-  //         if (error) return { error }
-  //       } else {
-  //         const { error } = await deleteOneById('cart', product.cartItemId)
-  //         if (error) return { error }
-  //       }
-  //     }
-  //   } else {
-  //     const data = localStorageGet<ProductInStorage[]>('products') ?? []
-  //     cartItems.value = data
-  //     localStorageSet('products', cartItems.value)
-  //   }
-  //   if (product.count > 1) {
-  //     cartItemsWithDetails.value = cartItemsWithDetails.value.map((p) =>
-  //       p.id === product.id ? { ...p, count: p.count - 1 } : p
-  //     )
-  //     cartItems.value = cartItems.value.map((p) =>
-  //       p.productId === product.id ? { ...p, count: p.count - 1 } : p
-  //     )
-  //   } else {
-  //     cartItemsWithDetails.value = cartItemsWithDetails.value.filter(
-  //       (p) => p.id !== product.id
-  //     )
-  //     cartItems.value = cartItems.value.filter(
-  //       (p) => p.productId !== product.id
-  //     )
-  //   }
-  //   return { error: null }
-  // }
 
   async function setItemCount(
     product: ProductCart,
@@ -262,9 +204,9 @@ export const useCartStore = defineStore('cart', () => {
         }
       }
     } else {
-      const data = localStorageGet<ProductInStorage[]>('products') ?? []
+      const data = localStorageGet<ProductInStorage[]>('cart') ?? []
       cartItems.value = data
-      localStorageSet('products', cartItems.value)
+      localStorageSet('cart', cartItems.value)
     }
     if (count === 0) {
       cartItemsWithDetails.value = cartItemsWithDetails.value.filter(
@@ -303,9 +245,9 @@ export const useCartStore = defineStore('cart', () => {
       )
       if (errorDelete) return { error: errorDelete }
     } else {
-      const data = localStorageGet<ProductInStorage[]>('products') ?? []
+      const data = localStorageGet<ProductInStorage[]>('cart') ?? []
       localStorageSet(
-        'products',
+        'cart',
         data.filter((e) => e.productId !== productId)
       )
     }
@@ -317,15 +259,28 @@ export const useCartStore = defineStore('cart', () => {
     return { error: null }
   }
 
+  const countCartItems = computed(() =>
+    cartItems.value.reduce((total, item) => total + item.count, 0)
+  )
+
+  const getMarkup = (warranty: number, productPrice: number) => {
+    const markup = Math.min(productPrice * 0.01, 1000)
+    let price = 0
+    if (warranty === 12) price = 1000 + markup
+    if (warranty === 24) price = 1500 + markup
+    if (warranty === 36) price = 2500 + markup
+    return Math.floor(price)
+  }
+
   return {
     cartItems,
     addToCart,
     setCartItems,
     cartItemsWithDetails,
     setCartItemsWithDetails,
-    // increaseItemCount,
-    // reduceItemCount,
     setItemCount,
-    deleteItem
+    deleteItem,
+    countCartItems,
+    getMarkup
   }
 })

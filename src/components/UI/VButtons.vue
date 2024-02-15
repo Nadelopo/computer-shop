@@ -3,6 +3,7 @@
   lang="ts"
   generic="T extends boolean | string | string[] | number"
 >
+import { ref, watchEffect } from 'vue'
 import { VButton } from '@/components/UI'
 
 type Value = T extends string | string[]
@@ -18,13 +19,19 @@ const props = defineProps<{
     value: Value
     title: string
   }[]
+  loading?: boolean
 }>()
 
 const emit = defineEmits<{
   'update:modelValue': [T]
 }>()
 
-const onClick = (value: { value: ValueArg; title: string }) => {
+const currentBtnIndex = ref(-1)
+const onClick = (value: { value: ValueArg; title: string }, i: number) => {
+  if (props.loading !== undefined) {
+    currentBtnIndex.value = i
+    if (props.loading) return
+  }
   if (Array.isArray(props.modelValue)) {
     let updatedValues: string[] = []
     if (props.modelValue.includes(value.value as string)) {
@@ -45,6 +52,14 @@ const isActive = (value: { value: ValueArg; title: string }) => {
     return props.modelValue === value.value
   }
 }
+
+if (props.loading !== undefined) {
+  watchEffect(() => {
+    if (props.loading === false) {
+      currentBtnIndex.value = -1
+    }
+  })
+}
 </script>
 
 <template>
@@ -54,7 +69,8 @@ const isActive = (value: { value: ValueArg; title: string }) => {
       :key="i"
       type="button"
       :variant="isActive(value) ? 'primary' : 'noactive'"
-      @click="onClick(value)"
+      :loading="loading && currentBtnIndex === i"
+      @click="onClick(value, i)"
     >
       {{ value.title }}
     </v-button>

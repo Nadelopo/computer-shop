@@ -4,7 +4,6 @@ import { defineStore } from 'pinia'
 import type {
   SpecificationCreate,
   SpecificationRead,
-  SpecificationReadWithDetails,
   SpecificationUpdate
 } from '@/types/tables/specifications.types'
 import type {

@@ -25,7 +25,11 @@ export const useUserStore = defineStore('user', () => {
 
   async function setUserData(id: string | undefined): Promise<void> {
     if (id) {
-      const { data } = await getOneById('users', id)
+      const { data } = await getOneById(
+        'users',
+        id,
+        'id, created_at, email, name, phone, role, favourites, comparison'
+      )
       user.value = data
     } else {
       user.value = null
@@ -78,7 +82,11 @@ export const useUserStore = defineStore('user', () => {
     }
     let items: number[]
     if (isUser) {
-      const { data, error } = await getOneById('users', isUser.id)
+      const { data, error } = await getOneById(
+        'users',
+        isUser.id,
+        'favourites,  comparison'
+      )
       if (error) return error
 
       items = data[listTitle]

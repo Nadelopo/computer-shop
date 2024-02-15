@@ -60,11 +60,6 @@ watchEffect(async () => {
     @submit.prevent="onSubmit"
   >
     <div>
-      <!-- <label>Адрес</label> -->
-      <!-- <v-input-text
-        v-model="model.address"
-        required
-      /> -->
       <input-address
         v-model="model.address"
         :location-results="locationResults"
@@ -85,7 +80,7 @@ watchEffect(async () => {
       <label>Телефон</label>
       <v-input-text
         v-model="model.phone"
-        type="phone"
+        type="tel"
         placeholder="7 (###) ###-##-##"
         required
         @update:model-value="(_, b) => (phoneMaskaCompleted = b?.completed!)"

@@ -1,4 +1,7 @@
-export type UserRead = Required<UserCreate>
+export type UserRead = Required<
+  Omit<UserCreate, 'address' | 'floor' | 'apartment' | 'entrance' | 'city'>
+>
+export type UserReadWithDetails = Required<UserCreate>
 
 export type UserCreate = {
   created_at?: string
@@ -9,6 +12,11 @@ export type UserCreate = {
   role?: (typeof Role)[keyof typeof Role]
   favourites?: number[]
   comparison?: number[]
+  address?: string | null
+  apartment?: number | null
+  floor?: number | null
+  entrance?: number | null
+  city?: string | null
 }
 
 export type UserUpdate = Partial<UserCreate>

@@ -1,4 +1,4 @@
-import type { DbEnums } from '@/types/database.types'
+import type { DbEnum } from '@/types/database.types'
 import type { SpecificationCreate } from '@/types/tables/specifications.types'
 
 export type SpecificationCreateForm = Omit<
@@ -17,7 +17,7 @@ export type SpecificationCreateForm = Omit<
         step: number
       }
     | {
-        type: Exclude<DbEnums<'category_specification_type'>, 'number'>
+        type: Exclude<DbEnum<'category_specification_type'>, 'number'>
         valueNumber: null
         valueString: string[]
         variantsValues: string[]

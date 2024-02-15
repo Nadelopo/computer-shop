@@ -1,19 +1,24 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useMediaQuery } from '@vueuse/core'
 import { useCartStore } from '@/stores/cartStore'
 import { VLoader, VButton, VButtons, VSelect } from '@/components/UI'
 import ItemActions from '@/components/Cart/ItemActions.vue'
 import { formatPrice } from '@/utils/formatPrice'
-import { useMediaQuery } from '@vueuse/core'
+import { useChooseWord } from '@/components/Cart/useChooseWord'
+import { updateOneById } from '@/db/queries/tables'
+import { useUserStore } from '@/stores/userStore'
+import { localStorageSet } from '@/utils/localStorage'
 import type { ProductCart } from '@/stores/cartStore'
 import type { Loading } from '@/types'
 
-const { setCartItemsWithDetails, setCartItems } = useCartStore()
-const { cartItemsWithDetails } = storeToRefs(useCartStore())
-
+const { isUserAuthenticated } = useUserStore()
+const { setCartItemsWithDetails, setCartItems, getMarkup } = useCartStore()
+const { cartItemsWithDetails, countCartItems, cartItems } = storeToRefs(
+  useCartStore()
+)
 const loading = ref<Loading>('loading')
-
 onBeforeMount(async () => {
   const { data, error } = await setCartItems()
   if (error) {
@@ -25,6 +30,9 @@ onBeforeMount(async () => {
     return
   }
   await setCartItemsWithDetails(data)
+  for (const item of cartItemsWithDetails.value) {
+    item.servicePrice = getMarkup(item.additionalWarranty, item.price)
+  }
   loading.value = 'success'
 })
 
@@ -35,49 +43,38 @@ const sumPrice = computed(() => {
 })
 
 const warrantyOptions = [
-  {
-    title: 'нет',
-    value: 0
-  },
-  {
-    title: '+12 мес.',
-    value: 12
-  },
-  {
-    title: '+24 мес.',
-    value: 24
-  },
-  {
-    title: '+36 мес.',
-    value: 36
-  }
+  { title: 'нет', value: 0 },
+  { title: '+12 мес.', value: 12 },
+  { title: '+24 мес.', value: 24 },
+  { title: '+36 мес.', value: 36 }
 ]
 
-const setServicePrice = (warranty: number, product: ProductCart) => {
-  const markup = Math.min(product.price * 0.01, 1000)
-  let price = 0
-  if (warranty === 12) price = 1000 + markup
-  if (warranty === 24) price = 1500 + markup
-  if (warranty === 36) price = 2500 + markup
-  product.servicePrice = Math.floor(price)
+const loadingServicePrice = ref<Loading>('success')
+const setServicePrice = async (warranty: number, product: ProductCart) => {
+  loadingServicePrice.value = 'loading'
+  const user = await isUserAuthenticated()
+  console.log(user)
+  if (user && product.cartItemId) {
+    const { error } = await updateOneById('cart', product.cartItemId, {
+      additionalWarranty: warranty
+    })
+    if (error) {
+      loadingServicePrice.value = 'error'
+      return
+    }
+  } else {
+    localStorageSet(
+      'cart',
+      cartItems.value.map((e) =>
+        e.productId === product.id ? { ...e, additionalWarranty: warranty } : e
+      )
+    )
+  }
+  product.servicePrice = getMarkup(warranty, product.price)
+  loadingServicePrice.value = 'success'
 }
 
-const countCartItems = computed(() =>
-  cartItemsWithDetails.value.reduce((total, item) => total + item.count, 0)
-)
-
-const chooseWord = computed(() => {
-  const countCartItemsValue = countCartItems.value
-  if (countCartItemsValue < 20) {
-    if (countCartItemsValue === 1) return 'товар'
-    if (countCartItemsValue >= 2 && countCartItemsValue <= 4) return 'товара'
-  } else {
-    const lastChar = Number(countCartItemsValue.toString().at(-1))
-    if (lastChar === 1) return 'товар'
-    if (lastChar >= 2 && lastChar <= 4) return 'товара'
-  }
-  return 'товаров'
-})
+const { chooseWord } = useChooseWord()
 
 const isMobile = useMediaQuery('(width < 640px)')
 </script>
@@ -129,7 +126,6 @@ const isMobile = useMediaQuery('(width < 640px)')
               />
             </router-link>
           </div>
-
           <div class="title">
             <router-link
               class="text-xl text-black font-medium duration-200 cursor-pointer hover:text-text"
@@ -159,6 +155,7 @@ const isMobile = useMediaQuery('(width < 640px)')
               <v-buttons
                 v-model="product.additionalWarranty"
                 :options="warrantyOptions"
+                :loading="loadingServicePrice === 'loading'"
                 class="mt-2"
                 @update:model-value="setServicePrice($event, product)"
               />
@@ -185,7 +182,9 @@ const isMobile = useMediaQuery('(width < 640px)')
               {{ formatPrice(sumPrice) }}
             </div>
           </div>
-          <v-button width="100%"> Перейти к оформлению </v-button>
+          <router-link :to="{ name: 'Checkout' }">
+            <v-button width="100%"> Перейти к оформлению </v-button>
+          </router-link>
         </div>
       </div>
     </div>

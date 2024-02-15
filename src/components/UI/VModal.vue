@@ -47,6 +47,7 @@ watch(modelValue, () => {
   display: flex
   z-index: 1000
   padding: 10px
+  overflow: auto
 
 .dialog__content
   margin: auto

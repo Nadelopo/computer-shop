@@ -1,4 +1,4 @@
-import type { DbEnums } from '../database.types'
+import type { DbEnum } from '../database.types'
 
 export type SpecificationRead = Required<SpecificationCreate>
 
@@ -9,7 +9,7 @@ export type SpecificationReadWithDetails = {
     title: string
     visible: boolean
     units: string
-    type: DbEnums<'category_specification_type'>
+    type: DbEnum<'category_specification_type'>
   }
   created_at: string
   id: number

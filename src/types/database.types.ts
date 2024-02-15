@@ -35,10 +35,11 @@ import type {
 } from '@/types/tables/specifications.types'
 import type {
   UserCreate,
-  UserRead,
+  UserReadWithDetails,
   UserUpdate
 } from '@/types/tables/users.types'
 import type { ShopCreate, ShopRead, ShopUpdate } from './tables/shops.types'
+import type { OrderCreate, OrderRead, OrderUpdate } from './tables/orders.types'
 
 export type Json =
   | string
@@ -159,7 +160,7 @@ export type Database = {
         ]
       }
       users: {
-        Row: UserRead
+        Row: UserReadWithDetails
         Insert: UserCreate
         Update: UserUpdate
         Relationships: []
@@ -169,6 +170,27 @@ export type Database = {
         Insert: ShopCreate
         Update: ShopUpdate
         Relationships: []
+      }
+      orders: {
+        Row: OrderRead
+        Insert: OrderCreate
+        Update: OrderUpdate
+        Relationships: [
+          {
+            foreignKeyName: 'orders_shopAddress_fkey'
+            columns: ['shopAddress']
+            isOneToOne: false
+            referencedRelation: 'shops'
+            referencedColumns: ['address']
+          },
+          {
+            foreignKeyName: 'orders_userId_fkey'
+            columns: ['userId']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
+        ]
       }
     }
     Views: {
@@ -232,6 +254,9 @@ export type Database = {
     Enums: {
       category_specification_condition: 'greater' | 'less'
       category_specification_type: 'number' | 'string' | 'union'
+      //prettier-ignore
+      order_status: 'processing' | 'awaiting payment' | 'preparing for shipment' | 'shipped' | 'delivered'| 'cancelled'| 'returned'| 'completed'| 'awaiting'
+      order_type: 'selfcall' | 'delivery'
     }
     CompositeTypes: {
       [_ in never]: never
@@ -250,5 +275,5 @@ export type UpdateData<T extends Table> =
 export type View<T extends keyof Database['public']['Views']> =
   Database['public']['Views'][T]['Row']
 
-export type DbEnums<T extends keyof Database['public']['Enums']> =
+export type DbEnum<T extends keyof Database['public']['Enums']> =
   Database['public']['Enums'][T]

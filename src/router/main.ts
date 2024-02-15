@@ -13,11 +13,15 @@ export const mainRoutes: RouteRecordRaw[] = [
     name: 'CategoryProducts',
     component: () => import('@/pages/CategoryProducts.vue')
   },
-
   {
     path: '/cart',
     name: 'Cart',
     component: () => import('@/pages/Cart.vue')
+  },
+  {
+    path: '/checkout',
+    name: 'Checkout',
+    component: () => import('@/pages/Checkout.vue')
   },
   {
     path: '/products/:category/:categoryId/:productId',
