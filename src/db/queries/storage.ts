@@ -22,7 +22,7 @@ export const insertInStorage = async (
       upsert: false
     })
   if (error) {
-    console.log(error)
+    console.error(error)
     return {
       url: null,
       error: error as any
@@ -49,7 +49,7 @@ export const removeFromStorage = async (
     .from('storage')
     .remove([`${folder}/${getImgName(imgUrl)}`])
   if (error) {
-    console.log(error)
+    console.error(error)
     return {
       data: null,
       error: error as any

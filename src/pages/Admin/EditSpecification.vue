@@ -60,7 +60,7 @@ const save = async () => {
       .update(updateValues)
       .eq('categorySpecificationsId', form.value.id)
     if (errorUpdate) {
-      console.log(errorUpdate)
+      console.error(errorUpdate)
     }
   }
   router.push({ name: 'AdminSpecifications' })

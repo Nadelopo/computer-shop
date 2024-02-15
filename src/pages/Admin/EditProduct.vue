@@ -43,7 +43,7 @@ onBeforeMount(async () => {
   ])
   if (!productData || !specificationsData) {
     loading.value = 'error'
-    console.log(errorData, errorSpecifications)
+    console.error(errorData, errorSpecifications)
     return
   }
   product.value = productData

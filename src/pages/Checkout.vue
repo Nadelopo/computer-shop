@@ -184,7 +184,6 @@ const onSubmit = async () => {
     const findedAddress = data?.find(
       (e) => e.title.text === userContactDataValue.location.address
     )
-    console.log(findedAddress)
     if (!findedAddress) {
       useToast().warning('Адрес не найден')
       loadingCreateOrder.value = 'success'

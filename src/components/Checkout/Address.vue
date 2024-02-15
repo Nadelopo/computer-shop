@@ -32,7 +32,6 @@ watch(
       type: 'house'
     })
     locationResults.value = data
-    console.log(data)
   }
 )
 

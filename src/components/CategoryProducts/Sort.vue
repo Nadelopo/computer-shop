@@ -66,7 +66,6 @@ onBeforeMount(() => {
   const sortQuery = route.query.sort as string | undefined
   if (!sortQuery) return
   const [column, ascents] = sortQuery.split('_')
-  console.log(column, ascents)
   sortColumn.value = column as SortType
   sortAscents[column as SortType] = ascents === 'true'
   currentSort.value = `${sortColumn.value}_${sortAscents[sortColumn.value]}`

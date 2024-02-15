@@ -25,7 +25,7 @@ const signIn = async () => {
       password: password.value
     })
     if (error) {
-      console.log(error)
+      console.error(error)
       toast.warning('Неверная почта или пароль')
     }
     if (user) {
@@ -46,7 +46,7 @@ const signUp = async () => {
       password: password.value
     })
     if (error) {
-      console.log(error)
+      console.error(error)
       toast.warning('Пользователь уже зарегестрирован')
     }
     if (!user) return

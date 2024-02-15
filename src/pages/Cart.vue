@@ -53,7 +53,6 @@ const loadingServicePrice = ref<Loading>('success')
 const setServicePrice = async (warranty: number, product: ProductCart) => {
   loadingServicePrice.value = 'loading'
   const user = await isUserAuthenticated()
-  console.log(user)
   if (user && product.cartItemId) {
     const { error } = await updateOneById('cart', product.cartItemId, {
       additionalWarranty: warranty
