@@ -48,7 +48,8 @@ const width = computed(() => props.width ?? 'auto')
   color: #fff
   cursor: pointer
   transition: transform .3s, background .3s
-  display: flex
+  display: inline-flex
+  vertical-align: middle
   align-items: center
   justify-content: center
   outline: 2px solid transparent
@@ -77,7 +78,8 @@ const width = computed(() => props.width ?? 'auto')
     padding: 0.375rem 0.75rem
     cursor: pointer
     transition: fill .3s, background .3s, transform .3s, color .3s
-    display: flex
+    display: inline-flex
+    vertical-align: middle
     align-items: center
     justify-content: center
     color: var(--color-main)

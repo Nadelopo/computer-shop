@@ -1,17 +1,8 @@
-<script
-  setup
-  lang="ts"
-  generic="T extends boolean | string | string[] | number"
->
+<script setup lang="ts" generic="T ">
 import { ref, watchEffect } from 'vue'
 import { VButton } from '@/components/UI'
 
-type Value = T extends string | string[]
-  ? string
-  : T extends boolean
-  ? boolean
-  : number
-type ValueArg = string | boolean | number
+type Value = T extends Array<infer U> ? U : T
 
 const props = defineProps<{
   modelValue: T
@@ -20,6 +11,7 @@ const props = defineProps<{
     title: string
   }[]
   loading?: boolean
+  width?: string
 }>()
 
 const emit = defineEmits<{
@@ -27,7 +19,7 @@ const emit = defineEmits<{
 }>()
 
 const currentBtnIndex = ref(-1)
-const onClick = (value: { value: ValueArg; title: string }, i: number) => {
+const onClick = (value: { value: Value; title: string }, i: number) => {
   if (props.loading !== undefined) {
     currentBtnIndex.value = i
     if (props.loading) return
@@ -45,9 +37,11 @@ const onClick = (value: { value: ValueArg; title: string }, i: number) => {
   }
 }
 
-const isActive = (value: { value: ValueArg; title: string }) => {
+const isActive = (value: { value: Value; title: string }) => {
   if (Array.isArray(props.modelValue)) {
     return props.modelValue.includes(value.value as string)
+  } else if (value.value instanceof Date && props.modelValue instanceof Date) {
+    return value.value.getTime() === props.modelValue.getTime()
   } else {
     return props.modelValue === value.value
   }
@@ -63,13 +57,15 @@ if (props.loading !== undefined) {
 </script>
 
 <template>
-  <div class="wrap">
+  <div>
     <v-button
       v-for="(value, i) in options"
       :key="i"
       type="button"
       :variant="isActive(value) ? 'primary' : 'noactive'"
       :loading="loading && currentBtnIndex === i"
+      class="buttons__button"
+      :width="width"
       @click="onClick(value, i)"
     >
       {{ value.title }}
@@ -78,7 +74,9 @@ if (props.loading !== undefined) {
 </template>
 
 <style scoped lang="sass">
-.wrap
-  display: flex
-  gap: 10px
+.buttons__button
+  margin-right: 8px
+  margin-bottom: 8px
+  &:last-child
+    margin-right: 0
 </style>
