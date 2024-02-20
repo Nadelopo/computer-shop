@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { VInputText, VButton, VModal, VLoader } from '../UI'
+import { VInputText, VButton, VModal, VLoader, VButtons } from '../UI'
 import { getAll } from '@/db/queries/tables'
 import { LocationResult, useGeoSuggest } from '@/utils/useGeoSuggest'
 import InputAddress from '@/components/InputAddress.vue'
@@ -19,6 +19,10 @@ const address = defineModel<Location>({
 })
 
 const shopAddress = defineModel<string | null>('shopAddress', {
+  required: true
+})
+
+const selectedDate = defineModel<Date>('date', {
   required: true
 })
 
@@ -56,45 +60,69 @@ const loadingMap = ref(false)
 const onMapLoad = () => {
   loadingMap.value = true
 }
+
+const tomorrow = new Date()
+tomorrow.setDate(tomorrow.getDate() + 1)
+const dates = ref<{ title: string; value: Date }[]>([])
+
+for (let i = 0; i < 7; i++) {
+  const date = new Date(selectedDate.value)
+  const value = new Date(date.setDate(date.getDate() + i))
+  const formatDate = new Intl.DateTimeFormat('ru', {
+    month: 'long',
+    weekday: 'short',
+    day: 'numeric'
+  }).format(date)
+  let title = formatDate.split(',').reverse().join(', ') + '.'
+  dates.value.push({ title, value })
+}
 </script>
 
 <template>
-  <div
-    v-if="obtainType === 'delivery'"
-    ref="testRef"
-    class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2"
-  >
-    <input-address
-      v-model="address.address"
-      :location-results="locationResults"
-      text="Адрес*"
-      @click-on-suggestion="address.address = $event"
-    />
-    <div>
-      <div>Квартира*</div>
-      <v-input-text
-        v-model="address.apartment"
-        type="number"
-        min="0"
+  <div v-if="obtainType === 'delivery'">
+    <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
+      <input-address
+        v-model="address.address"
+        :location-results="locationResults"
+        text="Адрес*"
+        @click-on-suggestion="address.address = $event"
       />
+      <div>
+        <div>Квартира*</div>
+        <v-input-text
+          v-model="address.apartment"
+          type="number"
+          min="0"
+        />
+      </div>
+      <div>
+        <div>Этаж</div>
+        <v-input-text
+          v-model="address.floor"
+          type="number"
+          min="0"
+          :required="false"
+        />
+      </div>
+      <div>
+        <div>Подъезд</div>
+        <v-input-text
+          v-model="address.entrance"
+          type="number"
+          min="0"
+          :required="false"
+        />
+      </div>
     </div>
-    <div>
-      <div>Этаж</div>
-      <v-input-text
-        v-model="address.floor"
-        type="number"
-        min="0"
-        :required="false"
-      />
-    </div>
-    <div>
-      <div>Подъезд</div>
-      <v-input-text
-        v-model="address.entrance"
-        type="number"
-        min="0"
-        :required="false"
-      />
+    <div class="mt-4">
+      <div class="text-xl mb-2">Дата доставки</div>
+      <div>
+        <v-buttons
+          v-model="selectedDate"
+          :options="dates"
+          width="150px"
+        />
+      </div>
     </div>
   </div>
   <div v-else>

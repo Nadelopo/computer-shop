@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, watch } from 'vue'
-import { VButton, VButtons, VInputText, VLoader } from '@/components/UI'
+import { useToast } from 'vue-toastification'
+import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
 import { useCartStore } from '@/stores/cartStore'
 import { useChooseWord } from '@/components/Cart/useChooseWord'
@@ -13,17 +15,15 @@ import {
   updateOneById
 } from '@/db/queries/tables'
 import { formatPrice } from '@/utils/formatPrice'
+import { VButton, VButtons, VInputText, VLoader } from '@/components/UI'
+import { localStorageSet } from '@/utils/localStorage'
+import { useGeoSuggest } from '@/utils/useGeoSuggest'
 import Address from '@/components/Checkout/Address.vue'
 import type { Loading } from '@/types'
 import type { Location } from '@/components/Checkout/types'
 import type { ProductRead } from '@/types/tables/products.types'
-import type { OrderCreate } from '@/types/tables/orders.types'
+import type { OrderCreate, OrderedProduct } from '@/types/tables/orders.types'
 import type { UserUpdate } from '@/types/tables/users.types'
-import { useToast } from 'vue-toastification'
-import { useRouter } from 'vue-router'
-import { supabase } from '@/db/supabase'
-import { localStorageSet } from '@/utils/localStorage'
-import { useGeoSuggest } from '@/utils/useGeoSuggest'
 
 type UserContactData = {
   name: string
@@ -31,30 +31,34 @@ type UserContactData = {
   phone: string
   obtainType: 'selfcall' | 'delivery'
   location: Location
-  shopAddress: string | null
 }
 
 const { user } = storeToRefs(useUserStore())
+const { isUserAuthenticated } = useUserStore()
 const userContactData = ref<UserContactData>({
   name: '',
   email: '',
   phone: '',
-  obtainType: 'selfcall',
+  obtainType: 'delivery',
   location: {
     apartment: null,
     floor: null,
     entrance: null,
-    address: '',
-    city: ''
-  },
-  shopAddress: null
+    address: null,
+    city: 'Ульяновск'
+  }
 })
 
 const loadingUserData = ref<Loading>('loading')
 const watcher = watch(
   user,
   async (cur) => {
-    if (!cur) return
+    if (!cur) {
+      const isUser = await isUserAuthenticated()
+      if (!isUser) watcher()
+      loadingUserData.value = 'success'
+      return
+    }
     const { data, error } = await getOneById(
       'users',
       cur.id,
@@ -62,12 +66,13 @@ const watcher = watch(
     )
     if (error) {
       loadingUserData.value = 'error'
+      watcher()
       return
     }
     userContactData.value = {
       email: cur.email,
       name: cur.name,
-      obtainType: 'selfcall',
+      obtainType: 'delivery',
       phone: cur.phone?.toString() ?? '',
       location: {
         city: data.city ?? 'Ульяновск',
@@ -75,8 +80,7 @@ const watcher = watch(
         apartment: data.apartment,
         floor: data.floor,
         entrance: data.entrance
-      },
-      shopAddress: null
+      }
     }
     loadingUserData.value = 'success'
     watcher()
@@ -94,6 +98,9 @@ const products = ref<
 >([])
 onBeforeMount(async () => {
   await setCartItems()
+  if (!cartItems.value.length) {
+    router.push({ name: 'Cart' })
+  }
   const { data, error } = await getAll('products', {
     in: {
       id: cartItems.value.map((e) => e.productId)
@@ -116,7 +123,7 @@ onBeforeMount(async () => {
 
 const { chooseWord } = useChooseWord()
 
-const updatePriductQuantity = () => {
+const updateProductQuantity = () => {
   const items: Pick<ProductRead, 'id' | 'quantity'>[] = []
   for (const product of products.value) {
     const count = cartItems.value.find((e) => e.productId === product.id)?.count
@@ -154,32 +161,37 @@ const updateUserData = async (phone: number) => {
   if (!user.value.phone) {
     updateData.phone = phone
   }
+  if (Object.keys(updateData).length === 0) return
   updateOneById('users', user.value.id, updateData)
 }
 
 const loadingCreateOrder = ref<Loading>('success')
 const router = useRouter()
+const shopAddress = ref<string | null>(null)
+const deliveryDate = ref<Date>(
+  new Date(new Date().setDate(new Date().getDate() + 1))
+)
 const onSubmit = async () => {
   const userContactDataValue = userContactData.value
   const {
     name,
     email,
     obtainType,
-    shopAddress,
     location: { address, apartment, floor, entrance, city }
   } = userContactDataValue
   const phone = Number(userContactDataValue.phone.replace(/[()\- ]/g, ''))
 
   loadingCreateOrder.value = 'loading'
   if (obtainType === 'selfcall') {
-    if (userContactDataValue.shopAddress === null) {
+    if (shopAddress.value === null) {
       useToast().warning('Выберите магазин')
       loadingCreateOrder.value = 'success'
       return
     }
   } else {
     const { data } = await useGeoSuggest({
-      text: userContactDataValue.location.address
+      text: address ? `${city} ${address}` : '',
+      type: 'house'
     })
     const findedAddress = data?.find(
       (e) => e.title.text === userContactDataValue.location.address
@@ -191,28 +203,36 @@ const onSubmit = async () => {
     }
   }
   updateUserData(phone)
-  const orderedProducts = cartItems.value.map((e) => {
-    const price = products.value.find((p) => p.id === e.productId)?.price ?? 0
+  const orderedProducts: OrderedProduct[] = cartItems.value.map((e) => {
+    const product = products.value.find((p) => p.id === e.productId)
+    const additionalWarranty =
+      cartItems.value.find((p) => p.productId === e.productId)
+        ?.additionalWarranty ?? 0
     return {
       productId: e.productId,
       count: e.count,
-      price
+      price: product?.price ?? 0,
+      additionalWarranty,
+      servicePrice: getMarkup(additionalWarranty, product?.price ?? 0)
     }
   })
-
+  const date = deliveryDate.value
+  const formatDate = `
+    ${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}
+  `
   const order: OrderCreate = {
     userId: user.value?.id ?? null,
-    phone: user.value ? null : phone,
-    email: user.value ? null : email,
-    name: user.value ? null : name,
-    address: user.value ? null : address,
-    apartment: user.value ? null : apartment,
-    city: user.value ? null : city,
-    entrance: user.value ? null : entrance,
-    floor: user.value ? null : floor,
+    phone,
+    email,
+    name,
     type: obtainType,
-    deliveryDate: obtainType === 'delivery' ? new Date() : null,
-    shopAddress: obtainType === 'selfcall' ? shopAddress : null,
+    address: obtainType === 'delivery' ? address : null,
+    city: obtainType === 'delivery' ? city : null,
+    apartment: obtainType === 'delivery' ? apartment || null : null,
+    floor: obtainType === 'delivery' ? floor || null : null,
+    entrance: obtainType === 'delivery' ? entrance || null : null,
+    deliveryDate: obtainType === 'delivery' ? formatDate : null,
+    shopAddress: obtainType === 'selfcall' ? shopAddress.value : null,
     status: 'awaiting',
     price: price.value,
     orderedProducts
@@ -228,7 +248,7 @@ const onSubmit = async () => {
   } else {
     localStorageSet('cart', [])
   }
-  await updatePriductQuantity()
+  await updateProductQuantity()
   router.push('Cart')
 }
 </script>
@@ -282,7 +302,8 @@ const onSubmit = async () => {
         </div>
         <Address
           v-model="userContactData.location"
-          v-model:shop-address="userContactData.shopAddress"
+          v-model:shop-address="shopAddress"
+          v-model:date="deliveryDate"
           :obtain-type="userContactData.obtainType"
         />
       </div>
@@ -293,7 +314,7 @@ const onSubmit = async () => {
         <div>Выберите способ оплаты</div>
       </div>
       <div class="content">
-        <v-button>при получении</v-button>
+        <v-button type="button">при получении</v-button>
       </div>
     </div>
     <div>

@@ -14,7 +14,7 @@ const emit = defineEmits<{
   clickOnInput: [string]
 }>()
 
-const model = defineModel<string>({ required: true })
+const model = defineModel<string | null>({ required: true })
 
 const chooseColored = (
   hl: { begin: number; end: number }[] | undefined,

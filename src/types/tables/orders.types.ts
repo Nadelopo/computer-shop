@@ -2,6 +2,8 @@ export type OrderedProduct = {
   productId: number
   count: number
   price: number
+  additionalWarranty: number
+  servicePrice: number
 }
 
 import type { DbEnum } from '../database.types'
@@ -26,7 +28,7 @@ type OrderDetails<
   userId: U
   type: T
   shopAddress: T extends 'selfcall' ? string : null
-  deliveryDate: T extends 'delivery' ? Date : null
+  deliveryDate: T extends 'delivery' ? string : null
   address: T extends 'delivery' ? string : null
   apartment: T extends 'delivery' ? number : null
   floor: number | null
@@ -46,7 +48,7 @@ export type OrderCreate = {
   userId: string | null
   type: DbEnum<'order_type'>
   shopAddress: string | null
-  deliveryDate: Date | null
+  deliveryDate: string | null
   address: string | null
   apartment: number | null
   floor: number | null
