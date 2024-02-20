@@ -23,7 +23,7 @@ const currentCategoryId = defineModel<number | null>('currentCategoryId', {
 const categories = defineModel<Category[]>('categories', { required: true })
 
 const emit = defineEmits<{
-  updateLoaing: [Loading]
+  updateLoading: [Loading]
 }>()
 
 const router = useRouter()
@@ -38,7 +38,7 @@ const clearList = async () => {
       comparison: remainProductIds
     })
     if (error) {
-      emit('updateLoaing', 'error')
+      emit('updateLoading', 'error')
       return
     }
     user.value.comparison = data.comparison
@@ -64,7 +64,7 @@ const clearList = async () => {
     query = { category_id: String(currentCategoryId.value) }
   }
   router.push({ query })
-  emit('updateLoaing', products.value.length ? 'success' : 'empty')
+  emit('updateLoading', products.value.length ? 'success' : 'empty')
 }
 
 const route = useRoute()
