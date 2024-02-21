@@ -64,11 +64,11 @@ const onMove = (e: MouseEvent | TouchEvent) => {
     touchMoveDirection.value =
       Math.abs(clientX - startPosX.value) > 4 ? 'horizontal' : 'vertical'
   }
-  isMovableOnEvents.value = true
   if (touchMoveDirectionValue === 'vertical') return
   if (touchMoveDirectionValue === 'horizontal') e.preventDefault()
   const currentPosXValue = currentPosX.value
-  if (clientX > currentPosXValue || clientX < currentPosXValue) {
+  if (clientX !== currentPosXValue) {
+    isMovableOnEvents.value = true
     translate.value += clientX - currentPosXValue
   }
   currentPosX.value = clientX

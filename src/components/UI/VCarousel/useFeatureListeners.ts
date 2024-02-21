@@ -13,10 +13,7 @@ export const useFeatureMoveListener = (
     window.removeEventListener('touchmove', handler)
   }
   onUnmounted(remove)
-  return {
-    add,
-    remove
-  }
+  return { add, remove }
 }
 
 export const useFeatureMouseUpListener = (
@@ -25,8 +22,5 @@ export const useFeatureMouseUpListener = (
   const add = () => window.addEventListener('mouseup', handler)
   const remove = () => window.removeEventListener('mouseup', handler)
   onUnmounted(remove)
-  return {
-    add,
-    remove
-  }
+  return { add, remove }
 }
