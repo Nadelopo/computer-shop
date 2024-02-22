@@ -4,15 +4,16 @@ import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { VAccordion } from '@/components/UI'
 import { ArrowSvg, HomeSvg } from '@/assets/icons'
-import { localStorageGet, localStorageSet } from '@/utils/localStorage'
+import { useLocalStorage } from '@/utils/localStorage'
 
 const isVisible = ref(false)
 
 const { categories } = storeToRefs(useCategoriesStore())
 
-const isCollapsed = ref(Boolean(localStorageGet<boolean>('adminSidebar')))
+const isCollapsedStorage = useLocalStorage<boolean>('adminSidebar')
+const isCollapsed = ref(isCollapsedStorage.get() || false)
 watchEffect(() => {
-  localStorageSet('adminSidebar', isCollapsed.value)
+  isCollapsedStorage.set(isCollapsed.value)
 })
 </script>
 

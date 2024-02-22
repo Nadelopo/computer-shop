@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, computed, onBeforeMount } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import { getAll } from '@/db/queries/tables'
@@ -26,9 +26,11 @@ const currentCategorySpecifications = computed((): CategorySpecifications[] => {
 
 const products = ref<ComparisonProduct[]>([])
 const showDifferences = ref(false)
-const loading = ref<Loading>('loading')
+const loading = ref<Loading>('success')
 const route = useRoute()
-onBeforeMount(async () => {
+const loadData = async () => {
+  if (loading.value === 'loading') return
+  loading.value = 'loading'
   await setUserListsValue()
   const queryIds = route.query.ids ? String(route.query.ids) : null
   const ids = queryIds?.split(' ').map(Number) ?? userLists.comparison
@@ -55,7 +57,7 @@ onBeforeMount(async () => {
   }
 
   const modifiedProducts: ComparisonProduct[] = []
-
+  categories.value = []
   if (productData && specificationsData) {
     for (const product of productData) {
       modifiedProducts.push({
@@ -115,7 +117,8 @@ onBeforeMount(async () => {
   }
 
   loading.value = 'success'
-})
+}
+watch(() => userLists.comparison.length, loadData, { immediate: true })
 
 // нужно следить за route т.к. пользователь может перемещаться по истории, без кликов на нужную категорию
 watch(

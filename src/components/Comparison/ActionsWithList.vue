@@ -1,14 +1,14 @@
 <script setup lang="ts">
+import { nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import { updateOneById } from '@/db/queries/tables'
-import { localStorageSet } from '@/utils/localStorage'
+import { useLocalStorage } from '@/utils/localStorage'
 import { VButton, VCheckbox } from '../UI'
 import { TrashSvg, ShareSvg } from '@/assets/icons'
 import type { Category, ComparisonProduct } from './types'
 import type { Loading } from '@/types'
-import { nextTick } from 'vue'
 
 const { userLists } = useUserStore()
 const { user } = storeToRefs(useUserStore())
@@ -41,10 +41,9 @@ const clearList = async () => {
       emit('updateLoading', 'error')
       return
     }
-    user.value.comparison = data.comparison
     userLists.comparison = data.comparison
   } else {
-    localStorageSet('compareList', remainProductIds)
+    useLocalStorage('compareList').set(remainProductIds)
     userLists.comparison = remainProductIds
   }
 

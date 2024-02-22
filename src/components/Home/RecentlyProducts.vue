@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import type { ProductCardData } from '../ProductCard/types'
-import { localStorageGet } from '@/utils/localStorage'
+import { useLocalStorage } from '@/utils/localStorage'
 import { getAll } from '@/db/queries/tables'
-import type { Loading } from '@/types'
 import ProductListCarousel from './ProductListCarousel.vue'
+import type { ProductCardData } from '../ProductCard/types'
+import type { Loading } from '@/types'
 
 const products = ref<ProductCardData[]>([])
 const loading = ref<Loading>('loading')
 onBeforeMount(async () => {
-  const recentlyProducts = localStorageGet<number[]>('recentlyProducts')
+  const recentlyProducts = useLocalStorage<number[]>('recentlyProducts').get()
   if (!recentlyProducts) {
     loading.value = 'empty'
     return

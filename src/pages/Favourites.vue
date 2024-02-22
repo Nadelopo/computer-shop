@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue'
+import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import { getAll, updateOneById } from '@/db/queries/tables'
@@ -16,7 +16,7 @@ const { user } = storeToRefs(useUserStore())
 const favourites = ref<ProductCardData[]>([])
 const loading = ref<Loading>('success')
 
-onBeforeMount(async () => {
+const setFavourites = async () => {
   loading.value = 'loading'
   await setUserListsValue()
   const { data, error } = await getAll('products', {
@@ -29,7 +29,9 @@ onBeforeMount(async () => {
   }
   favourites.value = data
   loading.value = favourites.value.length ? 'success' : 'empty'
-})
+}
+
+watch(() => userLists.favourites.length, setFavourites, { immediate: true })
 
 const clear = async () => {
   if (user.value) {
@@ -41,7 +43,6 @@ const clear = async () => {
       return
     }
     favourites.value = []
-    user.value.favourites = []
     userLists.favourites = []
     loading.value = 'empty'
   }

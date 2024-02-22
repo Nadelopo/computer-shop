@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useMediaQuery } from '@vueuse/core'
 import { useCartStore } from '@/stores/cartStore'
@@ -9,8 +9,8 @@ import { formatPrice } from '@/utils/formatPrice'
 import { useChooseWord } from '@/components/Cart/useChooseWord'
 import { updateOneById } from '@/db/queries/tables'
 import { useUserStore } from '@/stores/userStore'
-import { localStorageSet } from '@/utils/localStorage'
-import type { ProductCart } from '@/stores/cartStore'
+import { useLocalStorage } from '@/utils/localStorage'
+import type { ProductCart, ProductInStorage } from '@/stores/cartStore'
 import type { Loading } from '@/types'
 
 const { isUserAuthenticated } = useUserStore()
@@ -19,7 +19,8 @@ const { cartItemsWithDetails, countCartItems, cartItems } = storeToRefs(
   useCartStore()
 )
 const loading = ref<Loading>('loading')
-onBeforeMount(async () => {
+const loadData = async () => {
+  loading.value = 'loading'
   const { data, error } = await setCartItems()
   if (error) {
     loading.value = 'error'
@@ -34,7 +35,8 @@ onBeforeMount(async () => {
     item.servicePrice = getMarkup(item.additionalWarranty, item.price)
   }
   loading.value = 'success'
-})
+}
+watch(() => cartItems.value.length, loadData, { immediate: true })
 
 const sumPrice = computed(() => {
   return cartItemsWithDetails.value.reduce((a, b) => {
@@ -50,6 +52,7 @@ const warrantyOptions = [
 ]
 
 const loadingServicePrice = ref<Loading>('success')
+const cartItemsStorage = useLocalStorage<ProductInStorage[]>('cart')
 const setServicePrice = async (warranty: number, product: ProductCart) => {
   loadingServicePrice.value = 'loading'
   const user = await isUserAuthenticated()
@@ -62,8 +65,7 @@ const setServicePrice = async (warranty: number, product: ProductCart) => {
       return
     }
   } else {
-    localStorageSet(
-      'cart',
+    cartItemsStorage.set(
       cartItems.value.map((e) =>
         e.productId === product.id ? { ...e, additionalWarranty: warranty } : e
       )

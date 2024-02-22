@@ -3,7 +3,7 @@ import { onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { updateOneById } from '@/db/queries/tables'
 import { useProductsStore } from '@/stores/productsStore'
-import { localStorageGet, localStorageSet } from '@/utils/localStorage'
+import { useLocalStorage } from '@/utils/localStorage'
 import Header from '@/components/Product/Header.vue'
 import ProductSpecifications from '@/components/Product/ProductSpecifications.vue'
 import SimilarProducts from '@/components/Product/SimilarProducts.vue'
@@ -59,9 +59,9 @@ const updateProductRating = (newData: UpdateProductRating) => {
     }
   }
 }
-
+const recentlyProductsStorage = useLocalStorage<number[]>('recentlyProducts')
 onBeforeMount(() => {
-  let recentlyProducts = localStorageGet<number[]>('recentlyProducts') ?? []
+  let recentlyProducts = recentlyProductsStorage.get() ?? []
   const productId = Number(route.params.productId)
   if (recentlyProducts.includes(productId)) {
     recentlyProducts = recentlyProducts.filter((p) => p !== productId)
@@ -70,7 +70,7 @@ onBeforeMount(() => {
   if (recentlyProducts.length > 12) {
     recentlyProducts.pop()
   }
-  localStorageSet('recentlyProducts', recentlyProducts)
+  recentlyProductsStorage.set(recentlyProducts)
 })
 </script>
 

@@ -8,7 +8,7 @@ import {
   getOneById,
   updateOneById
 } from '@/db/queries/tables'
-import { localStorageGet, localStorageSet } from '@/utils/localStorage'
+import { useLocalStorage } from '@/utils/localStorage'
 import type { ProductRead } from '@/types/tables/products.types'
 import type { PostgrestError } from '@supabase/supabase-js'
 import type { DataError } from '@/types'
@@ -34,7 +34,7 @@ export type ProductCart = QueryProduct & {
   }
 }
 
-type ProductInStorage = {
+export type ProductInStorage = {
   id?: number
   created_at?: string
   userId?: string
@@ -47,6 +47,11 @@ export const useCartStore = defineStore('cart', () => {
   const { isUserAuthenticated } = useUserStore()
   const cartItems = ref<ProductInStorage[]>([])
   const cartItemsWithDetails = ref<ProductCart[]>([])
+  const cartItemsStorage = useLocalStorage<ProductInStorage[]>('cart', {
+    onChange: (newValue) => {
+      cartItems.value = newValue
+    }
+  })
 
   async function addToCart(
     productId: number
@@ -78,9 +83,7 @@ export const useCartStore = defineStore('cart', () => {
         const { data, error: errorUpdate } = await updateOneById(
           'cart',
           productsCart[0].id,
-          {
-            count: productsCart[0].count + 1
-          }
+          { count: productsCart[0].count + 1 }
         )
         cartItems.value = cartItems.value.map((e) =>
           data && e.productId === productId ? data : e
@@ -103,7 +106,7 @@ export const useCartStore = defineStore('cart', () => {
         cartItems.value.push(data)
       }
     } else {
-      const productsCart = localStorageGet<ProductInStorage[]>('cart') ?? []
+      const productsCart = cartItemsStorage.get() ?? []
       const checkProductInCart = productsCart.find(
         (e) => e.productId === productId
       )
@@ -119,8 +122,8 @@ export const useCartStore = defineStore('cart', () => {
           { count: 1, productId, additionalWarranty: 0 }
         ]
       }
-      localStorageSet('cart', cartItems.value)
     }
+    cartItemsStorage.set(cartItems.value)
     return { error }
   }
 
@@ -136,8 +139,9 @@ export const useCartStore = defineStore('cart', () => {
         return { data: null, error }
       }
       cartItems.value = data
+      cartItemsStorage.set(data)
     } else {
-      const data = localStorageGet<ProductInStorage[]>('cart')
+      const data = cartItemsStorage.get()
       if (data) {
         cartItems.value = data
       }
@@ -204,9 +208,8 @@ export const useCartStore = defineStore('cart', () => {
         }
       }
     } else {
-      const data = localStorageGet<ProductInStorage[]>('cart') ?? []
+      const data = cartItemsStorage.get() ?? []
       cartItems.value = data
-      localStorageSet('cart', cartItems.value)
     }
     if (count === 0) {
       cartItemsWithDetails.value = cartItemsWithDetails.value.filter(
@@ -223,6 +226,7 @@ export const useCartStore = defineStore('cart', () => {
         p.productId === product.id ? { ...p, count } : p
       )
     }
+    cartItemsStorage.set(cartItems.value)
     return { error: null }
   }
 
@@ -245,11 +249,8 @@ export const useCartStore = defineStore('cart', () => {
       )
       if (errorDelete) return { error: errorDelete }
     } else {
-      const data = localStorageGet<ProductInStorage[]>('cart') ?? []
-      localStorageSet(
-        'cart',
-        data.filter((e) => e.productId !== productId)
-      )
+      const data = cartItemsStorage.get() ?? []
+      cartItemsStorage.set(data.filter((e) => e.productId !== productId))
     }
 
     cartItems.value = cartItems.value.filter((e) => e.productId !== productId)

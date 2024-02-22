@@ -1,17 +1,44 @@
-type Key = 'cart' | 'compareList' | 'adminSidebar' | 'recentlyProducts'
+type Key =
+  | 'cart'
+  | 'compareList'
+  | 'adminSidebar'
+  | 'recentlyProducts'
+  | 'favourites'
 
-export const localStorageSet = (key: Key, value: unknown): void => {
-  localStorage.setItem(key, JSON.stringify(value))
+type Options<T> = {
+  onChange?: (newValue: T) => void
 }
 
-export const localStorageGet = <T>(key: Key): T | null => {
-  const data = localStorage.getItem(key)
-  if (data === null) return null
-
-  try {
-    return JSON.parse(data) as T
-  } catch (e) {
-    console.error('incorrect format ', e)
-    return null
+export const useLocalStorage = <T>(key: Key, options?: Options<T>) => {
+  if (options?.onChange) {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === key) {
+        options.onChange!(JSON.parse(e.newValue ?? '') as T)
+      }
+    }
+    window.addEventListener('storage', onStorage)
   }
+
+  const set = (value: T) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value))
+      return true
+    } catch (err) {
+      console.error(err)
+      return false
+    }
+  }
+
+  const get = () => {
+    const data = localStorage.getItem(key)
+    if (data === null) return null
+
+    try {
+      return JSON.parse(data) as T
+    } catch (e) {
+      console.error('incorrect format ', e)
+      return null
+    }
+  }
+  return { set, get }
 }

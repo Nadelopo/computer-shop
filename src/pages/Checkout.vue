@@ -16,7 +16,7 @@ import {
 } from '@/db/queries/tables'
 import { formatPrice } from '@/utils/formatPrice'
 import { VButton, VButtons, VInputText, VLoader } from '@/components/UI'
-import { localStorageSet } from '@/utils/localStorage'
+import { useLocalStorage } from '@/utils/localStorage'
 import { useGeoSuggest } from '@/utils/useGeoSuggest'
 import Address from '@/components/Checkout/Address.vue'
 import type { Loading } from '@/types'
@@ -246,7 +246,7 @@ const onSubmit = async () => {
   if (user.value) {
     await supabase.from('cart').delete().match({ userId: user.value.id })
   } else {
-    localStorageSet('cart', [])
+    useLocalStorage('cart').set([])
   }
   await updateProductQuantity()
   router.push('Cart')

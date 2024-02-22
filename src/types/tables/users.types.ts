@@ -1,5 +1,14 @@
 export type UserRead = Required<
-  Omit<UserCreate, 'address' | 'floor' | 'apartment' | 'entrance' | 'city'>
+  Omit<
+    UserCreate,
+    | 'address'
+    | 'floor'
+    | 'apartment'
+    | 'entrance'
+    | 'city'
+    | 'comparison'
+    | 'favourites'
+  >
 >
 export type UserReadWithDetails = Required<UserCreate>
 

@@ -14,7 +14,7 @@ defineProps<{
   obtainType: 'selfcall' | 'delivery'
 }>()
 
-const address = defineModel<Location>({
+const location = defineModel<Location>({
   required: true
 })
 
@@ -29,10 +29,10 @@ const selectedDate = defineModel<Date>('date', {
 const locationResults = ref<LocationResult['results'] | null>(null)
 
 watch(
-  () => address.value.address,
-  async (location) => {
+  () => location.value.address,
+  async (address) => {
     const { data } = await useGeoSuggest({
-      text: `${address.value.city} ${location}`,
+      text: `${location.value.city} ${address}`,
       type: 'house'
     })
     locationResults.value = data
@@ -82,15 +82,15 @@ for (let i = 0; i < 7; i++) {
   <div v-if="obtainType === 'delivery'">
     <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
       <input-address
-        v-model="address.address"
+        v-model="location.address"
         :location-results="locationResults"
         text="Адрес*"
-        @click-on-suggestion="address.address = $event"
+        @click-on-suggestion="location.address = $event"
       />
       <div>
         <div>Квартира*</div>
         <v-input-text
-          v-model="address.apartment"
+          v-model="location.apartment"
           type="number"
           min="0"
         />
@@ -98,7 +98,7 @@ for (let i = 0; i < 7; i++) {
       <div>
         <div>Этаж</div>
         <v-input-text
-          v-model="address.floor"
+          v-model="location.floor"
           type="number"
           min="0"
           :required="false"
@@ -107,7 +107,7 @@ for (let i = 0; i < 7; i++) {
       <div>
         <div>Подъезд</div>
         <v-input-text
-          v-model="address.entrance"
+          v-model="location.entrance"
           type="number"
           min="0"
           :required="false"

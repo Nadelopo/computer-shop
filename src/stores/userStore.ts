@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { useToast } from 'vue-toastification'
 import { supabase } from '@/db/supabase'
 import { getOneById, updateOneById } from '@/db/queries/tables'
-import { localStorageGet, localStorageSet } from '@/utils/localStorage'
+import { useLocalStorage } from '@/utils/localStorage'
 import type { UserRead } from '@/types/tables/users.types'
 import type { PostgrestError, User } from '@supabase/supabase-js'
 
@@ -22,19 +22,25 @@ export const useUserStore = defineStore('user', () => {
     favourites: [],
     comparison: []
   })
+  const favouritesStorage = useLocalStorage<number[]>('favourites')
+  const comparisonStorage = useLocalStorage<number[]>('compareList', {
+    onChange: (newValue) => {
+      userLists.comparison = newValue
+    }
+  })
 
   async function setUserData(id: string | undefined): Promise<void> {
     if (id) {
       const { data } = await getOneById(
         'users',
         id,
-        'id, created_at, email, name, phone, role, favourites, comparison'
+        'id, created_at, email, name, phone, role'
       )
       user.value = data
     } else {
       user.value = null
     }
-    setUserListsValue(user.value)
+    setUserListsValue()
   }
 
   async function isUserAuthenticated(): Promise<User | null> {
@@ -45,14 +51,9 @@ export const useUserStore = defineStore('user', () => {
     return null
   }
 
-  async function setUserListsValue(
-    user?: UserRead | null
-  ): Promise<PostgrestError | null> {
+  async function setUserListsValue(): Promise<PostgrestError | null> {
     const isUser = await isUserAuthenticated()
-    if (isUser && user) {
-      userLists.favourites = user.favourites
-      userLists.comparison = user.comparison
-    } else if (isUser) {
+    if (isUser) {
       const { data, error } = await getOneById(
         'users',
         isUser.id,
@@ -64,8 +65,10 @@ export const useUserStore = defineStore('user', () => {
 
       userLists.favourites = data.favourites
       userLists.comparison = data.comparison
+      favouritesStorage.set(data.favourites)
+      comparisonStorage.set(data.comparison)
     } else {
-      userLists.comparison = localStorageGet<number[]>('compareList') ?? []
+      userLists.comparison = comparisonStorage.get() ?? []
       userLists.favourites = []
     }
     return null
@@ -88,10 +91,9 @@ export const useUserStore = defineStore('user', () => {
         'favourites,  comparison'
       )
       if (error) return error
-
       items = data[listTitle]
     } else {
-      items = localStorageGet<number[]>('compareList') ?? []
+      items = comparisonStorage.get() ?? []
     }
 
     const updatedValue = items.includes(productId)
@@ -104,11 +106,13 @@ export const useUserStore = defineStore('user', () => {
       if (error) return error
 
       userLists[listTitle] = updatedValue
-      user.value && (user.value[listTitle] = updatedValue)
+      favouritesStorage.set(userLists.favourites)
+      // comparisonStorage.set(userLists.comparison)
     } else {
-      localStorageSet('compareList', updatedValue)
+      // comparisonStorage.set(updatedValue)
       userLists[listTitle] = updatedValue
     }
+    comparisonStorage.set(updatedValue)
     return null
   }
 
@@ -124,11 +128,13 @@ export const useUserStore = defineStore('user', () => {
       })
       if (error) return { error }
       userLists[listTitle] = updatedItems
-      user.value && (user.value[listTitle] = updatedItems)
+      favouritesStorage.set(userLists.favourites)
+      // comparisonStorage.set(userLists.comparison)
     } else {
-      localStorageSet('compareList', updatedItems)
+      // comparisonStorage.set(updatedItems)
       userLists[listTitle] = updatedItems
     }
+    comparisonStorage.set(updatedItems)
     return { error: null }
   }
 
