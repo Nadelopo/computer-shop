@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useCartStore } from '@/stores/cartStore'
+import { useUserStore } from '@/stores/userStore'
+import { storeToRefs } from 'pinia'
 import {
   HomeSvg,
   FavouriteSvg,
@@ -6,8 +9,12 @@ import {
   ComparisonSvg,
   AvatarSvg
 } from '@/assets/icons'
+import { computed } from 'vue'
 
-const links = [
+const { countCartItems } = storeToRefs(useCartStore())
+const { userLists } = useUserStore()
+
+const links = computed(() => [
   {
     name: 'Главная',
     page: 'Home',
@@ -16,24 +23,27 @@ const links = [
   {
     name: 'Избранное',
     page: 'Favourites',
-    svg: FavouriteSvg
+    svg: FavouriteSvg,
+    count: userLists.favourites.length
   },
   {
     name: 'Корзина',
     page: 'Cart',
-    svg: CartSvg
+    svg: CartSvg,
+    count: countCartItems.value
   },
   {
     name: 'Сравнение',
     page: 'Comparison',
-    svg: ComparisonSvg
+    svg: ComparisonSvg,
+    count: userLists.comparison.length
   },
   {
     name: 'Профиль',
     page: 'ProfileMain',
     svg: AvatarSvg
   }
-]
+])
 </script>
 
 <template>
@@ -44,6 +54,12 @@ const links = [
       :to="{ name: link.page }"
     >
       <Component :is="link.svg" />
+      <span
+        v-if="link.count"
+        class="count"
+      >
+        {{ link.count }}
+      </span>
       <div>
         {{ link.name }}
       </div>
@@ -69,8 +85,22 @@ const links = [
   a
     width: 60px
     font-size: 14px
+    position: relative
     @media (width < 700px)
       font-size: 10px
+    .count
+      position: absolute
+      top: -10px
+      right: 10px
+      background: #26a69a
+      align-items: center
+      justify-content: center
+      width: 20px
+      display: flex
+      height: 20px
+      color: #fff
+      border-radius: 50px
+      font-size: 12px
     &.router-link-exact-active
       color: var(--color-text)
       fill: var(--color-text)
