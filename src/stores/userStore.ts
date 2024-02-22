@@ -74,7 +74,7 @@ export const useUserStore = defineStore('user', () => {
     return null
   }
 
-  async function changeUserListValueOnClick(
+  async function changeUserListsValueOnToggle(
     listTitle: listTitle,
     productId: number
   ): Promise<PostgrestError | null> {
@@ -104,15 +104,13 @@ export const useUserStore = defineStore('user', () => {
         [listTitle]: updatedValue
       })
       if (error) return error
-
-      userLists[listTitle] = updatedValue
-      favouritesStorage.set(userLists.favourites)
-      // comparisonStorage.set(userLists.comparison)
-    } else {
-      // comparisonStorage.set(updatedValue)
-      userLists[listTitle] = updatedValue
     }
-    comparisonStorage.set(updatedValue)
+    userLists[listTitle] = updatedValue
+    if (listTitle === 'comparison') {
+      comparisonStorage.set(updatedValue)
+    } else {
+      favouritesStorage.set(updatedValue)
+    }
     return null
   }
 
@@ -127,14 +125,29 @@ export const useUserStore = defineStore('user', () => {
         [listTitle]: updatedItems
       })
       if (error) return { error }
-      userLists[listTitle] = updatedItems
-      favouritesStorage.set(userLists.favourites)
-      // comparisonStorage.set(userLists.comparison)
-    } else {
-      // comparisonStorage.set(updatedItems)
-      userLists[listTitle] = updatedItems
     }
-    comparisonStorage.set(updatedItems)
+    userLists[listTitle] = updatedItems
+    if (listTitle === 'comparison') {
+      comparisonStorage.set(updatedItems)
+    } else {
+      favouritesStorage.set(updatedItems)
+    }
+    return { error: null }
+  }
+
+  async function clearUserLists(listTitle: listTitle, products: number[]) {
+    if (user.value) {
+      const { error } = await updateOneById('users', user.value.id, {
+        [listTitle]: products
+      })
+      if (error) return { error }
+    }
+    userLists[listTitle] = products
+    if (listTitle === 'favourites') {
+      favouritesStorage.set(products)
+    } else {
+      comparisonStorage.set(products)
+    }
     return { error: null }
   }
 
@@ -143,8 +156,9 @@ export const useUserStore = defineStore('user', () => {
     setUserData,
     isUserAuthenticated,
     userLists,
-    changeUserListValueOnClick,
+    changeUserListsValueOnToggle,
     deleteItemFromUserList,
-    setUserListsValue
+    setUserListsValue,
+    clearUserLists
   }
 })

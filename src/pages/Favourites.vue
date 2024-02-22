@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { storeToRefs } from 'pinia'
+import { onBeforeMount, ref } from 'vue'
 import { useUserStore } from '@/stores/userStore'
-import { getAll, updateOneById } from '@/db/queries/tables'
+import { getAll } from '@/db/queries/tables'
+import { useLocalStorage } from '@/utils/localStorage'
 import { VButton } from '@/components/UI'
 import ProductCard from '@/components/ProductCard'
 import ProductCardSkeleton from '@/components/ProductCard/ProductCardSkeleton.vue'
@@ -11,7 +11,7 @@ import type { ProductCardData } from '@/components/ProductCard/types'
 import type { Loading } from '@/types'
 
 const { userLists, setUserListsValue, deleteItemFromUserList } = useUserStore()
-const { user } = storeToRefs(useUserStore())
+const { clearUserLists } = useUserStore()
 
 const favourites = ref<ProductCardData[]>([])
 const loading = ref<Loading>('success')
@@ -31,21 +31,17 @@ const setFavourites = async () => {
   loading.value = favourites.value.length ? 'success' : 'empty'
 }
 
-watch(() => userLists.favourites.length, setFavourites, { immediate: true })
+onBeforeMount(setFavourites)
+useLocalStorage('favourites', { onChange: setFavourites })
 
 const clear = async () => {
-  if (user.value) {
-    const { error } = await updateOneById('users', user.value.id, {
-      favourites: []
-    })
-    if (error) {
-      loading.value = 'error'
-      return
-    }
-    favourites.value = []
-    userLists.favourites = []
-    loading.value = 'empty'
+  loading.value = 'loading'
+  const { error } = await clearUserLists('favourites', [])
+  if (error) {
+    loading.value = 'error'
   }
+  favourites.value = []
+  loading.value = 'empty'
 }
 
 const deleteItem = async (id: number) => {

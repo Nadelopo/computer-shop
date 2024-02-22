@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onBeforeMount } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import { getAll } from '@/db/queries/tables'
@@ -12,6 +12,7 @@ import type {
   ComparisonProduct
 } from '@/components/Comparison/types'
 import type { Loading } from '@/types'
+import { useLocalStorage } from '@/utils/localStorage'
 
 const { userLists, setUserListsValue, deleteItemFromUserList } = useUserStore()
 const categories = ref<Category[]>([])
@@ -118,7 +119,8 @@ const loadData = async () => {
 
   loading.value = 'success'
 }
-watch(() => userLists.comparison.length, loadData, { immediate: true })
+onBeforeMount(loadData)
+useLocalStorage('compareList', { onChange: loadData })
 
 // нужно следить за route т.к. пользователь может перемещаться по истории, без кликов на нужную категорию
 watch(

@@ -1,3 +1,5 @@
+import { onUnmounted } from 'vue'
+
 type Key =
   | 'cart'
   | 'compareList'
@@ -10,14 +12,18 @@ type Options<T> = {
 }
 
 export const useLocalStorage = <T>(key: Key, options?: Options<T>) => {
-  if (options?.onChange) {
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === key) {
-        options.onChange!(JSON.parse(e.newValue ?? '') as T)
-      }
+  const onStorage = (e: StorageEvent) => {
+    if (e.key === key) {
+      options?.onChange!(JSON.parse(e.newValue ?? '') as T)
     }
+  }
+  if (options?.onChange) {
     window.addEventListener('storage', onStorage)
   }
+
+  onUnmounted(() => {
+    window.removeEventListener('storage', onStorage)
+  })
 
   const set = (value: T) => {
     try {

@@ -1,17 +1,13 @@
 <script setup lang="ts">
 import { nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
-import { updateOneById } from '@/db/queries/tables'
-import { useLocalStorage } from '@/utils/localStorage'
 import { VButton, VCheckbox } from '../UI'
 import { TrashSvg, ShareSvg } from '@/assets/icons'
 import type { Category, ComparisonProduct } from './types'
 import type { Loading } from '@/types'
 
-const { userLists } = useUserStore()
-const { user } = storeToRefs(useUserStore())
+const { clearUserLists } = useUserStore()
 
 const showDifferences = defineModel<boolean>({ required: true })
 const products = defineModel<ComparisonProduct[]>('products', {
@@ -32,19 +28,9 @@ const clearList = async () => {
     (e) => e.categoryId !== currentCategoryId.value
   )
   const remainProductIds = remainProducts.map((e) => e.id)
-
-  if (user.value) {
-    const { data, error } = await updateOneById('users', user.value.id, {
-      comparison: remainProductIds
-    })
-    if (error) {
-      emit('updateLoading', 'error')
-      return
-    }
-    userLists.comparison = data.comparison
-  } else {
-    useLocalStorage('compareList').set(remainProductIds)
-    userLists.comparison = remainProductIds
+  const { error } = await clearUserLists('comparison', remainProductIds)
+  if (error) {
+    emit('updateLoading', 'error')
   }
 
   products.value = remainProducts

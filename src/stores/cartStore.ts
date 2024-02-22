@@ -248,15 +248,13 @@ export const useCartStore = defineStore('cart', () => {
         productCart[0].id
       )
       if (errorDelete) return { error: errorDelete }
-    } else {
-      const data = cartItemsStorage.get() ?? []
-      cartItemsStorage.set(data.filter((e) => e.productId !== productId))
     }
 
     cartItems.value = cartItems.value.filter((e) => e.productId !== productId)
     cartItemsWithDetails.value = cartItemsWithDetails.value.filter(
       (e) => e.id !== productId
     )
+    cartItemsStorage.set(cartItems.value)
     return { error: null }
   }
 

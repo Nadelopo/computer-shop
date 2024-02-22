@@ -8,7 +8,7 @@ const props = defineProps<{
   listTitle: 'favourites' | 'comparison'
 }>()
 
-const { userLists, changeUserListValueOnClick } = useUserStore()
+const { userLists, changeUserListsValueOnToggle } = useUserStore()
 
 const fill = computed(() =>
   userLists[props.listTitle].includes(props.productId)
@@ -23,7 +23,7 @@ const ListIcon = props.listTitle === 'favourites' ? FavouriteSvg : ComparisonSvg
   <button
     class="favourite-comparison__btn"
     @click.prevent="
-      changeUserListValueOnClick(props.listTitle, props.productId)
+      changeUserListsValueOnToggle(props.listTitle, props.productId)
     "
   >
     <list-icon width="24" />

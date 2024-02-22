@@ -9,7 +9,7 @@ const props = defineProps<{
   listTitle: 'favourites' | 'comparison'
 }>()
 
-const { userLists, changeUserListValueOnClick } = useUserStore()
+const { userLists, changeUserListsValueOnToggle } = useUserStore()
 
 const state = computed(() =>
   userLists[props.listTitle].includes(props.productId)
@@ -17,7 +17,7 @@ const state = computed(() =>
 const loading = ref(false)
 const add = async () => {
   loading.value = true
-  await changeUserListValueOnClick(props.listTitle, props.productId)
+  await changeUserListsValueOnToggle(props.listTitle, props.productId)
   loading.value = false
 }
 const ListIcon = props.listTitle === 'favourites' ? FavouriteSvg : ComparisonSvg

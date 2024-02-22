@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useMediaQuery } from '@vueuse/core'
 import { useCartStore } from '@/stores/cartStore'
@@ -36,7 +36,9 @@ const loadData = async () => {
   }
   loading.value = 'success'
 }
-watch(() => cartItems.value.length, loadData, { immediate: true })
+
+onBeforeMount(loadData)
+useLocalStorage('cart', { onChange: loadData })
 
 const sumPrice = computed(() => {
   return cartItemsWithDetails.value.reduce((a, b) => {
