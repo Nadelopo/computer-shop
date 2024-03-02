@@ -35,7 +35,7 @@ const isSmall = useMediaQuery('(width < 520px)')
       <div>
         <div class="card__link">
           <div class="card__head">
-            <div class="card__head__title">{{ item.name }}</div>
+            <div class="card__head__title">{{ item.title }}</div>
             <div>
               <rating-stars
                 :model-value="item.rating"

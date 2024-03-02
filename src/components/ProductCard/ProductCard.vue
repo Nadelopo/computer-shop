@@ -58,7 +58,7 @@ const titleActive = ref(true)
       class="title"
       :class="{ title__active: titleActive }"
     >
-      {{ item.name }}
+      {{ item.title }}
     </div>
     <rating-stars :model-value="item.rating" />
     <div class="flex gap-x-4">

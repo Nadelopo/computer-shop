@@ -94,7 +94,7 @@ const { countCartItems, cartItems } = storeToRefs(useCartStore())
 const price = ref(0)
 const loadingPrice = ref<Loading>('loading')
 const products = ref<
-  Pick<ProductRead, 'id' | 'price' | 'name' | 'img' | 'quantity'>[]
+  Pick<ProductRead, 'id' | 'price' | 'title' | 'img' | 'quantity'>[]
 >([])
 onBeforeMount(async () => {
   await setCartItems()
@@ -105,7 +105,7 @@ onBeforeMount(async () => {
     in: {
       id: cartItems.value.map((e) => e.productId)
     },
-    select: 'id, price, quantity, name, img '
+    select: 'id, price, quantity, title, img '
   })
   if (error) {
     loadingPrice.value = 'error'

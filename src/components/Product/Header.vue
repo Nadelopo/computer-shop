@@ -43,7 +43,7 @@ const buttonCartWidth = computed(() => {
     />
     <div class="w-full">
       <div class="product__title">
-        <div class="text-3xl font-medium">{{ product.name }}</div>
+        <div class="text-3xl font-medium">{{ product.title }}</div>
         <div class="ml-auto hidden sm:block">
           <img
             class="max-h-14"

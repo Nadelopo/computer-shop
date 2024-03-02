@@ -55,7 +55,7 @@ const onSubmit = () => {
   >
     <div>
       <label>Наименование</label>
-      <v-input-text v-model="product.name" />
+      <v-input-text v-model="product.title" />
     </div>
     <div>
       <label>Описание</label>

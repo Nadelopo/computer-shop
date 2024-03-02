@@ -112,7 +112,7 @@ const save = async (fileActions: InputFileActions<string[]> | undefined) => {
       : productValue.priceWithoutDiscount
   )
   const productUpdate: ProductUpdate = {
-    name: productValue.name,
+    title: productValue.title,
     description: productValue.description,
     img: productValue.img,
     manufacturerId: productValue.manufacturerId,

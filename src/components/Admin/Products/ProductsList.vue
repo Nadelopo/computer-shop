@@ -73,7 +73,7 @@ const remove = async (id: number, img: string[]) => {
         v-for="product in products"
         :key="product.id"
       >
-        <td>{{ product.name }}</td>
+        <td>{{ product.title }}</td>
         <td
           v-for="specification in product.specifications"
           :key="specification.id"
@@ -110,7 +110,7 @@ const remove = async (id: number, img: string[]) => {
             </router-link>
           </v-button>
           <v-confirm
-            :message="'Вы точно хотите удалить продукт - ' + product.name"
+            :message="'Вы точно хотите удалить продукт - ' + product.title"
             :loading="
               loadingRemove === 'loading' &&
               currentRemoveProductId === product.id

@@ -17,7 +17,7 @@ onBeforeMount(async () => {
   const { data, error } = await getAll('products', {
     in: { id: recentlyProducts },
     select:
-      'id, name, price, priceWithoutDiscount, img, discount, rating, categories(id, enTitle)'
+      'id, title, price, priceWithoutDiscount, img, discount, rating, categories(id, enTitle)'
   })
   if (error) {
     loading.value = 'error'

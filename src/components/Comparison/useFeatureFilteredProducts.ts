@@ -54,7 +54,7 @@ export const useFeatureFilteredProducts = (
     const categoryProductsValue = categoryProducts.value
     for (let i = 0; i < categoryProductsValue.length; i++) {
       const product = categoryProductsValue[i]
-      fields[0].values.push(product.name)
+      fields[0].values.push(product.title)
       fields[1].values.push(formatPrice(product.price))
       fields[2].values.push(Number(product.rating.toFixed(1)))
       for (let j = 0; j < currentCategorySpecificationsValue.length; j++) {

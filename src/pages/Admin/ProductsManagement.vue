@@ -73,7 +73,7 @@ watch(() => route.params.id, setCategorySpecifications, {
 })
 
 const emptyProductFields: ProductCreate = {
-  name: '',
+  title: '',
   description: '',
   price: 0,
   categoryId: 0,

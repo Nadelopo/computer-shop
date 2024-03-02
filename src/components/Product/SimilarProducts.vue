@@ -79,7 +79,7 @@ watch(() => props.productId, loadSimilarProducts)
             :src="similarProduct.img[0]"
             alt=""
           />
-          <span> {{ similarProduct.name }}</span>
+          <span> {{ similarProduct.title }}</span>
         </router-link>
       </v-carousel-slide>
     </v-carousel>

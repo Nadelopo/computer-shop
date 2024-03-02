@@ -141,7 +141,7 @@ const isMobile = useMediaQuery('(width < 640px)')
                 }
               }"
             >
-              {{ product.name }}
+              {{ product.title }}
             </router-link>
           </div>
           <div class="price">{{ formatPrice(product.price) }}</div>

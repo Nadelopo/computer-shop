@@ -11,7 +11,7 @@ onBeforeMount(async () => {
   const { data, error } = await getAll('products', {
     order: ['popularity', false],
     select:
-      'id, name, price, priceWithoutDiscount, img, discount, rating, categories(id, enTitle)',
+      'id, title, price, priceWithoutDiscount, img, discount, rating, categories(id, enTitle)',
     limit: 12
   })
   if (error) {

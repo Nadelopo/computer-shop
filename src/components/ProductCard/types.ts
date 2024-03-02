@@ -3,7 +3,7 @@ import type { ProductRead } from '@/types/tables/products.types'
 export type ProductCardData = Pick<
   ProductRead,
   | 'id'
-  | 'name'
+  | 'title'
   | 'price'
   | 'priceWithoutDiscount'
   | 'discount'

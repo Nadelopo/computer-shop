@@ -116,7 +116,7 @@ export const useFilterStore = defineStore('filter', () => {
           'products.categoryId': categoryId,
           categorySpecificationsId: specification.id
         })
-        .ilike('products.name', formatSearch(search.value))
+        .ilike('products.title', formatSearch(search.value))
 
       if (specification.type === 'number') {
         query
