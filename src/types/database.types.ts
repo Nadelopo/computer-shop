@@ -40,6 +40,11 @@ import type {
 } from '@/types/tables/users.types'
 import type { ShopCreate, ShopRead, ShopUpdate } from './tables/shops.types'
 import type { OrderCreate, OrderRead, OrderUpdate } from './tables/orders.types'
+import type {
+  OrderedProductCreate,
+  OrderedProductRead,
+  OrderedProductUpdate
+} from './tables/orderedProducts.types'
 
 export type Json =
   | string
@@ -188,6 +193,20 @@ export type Database = {
             columns: ['userId']
             isOneToOne: false
             referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      ordered_products: {
+        Row: OrderedProductRead
+        Insert: OrderedProductCreate
+        Update: OrderedProductUpdate
+        Relationships: [
+          {
+            foreignKeyName: 'public_ordered_products_productId_fkey'
+            columns: ['productId']
+            isOneToOne: false
+            referencedRelation: 'products'
             referencedColumns: ['id']
           }
         ]

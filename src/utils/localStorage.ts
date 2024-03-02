@@ -13,8 +13,8 @@ type Options<T> = {
 
 export const useLocalStorage = <T>(key: Key, options?: Options<T>) => {
   const onStorage = (e: StorageEvent) => {
-    if (e.key === key) {
-      options?.onChange!(JSON.parse(e.newValue ?? '') as T)
+    if (e.key === key && e.newValue !== null) {
+      options?.onChange?.(JSON.parse(e.newValue))
     }
   }
   if (options?.onChange) {

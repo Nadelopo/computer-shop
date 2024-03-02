@@ -1,11 +1,3 @@
-export type OrderedProduct = {
-  productId: number
-  count: number
-  price: number
-  additionalWarranty: number
-  servicePrice: number
-}
-
 import type { DbEnum } from '../database.types'
 
 export type OrderRead = {
@@ -13,7 +5,6 @@ export type OrderRead = {
   created_at: string
   price: number
   status: DbEnum<'order_status'>
-  orderedProducts: OrderedProduct[]
 } & (
   | OrderDetails<string, 'selfcall'>
   | OrderDetails<string, 'delivery'>
@@ -44,7 +35,6 @@ export type OrderCreate = {
   created_at?: string
   price: number
   status: DbEnum<'order_status'>
-  orderedProducts: OrderedProduct[]
   userId: string | null
   type: DbEnum<'order_type'>
   shopAddress: string | null

@@ -8,6 +8,7 @@ import { useUserStore } from '@/stores/userStore'
 import { useCartStore } from '@/stores/cartStore'
 import { useChooseWord } from '@/components/Cart/useChooseWord'
 import {
+  createMany,
   createOne,
   getAll,
   getOneById,
@@ -22,8 +23,9 @@ import Address from '@/components/Checkout/Address.vue'
 import type { Loading } from '@/types'
 import type { Location } from '@/components/Checkout/types'
 import type { ProductRead } from '@/types/tables/products.types'
-import type { OrderCreate, OrderedProduct } from '@/types/tables/orders.types'
+import type { OrderCreate } from '@/types/tables/orders.types'
 import type { UserUpdate } from '@/types/tables/users.types'
+import type { OrderedProductCreate } from '@/types/tables/orderedProducts.types'
 
 type UserContactData = {
   name: string
@@ -203,19 +205,20 @@ const onSubmit = async () => {
     }
   }
   updateUserData(phone)
-  const orderedProducts: OrderedProduct[] = cartItems.value.map((e) => {
-    const product = products.value.find((p) => p.id === e.productId)
-    const additionalWarranty =
-      cartItems.value.find((p) => p.productId === e.productId)
-        ?.additionalWarranty ?? 0
-    return {
-      productId: e.productId,
-      count: e.count,
-      price: product?.price ?? 0,
-      additionalWarranty,
-      servicePrice: getMarkup(additionalWarranty, product?.price ?? 0)
-    }
-  })
+  const orderedProducts: Omit<OrderedProductCreate, 'orderId'>[] =
+    cartItems.value.map((e) => {
+      const product = products.value.find((p) => p.id === e.productId)
+      const additionalWarranty =
+        cartItems.value.find((p) => p.productId === e.productId)
+          ?.additionalWarranty ?? 0
+      return {
+        productId: e.productId,
+        count: e.count,
+        price: product?.price ?? 0,
+        additionalWarranty,
+        servicePrice: getMarkup(additionalWarranty, product?.price ?? 0)
+      }
+    })
   const date = deliveryDate.value
   const formatDate = `
     ${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}
@@ -234,11 +237,19 @@ const onSubmit = async () => {
     deliveryDate: obtainType === 'delivery' ? formatDate : null,
     shopAddress: obtainType === 'selfcall' ? shopAddress.value : null,
     status: 'awaiting',
-    price: price.value,
-    orderedProducts
+    price: price.value
   }
-  const { error } = await createOne('orders', order)
+  const { data, error } = await createOne('orders', order)
   if (error) {
+    loadingCreateOrder.value = 'error'
+    useToast().error('Произошла ошибка')
+    return
+  }
+  const { error: errorOrderedProducts } = await createMany(
+    'ordered_products',
+    orderedProducts.map((e) => ({ ...e, orderId: data.id }))
+  )
+  if (errorOrderedProducts) {
     loadingCreateOrder.value = 'error'
     useToast().error('Произошла ошибка')
     return
