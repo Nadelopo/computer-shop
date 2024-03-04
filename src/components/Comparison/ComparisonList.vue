@@ -164,6 +164,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
             <div class="flex gap-x-2 mt-4">
               <button-cart
                 :product-id="product.id"
+                :quantity="product.quantity"
                 :width="isSmall ? 'auto' : undefined"
               />
             </div>

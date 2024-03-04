@@ -89,6 +89,7 @@ const isSmall = useMediaQuery('(width < 520px)')
           <button-cart
             :size="isSmall ? 'small' : 'normal'"
             :product-id="item.id"
+            :quantity="item.quantity"
             class="ml-auto"
           />
         </div>

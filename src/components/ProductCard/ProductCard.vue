@@ -87,7 +87,10 @@ const titleActive = ref(true)
           }}
         </div>
         <div>
-          <button-cart :product-id="item.id" />
+          <button-cart
+            :product-id="item.id"
+            :quantity="item.quantity"
+          />
         </div>
       </div>
     </div>

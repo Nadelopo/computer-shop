@@ -9,6 +9,7 @@ export type ProductCardData = Pick<
   | 'discount'
   | 'img'
   | 'rating'
+  | 'quantity'
 > & {
   categories: {
     id: number

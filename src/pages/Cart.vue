@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, ref } from 'vue'
+import { computed, onBeforeMount, onUnmounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useMediaQuery } from '@vueuse/core'
 import { useCartStore } from '@/stores/cartStore'
@@ -76,6 +76,10 @@ const setServicePrice = async (warranty: number, product: ProductCart) => {
   product.servicePrice = getMarkup(warranty, product.price)
   loadingServicePrice.value = 'success'
 }
+
+onUnmounted(() => {
+  cartItemsWithDetails.value = []
+})
 
 const { chooseWord } = useChooseWord()
 

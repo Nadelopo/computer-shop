@@ -31,7 +31,7 @@ onBeforeMount(async () => {
         manufacturerId
       },
       select:
-        'id, img, discount, price, priceWithoutDiscount, title, rating, categories(id, enTitle)',
+        'id, img, discount, price, priceWithoutDiscount, title, rating, quantity, categories(id, enTitle)',
       gt: ['discount', 0]
     })
   ])

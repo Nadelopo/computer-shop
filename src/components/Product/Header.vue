@@ -73,6 +73,7 @@ const buttonCartWidth = computed(() => {
       <div>
         <button-cart
           :width="buttonCartWidth"
+          :quantity="product.quantity"
           :product-id="product.id"
         />
         <div class="list__btns">

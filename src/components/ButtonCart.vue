@@ -3,16 +3,17 @@ import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
 import { VButton } from '@/components/UI'
-import { CartInButtonSvg, InCartSvg } from '@/assets/icons'
+import { CartInButtonSvg, InCartSvg, AbsentForCart } from '@/assets/icons'
 
 type Props = {
   productId: number
+  quantity: number
   width?: string
   size?: 'normal' | 'small'
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  width: '122px',
+  width: '128px',
   size: 'normal'
 })
 
@@ -21,11 +22,15 @@ const loading = ref(false)
 const { addToCart } = useCartStore()
 const { cartItems } = storeToRefs(useCartStore())
 
-const isProductInCart = computed(() =>
-  cartItems.value.find((e) => e.productId === props.productId)
-)
+const productStatus = computed((): 'in' | 'outside' | 'absent' => {
+  if (props.quantity <= 0) return 'absent'
+  return cartItems.value.find((e) => e.productId === props.productId)
+    ? 'in'
+    : 'outside'
+})
 
 const add = async () => {
+  if (productStatus.value === 'absent') return
   loading.value = true
   await addToCart(props.productId)
   loading.value = false
@@ -35,17 +40,28 @@ const width = computed(() => {
   return props.size === 'small' ? 'auto' : props.width
 })
 
-const icon = computed(() =>
-  isProductInCart.value ? InCartSvg : CartInButtonSvg
-)
+const icon = computed(() => {
+  if (productStatus.value === 'in') return CartInButtonSvg
+  if (productStatus.value === 'outside') return InCartSvg
+  return AbsentForCart
+})
+
+const buttonText = computed(() => {
+  if (productStatus.value === 'in') return 'в корзине'
+  if (productStatus.value === 'outside') return 'купить'
+  return 'отсутсвует'
+})
 </script>
 
 <template>
   <v-button
     :width="width"
-    :loading="isProductInCart ? false : loading"
+    :loading="loading"
     :size="size"
-    @click.prevent="isProductInCart ? $router.push({ name: 'Cart' }) : add()"
+    :variant="productStatus === 'absent' ? 'noactive' : 'primary'"
+    @click.prevent="
+      productStatus === 'in' ? $router.push({ name: 'Cart' }) : add()
+    "
   >
     <component
       :is="icon"
@@ -54,7 +70,7 @@ const icon = computed(() =>
       :class="{ 'mr-2': size === 'normal' }"
     />
     <template v-if="size === 'normal'">
-      {{ isProductInCart ? 'в корзине' : 'купить' }}
+      {{ buttonText }}
     </template>
   </v-button>
 </template>
