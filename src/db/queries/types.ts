@@ -4,11 +4,16 @@ type ReadData<T extends keyof Database['public']['Tables']> =
   | keyof Database['public']['Tables'][T]['Row']
   | (string & {})
 
+export type QueryOrder<T extends Table> = [
+  column: ReadData<T>,
+  options?: { ascending?: boolean; foreignTable?: Table }
+]
+
 export type GetAllParams<S, T extends Table> = {
   match?: Partial<Record<ReadData<T>, unknown>>
   in?: Partial<Record<ReadData<T>, (number | string)[]>>
   select?: S
-  order?: [column: ReadData<T>, ascending?: boolean]
+  order?: QueryOrder<T> | QueryOrder<T>[]
   search?: [column: ReadData<T>, value?: string]
   between?: {
     column: ReadData<T>

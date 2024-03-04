@@ -3,6 +3,7 @@ import { ref, watch, computed, onBeforeMount } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import { getAll } from '@/db/queries/tables'
+import { useLocalStorage } from '@/utils/localStorage'
 import ComparisonList from '@/components/Comparison/ComparisonList.vue'
 import ActionsWithList from '@/components/Comparison/ActionsWithList.vue'
 import { VTabs, VLoader } from '@/components/UI'
@@ -12,7 +13,6 @@ import type {
   ComparisonProduct
 } from '@/components/Comparison/types'
 import type { Loading } from '@/types'
-import { useLocalStorage } from '@/utils/localStorage'
 
 const { userLists, setUserListsValue, deleteItemFromUserList } = useUserStore()
 const categories = ref<Category[]>([])
@@ -39,47 +39,34 @@ const loadData = async () => {
     loading.value = 'empty'
     return
   }
-  const [
-    { data: productData, error: errorData },
-    { data: specificationsData, error: errorSpecifications }
-  ] = await Promise.all([
-    getAll('products', {
-      select: '*, categories(id, title), manufacturers(id, title)',
-      in: { id: ids }
-    }),
-    getAll('specifications', {
-      in: { productId: ids },
-      order: ['categorySpecificationsId']
-    })
-  ])
-  if (errorData || errorSpecifications) {
+
+  const { data, error } = await getAll('products', {
+    select:
+      '*, categories(id, title), manufacturers(id, title), specifications(*)',
+    in: { id: ids },
+    order: ['categorySpecificationsId', { foreignTable: 'specifications' }]
+  })
+
+  if (error) {
     loading.value = 'error'
     return
   }
 
-  const modifiedProducts: ComparisonProduct[] = []
+  const modifiedProducts: ComparisonProduct[] = data
   categories.value = []
-  if (productData && specificationsData) {
-    for (const product of productData) {
-      modifiedProducts.push({
-        ...product,
-        specifications: specificationsData.filter(
-          (e) => e.productId === product.id
-        )
-      })
 
-      if (!categories.value.some((e) => e.id === product.categoryId)) {
-        categories.value.push({
-          id: product.categoryId,
-          title: product.categories.title,
-          count: 1,
-          specifications: []
-        })
-      } else {
-        categories.value = categories.value.map((e) =>
-          e.id === product.categoryId ? { ...e, count: e.count + 1 } : e
-        )
-      }
+  for (const product of data) {
+    if (!categories.value.some((e) => e.id === product.categoryId)) {
+      categories.value.push({
+        id: product.categoryId,
+        title: product.categories.title,
+        count: 1,
+        specifications: []
+      })
+    } else {
+      categories.value = categories.value.map((e) =>
+        e.id === product.categoryId ? { ...e, count: e.count + 1 } : e
+      )
     }
 
     const categoryId = Number(route.query.category_id)

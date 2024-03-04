@@ -112,7 +112,7 @@ const loadReviews = async () => {
   const { data, count } = await getAll('reviews', {
     match: { productId: props.productId },
     select: '*, users(name)',
-    order: ['created_at', false],
+    order: ['created_at', { ascending: false }],
     range: [
       currentPage.value * reviewsLimit,
       currentPage.value * reviewsLimit + reviewsLimit - 1

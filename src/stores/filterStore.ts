@@ -162,7 +162,7 @@ export const useFilterStore = defineStore('filter', () => {
     } = await getAll('products', {
       select: '*, categories(id, enTitle), manufacturers(id, title)',
       in: productsIn,
-      order: [sortColumn.value, sortAscents[sortColumn.value]],
+      order: [sortColumn.value, { ascending: sortAscents[sortColumn.value] }],
       between: [
         {
           column: 'price',

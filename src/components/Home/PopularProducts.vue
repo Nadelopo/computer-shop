@@ -9,7 +9,7 @@ const products = ref<ProductCardData[]>([])
 const loading = ref<Loading>('loading')
 onBeforeMount(async () => {
   const { data, error } = await getAll('products', {
-    order: ['popularity', false],
+    order: ['popularity', { ascending: false }],
     select:
       'id, title, price, priceWithoutDiscount, img, discount, rating, categories(id, enTitle)',
     limit: 12

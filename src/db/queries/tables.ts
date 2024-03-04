@@ -1,26 +1,50 @@
 import { supabase } from '@/db/supabase'
 import { formatSearch } from '../../utils/formatSearch'
-import type { GetAllParams, Id, UpdateMany } from './types'
+import type { GetAllParams, Id, QueryOrder, UpdateMany } from './types'
 import type { CreateData, Table, UpdateData } from '@/types/database.types'
 
-type ForeignWithoutNull<T> = T extends Array<infer U>
-  ? { [K in keyof U]: K extends Table ? NonNullable<U[K]> : U[K] }[]
-  : { [K in keyof T]: K extends Table ? NonNullable<T[K]> : T[K] }
+type IsKeyInValues<K extends PropertyKey> = K extends Table ? true : false
+
+type ForeignWithoutNull<T> = {
+  [K in keyof T]: IsKeyInValues<K> extends true
+    ? NonNullable<T[K]> extends infer U
+      ? U extends object
+        ? ForeignWithoutNull<U>
+        : U
+      : never
+    : T[K] extends object
+    ? ForeignWithoutNull<T[K]>
+    : T[K]
+}
 
 type ReturnType<D> = {
   [K in keyof D]: K extends 'data' ? ForeignWithoutNull<D[K]> : D[K]
 }
 
+const orderValuesIsArray = <T extends Table>(
+  order: QueryOrder<T> | QueryOrder<T>[] | undefined
+): order is QueryOrder<T>[] => {
+  if (Array.isArray(order?.[0])) {
+    return true
+  }
+  return false
+}
+
 export async function getOneById<T extends Table, S extends string = '*'>(
   table: T,
   id: Id<T>,
-  select?: S
+  select?: S,
+  options?: {
+    order: QueryOrder<T>
+  }
 ): Promise<ReturnType<typeof response>> {
-  const response = await supabase
-    .from(table)
-    .select(select)
-    .eq('id', id)
-    .single()
+  const query = supabase.from(table).select(select).eq('id', id)
+
+  if (options?.order) {
+    const orderColumn = (options.order[0] ?? 'id') as string
+    query.order(orderColumn, options.order[1])
+  }
+  const response = await query.single()
   if (response.error) console.error(response.error)
   return response as ReturnType<typeof response>
 }
@@ -50,8 +74,14 @@ export const getAll = async <T extends Table = Table, S extends string = '*'>(
   })
 
   if (!params?.onlyCount) {
-    const [orderColumn, ascending] = order ?? ['id', true]
-    query.order(orderColumn as string, { ascending })
+    if (orderValuesIsArray(order)) {
+      for (const o of order) {
+        query.order(o[0] as string, o[1])
+      }
+    } else {
+      const [orderColumn] = order ?? ['id']
+      query.order(orderColumn as string, order?.[1])
+    }
   }
   if (match) {
     query.match(match)

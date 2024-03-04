@@ -2,7 +2,7 @@
 import { onBeforeMount, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProductsStore } from '@/stores/productsStore'
-import { getAll, getOneById } from '@/db/queries/tables'
+import { getOneById } from '@/db/queries/tables'
 import ProductsForm from '@/components/Admin/Products/ProductsForm.vue'
 import { VButton, VLoader } from '@/components/UI'
 import type { Loading } from '@/types'
@@ -25,29 +25,21 @@ const product = ref<ProductCreate | null>(null)
 const specifications = ref<SpecificationUpdateForm[]>([])
 const loading = ref<Loading>('loading')
 onBeforeMount(async () => {
-  const [
-    { data: productData, error: errorData },
-    { data: specificationsData, error: errorSpecifications }
-  ] = await Promise.all([
-    getOneById(
-      'products',
-      productId,
-      '*, manufacturers(id, title), categories(id, enTitle)'
-    ),
-    getAll('specifications', {
-      match: { productId: productId },
-      select:
-        '*, category_specifications(id, title, visible, units, type, step, min, max, variantsValues)',
-      order: ['categorySpecificationsId']
-    })
-  ])
-  if (!productData || !specificationsData) {
+  const { data, error } = await getOneById(
+    'products',
+    productId,
+    '*, manufacturers(id, title), categories(id, enTitle), specifications(*, category_specifications(id, title, visible, units, type, step, min, max, variantsValues))',
+    {
+      order: ['categorySpecificationsId', { foreignTable: 'specifications' }]
+    }
+  )
+  if (error) {
     loading.value = 'error'
-    console.error(errorData, errorSpecifications)
     return
   }
-  product.value = productData
-  specifications.value = specificationsData.map((s) => {
+  const { specifications: specificationsValue, ...productValue } = data
+  product.value = productValue
+  specifications.value = specificationsValue.map((s) => {
     const staticFields = {
       id: s.id,
       productId,
