@@ -1,10 +1,10 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends string | number | boolean">
 import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
 import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
 import { ArrowSvg } from '@/assets/icons'
 
 type Props = {
-  options: { title: string; value: string | number | boolean }[]
+  options: { title: string; value: T }[]
   required?: boolean
   width?: 'max' | 'static'
 }
@@ -14,10 +14,12 @@ const props = withDefaults(defineProps<Props>(), {
   required: true
 })
 
+defineEmits<{
+  'update:modelValue': [T]
+}>()
+
 const modelValue = defineModel<
-  [string | number | boolean | null | undefined] extends readonly (infer e)[]
-    ? e
-    : never
+  [T | null | undefined] extends readonly (infer e)[] ? e : never
 >({
   required: true
 })
@@ -55,7 +57,7 @@ watch(
   }
 )
 
-const onOptionClick = (selectValue: string | number | boolean, i: number) => {
+const onOptionClick = (selectValue: T, i: number) => {
   selected.value = props.options[i].title
   modelValue.value = selectValue
   if (color.value === '#a9a9a9') {
