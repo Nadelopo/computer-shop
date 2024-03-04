@@ -140,6 +140,8 @@ const isSmall = useMediaQuery('(width < 520px)')
       display: grid
       grid-template-columns: minmax(20%, 80px) auto 1fr
       gap: 40px
+      & > :last-child
+        justify-self: end
     @media (width < 520px)
       gap: 0
     .price__wrapper
