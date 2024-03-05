@@ -43,7 +43,7 @@ const onChange = (e: Event) => {
   }
 }
 
-const visibility = defineModel('visibility', { required: true })
+const visibility = defineModel<boolean>('visibility', { required: true })
 
 const isActive = computed(
   () => maxValue.value < props.max || minValue.value > props.min

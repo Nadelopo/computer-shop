@@ -13,8 +13,7 @@ type Category = {
 }
 
 const specifications = defineModel<CategorySpecificationRead[]>({
-  required: true,
-  local: true
+  required: true
 })
 
 const route = useRoute()
