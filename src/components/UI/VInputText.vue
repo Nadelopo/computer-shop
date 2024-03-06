@@ -1,9 +1,15 @@
 <script setup lang="ts" generic="T extends string | number">
-import { computed, onMounted, ref, useAttrs } from 'vue'
+import {
+  computed,
+  onMounted,
+  ref,
+  useAttrs,
+  type InputHTMLAttributes
+} from 'vue'
 import { vMaska, MaskaDetail } from 'maska'
 import { debounce } from '@/utils/debounce'
 
-type Props = {
+interface Props extends /* @vue-ignore */ InputHTMLAttributes {
   modelValue: T | null
   type?: 'text' | 'number' | 'tel'
   required?: boolean

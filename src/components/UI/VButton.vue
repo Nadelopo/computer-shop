@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, type ButtonHTMLAttributes } from 'vue'
 import VLoader from './VLoader.vue'
 
-type Props = {
+interface Props extends /* @vue-ignore */ ButtonHTMLAttributes {
   variant?: 'primary' | 'danger' | 'noactive'
   loading?: boolean
   width?: string
@@ -69,8 +69,13 @@ const width = computed(() => props.width ?? 'auto')
   background: var(--color-main)
   :slotted(svg)
     fill: #fff
-  &:hover
-    background: var(--color-sec)
+  @media (hover: hover)
+    &:hover
+      background: var(--color-sec)
+  @media (hover: none)
+    &:active
+      background: var(--color-sec)
+
   &:focus-visible
     outline: 2px solid var(--color-text)
   &.noactive
@@ -88,17 +93,30 @@ const width = computed(() => props.width ?? 'auto')
     :slotted(svg)
       transition: fill .3s
       fill: var(--color-main)
-    &:hover
-      :slotted(svg)
-        fill: #fff
-    &:hover
-      background: var(--color-sec)
-      color: #fff
-      box-shadow: inset 0px 0px 0px 2px var(--color-sec)
+    @media (hover: hover)
+      &:hover
+        :slotted(svg)
+          fill: #fff
+      &:hover
+        background: var(--color-sec)
+        color: #fff
+        box-shadow: inset 0px 0px 0px 2px var(--color-sec)
+    @media (hover: none)
+      &:active
+        :slotted(svg)
+          fill: #fff
+      &:active
+        background: var(--color-sec)
+        color: #fff
+        box-shadow: inset 0px 0px 0px 2px var(--color-sec)
   &.danger
     background: var(--danger)
-    &:hover
-      background: var(--danger-light)
+    @media (hover: hover)
+      &:hover
+        background: var(--danger-light)
+    @media (hover: none)
+      &:active
+        background: var(--danger-light)
     &:focus-visible
       outline: 2px solid #ffa3a3
 </style>

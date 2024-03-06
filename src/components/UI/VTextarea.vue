@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, type TextareaHTMLAttributes } from 'vue'
 
-type Props = {
+interface Props extends /* @vue-ignore */ TextareaHTMLAttributes {
   required?: boolean
   autofocus?: true
   rows?: number

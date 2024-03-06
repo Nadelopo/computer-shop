@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, type ButtonHTMLAttributes } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
 import { VButton } from '@/components/UI'
 import { CartInButtonSvg, InCartSvg, AbsentForCart } from '@/assets/icons'
 
-type Props = {
+interface Props extends /* @vue-ignore */ ButtonHTMLAttributes {
   productId: number
   quantity: number
   width?: string
