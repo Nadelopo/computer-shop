@@ -16,14 +16,15 @@ const { setItemCount, deleteItem } = useCartStore()
 
 const action = async (action: Action) => {
   loading.value = true
+  const id = props.product.id
   if (action === 'reduce') {
-    await setItemCount(props.product, props.product.count - 1)
+    await setItemCount(id, props.product.count - 1, props.product.cartItemId)
   }
   if (action === 'increase') {
-    await setItemCount(props.product, props.product.count + 1)
+    await setItemCount(id, props.product.count + 1, props.product.cartItemId)
   }
   if (action === 'delete') {
-    await deleteItem(props.product.id)
+    await deleteItem(id)
   }
   loading.value = false
 }
@@ -31,7 +32,11 @@ const action = async (action: Action) => {
 const onChange = async (e: Event) => {
   loading.value = true
   const target = e.target as HTMLInputElement
-  await setItemCount(props.product, target.valueAsNumber)
+  await setItemCount(
+    props.product.id,
+    target.valueAsNumber,
+    props.product.cartItemId
+  )
   loading.value = false
 }
 </script>

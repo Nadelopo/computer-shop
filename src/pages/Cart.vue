@@ -10,7 +10,7 @@ import { useChooseWord } from '@/components/Cart/useChooseWord'
 import { updateOneById } from '@/db/queries/tables'
 import { useUserStore } from '@/stores/userStore'
 import { useLocalStorage } from '@/utils/localStorage'
-import type { ProductCart, ProductInStorage } from '@/stores/cartStore'
+import type { ProductCart, ProductStorage } from '@/stores/cartStore'
 import type { Loading } from '@/types'
 
 const { isUserAuthenticated } = useUserStore()
@@ -54,7 +54,7 @@ const warrantyOptions = [
 ]
 
 const loadingServicePrice = ref<Loading>('success')
-const cartItemsStorage = useLocalStorage<ProductInStorage[]>('cart')
+const cartItemsStorage = useLocalStorage<ProductStorage[]>('cart')
 const setServicePrice = async (warranty: number, product: ProductCart) => {
   loadingServicePrice.value = 'loading'
   const user = await isUserAuthenticated()

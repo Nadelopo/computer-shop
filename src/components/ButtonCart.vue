@@ -22,8 +22,10 @@ const loading = ref(false)
 const { addToCart } = useCartStore()
 const { cartItems } = storeToRefs(useCartStore())
 
+const quantity = ref(props.quantity)
+
 const productStatus = computed((): 'in' | 'outside' | 'absent' => {
-  if (props.quantity <= 0) return 'absent'
+  if (quantity.value <= 0) return 'absent'
   return cartItems.value.find((e) => e.productId === props.productId)
     ? 'in'
     : 'outside'
@@ -32,7 +34,10 @@ const productStatus = computed((): 'in' | 'outside' | 'absent' => {
 const add = async () => {
   if (productStatus.value === 'absent') return
   loading.value = true
-  await addToCart(props.productId)
+  const { error } = await addToCart(props.productId)
+  if (error === 'OutOfStock') {
+    quantity.value = 0
+  }
   loading.value = false
 }
 
@@ -41,8 +46,8 @@ const width = computed(() => {
 })
 
 const icon = computed(() => {
-  if (productStatus.value === 'in') return CartInButtonSvg
-  if (productStatus.value === 'outside') return InCartSvg
+  if (productStatus.value === 'in') return InCartSvg
+  if (productStatus.value === 'outside') return CartInButtonSvg
   return AbsentForCart
 })
 

@@ -10,7 +10,7 @@ import {
 } from '@/db/queries/tables'
 import { useLocalStorage } from '@/utils/localStorage'
 import type { ProductRead } from '@/types/tables/products.types'
-import type { PostgrestError } from '@supabase/supabase-js'
+import type { PostgrestError, User } from '@supabase/supabase-js'
 import type { DataError } from '@/types'
 
 type QueryProduct = Omit<
@@ -34,7 +34,7 @@ export type ProductCart = QueryProduct & {
   }
 }
 
-export type ProductInStorage = {
+export type ProductStorage = {
   id?: number
   created_at?: string
   userId?: string
@@ -45,9 +45,9 @@ export type ProductInStorage = {
 
 export const useCartStore = defineStore('cart', () => {
   const { isUserAuthenticated } = useUserStore()
-  const cartItems = ref<ProductInStorage[]>([])
+  const cartItems = ref<ProductStorage[]>([])
   const cartItemsWithDetails = ref<ProductCart[]>([])
-  const cartItemsStorage = useLocalStorage<ProductInStorage[]>('cart', {
+  const cartItemsStorage = useLocalStorage<ProductStorage[]>('cart', {
     onChange: (newValue) => {
       cartItems.value = newValue
     }
@@ -55,13 +55,15 @@ export const useCartStore = defineStore('cart', () => {
 
   async function addToCart(
     productId: number
-  ): Promise<{ error: PostgrestError | null }> {
-    const [user, { error: errorGetProduct }] = await Promise.all([
-      isUserAuthenticated(),
-      getOneById('products', productId)
-    ])
-    if (errorGetProduct) {
+  ): Promise<{ error: PostgrestError | null | 'OutOfStock' }> {
+    const [user, { data: product, error: errorGetProduct }] = await Promise.all(
+      [isUserAuthenticated(), getOneById('products', productId)]
+    )
+    if (!product) {
       return { error: errorGetProduct }
+    }
+    if (product.quantity < 1) {
+      return { error: 'OutOfStock' }
     }
     let error: PostgrestError | null = null
     if (user) {
@@ -127,31 +129,73 @@ export const useCartStore = defineStore('cart', () => {
     return { error }
   }
 
-  async function setCartItems(): Promise<DataError<ProductInStorage[]>> {
-    const user = await isUserAuthenticated()
-    let error: PostgrestError | null = null
+  async function getCartItems(
+    user: User | null
+  ): Promise<DataError<ProductStorage[]>> {
+    let dataValue: ProductStorage[] = []
     if (user) {
-      const { data, error: errorGet } = await getAll('cart', {
+      const { data, error } = await getAll('cart', {
         match: { userId: user.id }
       })
-      if (errorGet) {
-        error = errorGet
+      if (error) {
         return { data: null, error }
       }
-      cartItems.value = data
-      cartItemsStorage.set(data)
+      dataValue = data
     } else {
       const data = cartItemsStorage.get()
       if (data) {
-        cartItems.value = data
+        dataValue = data
       }
     }
-    return { data: cartItems.value, error }
+    return { data: dataValue, error: null }
   }
 
-  async function setCartItemsWithDetails(
-    cartItems: ProductInStorage[]
-  ): Promise<{
+  async function setCartItems(): Promise<DataError<ProductStorage[]>> {
+    const user = await isUserAuthenticated()
+    let data: ProductStorage[] = []
+    const { data: items, error } = await getCartItems(user)
+    if (error) {
+      return { data: null, error }
+    }
+    data = items
+    const { data: products, error: errorProducts } = await getAll('products', {
+      select: 'id, quantity',
+      in: { id: items.map((e) => e.productId) }
+    })
+    if (errorProducts) return { data: null, error: errorProducts }
+    const promises = []
+    for (const cartProduct of items) {
+      const product = products.find((e) => e.id === cartProduct.productId)
+      if (!product) continue
+      if (product.quantity === 0) {
+        promises.push(deleteItem(product.id))
+        continue
+      }
+      if (product.quantity < cartProduct.count) {
+        promises.push(
+          setItemCount(product.id, product.quantity, cartProduct.id)
+        )
+      }
+    }
+    if (promises.length) {
+      await Promise.all(promises)
+      const { data: updatedItems, error: errorCartItems } = await getCartItems(
+        user
+      )
+      if (errorCartItems) {
+        return { data: null, error: errorCartItems }
+      }
+      data = updatedItems
+    }
+
+    cartItems.value = data
+    if (user) {
+      cartItemsStorage.set(data)
+    }
+    return { data: cartItems.value, error: null }
+  }
+
+  async function setCartItemsWithDetails(cartItems: ProductStorage[]): Promise<{
     error: PostgrestError | null
   }> {
     const idList: number[] = cartItems.map((e) => e.productId)
@@ -191,17 +235,23 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   async function setItemCount(
-    product: ProductCart,
-    count: number
+    productId: number,
+    count: number,
+    cartItemId?: number
   ): Promise<{ error: PostgrestError | null }> {
     const user = await isUserAuthenticated()
+    const { data, error } = await getOneById('products', productId)
+    if (error) return { error }
+    if (data.quantity < count) {
+      count = data.quantity
+    }
     if (user) {
-      if (product.cartItemId) {
+      if (cartItemId) {
         if (count === 0) {
-          const { error } = await deleteOneById('cart', product.cartItemId)
+          const { error } = await deleteOneById('cart', cartItemId)
           if (error) return { error }
         } else {
-          const { error } = await updateOneById('cart', product.cartItemId, {
+          const { error } = await updateOneById('cart', cartItemId, {
             count
           })
           if (error) return { error }
@@ -213,17 +263,15 @@ export const useCartStore = defineStore('cart', () => {
     }
     if (count === 0) {
       cartItemsWithDetails.value = cartItemsWithDetails.value.filter(
-        (p) => p.id !== product.id
+        (p) => p.id !== productId
       )
-      cartItems.value = cartItems.value.filter(
-        (p) => p.productId !== product.id
-      )
+      cartItems.value = cartItems.value.filter((p) => p.productId !== productId)
     } else {
       cartItemsWithDetails.value = cartItemsWithDetails.value.map((p) =>
-        p.id === product.id ? { ...p, count } : p
+        p.id === productId ? { ...p, count } : p
       )
       cartItems.value = cartItems.value.map((p) =>
-        p.productId === product.id ? { ...p, count } : p
+        p.productId === productId ? { ...p, count } : p
       )
     }
     cartItemsStorage.set(cartItems.value)
