@@ -7,6 +7,7 @@ export type CartCreate = {
   productId: number
   count: number
   additionalWarranty: number
+  isPriceChanged: boolean
 }
 
 export type CartUpdate = Partial<CartCreate>

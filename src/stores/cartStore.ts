@@ -29,6 +29,7 @@ export type ProductCart = QueryProduct & {
   cartItemId?: number
   additionalWarranty: number
   servicePrice: number
+  isPriceChanged: boolean
   categories: {
     enTitle: string
   }
@@ -40,6 +41,7 @@ export type ProductStorage = {
   userId?: string
   productId: number
   count: number
+  isPriceChanged: boolean
   additionalWarranty: number
 }
 
@@ -99,7 +101,8 @@ export const useCartStore = defineStore('cart', () => {
           userId: user.id,
           productId,
           count: 1,
-          additionalWarranty: 0
+          additionalWarranty: 0,
+          isPriceChanged: false
         })
         if (errorCreate) {
           error = errorCreate
@@ -121,7 +124,7 @@ export const useCartStore = defineStore('cart', () => {
       } else {
         cartItems.value = [
           ...productsCart,
-          { count: 1, productId, additionalWarranty: 0 }
+          { count: 1, productId, additionalWarranty: 0, isPriceChanged: false }
         ]
       }
     }
@@ -218,7 +221,8 @@ export const useCartStore = defineStore('cart', () => {
           count: item.count,
           cartItemId: item.id,
           additionalWarranty: item.additionalWarranty,
-          servicePrice: 0
+          servicePrice: 0,
+          isPriceChanged: item.isPriceChanged
         })
       }
     }
