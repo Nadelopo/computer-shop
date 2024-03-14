@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue'
+import { ref } from 'vue'
 import { supabase } from './db/supabase'
 import { useUserStore } from './stores/userStore'
 import { useCartStore } from './stores/cartStore'
 import { useLocalStorage } from './utils/localStorage'
 
-const { setUserData, isUserAuthenticated, userLists } = useUserStore()
+const { setUserData, userLists } = useUserStore()
 const { setCartItems } = useCartStore()
 
 const eventValue = ref('')
@@ -17,14 +17,9 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   }
 })
 
-onBeforeMount(async () => {
-  const isUser = await isUserAuthenticated()
-  if (isUser) {
-    useLocalStorage<number[]>('favourites', {
-      onChange: (newValue) => {
-        userLists.favourites = newValue
-      }
-    })
+useLocalStorage<number[]>('favourites', {
+  onChange: (newValue) => {
+    userLists.favourites = newValue
   }
 })
 </script>

@@ -1,4 +1,5 @@
-import { onUnmounted } from 'vue'
+import { onBeforeMount, onUnmounted } from 'vue'
+import { useUserStore } from '@/stores/userStore'
 
 type Key =
   | 'cart'
@@ -17,9 +18,16 @@ export const useLocalStorage = <T>(key: Key, options?: Options<T>) => {
       options?.onChange?.(JSON.parse(e.newValue))
     }
   }
-  if (options?.onChange) {
-    window.addEventListener('storage', onStorage)
-  }
+  onBeforeMount(async () => {
+    if (options?.onChange) {
+      if (key === 'favourites') {
+        const { isUserAuthenticated } = useUserStore()
+        const isUser = await isUserAuthenticated()
+        if (!isUser) return
+      }
+      window.addEventListener('storage', onStorage)
+    }
+  })
 
   onUnmounted(() => {
     window.removeEventListener('storage', onStorage)
