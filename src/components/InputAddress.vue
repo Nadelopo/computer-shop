@@ -7,6 +7,9 @@ import type { LocationResult } from '@/utils/useGeoSuggest'
 defineProps<{
   text: string
   locationResults: LocationResult['results'] | null
+  required?: boolean
+  error?: boolean
+  name?: string
 }>()
 
 const emit = defineEmits<{
@@ -14,7 +17,7 @@ const emit = defineEmits<{
   clickOnInput: [string]
 }>()
 
-const model = defineModel<string | null>({ required: true })
+const model = defineModel<string | null>({ default: '' })
 
 const chooseColored = (
   hl: { begin: number; end: number }[] | undefined,
@@ -38,7 +41,7 @@ const onClick = () => {
 
 <template>
   <div class="wrapper">
-    <label>{{ text }}</label>
+    <label :class="{ 'text-danger-light': error }">{{ text }}</label>
     <div
       ref="suggestionsRef"
       @click="onClick"
@@ -46,6 +49,9 @@ const onClick = () => {
       <v-input-text
         v-model="model"
         :debounce="500"
+        :required="required"
+        :error="error"
+        :name="name"
       />
     </div>
     <Transition name="v">

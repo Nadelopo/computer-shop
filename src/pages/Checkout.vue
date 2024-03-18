@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
@@ -10,134 +10,35 @@ import { useChooseWord } from '@/components/Cart/useChooseWord'
 import {
   createMany,
   createOne,
-  getAll,
   getOneById,
   updateManyById,
   updateOneById
 } from '@/db/queries/tables'
 import { formatPrice } from '@/utils/formatPrice'
-import { VButton, VButtons, VInputText, VLoader } from '@/components/UI'
+import { VButton, VButtons, VLoader } from '@/components/UI'
 import { useLocalStorage } from '@/utils/localStorage'
 import { useGeoSuggest } from '@/utils/useGeoSuggest'
-import Address from '@/components/Checkout/Address.vue'
+import MethodObtain from '@/components/Checkout/MethodObtain.vue'
+import FormField from '@/components/FormField.vue'
 import type { Loading } from '@/types'
-import type { Location } from '@/components/Checkout/types'
 import type { ProductRead } from '@/types/tables/products.types'
 import type { OrderCreate } from '@/types/tables/orders.types'
 import type { UserUpdate } from '@/types/tables/users.types'
 import type { OrderedProductCreate } from '@/types/tables/orderedProducts.types'
+import { OrderData, useFeatureForm } from '@/components/Checkout/useFeatureForm'
+import { useFeaturePrice } from '@/components/Checkout/useFeaturePrice'
+import { useFeatureInitialUserDataInstallation } from '@/components/Checkout/useFeatureInitialUserDataInstallation'
 
-type UserContactData = {
-  name: string
-  email: string
-  phone: string
-  obtainType: 'selfcall' | 'delivery'
-  location: Location
-}
-
-const { user } = storeToRefs(useUserStore())
-const { isUserAuthenticated } = useUserStore()
-const userContactData = ref<UserContactData>({
-  name: '',
-  email: '',
-  phone: '',
-  obtainType: 'delivery',
-  location: {
-    apartment: null,
-    floor: null,
-    entrance: null,
-    address: null,
-    city: 'Ульяновск'
-  }
-})
-
-const loadingUserData = ref<Loading>('loading')
-const watcher = watch(
-  user,
-  async (cur) => {
-    if (!cur) {
-      const isUser = await isUserAuthenticated()
-      if (!isUser) watcher()
-      loadingUserData.value = 'success'
-      return
-    }
-    const { data, error } = await getOneById(
-      'users',
-      cur.id,
-      'address, apartment, floor, entrance, city'
-    )
-    if (error) {
-      loadingUserData.value = 'error'
-      watcher()
-      return
-    }
-    userContactData.value = {
-      email: cur.email,
-      name: cur.name,
-      obtainType: 'delivery',
-      phone: cur.phone?.toString() ?? '',
-      location: {
-        city: data.city ?? 'Ульяновск',
-        address: data.address ?? '',
-        apartment: data.apartment,
-        floor: data.floor,
-        entrance: data.entrance
-      }
-    }
-    loadingUserData.value = 'success'
-    watcher()
-  },
-  { immediate: true }
+const { values, handleSubmit, setFieldValue, setValues } = useFeatureForm()
+const { loadingUserData } = useFeatureInitialUserDataInstallation(
+  setValues,
+  values
 )
+const { price, loadingPrice, products } = useFeaturePrice()
 
-const { getMarkup, setCartItems } = useCartStore()
 const { countCartItems, cartItems } = storeToRefs(useCartStore())
 
-const price = ref(0)
-const loadingPrice = ref<Loading>('loading')
-const products = ref<
-  Pick<ProductRead, 'id' | 'price' | 'title' | 'img' | 'quantity'>[]
->([])
-onBeforeMount(async () => {
-  await setCartItems()
-  if (!cartItems.value.length) {
-    router.push({ name: 'Cart' })
-  }
-  const { data, error } = await getAll('products', {
-    in: {
-      id: cartItems.value.map((e) => e.productId)
-    },
-    select: 'id, price, quantity, title, img '
-  })
-  if (error) {
-    loadingPrice.value = 'error'
-    return
-  }
-  products.value = data
-  price.value += data.reduce((a, b) => {
-    const item = cartItems.value.find((e) => e.productId === b.id)
-    if (!item) return a
-    const markup = getMarkup(item.additionalWarranty, b.price)
-    return a + b.price * item.count + markup
-  }, 0)
-  loadingPrice.value = 'success'
-})
-
-const { chooseWord } = useChooseWord()
-
-const updateProductQuantity = () => {
-  const items: Pick<ProductRead, 'id' | 'quantity'>[] = []
-  for (const product of products.value) {
-    const count = cartItems.value.find((e) => e.productId === product.id)?.count
-    if (count === undefined) continue
-    items.push({
-      id: product.id,
-      quantity: product.quantity - count
-    })
-  }
-  return updateManyById('products', items)
-}
-
+const { user } = storeToRefs(useUserStore())
 const updateUserData = async (phone: number) => {
   if (!user.value) return
   const { data, error: getUserError } = await getOneById(
@@ -148,8 +49,8 @@ const updateUserData = async (phone: number) => {
   if (getUserError) return
   const {
     obtainType,
-    location: { address, city, apartment, floor, entrance }
-  } = userContactData.value
+    receiptDetails: { address, city, apartment, floor, entrance }
+  } = values
   let updateData: UserUpdate = {}
   if (!data.address && obtainType === 'delivery') {
     updateData = {
@@ -168,43 +69,39 @@ const updateUserData = async (phone: number) => {
 }
 
 const loadingCreateOrder = ref<Loading>('success')
-const router = useRouter()
-const shopAddress = ref<string | null>(null)
-const deliveryDate = ref<Date>(
-  new Date(new Date().setDate(new Date().getDate() + 1))
-)
-const onSubmit = async () => {
-  const userContactDataValue = userContactData.value
-  const {
-    name,
-    email,
-    obtainType,
-    location: { address, apartment, floor, entrance, city }
-  } = userContactDataValue
-  const phone = Number(userContactDataValue.phone.replace(/[()\- ]/g, ''))
-
-  loadingCreateOrder.value = 'loading'
-  if (obtainType === 'selfcall') {
-    if (shopAddress.value === null) {
-      useToast().warning('Выберите магазин')
-      loadingCreateOrder.value = 'success'
-      return
-    }
-  } else {
-    const { data } = await useGeoSuggest({
-      text: address ? `${city} ${address}` : '',
-      type: 'house'
-    })
-    const findedAddress = data?.find(
-      (e) => e.title.text === userContactDataValue.location.address
-    )
-    if (!findedAddress) {
-      useToast().warning('Адрес не найден')
-      loadingCreateOrder.value = 'success'
-      return
-    }
+const toast = useToast()
+const checkAddressValid = async (
+  address: string | null,
+  city: string | null,
+  obtainType: OrderData['obtainType']
+): Promise<boolean> => {
+  if (obtainType === 'selfcall') return true
+  const { data } = await useGeoSuggest({
+    text: address ? `${city} ${address}` : '',
+    type: 'house'
+  })
+  const findedAddress = data?.find((e) => e.title.text === address)
+  if (!findedAddress) {
+    toast.warning('Адрес не найден')
+    loadingCreateOrder.value = 'success'
+    return false
   }
-  updateUserData(phone)
+  return true
+}
+
+const updateProductQuantity = () => {
+  const items: Pick<ProductRead, 'id' | 'quantity'>[] = []
+  for (const product of products.value) {
+    const count = cartItems.value.find((e) => e.productId === product.id)?.count
+    if (count === undefined) continue
+    items.push({
+      id: product.id,
+      quantity: product.quantity - count
+    })
+  }
+  return updateManyById('products', items)
+}
+const addOrderedProducts = async (orderId: number) => {
   const orderedProducts: Omit<OrderedProductCreate, 'orderId'>[] =
     cartItems.value.map((e) => {
       const product = products.value.find((p) => p.id === e.productId)
@@ -219,10 +116,40 @@ const onSubmit = async () => {
         servicePrice: getMarkup(additionalWarranty, product?.price ?? 0)
       }
     })
-  const date = deliveryDate.value
-  const formatDate = `
-    ${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}
-  `
+  const { error: errorOrderedProducts } = await createMany(
+    'ordered_products',
+    orderedProducts.map((e) => ({ ...e, orderId }))
+  )
+  if (errorOrderedProducts) {
+    loadingCreateOrder.value = 'error'
+    toast.error('Произошла ошибка')
+    return
+  }
+  if (user.value) {
+    await supabase.from('cart').delete().match({ userId: user.value.id })
+  } else {
+    useLocalStorage('cart').set([])
+  }
+  await updateProductQuantity()
+}
+
+const router = useRouter()
+const { getMarkup } = useCartStore()
+const onSubmit = handleSubmit(async () => {
+  const {
+    name,
+    email,
+    obtainType,
+    //prettier-ignore
+    receiptDetails: { address, apartment, floor, entrance, city, deliveryDate, shopAddress }
+  } = values
+  const phone = Number(values.phone.replace(/[()\- ]/g, ''))
+  loadingCreateOrder.value = 'loading'
+  const isAddressValid = await checkAddressValid(address, city, obtainType)
+  if (!isAddressValid) return
+  updateUserData(phone)
+  //prettier-ignore
+  const formatDate = `${deliveryDate.getFullYear()}-${ deliveryDate.getMonth() + 1}-${deliveryDate.getDate()}`
   const order: OrderCreate = {
     userId: user.value?.id ?? null,
     phone,
@@ -235,33 +162,21 @@ const onSubmit = async () => {
     floor: obtainType === 'delivery' ? floor || null : null,
     entrance: obtainType === 'delivery' ? entrance || null : null,
     deliveryDate: obtainType === 'delivery' ? formatDate : null,
-    shopAddress: obtainType === 'selfcall' ? shopAddress.value : null,
+    shopAddress: obtainType === 'selfcall' ? shopAddress : null,
     status: 'awaiting',
     price: price.value
   }
   const { data, error } = await createOne('orders', order)
   if (error) {
     loadingCreateOrder.value = 'error'
-    useToast().error('Произошла ошибка')
+    toast.error('Произошла ошибка')
     return
   }
-  const { error: errorOrderedProducts } = await createMany(
-    'ordered_products',
-    orderedProducts.map((e) => ({ ...e, orderId: data.id }))
-  )
-  if (errorOrderedProducts) {
-    loadingCreateOrder.value = 'error'
-    useToast().error('Произошла ошибка')
-    return
-  }
-  if (user.value) {
-    await supabase.from('cart').delete().match({ userId: user.value.id })
-  } else {
-    useLocalStorage('cart').set([])
-  }
-  await updateProductQuantity()
+  await addOrderedProducts(data.id)
   router.push('Cart')
-}
+})
+
+const { chooseWord } = useChooseWord()
 </script>
 
 <template>
@@ -278,20 +193,23 @@ const onSubmit = async () => {
       </div>
       <div class="content grid grid-cols-1 gap-6 xs:grid-cols-2">
         <div>
-          <div>Имя*</div>
-          <v-input-text v-model="userContactData.name" />
+          <form-field
+            label="Имя*"
+            name="name"
+          />
         </div>
         <div>
-          <div>Почта*</div>
-          <v-input-text v-model="userContactData.email" />
+          <form-field
+            label="Почта*"
+            name="email"
+          />
         </div>
         <div>
-          <div>Телефон*</div>
-          <v-input-text
-            v-model="userContactData.phone"
+          <form-field
+            label="Телефон*"
             type="tel"
             :show-spin-buttons="false"
-            pattern=".{17,}"
+            name="phone"
           />
         </div>
       </div>
@@ -304,18 +222,18 @@ const onSubmit = async () => {
       <div class="content">
         <div>
           <v-buttons
-            v-model="userContactData.obtainType"
             :options="[
               { title: 'Самовызов', value: 'selfcall' },
               { title: 'Доставка', value: 'delivery' }
             ]"
+            :model-value="values.obtainType"
+            @update:model-value="setFieldValue('obtainType', $event)"
           />
         </div>
-        <Address
-          v-model="userContactData.location"
-          v-model:shop-address="shopAddress"
-          v-model:date="deliveryDate"
-          :obtain-type="userContactData.obtainType"
+        <method-obtain
+          :obtain-type="values.obtainType"
+          :receipt-details="values.receiptDetails"
+          @receipt-details="(field, value) => setFieldValue(field, value)"
         />
       </div>
     </div>

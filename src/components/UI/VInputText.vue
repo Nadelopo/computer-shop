@@ -9,7 +9,8 @@ import {
 import { vMaska, MaskaDetail } from 'maska'
 import { debounce } from '@/utils/debounce'
 
-interface Props extends /* @vue-ignore */ InputHTMLAttributes {
+export interface VInputTextProps<T>
+  extends /* @vue-ignore */ InputHTMLAttributes {
   modelValue: T | null
   type?: 'text' | 'number' | 'tel'
   required?: boolean
@@ -19,9 +20,10 @@ interface Props extends /* @vue-ignore */ InputHTMLAttributes {
   max?: number | string
   min?: number | string
   debounce?: number
+  error?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<VInputTextProps<T>>(), {
   type: 'text',
   required: true,
   autofocus: false,
@@ -99,7 +101,10 @@ const bindOptions = computed(() => ({
 
 <template>
   <div>
-    <span class="wrapper">
+    <span
+      class="wrapper"
+      :class="{ error }"
+    >
       <input
         v-if="type === 'tel'"
         v-maska="maskaDetails"
@@ -129,8 +134,14 @@ const bindOptions = computed(() => ({
     background: var(--color-main)
     transition: 0.4s
     transform: scaleX(0)
+  &.error::after
+    background: var(--danger-light)
   &:focus-within::after
     transform: scaleX(1)
+  &.error
+    input
+      border-bottom: 1px solid var(--danger-light)
+
 
 .input
   outline: none

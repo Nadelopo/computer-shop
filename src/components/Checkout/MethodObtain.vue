@@ -1,38 +1,37 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useField } from 'vee-validate'
 import { VInputText, VButton, VModal, VLoader, VButtons } from '../UI'
 import { getAll } from '@/db/queries/tables'
 import { LocationResult, useGeoSuggest } from '@/utils/useGeoSuggest'
-import InputAddress from '@/components/InputAddress.vue'
-import { CrossSvg, HomeSvg } from '@/assets/icons'
 import { formatTime } from '@/utils/formatTime'
+import InputAddress from '@/components/InputAddress.vue'
+import FormField from '../FormField.vue'
+import { CrossSvg, HomeSvg } from '@/assets/icons'
 import type { ShopRead } from '@/types/tables/shops.types'
 import type { Loading } from '@/types'
-import type { Location } from './types'
+import type { ReceiptDetails } from './useFeatureForm'
 
-defineProps<{
+const props = defineProps<{
   obtainType: 'selfcall' | 'delivery'
+  receiptDetails: ReceiptDetails
 }>()
 
-const location = defineModel<Location>({
-  required: true
-})
-
-const shopAddress = defineModel<string | null>('shopAddress', {
-  required: true
-})
-
-const selectedDate = defineModel<Date>('date', {
-  required: true
-})
+const emit = defineEmits<{
+  receiptDetails: [
+    field: `receiptDetails.${keyof ReceiptDetails}`,
+    value: ReceiptDetails[keyof ReceiptDetails]
+  ]
+}>()
 
 const locationResults = ref<LocationResult['results'] | null>(null)
 
+const { value: address } = useField<string>('receiptDetails.address')
 watch(
-  () => location.value.address,
+  () => props.receiptDetails.address,
   async (address) => {
     const { data } = await useGeoSuggest({
-      text: `${location.value.city} ${address}`,
+      text: `${props.receiptDetails.city} ${address}`,
       type: 'house'
     })
     locationResults.value = data
@@ -66,7 +65,7 @@ tomorrow.setDate(tomorrow.getDate() + 1)
 const dates = ref<{ title: string; value: Date }[]>([])
 
 for (let i = 0; i < 7; i++) {
-  const date = new Date(selectedDate.value)
+  const date = new Date(props.receiptDetails.deliveryDate)
   const value = new Date(date.setDate(date.getDate() + i))
   const formatDate = new Intl.DateTimeFormat('ru', {
     month: 'long',
@@ -76,41 +75,65 @@ for (let i = 0; i < 7; i++) {
   let title = formatDate.split(',').reverse().join(', ') + '.'
   dates.value.push({ title, value })
 }
+
+const { value: shopAddress, errorMessage } = useField<string>(
+  'receiptDetails.shopAddress',
+  () => true,
+  { initialValue: 'Выберите магазин' }
+)
 </script>
 
 <template>
   <div v-if="obtainType === 'delivery'">
     <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
-      <input-address
-        v-model="location.address"
-        :location-results="locationResults"
-        text="Адрес*"
-        @click-on-suggestion="location.address = $event"
-      />
       <div>
-        <div>Квартира*</div>
-        <v-input-text
-          v-model="location.apartment"
+        <form-field
+          v-slot="{ isError }"
+          name="receiptDetails.address"
+        >
+          <input-address
+            v-model="address"
+            name="address"
+            :location-results="locationResults"
+            text="Адрес*"
+            :required="false"
+            :error="isError"
+            @click-on-suggestion="address = $event"
+          />
+        </form-field>
+      </div>
+
+      <div>
+        <form-field
+          name="receiptDetails.apartment"
+          label="Квартира*"
           type="number"
           min="0"
+          max="5000"
         />
       </div>
       <div>
         <div>Этаж</div>
         <v-input-text
-          v-model="location.floor"
           type="number"
           min="0"
           :required="false"
+          :model-value="receiptDetails.floor"
+          @update:model-value="
+            emit('receiptDetails', 'receiptDetails.floor', $event)
+          "
         />
       </div>
       <div>
         <div>Подъезд</div>
         <v-input-text
-          v-model="location.entrance"
           type="number"
           min="0"
           :required="false"
+          :model-value="receiptDetails.entrance"
+          @update:model-value="
+            emit('receiptDetails', 'receiptDetails.entrance', $event)
+          "
         />
       </div>
     </div>
@@ -118,9 +141,12 @@ for (let i = 0; i < 7; i++) {
       <div class="text-xl mb-2">Дата доставки</div>
       <div>
         <v-buttons
-          v-model="selectedDate"
           :options="dates"
           width="150px"
+          :model-value="receiptDetails.deliveryDate"
+          @update:model-value="
+            emit('receiptDetails', 'receiptDetails.deliveryDate', $event)
+          "
         />
       </div>
     </div>
@@ -134,13 +160,14 @@ for (let i = 0; i < 7; i++) {
             width="50"
           />
         </div>
-        <button
+        <input
+          v-model="shopAddress"
+          name="shopAddress"
           class="choose__option__btn"
           type="button"
+          :class="[{ 'text-danger-light': errorMessage }, 'cursor-pointer']"
           @click="toggleModal"
-        >
-          {{ shopAddress || 'Выберите пунк самовызова' }}
-        </button>
+        />
         <v-modal v-model="isModalOpen">
           <div class="modal__content">
             <div class="flex">

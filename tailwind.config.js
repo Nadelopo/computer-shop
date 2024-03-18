@@ -11,7 +11,9 @@ module.exports = {
     },
     extend: {
       colors: {
-        text: 'var(--color-text)'
+        text: 'var(--color-text)',
+        danger: 'var(--danger)',
+        'danger-light': 'var(--danger-light)'
       }
     }
   },
