@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onUnmounted, ref, watchEffect } from 'vue'
 import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
 import { VInputText } from '@/components/UI'
 import type { LocationResult } from '@/utils/useGeoSuggest'
@@ -30,12 +30,65 @@ const chooseColored = (
   }
 }
 
-const suggestionsRef = ref<HTMLElement>()
-const suggestionsOpen = onClickOutsideClose(suggestionsRef)
+const inputRef = ref<HTMLElement>()
+const suggestionsOpen = onClickOutsideClose(inputRef)
 
 const onClick = () => {
   emit('clickOnInput', 'locality')
   suggestionsOpen.value = true
+}
+
+const stopScrollDocument = (e: KeyboardEvent) => {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault()
+  }
+}
+
+const suggestionsRef = ref<HTMLElement>()
+watchEffect(() => {
+  if (suggestionsRef.value) {
+    const firstEl = suggestionsRef.value.children[0] as HTMLElement
+    firstEl.focus()
+    addEventListener('keydown', stopScrollDocument)
+  } else {
+    removeEventListener('keydown', stopScrollDocument)
+  }
+})
+onUnmounted(() => {
+  removeEventListener('keydown', stopScrollDocument)
+})
+
+const onSuggestionKey = (e: Event, type: 'down' | 'up') => {
+  if (!suggestionsRef.value) return
+  const target = e.target as HTMLElement
+  const children = suggestionsRef.value.children
+  let nextFocusedElement: HTMLElement | undefined
+  if (type === 'down') {
+    nextFocusedElement = target.nextElementSibling as HTMLElement
+    if (!nextFocusedElement) {
+      nextFocusedElement = children[0] as HTMLElement
+    }
+  }
+  if (type === 'up') {
+    nextFocusedElement = target.previousElementSibling as HTMLElement
+    if (!nextFocusedElement) {
+      nextFocusedElement = children[children.length - 1] as HTMLElement
+    }
+  }
+  nextFocusedElement?.focus()
+}
+
+const onInputKey = (type: 'down' | 'up') => {
+  if (!suggestionsRef.value) return
+  const children = suggestionsRef.value.children
+  if (type === 'down') {
+    //prettier-ignore
+    (children[0] as HTMLElement).focus()
+  }
+  if (type === 'up') {
+    //prettier-ignore
+    (children[children.length - 1] as HTMLElement).focus()
+  }
 }
 </script>
 
@@ -43,8 +96,10 @@ const onClick = () => {
   <div class="wrapper">
     <label :class="{ 'text-danger-light': error }">{{ text }}</label>
     <div
-      ref="suggestionsRef"
+      ref="inputRef"
       @click="onClick"
+      @keyup.arrow-down="onInputKey('down')"
+      @keyup.arrow-up="onInputKey('up')"
     >
       <v-input-text
         v-model="model"
@@ -57,13 +112,17 @@ const onClick = () => {
     <Transition name="v">
       <div
         v-if="suggestionsOpen && locationResults"
+        ref="suggestionsRef"
         class="suggestions"
       >
-        <div
+        <button
           v-for="(locate, i) in locationResults"
           :key="i"
+          type="button"
           class="suggestion"
           @click="emit('clickOnSuggestion', locate.title.text)"
+          @keyup.arrow-down="onSuggestionKey($event, 'down')"
+          @keyup.arrow-up="onSuggestionKey($event, 'up')"
         >
           <template
             v-for="(s, j) in locate.title.text"
@@ -79,14 +138,13 @@ const onClick = () => {
               {{ s }}
             </template>
           </template>
-        </div>
+        </button>
       </div>
     </Transition>
   </div>
 </template>
 
 <style scoped lang="sass">
-
 .v-enter-active,
 .v-leave-active
   transition: 0.2s
@@ -107,8 +165,13 @@ const onClick = () => {
     border: 2px solid var(--color-main)
     overflow: hidden
     .suggestion
+      width: 100%
+      text-align: start
       cursor: pointer
       padding: 0 10px
-      &:hover
+      border-top: 2px solid transparent
+      border-bottom: 2px solid transparent
+      &:hover, &:focus
         background: #f1f1f1
+        outline: none
 </style>
