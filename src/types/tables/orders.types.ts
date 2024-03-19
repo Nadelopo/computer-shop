@@ -1,4 +1,7 @@
 import type { DbEnum } from '../database.types'
+import type { CategoryRead } from './categories.types'
+import type { OrderedProductRead } from './orderedProducts.types'
+import type { ProductRead } from './products.types'
 
 export type OrderRead = {
   id: number
@@ -50,3 +53,11 @@ export type OrderCreate = {
 }
 
 export type OrderUpdate = Partial<OrderCreate>
+
+export type OrderReadWithDetails = OrderRead & {
+  ordered_products: (OrderedProductRead & {
+    products: Pick<ProductRead, 'id' | 'img' | 'title'> & {
+      categories: Pick<CategoryRead, 'id' | 'enTitle'>
+    }
+  })[]
+}
