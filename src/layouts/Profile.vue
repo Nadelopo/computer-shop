@@ -63,7 +63,6 @@ onBeforeMount(() => {
   grid-template-columns: 240px 1fr
   gap: 20px
 
-
 .sidebar
   display: flex
   flex-direction: column
@@ -72,5 +71,7 @@ onBeforeMount(() => {
     font-weight: 400
     transition: .2s
     &:hover
+      color: var(--color-text)
+    &.router-link-exact-active
       color: var(--color-text)
 </style>

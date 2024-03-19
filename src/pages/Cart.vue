@@ -5,7 +5,7 @@ import { useCartStore } from '@/stores/cartStore'
 import { formatPrice } from '@/utils/formatPrice'
 import { useLocalStorage } from '@/utils/localStorage'
 import { VLoader, VButton, VModal } from '@/components/UI'
-import { useChooseWord } from '@/components/Cart/useChooseWord'
+import { getWordByQuantity } from '@/components/Cart/useChooseWord'
 import ProductsWithChangedPrice from '@/components/Cart/ProductsWithChangedPrice.vue'
 import ProductBlock from '@/components/Cart/ProductBlock.vue'
 import type { ProductCart } from '@/stores/cartStore'
@@ -52,8 +52,6 @@ const sumPrice = computed(() => {
 onUnmounted(() => {
   cartItemsWithDetails.value = []
 })
-
-const { chooseWord } = useChooseWord()
 </script>
 
 <template>
@@ -93,7 +91,7 @@ const { chooseWord } = useChooseWord()
           <div class="flex justify-between font-medium text-lg mb-2">
             <div>
               {{ countCartItems }}
-              {{ chooseWord }}
+              {{ getWordByQuantity(countCartItems) }}
             </div>
             <div>
               {{ formatPrice(sumPrice) }}

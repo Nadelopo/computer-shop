@@ -6,7 +6,7 @@ import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
 import { useCartStore } from '@/stores/cartStore'
-import { useChooseWord } from '@/components/Cart/useChooseWord'
+import { getWordByQuantity } from '@/components/Cart/useChooseWord'
 import {
   createMany,
   createOne,
@@ -175,8 +175,6 @@ const onSubmit = handleSubmit(async () => {
   await addOrderedProducts(data.id)
   router.push('Cart')
 })
-
-const { chooseWord } = useChooseWord()
 </script>
 
 <template>
@@ -251,7 +249,7 @@ const { chooseWord } = useChooseWord()
         class="content"
         style="border-left: unset"
       >
-        <div> {{ countCartItems }} {{ chooseWord }}</div>
+        <div> {{ countCartItems }} {{ getWordByQuantity(countCartItems) }}</div>
         <div class="text-3xl font-medium mb-2">
           Итого: <span class="font-bold">{{ formatPrice(price) }}</span>
         </div>
