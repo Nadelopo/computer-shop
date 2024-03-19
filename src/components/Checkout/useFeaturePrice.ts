@@ -36,7 +36,7 @@ export const useFeaturePrice = () => {
       const item = store.cartItems.find((e) => e.productId === b.id)
       if (!item) return a
       const markup = store.getMarkup(item.additionalWarranty, b.price)
-      return a + b.price * item.count + markup
+      return a + b.price * item.count + markup * item.count
     }, 0)
     loadingPrice.value = 'success'
   })

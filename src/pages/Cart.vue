@@ -45,7 +45,7 @@ useLocalStorage('cart', { onChange: loadData })
 
 const sumPrice = computed(() => {
   return cartItemsWithDetails.value.reduce((a, b) => {
-    return a + b.price * b.count + b.servicePrice
+    return a + b.price * b.count + b.servicePrice * b.count
   }, 0)
 })
 
