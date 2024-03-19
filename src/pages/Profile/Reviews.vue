@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { onBeforeMount } from 'vue'
+import { onBeforeMount, onUnmounted } from 'vue'
 import ReviewBlock from '@/components/ReviewBlock.vue'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 
 const props = defineProps<{
   reviews: ReviewWithDetails[]
-  setReviews: () => Promise<ReviewWithDetails[]>
+  setReviews: (limit?: number) => Promise<ReviewWithDetails[]>
 }>()
 
 onBeforeMount(async () => {
   props.setReviews()
+})
+
+onUnmounted(() => {
+  props.setReviews(4)
 })
 </script>
 

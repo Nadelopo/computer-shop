@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import { getAll } from '@/db/queries/tables'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 
-const { user } = storeToRefs(useUserStore())
+const { isUserAuthenticated } = useUserStore()
 
 const route = useRoute()
 const pageName = route.name
 
 const reviews = ref<ReviewWithDetails[]>([])
 const setReviews = async (limit?: number) => {
-  if (!user.value) return null
+  const user = await isUserAuthenticated()
+  if (!user) return
   const { data } = await getAll('reviews', {
-    match: { userId: user.value.id },
+    match: { userId: user.id },
     select: '*, users(name), categories(id, enTitle)',
     order: ['created_at', { ascending: false }],
     limit
@@ -26,6 +26,7 @@ const setReviews = async (limit?: number) => {
 }
 
 onBeforeMount(() => {
+  console.log('onBeforeMount')
   if (!reviews.value.length && pageName === 'ProfileMain') {
     setReviews(4)
   }
