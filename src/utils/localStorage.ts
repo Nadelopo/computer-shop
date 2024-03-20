@@ -10,6 +10,7 @@ type Key =
 
 type Options<T> = {
   onChange?: (newValue: T) => void
+  auth?: boolean
 }
 
 export const useLocalStorage = <T>(key: Key, options?: Options<T>) => {
@@ -20,7 +21,7 @@ export const useLocalStorage = <T>(key: Key, options?: Options<T>) => {
   }
   onBeforeMount(async () => {
     if (options?.onChange) {
-      if (key === 'favourites') {
+      if (options.auth) {
         const { isUserAuthenticated } = useUserStore()
         const isUser = await isUserAuthenticated()
         if (!isUser) return

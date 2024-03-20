@@ -2,144 +2,166 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
+import { useField, useForm } from 'vee-validate'
 import { supabase } from '@/db/supabase'
 import { createOne } from '@/db/queries/tables'
+import { string } from '@/utils/validator'
 import { VButton } from '@/components/UI'
 
 const router = useRouter()
 
-const active = ref(true)
-const email = ref('')
-const password = ref('')
-const name = ref('')
+const isSignIn = ref(true)
+
+const { handleSubmit } = useForm<{
+  email: string
+  password: string
+  name: string
+}>()
+
+const { value: email, errorMessage: errorEmail } = useField<string>(
+  'email',
+  (v) => string(v).required().email().valid()
+)
+const { value: password, errorMessage: errorPassword } = useField<string>(
+  'password',
+  (v) => string(v).required().min(6).max(50).valid()
+)
+const { value: name, errorMessage: errorName } = useField<string>(
+  'name',
+  (v) => {
+    if (isSignIn.value) return true
+    return string(v).required().min(2).max(50).valid()
+  }
+)
 
 const toast = useToast()
 
 const signIn = async () => {
-  if (email.value && password.value) {
-    const {
-      data: { user },
-      error
-    } = await supabase.auth.signInWithPassword({
-      email: email.value,
-      password: password.value
-    })
-    if (error) {
-      console.error(error)
-      toast.warning('Неверная почта или пароль')
-    }
-    if (user) {
-      router.push({ name: 'Home' })
-    }
-  } else {
-    toast.warning('Не все поля заполнены')
+  const {
+    data: { user },
+    error
+  } = await supabase.auth.signInWithPassword({
+    email: email.value,
+    password: password.value
+  })
+  if (error) {
+    console.error(error)
+    toast.warning('Неверная почта или пароль')
+  }
+  if (user) {
+    router.push({ name: 'Home' })
   }
 }
 
 const signUp = async () => {
-  if (email.value && password.value && name.value) {
-    const {
-      data: { user },
-      error
-    } = await supabase.auth.signUp({
-      email: email.value,
-      password: password.value
-    })
-    if (error) {
-      console.error(error)
-      toast.warning('Пользователь уже зарегестрирован')
-    }
-    if (!user) return
-    const insertData = await createOne('users', {
-      name: name.value,
-      email: email.value,
-      id: user.id
-    })
-    if (insertData) {
-      router.push({ name: 'Home' })
-    }
-  } else {
-    toast.warning('Не все поля заполнены')
+  const {
+    data: { user },
+    error
+  } = await supabase.auth.signUp({
+    email: email.value,
+    password: password.value
+  })
+  if (error) {
+    console.error(error)
+    toast.warning('Пользователь уже зарегестрирован')
+  }
+  if (!user) return
+  const { error: errorCreate } = await createOne('users', {
+    name: name.value,
+    email: email.value,
+    id: user.id
+  })
+  if (!errorCreate) {
+    router.push({ name: 'Home' })
   }
 }
+
+const submit = handleSubmit(() => {
+  if (isSignIn.value) signIn()
+  else signUp()
+})
 </script>
 
 <template>
   <div class="back">
     <form
       class="main"
-      @submit.prevent="active ? signIn() : signUp()"
+      @submit.prevent="submit"
     >
       <div class="head">
         <div
           class="cursor-pointer uppercase text"
-          :class="{ active }"
-          @click="active = true"
+          :class="{ isSignIn: isSignIn }"
+          @click="isSignIn = true"
         >
           войти
         </div>
         <div
           class="cursor-pointer uppercase text"
-          :class="{ active: !active }"
-          @click="active = false"
+          :class="{ active: !isSignIn }"
+          @click="isSignIn = false"
         >
           зарегистрироваться
         </div>
       </div>
       <div
-        v-if="!active"
-        class="flex flex-col mb-4"
+        v-if="!isSignIn"
+        class="flex flex-col"
       >
         <label
           class="label"
-          for=""
+          for="name"
         >
           ИМЯ
         </label>
         <input
+          id="name"
           v-model="name"
           class="input"
+          name="name"
           type="text"
-          minlength="4"
-          maxlength="50"
         />
-      </div>
-      <div class="flex flex-col mb-4">
-        <label
-          class="label"
-          for=""
-        >
-          ПОЧТА
-        </label>
-        <input
-          v-model="email"
-          class="input"
-          type="email"
-        />
+        <div class="text-danger-light pl-4 h-6">{{ errorName }}</div>
       </div>
       <div class="flex flex-col">
         <label
           class="label"
-          for=""
+          for="email"
+        >
+          ПОЧТА
+        </label>
+        <input
+          id="email"
+          v-model="email"
+          name="email"
+          class="input"
+          type="email"
+        />
+        <div class="text-danger-light pl-4 h-6">{{ errorEmail }}</div>
+      </div>
+      <div class="flex flex-col">
+        <label
+          class="label"
+          for="password"
         >
           ПАРОЛЬ
         </label>
         <input
           v-model="password"
           class="input"
+          name="password"
           type="password"
-          minlength="6"
-          maxlength="50"
         />
+        <div class="text-danger-light pl-4 h-6">{{ errorPassword }}</div>
       </div>
-      <div class="my-10">
+      <div class="mb-6 mt-4">
         <v-button class="btnn">
-          {{ active ? 'Войти' : 'Зарегистрироваться' }}
+          {{ isSignIn ? 'Войти' : 'Зарегистрироваться' }}
         </v-button>
       </div>
       <hr class="mb-4" />
       <div
-        v-if="active"
+        v-if="isSignIn"
         class="text-center"
       >
         <span
@@ -160,6 +182,7 @@ const signUp = async () => {
 </template>
 
 <style scoped lang="sass">
+$radius: 12px
 .back
   background:  linear-gradient(45deg, rgba(38, 166, 154, .8), rgb(32, 95, 109, .8))
   height: 100vh
@@ -171,11 +194,10 @@ const signUp = async () => {
 .main
   display: flex
   flex-direction: column
-  // min-height: 500px
   max-width: 400px
   width: 100%
   background:  linear-gradient( rgba(38, 166, 154, .8), rgb(32, 95, 109, .8))
-  border-radius: 10px
+  border-radius: 8px
   padding: 30px
   color: #fff
   transition: .3s
@@ -218,7 +240,7 @@ hr
   color: #fff
   background: rgba(255,255,255,.2)
   height: 35px
-  border-radius: 20px
+  border-radius: $radius
   padding-left: 20px
   transition: 0.3s linear
   &:focus
@@ -228,7 +250,7 @@ hr
 .btnn
   height: 40px
   width: 100%
-  border-radius: 20px
+  border-radius: $radius
 
 .link
   color: rgba(255,255,255, .75)

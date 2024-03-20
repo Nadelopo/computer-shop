@@ -3,6 +3,8 @@ type This = {
   email: () => This
   valid: () => string | true
   equal: (this: This, _value: string) => This
+  min: (this: This, min: number) => This
+  max: (this: This, max: number) => This
 }
 
 export function string(value?: string | null) {
@@ -48,9 +50,25 @@ export function string(value?: string | null) {
     return this
   }
 
+  function min(this: This, min: number) {
+    if (!value || value.length < min) {
+      isValid = false
+      setErrorMessage(`Минимальная длина ${min}`)
+    }
+    return this
+  }
+
+  function max(this: This, max: number) {
+    if (!value || value.length > max) {
+      isValid = false
+      setErrorMessage(`Максимальная длина ${max}`)
+    }
+    return this
+  }
+
   function valid(this: This) {
     if (isValid) return true
     return errorMessage
   }
-  return { required, email, valid, equal, notEqual }
+  return { required, email, valid, equal, notEqual, min, max }
 }

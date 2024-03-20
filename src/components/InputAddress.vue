@@ -4,7 +4,7 @@ import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
 import { VInputText } from '@/components/UI'
 import type { LocationResult } from '@/utils/useGeoSuggest'
 
-defineProps<{
+const props = defineProps<{
   text: string
   locationResults: LocationResult['results'] | null
   required?: boolean
@@ -47,8 +47,6 @@ const stopScrollDocument = (e: KeyboardEvent) => {
 const suggestionsRef = ref<HTMLElement>()
 watchEffect(() => {
   if (suggestionsRef.value) {
-    const firstEl = suggestionsRef.value.children[0] as HTMLElement
-    firstEl.focus()
     addEventListener('keydown', stopScrollDocument)
   } else {
     removeEventListener('keydown', stopScrollDocument)
@@ -90,11 +88,18 @@ const onInputKey = (type: 'down' | 'up') => {
     (children[children.length - 1] as HTMLElement).focus()
   }
 }
+
+const id = props.name + '-input'
 </script>
 
 <template>
   <div class="wrapper">
-    <label :class="{ 'text-danger-light': error }">{{ text }}</label>
+    <label
+      :class="{ 'text-danger-light': error }"
+      :for="id"
+    >
+      {{ text }}
+    </label>
     <div
       ref="inputRef"
       @click="onClick"
@@ -102,6 +107,7 @@ const onInputKey = (type: 'down' | 'up') => {
       @keyup.arrow-up="onInputKey('up')"
     >
       <v-input-text
+        :id="id"
         v-model="model"
         :debounce="500"
         :required="required"

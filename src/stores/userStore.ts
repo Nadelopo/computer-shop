@@ -22,7 +22,12 @@ export const useUserStore = defineStore('user', () => {
     favourites: [],
     comparison: []
   })
-  const favouritesStorage = useLocalStorage<number[]>('favourites')
+  const favouritesStorage = useLocalStorage<number[]>('favourites', {
+    onChange: (newValue) => {
+      userLists.favourites = newValue
+    },
+    auth: true
+  })
   const comparisonStorage = useLocalStorage<number[]>('compareList', {
     onChange: (newValue) => {
       userLists.comparison = newValue

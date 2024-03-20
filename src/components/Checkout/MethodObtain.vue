@@ -113,8 +113,9 @@ const { value: shopAddress, errorMessage } = useField<string>(
         />
       </div>
       <div>
-        <div>Этаж</div>
+        <label for="floor">Этаж</label>
         <v-input-text
+          id="floor"
           type="number"
           min="0"
           :required="false"
@@ -125,8 +126,9 @@ const { value: shopAddress, errorMessage } = useField<string>(
         />
       </div>
       <div>
-        <div>Подъезд</div>
+        <label for="entrance">Подъезд</label>
         <v-input-text
+          id="entrance"
           type="number"
           min="0"
           :required="false"
