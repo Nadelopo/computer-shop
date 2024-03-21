@@ -1,12 +1,15 @@
-import type { RouteRecordRaw } from 'vue-router'
+import type { AppRouteRecord } from './index'
 
-export const adminRoutes: RouteRecordRaw[] = [
+export const adminRoutes = [
   {
     path: '/admin',
-    name: 'Admin',
-    component: () => import('@/layouts/Admin.vue'),
     meta: { auth: true, admin: true },
     children: [
+      {
+        path: '',
+        name: 'Admin',
+        component: () => import('@/layouts/Admin.vue')
+      },
       {
         path: 'categories',
         name: 'AdminCategories',
@@ -59,4 +62,4 @@ export const adminRoutes: RouteRecordRaw[] = [
       }
     ]
   }
-]
+] as const satisfies readonly AppRouteRecord[]

@@ -4,16 +4,22 @@ import { useUserStore } from '@/stores/userStore'
 import { getOneById } from '@/db/queries/tables'
 import { adminRoutes } from './admin'
 import { mainRoutes } from './main'
+import { profileRoutes } from './profile'
 import MainVue from '@/layouts/Main.vue'
 import Auth from '@/pages/Auth.vue'
 import { Role } from '@/types/tables/users.types'
 
-export const routes: RouteRecordRaw[] = [
+export type AppRouteRecord = Omit<RouteRecordRaw, 'name' | 'children'> & {
+  name?: string
+  children?: readonly AppRouteRecord[]
+}
+
+export const routes = [
   ...adminRoutes,
   {
     path: '/',
     component: MainVue,
-    children: mainRoutes
+    children: [...mainRoutes, ...profileRoutes]
   },
   {
     path: '/auth',
@@ -25,11 +31,13 @@ export const routes: RouteRecordRaw[] = [
     name: 'NotFound',
     component: () => import('@/pages/NotFound.vue')
   }
-]
+] as const satisfies readonly AppRouteRecord[]
+
+export type TypeOfRoutes = typeof routes
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes
+  routes: routes as unknown as RouteRecordRaw[]
 })
 
 router.beforeEach(async (to, from) => {

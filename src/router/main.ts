@@ -1,8 +1,7 @@
-import { profileRoutes } from './profile'
 import Home from '@/pages/Home.vue'
-import type { RouteRecordRaw } from 'vue-router'
+import type { AppRouteRecord } from './index'
 
-export const mainRoutes: RouteRecordRaw[] = [
+export const mainRoutes = [
   {
     path: '',
     name: 'Home',
@@ -43,6 +42,5 @@ export const mainRoutes: RouteRecordRaw[] = [
     path: '/manufacturer/:title/:id',
     name: 'Manufacturer',
     component: () => import('@/pages/Manufacturer.vue')
-  },
-  ...profileRoutes
-]
+  }
+] as const satisfies readonly AppRouteRecord[]

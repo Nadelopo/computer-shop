@@ -6,3 +6,12 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>
   export default component
 }
+
+import 'vue-router'
+export {}
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    auth?: boolean
+  }
+}

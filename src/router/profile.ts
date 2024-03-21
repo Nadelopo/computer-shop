@@ -1,6 +1,6 @@
-import type { RouteRecordRaw } from 'vue-router'
+import type { AppRouteRecord } from './index'
 
-export const profileRoutes: RouteRecordRaw[] = [
+export const profileRoutes = [
   {
     path: '/profile',
     component: () => import('@/layouts/Profile.vue'),
@@ -28,4 +28,4 @@ export const profileRoutes: RouteRecordRaw[] = [
       }
     ]
   }
-]
+] as const satisfies readonly AppRouteRecord[]
