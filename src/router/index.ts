@@ -4,7 +4,6 @@ import { useUserStore } from '@/stores/userStore'
 import { getOneById } from '@/db/queries/tables'
 import { adminRoutes } from './admin'
 import { mainRoutes } from './main'
-import { profileRoutes } from './profile'
 import MainVue from '@/layouts/Main.vue'
 import Auth from '@/pages/Auth.vue'
 import { Role } from '@/types/tables/users.types'
@@ -19,7 +18,7 @@ export const routes = [
   {
     path: '/',
     component: MainVue,
-    children: [...mainRoutes, ...profileRoutes]
+    children: mainRoutes
   },
   {
     path: '/auth',

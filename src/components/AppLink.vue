@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends RouteName">
-import { RouteLocationRaw, RouterLink, RouterLinkProps } from 'vue-router'
+import type { RouteLocationRaw, RouterLink, RouterLinkProps } from 'vue-router'
 import type { RouteName, RouteParams, RouteParamsKeys } from '@/router/types'
 
 export type ParamsType<
