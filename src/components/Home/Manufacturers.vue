@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { VCarousel, VCarouselSlide } from '../UI'
+import AppLink from '../AppLink.vue'
 import type { CarouselBreakpoints } from '../UI/VCarousel/useFeatureBreakpoints'
 
 const { manufacturers } = storeToRefs(useManufacturersStore())
@@ -37,7 +38,7 @@ const carouselBreakpoints: CarouselBreakpoints = {
             v-for="(manufacturer, i) in manufacturers"
             :key="i"
           >
-            <router-link
+            <app-link
               :to="{
                 name: 'Manufacturer',
                 params: {
@@ -51,7 +52,7 @@ const carouselBreakpoints: CarouselBreakpoints = {
                 :src="manufacturer.img"
                 alt=""
               />
-            </router-link>
+            </app-link>
           </v-carousel-slide>
         </template>
         <template v-else>

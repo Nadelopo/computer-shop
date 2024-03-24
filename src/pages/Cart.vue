@@ -8,6 +8,7 @@ import { VLoader, VButton, VModal } from '@/components/UI'
 import { getWordByQuantity } from '@/components/Cart/useChooseWord'
 import ProductsWithChangedPrice from '@/components/Cart/ProductsWithChangedPrice.vue'
 import ProductBlock from '@/components/Cart/ProductBlock.vue'
+import AppLink from '@/components/AppLink.vue'
 import type { ProductCart } from '@/stores/cartStore'
 import type { Loading } from '@/types'
 
@@ -67,9 +68,7 @@ onUnmounted(() => {
       <div> Посмотрите предложения на главной странице </div>
       <div class="flex justify-center mt-2 text-base font-normal">
         <v-button>
-          <router-link :to="{ name: 'Home' }">
-            Вернуться к покупкам
-          </router-link>
+          <app-link :to="{ name: 'Home' }"> Вернуться к покупкам </app-link>
         </v-button>
       </div>
     </div>
@@ -97,9 +96,9 @@ onUnmounted(() => {
               {{ formatPrice(sumPrice) }}
             </div>
           </div>
-          <router-link :to="{ name: 'Checkout' }">
+          <app-link :to="{ name: 'Checkout' }">
             <v-button width="100%"> Перейти к оформлению </v-button>
-          </router-link>
+          </app-link>
         </div>
       </div>
       <v-modal

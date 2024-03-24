@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
+import AppLink from '../AppLink.vue'
 
 const { categories } = storeToRefs(useCategoriesStore())
 </script>
@@ -12,7 +13,7 @@ const { categories } = storeToRefs(useCategoriesStore())
         v-for="category in categories"
         :key="category.id"
       >
-        <router-link
+        <app-link
           class="link__wrap"
           :to="{
             name: 'CategoryProducts',
@@ -28,7 +29,7 @@ const { categories } = storeToRefs(useCategoriesStore())
 
             <div class="text-center text">{{ category.title }}</div>
           </div>
-        </router-link>
+        </app-link>
       </div>
     </template>
     <template v-else>

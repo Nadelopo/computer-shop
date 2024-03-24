@@ -3,6 +3,7 @@ import { computed, onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { deleteOneById, getAll } from '@/db/queries/tables'
 import { VTabs, VTable, VLoader, VButton, VConfirm } from '@/components/UI'
+import AppLink from '@/components/AppLink.vue'
 import type { Loading } from '@/types'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 
@@ -176,7 +177,7 @@ watch(
               </td>
               <td>
                 <v-button class="mb-2">
-                  <router-link
+                  <app-link
                     :to="{
                       name: 'EditSpecification',
                       params: {
@@ -186,7 +187,7 @@ watch(
                     }"
                   >
                     изменить
-                  </router-link>
+                  </app-link>
                 </v-button>
                 <v-confirm
                   :message="

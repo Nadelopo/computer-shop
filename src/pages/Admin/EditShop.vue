@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { getOneById, updateOneById } from '@/db/queries/tables'
+import { useCustomRouter } from '@/utils/useCustomRouter'
 import ShopsForm from '@/components/Admin/Shops/ShopsForm.vue'
 import { VLoader } from '@/components/UI'
 import type { ShopForm } from '@/components/Admin/Shops/types'
@@ -26,7 +27,7 @@ onBeforeMount(async () => {
 })
 
 const loadingSave = ref<Loading>('success')
-const router = useRouter()
+const router = useCustomRouter()
 const save = async () => {
   const formValue = form.value
   if (!formValue) return
@@ -40,7 +41,7 @@ const save = async () => {
     timeStart: `${start}:00`,
     timeEnd: `${end}:00`
   })
-  await router.push({
+  await router.customPush({
     name: 'AdminShops'
   })
   loadingSave.value = 'success'

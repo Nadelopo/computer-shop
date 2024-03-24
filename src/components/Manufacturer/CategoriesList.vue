@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import CategorySkeleton from '@/components/Manufacturer/CategorySkeleton.vue'
+import AppLink from '../AppLink.vue'
 import type { Loading } from '@/types'
 import type { View } from '@/types/database.types'
 
@@ -22,7 +23,7 @@ const categoriesFormat = computed(() => {
 <template>
   <div class="wrapper">
     <template v-if="loading === 'success'">
-      <router-link
+      <app-link
         v-for="category in categoriesFormat"
         :key="category.id"
         :to="{
@@ -37,7 +38,7 @@ const categoriesFormat = computed(() => {
           alt=""
         />
         <div> {{ category.title }} {{ category.repetitionCount }} </div>
-      </router-link>
+      </app-link>
     </template>
     <template v-else-if="loading === 'loading'">
       <category-skeleton

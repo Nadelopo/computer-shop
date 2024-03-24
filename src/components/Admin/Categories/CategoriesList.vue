@@ -5,6 +5,7 @@ import { useCategoriesStore } from '@/stores/categoriesStore'
 import { VTable, VButton, VConfirm } from '@/components/UI'
 import { removeFromStorage } from '@/db/queries/storage'
 import { deleteOneById } from '@/db/queries/tables'
+import AppLink from '@/components/AppLink.vue'
 import type { Loading } from '@/types'
 
 const { categories } = storeToRefs(useCategoriesStore())
@@ -58,7 +59,7 @@ const remove = async (id: number, img: string) => {
         </td>
         <td>
           <v-button class="mb-2">
-            <router-link
+            <app-link
               :to="{
                 name: 'EditCategory',
                 params: {
@@ -68,7 +69,7 @@ const remove = async (id: number, img: string) => {
               }"
             >
               изменить
-            </router-link>
+            </app-link>
           </v-button>
           <v-confirm
             :message="'Вы точно хотите удалить категорю - ' + category.title"

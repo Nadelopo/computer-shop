@@ -7,11 +7,12 @@ import {
   useFeatureNumberStaticFilter,
   useFeatureStringStaticFilter
 } from '@/components/CategoryProducts/useFeatureStaticFilter'
-import type { RouteLocationNormalizedLoaded, Router } from 'vue-router'
+import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
 import type { PostgrestError } from '@supabase/supabase-js'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
+import type { CustomRouter } from '@/utils/useCustomRouter'
 
 type SpecificationsValues = Pick<
   CategorySpecificationRead,
@@ -73,7 +74,7 @@ export const useFilterStore = defineStore('filter', () => {
   const loading = ref<Loading>('loading')
 
   function setQueryParams(
-    router: Router,
+    router: CustomRouter,
     route: RouteLocationNormalizedLoaded
   ) {
     const query: {
@@ -92,7 +93,7 @@ export const useFilterStore = defineStore('filter', () => {
         query[value.enTitle] = value.values
       }
     }
-    router.push({
+    router.customPush({
       query: {
         ...route.query,
         ...query,

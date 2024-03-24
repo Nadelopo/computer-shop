@@ -9,12 +9,21 @@ import {
   ComparisonSvg,
   AvatarSvg
 } from '@/assets/icons'
-import { computed } from 'vue'
+import { computed, FunctionalComponent, SVGAttributes } from 'vue'
+import AppLink from './AppLink.vue'
+import type { RouteName } from '@/router/types'
 
 const { countCartItems } = storeToRefs(useCartStore())
 const { userLists } = useUserStore()
 
-const links = computed(() => [
+type Links = {
+  name: string
+  page: RouteName
+  svg: FunctionalComponent<SVGAttributes>
+  count?: number
+}
+
+const links = computed((): Links[] => [
   {
     name: 'Главная',
     page: 'Home',
@@ -48,7 +57,7 @@ const links = computed(() => [
 
 <template>
   <div class="nav__mobile">
-    <router-link
+    <app-link
       v-for="link in links"
       :key="link.name"
       :to="{ name: link.page }"
@@ -63,7 +72,7 @@ const links = computed(() => [
       <div>
         {{ link.name }}
       </div>
-    </router-link>
+    </app-link>
   </div>
 </template>
 

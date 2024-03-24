@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { formatPrice } from '@/utils/formatPrice'
 import RatingStars from '../RatingStars.vue'
 import IconButtonFavouritesComparison from '../IconButtonFavouritesComparison.vue'
 import ButtonCart from '@/components/ButtonCart.vue'
-import { formatPrice } from '@/utils/formatPrice'
+import AppLink from '../AppLink.vue'
 import { CrossSvg } from '@/assets/icons'
 import type { ProductCardData } from './types'
 
@@ -27,7 +28,7 @@ const titleActive = ref(true)
 </script>
 
 <template>
-  <router-link
+  <app-link
     :to="{
       name: 'Product',
       params: {
@@ -94,7 +95,7 @@ const titleActive = ref(true)
         </div>
       </div>
     </div>
-  </router-link>
+  </app-link>
 </template>
 
 <style scoped lang="sass">

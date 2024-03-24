@@ -5,6 +5,7 @@ import { deleteOneById, getAll } from '@/db/queries/tables'
 import { VButton, VConfirm, VLoader, VTable } from '@/components/UI'
 import { formatPhoneNumber } from '@/utils/formatPhone'
 import { formatTime } from '@/utils/formatTime'
+import AppLink from '@/components/AppLink.vue'
 import type { Loading } from '@/types'
 import type { ShopRead } from '@/types/tables/shops.types'
 
@@ -68,7 +69,7 @@ const remove = async (id: number) => {
           <td> {{ formatTime(shop.timeStart, shop.timeEnd) }} </td>
           <td>
             <v-button class="mb-2">
-              <router-link
+              <app-link
                 :to="{
                   name: 'EditShop',
                   params: {
@@ -77,7 +78,7 @@ const remove = async (id: number) => {
                 }"
               >
                 изменить
-              </router-link>
+              </app-link>
             </v-button>
             <v-confirm
               :message="'Вы точно хотите удалить?'"

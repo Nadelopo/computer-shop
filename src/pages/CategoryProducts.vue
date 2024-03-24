@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { nextTick, onBeforeMount, onUnmounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useFilterStore } from '@/stores/filterStore'
+import { useRoute } from 'vue-router'
+import { useMediaQuery } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
+import { supabase } from '@/db/supabase'
+import { useCategoriesStore } from '@/stores/categoriesStore'
+import { useFilterStore } from '@/stores/filterStore'
+import { useCustomRouter } from '@/utils/useCustomRouter'
 import { VPagination, VButton } from '@/components/UI'
 import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
 import Search from '@/components/CategoryProducts/Search.vue'
@@ -10,10 +14,7 @@ import Sort from '@/components/CategoryProducts/Sort.vue'
 import Filters from '@/components/CategoryProducts/Filters.vue'
 import ProductBlockSkeleton from '@/components/CategoryProducts/ProductBlockSkeleton.vue'
 import FiltersMobile from '@/components/CategoryProducts/Filters.mobile.vue'
-import { useMediaQuery } from '@vueuse/core'
 import { getValuesFromQuery } from '@/components/CategoryProducts/useFeatureStaticFilter'
-import { supabase } from '@/db/supabase'
-import { useCategoriesStore } from '@/stores/categoriesStore'
 import type { Loading } from '@/types'
 
 type SortType = keyof typeof sortAscents
@@ -42,7 +43,7 @@ const {
   sortAscents
 } = useFilterStore()
 
-const router = useRouter()
+const router = useCustomRouter()
 const route = useRoute()
 const styles = ref('card__disable')
 
@@ -180,7 +181,7 @@ watch(
 
 const clickOnPaginate = () => {
   scrollTo(0, 0)
-  router.push({ query: { ...route.query, page: currentPage.value + 1 } })
+  router.customPush({ query: { ...route.query, page: currentPage.value + 1 } })
 }
 
 const isFiltersMobileOpen = ref(false)

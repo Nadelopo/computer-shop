@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
-import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
@@ -14,20 +13,21 @@ import {
   updateManyById,
   updateOneById
 } from '@/db/queries/tables'
+import { useCustomRouter } from '@/utils/useCustomRouter'
 import { formatPrice } from '@/utils/formatPrice'
 import { VButton, VButtons, VLoader } from '@/components/UI'
 import { useLocalStorage } from '@/utils/localStorage'
 import { useGeoSuggest } from '@/utils/useGeoSuggest'
 import MethodObtain from '@/components/Checkout/MethodObtain.vue'
 import FormField from '@/components/FormField.vue'
+import { OrderData, useFeatureForm } from '@/components/Checkout/useFeatureForm'
+import { useFeaturePrice } from '@/components/Checkout/useFeaturePrice'
+import { useFeatureInitialUserDataInstallation } from '@/components/Checkout/useFeatureInitialUserDataInstallation'
 import type { Loading } from '@/types'
 import type { ProductRead } from '@/types/tables/products.types'
 import type { OrderCreate } from '@/types/tables/orders.types'
 import type { UserUpdate } from '@/types/tables/users.types'
 import type { OrderedProductCreate } from '@/types/tables/orderedProducts.types'
-import { OrderData, useFeatureForm } from '@/components/Checkout/useFeatureForm'
-import { useFeaturePrice } from '@/components/Checkout/useFeaturePrice'
-import { useFeatureInitialUserDataInstallation } from '@/components/Checkout/useFeatureInitialUserDataInstallation'
 
 const { values, handleSubmit, setFieldValue, setValues } = useFeatureForm()
 const { loadingUserData } = useFeatureInitialUserDataInstallation(
@@ -133,7 +133,7 @@ const addOrderedProducts = async (orderId: number) => {
   await updateProductQuantity()
 }
 
-const router = useRouter()
+const router = useCustomRouter()
 const { getMarkup } = useCartStore()
 const onSubmit = handleSubmit(async () => {
   const {
@@ -173,7 +173,7 @@ const onSubmit = handleSubmit(async () => {
     return
   }
   await addOrderedProducts(data.id)
-  router.push('Cart')
+  router.customPush({ name: 'Cart' })
 })
 </script>
 

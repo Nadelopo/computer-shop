@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import ReviewBlock from '@/components/ReviewBlock.vue'
+import AppLink from '@/components/AppLink.vue'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 
 defineProps<{
@@ -33,18 +34,18 @@ const { user } = storeToRefs(useUserStore())
     <div class="reviews__grid">
       <div>
         <div class="text-3xl font-bold">Отзывы</div>
-        <router-link
+        <app-link
           :to="{ name: 'ProfileReviews' }"
           class="text-xl color-text"
         >
           Посмотреть все
-        </router-link>
+        </app-link>
       </div>
       <div
         v-if="reviews.length"
         class="last__reviews"
       >
-        <router-link
+        <app-link
           v-for="review in reviews.slice(0, 4)"
           :key="review.id"
           :to="{
@@ -63,7 +64,7 @@ const { user } = storeToRefs(useUserStore())
             :review="review"
             color="#fff"
           />
-        </router-link>
+        </app-link>
       </div>
     </div>
   </div>

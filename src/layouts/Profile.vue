@@ -3,6 +3,7 @@ import { onBeforeMount, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import { getAll } from '@/db/queries/tables'
+import AppLink from '@/components/AppLink.vue'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 
 const { isUserAuthenticated } = useUserStore()
@@ -37,19 +38,15 @@ onBeforeMount(() => {
   <div class="container">
     <div class="grid">
       <div class="sidebar">
-        <router-link :to="{ name: 'ProfileMain' }"> Мой профиль </router-link>
-        <router-link :to="{ name: 'ProfileOrders' }"> Заказы </router-link>
-        <router-link :to="{ name: 'ProfileReviews' }"> Отзывы</router-link>
-        <router-link :to="{ name: 'ProfileDelivery' }"> Доставка </router-link>
-        <router-link :to="{ name: 'ProfileMain' }">
-          Гарантийный отдел
-        </router-link>
-        <router-link :to="{ name: 'ProfileMain' }">
-          Настройки профиля
-        </router-link>
+        <app-link :to="{ name: 'ProfileMain' }"> Мой профиль </app-link>
+        <app-link :to="{ name: 'ProfileOrders' }"> Заказы </app-link>
+        <app-link :to="{ name: 'ProfileReviews' }"> Отзывы</app-link>
+        <app-link :to="{ name: 'ProfileDelivery' }"> Доставка </app-link>
+        <app-link :to="{ name: 'ProfileMain' }"> Гарантийный отдел </app-link>
+        <app-link :to="{ name: 'ProfileMain' }"> Настройки профиля </app-link>
       </div>
       <div>
-        <router-view
+        <app-view
           :reviews="reviews"
           :set-reviews="setReviews"
         />

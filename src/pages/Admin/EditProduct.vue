@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useProductsStore } from '@/stores/productsStore'
 import { getOneById } from '@/db/queries/tables'
+import { useCustomRouter } from '@/utils/useCustomRouter'
 import ProductsForm from '@/components/Admin/Products/ProductsForm.vue'
 import { VButton, VLoader } from '@/components/UI'
 import type { Loading } from '@/types'
@@ -73,13 +74,13 @@ onBeforeMount(async () => {
   loading.value = 'success'
 })
 
-const router = useRouter()
+const router = useCustomRouter()
 const back = async () => {
   loading.value = 'loading'
-  router.push({
+  router.customPush({
     name: 'AdminProducts',
     params: {
-      category: route.params.category,
+      category: route.params.category as string,
       id: Number(route.params.categoryId)
     }
   })

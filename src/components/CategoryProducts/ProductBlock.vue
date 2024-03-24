@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import { useMediaQuery } from '@vueuse/core'
 import { formatPrice } from '@/utils/formatPrice'
+import { getSpecificationValue } from '@/utils/getSpecificationValue'
 import ButtonCart from '../ButtonCart.vue'
 import RatingStars from '../RatingStars.vue'
 import IconBtnFavouritesComparison from '../IconButtonFavouritesComparison.vue'
-import { getSpecificationValue } from '@/utils/getSpecificationValue'
-import { useMediaQuery } from '@vueuse/core'
+import AppLink from '../AppLink.vue'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 
 defineProps<{
@@ -15,7 +16,7 @@ const isSmall = useMediaQuery('(width < 520px)')
 </script>
 
 <template>
-  <router-link
+  <app-link
     :to="{
       name: 'Product',
       params: {
@@ -95,7 +96,7 @@ const isSmall = useMediaQuery('(width < 520px)')
         </div>
       </div>
     </div>
-  </router-link>
+  </app-link>
 </template>
 
 <style scoped lang="sass">

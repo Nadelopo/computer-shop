@@ -3,12 +3,13 @@ import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getAll } from '@/db/queries/tables'
 import { VCarousel, VCarouselSlide } from '../UI'
+import AppLink from '../AppLink.vue'
 import type { ProductRead } from '@/types/tables/products.types'
 
 const route = useRoute()
 
 const categoryId = Number(route.params.categoryId)
-const category = route.params.category
+const category = route.params.category as string
 
 const props = defineProps<{
   productPrice: number
@@ -64,7 +65,7 @@ watch(() => props.productId, loadSimilarProducts)
         v-for="similarProduct in similarProducts"
         :key="similarProduct.id"
       >
-        <router-link
+        <app-link
           :to="{
             name: 'Product',
             params: {
@@ -80,7 +81,7 @@ watch(() => props.productId, loadSimilarProducts)
             alt=""
           />
           <span> {{ similarProduct.title }}</span>
-        </router-link>
+        </app-link>
       </v-carousel-slide>
     </v-carousel>
   </div>

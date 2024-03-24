@@ -5,6 +5,7 @@ import { getAll } from '@/db/queries/tables'
 import { formatPrice } from '@/utils/formatPrice'
 import { getWordByQuantity } from '@/components/Cart/useChooseWord'
 import { VLoader, VAccordion } from '@/components/UI'
+import AppLink from '@/components/AppLink.vue'
 import { ArrowSvg } from '@/assets/icons'
 import type { OrderReadWithDetails } from '@/types/tables/orders.types'
 import type { Loading } from '@/types'
@@ -79,7 +80,7 @@ const getCountPorductsInOrder = (i: number) => {
           class="product"
         >
           <div class="flex gap-4 pl-7">
-            <router-link
+            <app-link
               :to="{
                 name: 'Product',
                 params: {
@@ -94,9 +95,9 @@ const getCountPorductsInOrder = (i: number) => {
                 alt=""
                 class="max-w-[80px] max-h-[80px]"
               />
-            </router-link>
+            </app-link>
             <div>
-              <router-link
+              <app-link
                 :to="{
                   name: 'Product',
                   params: {
@@ -108,7 +109,7 @@ const getCountPorductsInOrder = (i: number) => {
                 class="hover:text-text duration-150"
               >
                 {{ product.products.title }}
-              </router-link>
+              </app-link>
             </div>
           </div>
           <div>{{ product.count }} шт</div>

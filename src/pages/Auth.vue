@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { useField, useForm } from 'vee-validate'
 import { supabase } from '@/db/supabase'
 import { createOne } from '@/db/queries/tables'
+import { useCustomRouter } from '@/utils/useCustomRouter'
 import { string } from '@/utils/validator'
 import { VButton } from '@/components/UI'
 
-const router = useRouter()
+const router = useCustomRouter()
 
 const isSignIn = ref(true)
 
@@ -49,7 +49,7 @@ const signIn = async () => {
     toast.warning('Неверная почта или пароль')
   }
   if (user) {
-    router.push({ name: 'Home' })
+    router.customPush({ name: 'Home' })
   }
 }
 
@@ -72,7 +72,7 @@ const signUp = async () => {
     id: user.id
   })
   if (!errorCreate) {
-    router.push({ name: 'Home' })
+    router.customPush({ name: 'Home' })
   }
 }
 

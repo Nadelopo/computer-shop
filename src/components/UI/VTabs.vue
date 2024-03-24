@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { nextTick, ref, watch, type ComponentPublicInstance } from 'vue'
 import { useRoute } from 'vue-router'
+import AppLink from '../AppLink.vue'
 
 type Option = {
   title: string
@@ -62,7 +63,7 @@ const clickOnTab = (value: number | string) => {
 
 <template>
   <div class="tabs">
-    <router-link
+    <app-link
       v-for="option in options"
       :key="option.value"
       ref="tabsRefs"
@@ -78,7 +79,7 @@ const clickOnTab = (value: number | string) => {
       <div class="link">
         {{ option.title }} <span class="ml-2">{{ option.count }}</span>
       </div>
-    </router-link>
+    </app-link>
   </div>
 </template>
 

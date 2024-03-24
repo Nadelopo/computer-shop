@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { useCustomRouter } from '@/utils/useCustomRouter'
 import { useFilterStore } from '@/stores/filterStore'
 import { VButton } from '@/components/UI'
 import InputFilter from '@/components/CategoryProducts/InputFilter.vue'
@@ -25,7 +26,7 @@ const { specificationsValues, search, currentPage } = storeToRefs(
 )
 
 const route = useRoute()
-const router = useRouter()
+const router = useCustomRouter()
 const apply = () => {
   setQueryParams(router, route)
   currentPage.value = 0
@@ -45,7 +46,7 @@ const cancel = () => {
   manufacturer.clear()
   search.value = ''
   currentPage.value = 0
-  router.push({ query: {} })
+  router.customPush({ query: {} })
 }
 
 const visibilityFilters = ref<boolean[]>([])

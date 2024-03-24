@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { nextTick } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
+import { useCustomRouter } from '@/utils/useCustomRouter'
 import { VButton, VCheckbox } from '../UI'
 import { TrashSvg, ShareSvg } from '@/assets/icons'
 import type { Category, ComparisonProduct } from './types'
@@ -22,7 +23,7 @@ const emit = defineEmits<{
   updateLoading: [Loading]
 }>()
 
-const router = useRouter()
+const router = useCustomRouter()
 const clearList = async () => {
   const remainProducts = products.value.filter(
     (e) => e.categoryId !== currentCategoryId.value
@@ -48,7 +49,7 @@ const clearList = async () => {
   if (currentCategoryId.value) {
     query = { category_id: String(currentCategoryId.value) }
   }
-  router.push({ query })
+  router.customPush({ query })
   emit('updateLoading', products.value.length ? 'success' : 'empty')
 }
 

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
+import { useCustomRouter } from '@/utils/useCustomRouter'
 import { VButton, VLoader } from '@/components/UI'
 import ManufacturersForm from '@/components/Admin/Manufacturers/ManufacturersForm.vue'
 import type { ManufacturerCreate } from '@/types/tables/manufacturers.types'
@@ -9,7 +10,7 @@ import type { Loading } from '@/types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 
 const route = useRoute()
-const router = useRouter()
+const router = useCustomRouter()
 
 const { getManufacturer, updateManufacturer } = useManufacturersStore()
 
@@ -49,7 +50,7 @@ const save = async (fileActions: InputFileActions | undefined) => {
     loadingGet.value = 'error'
     return
   }
-  router.push({
+  router.customPush({
     name: 'AdminManufacturers'
   })
 }
@@ -68,7 +69,7 @@ const save = async (fileActions: InputFileActions | undefined) => {
       <v-button
         class="mt-4"
         @click="
-          router.push({
+          router.customPush({
             name: 'AdminManufacturers',
             params: { id: manufactuerId }
           })

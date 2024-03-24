@@ -3,10 +3,14 @@ import type { AppRouteRecord } from './index'
 export const adminRoutes = [
   {
     path: '/admin',
-    name: 'Admin',
     component: () => import('@/layouts/Admin.vue'),
     meta: { auth: true, admin: true },
     children: [
+      {
+        path: '',
+        name: 'AdminMain',
+        component: () => import('@/pages/Admin/Main.vue')
+      },
       {
         path: 'categories',
         name: 'AdminCategories',

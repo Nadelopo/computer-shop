@@ -13,6 +13,7 @@ import { formatPrice } from '@/utils/formatPrice'
 import { useLocalStorage } from '@/utils/localStorage'
 import { VButtons, VSelect } from '../UI'
 import ItemActions from './ItemActions.vue'
+import AppLink from '../AppLink.vue'
 import type { Loading } from '@/types'
 
 defineProps<{
@@ -62,7 +63,7 @@ const isMobile = useMediaQuery('(width < 640px)')
 <template>
   <div class="product__wrapper">
     <div class="img">
-      <router-link
+      <app-link
         :to="{
           name: 'Product',
           params: {
@@ -77,10 +78,10 @@ const isMobile = useMediaQuery('(width < 640px)')
           alt="..."
           class="max-h-24 max-w-[100px] cursor-pointer"
         />
-      </router-link>
+      </app-link>
     </div>
     <div class="title">
-      <router-link
+      <app-link
         class="text-base sm:text-xl text-black font-medium duration-200 cursor-pointer hover:text-text"
         :to="{
           name: 'Product',
@@ -92,7 +93,7 @@ const isMobile = useMediaQuery('(width < 640px)')
         }"
       >
         {{ product.title }}
-      </router-link>
+      </app-link>
     </div>
     <div class="price">{{ formatPrice(product.price) }}</div>
     <item-actions

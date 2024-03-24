@@ -2,12 +2,13 @@
 import { ref } from 'vue'
 import { StorageError, removeFromStorage } from '@/db/queries/storage'
 import { deleteOneById } from '@/db/queries/tables'
-import { VButton, VLoader, VConfirm, VTable } from '@/components/UI'
 import { getSpecificationValue } from '@/utils/getSpecificationValue'
+import { formatPrice } from '@/utils/formatPrice'
+import { VButton, VLoader, VConfirm, VTable } from '@/components/UI'
+import AppLink from '@/components/AppLink.vue'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
-import { formatPrice } from '@/utils/formatPrice'
 
 const props = defineProps<{
   specifications: CategorySpecificationRead[]
@@ -96,7 +97,7 @@ const remove = async (id: number, img: string[]) => {
         </td>
         <td>
           <v-button class="mb-2">
-            <router-link
+            <app-link
               :to="{
                 name: 'EditProducts',
                 params: {
@@ -107,7 +108,7 @@ const remove = async (id: number, img: string[]) => {
               }"
             >
               изменить
-            </router-link>
+            </app-link>
           </v-button>
           <v-confirm
             :message="'Вы точно хотите удалить продукт - ' + product.title"

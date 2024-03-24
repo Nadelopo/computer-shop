@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, onUnmounted } from 'vue'
 import ReviewBlock from '@/components/ReviewBlock.vue'
+import AppLink from '@/components/AppLink.vue'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 
 const props = defineProps<{
@@ -21,7 +22,7 @@ onUnmounted(() => {
   <div>
     <div class="text-3xl font-bold mb-8">Отзывы</div>
     <div class="flex flex-col gap-8">
-      <router-link
+      <app-link
         v-for="review in props.reviews"
         :key="review.id"
         :to="{
@@ -40,7 +41,7 @@ onUnmounted(() => {
           :review="review"
           color="#fff"
         />
-      </router-link>
+      </app-link>
     </div>
   </div>
 </template>

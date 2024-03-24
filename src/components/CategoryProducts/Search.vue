@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useFilterStore } from '@/stores/filterStore'
+import { useCustomRouter } from '@/utils/useCustomRouter'
 import { VInputText } from '@/components/UI'
 
 const route = useRoute()
-const router = useRouter()
+const router = useCustomRouter()
 
 const { search } = storeToRefs(useFilterStore())
 const { setQueryParams } = useFilterStore()

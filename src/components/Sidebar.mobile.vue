@@ -3,12 +3,14 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
+import AppLink from './AppLink.vue'
+import type { RouteName } from '@/router/types'
 
 defineProps<{
   isOpen: boolean
   links: {
     text: string
-    page: string
+    page: RouteName
   }[]
 }>()
 
@@ -49,7 +51,7 @@ onUnmounted(() => {
     >
       <div class="grid grid-cols-2 items-center">
         <div>
-          <router-link
+          <app-link
             :to="{ name: 'Home' }"
             @click="closeSidebar"
           >
@@ -58,7 +60,7 @@ onUnmounted(() => {
               width="95"
               alt=""
             />
-          </router-link>
+          </app-link>
         </div>
         <div class="text-end">
           <button @click="closeSidebar">
@@ -68,20 +70,20 @@ onUnmounted(() => {
         </div>
       </div>
       <div class="list">
-        <router-link
+        <app-link
           :to="{ name: user ? 'Home' : 'Auth' }"
           @click="logout"
         >
           {{ user ? 'Выйти' : 'Войти' }}
-        </router-link>
-        <router-link
+        </app-link>
+        <app-link
           v-for="link in links"
           :key="link.text"
           :to="{ name: link.page }"
           @click="closeSidebar"
         >
           {{ link.text }}
-        </router-link>
+        </app-link>
       </div>
     </div>
   </div>

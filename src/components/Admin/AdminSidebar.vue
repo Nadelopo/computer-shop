@@ -2,9 +2,10 @@
 import { ref, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import { VAccordion } from '@/components/UI'
-import { ArrowSvg, HomeSvg } from '@/assets/icons'
 import { useLocalStorage } from '@/utils/localStorage'
+import { VAccordion } from '@/components/UI'
+import AppLink from '../AppLink.vue'
+import { ArrowSvg, HomeSvg } from '@/assets/icons'
 
 const isVisible = ref(false)
 
@@ -24,20 +25,20 @@ watchEffect(() => {
   >
     <div class="mb-6 flex justify-between items-center h-[56px]">
       <h1>
-        <router-link :to="{ name: 'Admin' }">
+        <app-link :to="{ name: 'AdminMain' }">
           <home-svg
             width="40"
             fill="#fff"
           />
-        </router-link>
+        </app-link>
       </h1>
-      <router-link :to="{ name: 'Home' }">
+      <app-link :to="{ name: 'Home' }">
         <img
           class="logo"
           src="/img/logoChangeWhiteSizeFnew.png"
           alt=""
         />
-      </router-link>
+      </app-link>
     </div>
     <div class="list">
       <div
@@ -67,7 +68,7 @@ watchEffect(() => {
           ref="listRef"
           class="li"
         >
-          <router-link
+          <app-link
             :to="{
               name: 'AdminProducts',
               params: { category: category.enTitle, id: category.id }
@@ -85,14 +86,14 @@ watchEffect(() => {
             <span>
               {{ category.title }}
             </span>
-          </router-link>
+          </app-link>
         </div>
       </v-accordion>
       <div
         class="head"
         title="Категории"
       >
-        <router-link
+        <app-link
           :to="{
             name: 'AdminCategories'
           }"
@@ -106,13 +107,13 @@ watchEffect(() => {
             />
           </div>
           <span> Категории </span>
-        </router-link>
+        </app-link>
       </div>
       <div
         class="head"
         title="Характеристики категорий"
       >
-        <router-link
+        <app-link
           :to="{
             name: 'AdminSpecifications'
           }"
@@ -125,13 +126,13 @@ watchEffect(() => {
             />
           </div>
           <span> Характеристики категорий </span>
-        </router-link>
+        </app-link>
       </div>
       <div
         class="head"
         title="Производители"
       >
-        <router-link
+        <app-link
           :to="{
             name: 'AdminManufacturers'
           }"
@@ -145,13 +146,13 @@ watchEffect(() => {
             />
           </div>
           <span> Производители </span>
-        </router-link>
+        </app-link>
       </div>
       <div
         class="head"
         title="Магазины"
       >
-        <router-link
+        <app-link
           :to="{
             name: 'AdminShops'
           }"
@@ -165,7 +166,7 @@ watchEffect(() => {
             />
           </div>
           <span> Магазины </span>
-        </router-link>
+        </app-link>
       </div>
     </div>
     <button

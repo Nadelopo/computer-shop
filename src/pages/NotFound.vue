@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { VButton } from '@/components/UI'
+import AppLink from '@/components/AppLink.vue'
 </script>
 
 <template>
@@ -7,12 +8,12 @@ import { VButton } from '@/components/UI'
     <div class="">
       <h1>404</h1>
       <h2>СТРАНИЦА НЕ НАЙДЕНА</h2>
-      <router-link
+      <app-link
         :to="{ name: 'Home' }"
         class="flex justify-center mt-4"
       >
         <v-button>ГЛАВНАЯ</v-button>
-      </router-link>
+      </app-link>
     </div>
   </div>
 </template>

@@ -1,34 +1,35 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
+import { useCustomRouter } from '@/utils/useCustomRouter'
 import { useUserStore } from '../stores/userStore'
 import { VPopup } from '@/components/UI'
 import SidebarMobile from './Sidebar.mobile.vue'
 import { AvatarSvg, FavouriteSvg, CartSvg, ComparisonSvg } from '@/assets/icons'
 import { Role } from '@/types/tables/users.types'
 import { useCartStore } from '@/stores/cartStore'
+import AppLink from './AppLink.vue'
+import type { RouteName } from '@/router/types'
 
 const { user, userLists } = storeToRefs(useUserStore())
 const { countCartItems } = storeToRefs(useCartStore())
 
-const router = useRouter()
+const router = useCustomRouter()
 
 const logout = async () => {
   const { error } = await supabase.auth.signOut()
   if (error) console.error(error)
-  router.push({ name: 'Home' })
+  router.customPush({ name: 'Home' })
 }
 
 const open = ref(false)
 
-const links = [
+const links: { text: string; page: RouteName }[] = [
   {
     text: 'Главная',
     page: 'Home'
   },
-
   {
     text: 'Товары',
     page: 'Home'
@@ -72,24 +73,24 @@ const links = [
           </button>
         </div>
         <div class="flex justify-end">
-          <router-link :to="{ name: 'Home' }">
+          <app-link :to="{ name: 'Home' }">
             <img
               src="/img/logoChangeWhiteSizeFnew.png"
               width="95"
               alt=""
             />
-          </router-link>
+          </app-link>
         </div>
       </div>
       <div class="root">
         <div class="logo">
-          <router-link :to="{ name: 'Home' }">
+          <app-link :to="{ name: 'Home' }">
             <img
               src="/img/logoChangeWhiteSizeFnew.png"
               width="95"
               alt=""
             />
-          </router-link>
+          </app-link>
         </div>
         <ul class="nav">
           <li
@@ -97,12 +98,12 @@ const links = [
             :key="link.text"
             class="li"
           >
-            <router-link
+            <app-link
               :to="{ name: link.page }"
               :class="{ li__line: i !== links.length - 1 }"
             >
               {{ link.text }}
-            </router-link>
+            </app-link>
           </li>
         </ul>
         <div class="nav__rigth">
@@ -115,31 +116,29 @@ const links = [
                 />
               </template>
               <template #content>
-                <router-link
+                <app-link
                   v-if="user?.role == Role.ADMIN"
-                  :to="{ name: 'Admin' }"
+                  :to="{ name: 'AdminMain' }"
                 >
                   admin
-                </router-link>
+                </app-link>
                 <div
                   v-if="user"
                   @click="logout"
                 >
                   выйти
                 </div>
-                <router-link
+                <app-link
                   v-else
                   :to="{ name: 'Auth' }"
                 >
                   войти
-                </router-link>
-                <router-link :to="{ name: 'ProfileMain' }">
-                  профиль
-                </router-link>
+                </app-link>
+                <app-link :to="{ name: 'ProfileMain' }"> профиль </app-link>
               </template>
             </v-popup>
           </div>
-          <router-link :to="{ name: 'Favourites' }">
+          <app-link :to="{ name: 'Favourites' }">
             <favourite-svg
               fill="#fff"
               width="25"
@@ -151,8 +150,8 @@ const links = [
             >
               {{ userLists.favourites.length }}
             </span>
-          </router-link>
-          <router-link :to="{ name: 'Comparison' }">
+          </app-link>
+          <app-link :to="{ name: 'Comparison' }">
             <comparison-svg width="25" />
             <span
               v-if="userLists.comparison.length"
@@ -160,8 +159,8 @@ const links = [
             >
               {{ userLists.comparison.length }}
             </span>
-          </router-link>
-          <router-link :to="{ name: 'Cart' }">
+          </app-link>
+          <app-link :to="{ name: 'Cart' }">
             <cart-svg height="25" />
             <span
               v-if="countCartItems"
@@ -169,7 +168,7 @@ const links = [
             >
               {{ countCartItems }}
             </span>
-          </router-link>
+          </app-link>
         </div>
       </div>
     </div>

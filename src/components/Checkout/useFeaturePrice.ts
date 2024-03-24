@@ -1,16 +1,16 @@
 import { onBeforeMount, ref } from 'vue'
 import { useCartStore } from '@/stores/cartStore'
+import { getAll } from '@/db/queries/tables'
+import { useCustomRouter } from '@/utils/useCustomRouter'
 import type { Loading } from '@/types'
 import type { ProductRead } from '@/types/tables/products.types'
-import { useRouter } from 'vue-router'
-import { getAll } from '@/db/queries/tables'
 
 export const useFeaturePrice = () => {
   const store = useCartStore()
   const price = ref(0)
   const loadingPrice = ref<Loading>('loading')
 
-  const router = useRouter()
+  const router = useCustomRouter()
 
   const products = ref<
     Pick<ProductRead, 'id' | 'price' | 'title' | 'img' | 'quantity'>[]
@@ -19,7 +19,7 @@ export const useFeaturePrice = () => {
   onBeforeMount(async () => {
     await store.setCartItems()
     if (!store.cartItems.length) {
-      router.push({ name: 'Cart' })
+      router.customPush({ name: 'Cart' })
     }
     const { data, error } = await getAll('products', {
       in: {

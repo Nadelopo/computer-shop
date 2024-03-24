@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, toRef } from 'vue'
 import { useElementSize, useMediaQuery, useResizeObserver } from '@vueuse/core'
-import { ArrowSvg, CrossSvg } from '@/assets/icons'
+import { formatPrice } from '@/utils/formatPrice'
 import { useFeatureFilteredProducts } from './useFeatureFilteredProducts'
 import IconButtonFavouritesComparison from '../IconButtonFavouritesComparison.vue'
 import ButtonCart from '../ButtonCart.vue'
-import { formatPrice } from '@/utils/formatPrice'
+import AppLink from '../AppLink.vue'
+import { ArrowSvg, CrossSvg } from '@/assets/icons'
 import type { ComparisonProduct, CategorySpecifications } from './types'
 
 const props = defineProps<{
@@ -134,7 +135,8 @@ const isSmall = useMediaQuery('(max-width: 420px)')
             @dragenter.prevent
           >
             <div class="flex w-full">
-              <router-link
+              <app-link
+                v-if="currentCategoryId"
                 :to="{
                   name: 'Product',
                   params: {
@@ -149,7 +151,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
                   :src="String(product.img[0])"
                   alt=""
                 />
-              </router-link>
+              </app-link>
               <span class="ml-auto pr-4">
                 <cross-svg
                   class="cross"

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
 import { useMediaQuery } from '@vueuse/core'
 import { useUserStore } from '@/stores/userStore'
+import { useCustomRouter } from '@/utils/useCustomRouter'
 import { getAll, updateOneById } from '@/db/queries/tables'
 import ReviewBlock from '@/components/ReviewBlock.vue'
 import FormCreateReview from './FormCreateReview.vue'
@@ -96,7 +97,7 @@ const evaluationReview = async (
   }
 }
 
-const router = useRouter()
+const router = useCustomRouter()
 const route = useRoute()
 const currentPage = ref(route.query.page ? Number(route.query.page) - 1 : 0)
 const clickOnPaginate = () => {

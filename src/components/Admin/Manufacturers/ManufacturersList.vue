@@ -6,6 +6,7 @@ import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { VButton, VConfirm, VTable } from '@/components/UI'
 import { deleteOneById } from '@/db/queries/tables'
 import { removeFromStorage } from '@/db/queries/storage'
+import AppLink from '@/components/AppLink.vue'
 import type { Loading } from '@/types'
 
 const { manufacturers } = storeToRefs(useManufacturersStore())
@@ -65,7 +66,7 @@ const remove = async (id: number, img: string) => {
         </td>
         <td>
           <v-button class="mb-2">
-            <router-link
+            <app-link
               :to="{
                 name: 'EditManufacturer',
                 params: {
@@ -74,7 +75,7 @@ const remove = async (id: number, img: string) => {
               }"
             >
               изменить
-            </router-link>
+            </app-link>
           </v-button>
           <v-confirm
             :message="

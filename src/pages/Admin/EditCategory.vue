@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { ref, onBeforeMount } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import { VButton, VLoader } from '@/components/UI'
 import { getOneById } from '@/db/queries/tables'
+import { useCustomRouter } from '@/utils/useCustomRouter'
+import { VButton, VLoader } from '@/components/UI'
+import CategoriesForm from '@/components/Admin/Categories/CategoriesForm.vue'
 import type {
   CategoryCreate,
   CategoryUpdate
 } from '@/types/tables/categories.types'
 import type { Loading } from '@/types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
-import CategoriesForm from '@/components/Admin/Categories/CategoriesForm.vue'
 
 //type
 const categoryHasId = (
@@ -24,7 +25,7 @@ const categoryHasId = (
 }
 
 const route = useRoute()
-const router = useRouter()
+const router = useCustomRouter()
 
 const { categories } = storeToRefs(useCategoriesStore())
 const { updateCategory } = useCategoriesStore()
@@ -61,7 +62,7 @@ const save = async (fileActions: InputFileActions | undefined) => {
     }
     form.value.img = data.url
     await updateCategory(form.value)
-    await router.push({
+    await router.customPush({
       name: 'AdminCategories'
     })
     loadingSave.value = 'success'
@@ -69,7 +70,7 @@ const save = async (fileActions: InputFileActions | undefined) => {
 }
 
 const back = async () => {
-  await router.push({ name: 'AdminCategories' })
+  await router.customPush({ name: 'AdminCategories' })
 }
 </script>
 
