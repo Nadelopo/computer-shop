@@ -113,7 +113,7 @@ export const useFilterStore = defineStore('filter', () => {
     //   'and(categorySpecificationsId.eq.6,valueNumber.gte.12),and(categorySpecificationsId.eq.4,valueNumber.gte.1)'
     // )
     const usedSpecifications: number[] = []
-    for (const [index, specification] of specificationsValues.value.entries()) {
+    for (const specification of specificationsValues.value) {
       // console.log(index, specificationsValues.value.length)
       if (specification.type === 'number') {
         if (
@@ -147,12 +147,15 @@ export const useFilterStore = defineStore('filter', () => {
       query.or(or)
     }
     const { data, error } = await query
+    if (error) {
+      loading.value = 'error'
+      return
+    }
     console.log(
-      data?.map((e) => e.products?.id),
+      data.map((e) => e.products?.id),
       error,
       usedSpecifications.length
     )
-    if (error) return
     console.log(or)
     let idList = data
       .map((e) => e.products?.id)
@@ -206,7 +209,10 @@ export const useFilterStore = defineStore('filter', () => {
       count
     } = await queryProduct.returns<ProductWithSpecifications[]>()
     console.log(productsData)
-    if (productsError) return
+    if (productsError) {
+      loading.value = 'error'
+      return
+    }
     if (
       !productsData.length ||
       (usedSpecifications.length &&
