@@ -49,7 +49,7 @@ const clearList = async () => {
   if (currentCategoryId.value) {
     query = { category_id: String(currentCategoryId.value) }
   }
-  router.customPush({ query })
+  router.push({ query })
   emit('updateLoading', products.value.length ? 'success' : 'empty')
 }
 

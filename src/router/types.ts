@@ -15,7 +15,7 @@ export type RouteName = GetRoutesNames<TypeOfRoutes>
 type GetRoutePath<T extends AppRouteRecord, N extends RouteName> = T extends {
   children: readonly AppRouteRecord[]
 }
-  ? GetRoutesPaths<T['children'], N>
+  ? T['path'] | GetRoutesPaths<T['children'], N>
   : N extends T['name']
   ? T['path']
   : never

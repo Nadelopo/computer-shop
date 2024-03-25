@@ -64,7 +64,7 @@ const save = async () => {
       console.error(errorUpdate)
     }
   }
-  router.customPush({ name: 'AdminSpecifications' })
+  router.push({ name: 'AdminSpecifications' })
 }
 </script>
 

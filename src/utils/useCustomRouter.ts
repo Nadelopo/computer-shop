@@ -15,16 +15,11 @@ export type RouterTo<T extends RouteName> = Exclude<
 }
 
 export type CustomRouter = Omit<Router, 'push'> & {
-  customPush: <T extends RouteName>(
+  push: <T extends RouteName>(
     to: RouterTo<T>
   ) => Promise<void | NavigationFailure | undefined>
 }
 
 export const useCustomRouter = (): CustomRouter => {
-  const router = useRouter() as unknown as CustomRouter
-  router.customPush = <T extends RouteName>(to: RouterTo<T>) => {
-    return (router as unknown as Router).push(to)
-  }
-
-  return router
+  return useRouter()
 }

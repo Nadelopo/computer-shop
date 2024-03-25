@@ -173,7 +173,7 @@ const onSubmit = handleSubmit(async () => {
     return
   }
   await addOrderedProducts(data.id)
-  router.customPush({ name: 'Cart' })
+  router.push({ name: 'Cart' })
 })
 </script>
 

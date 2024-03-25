@@ -50,7 +50,7 @@ const save = async (fileActions: InputFileActions | undefined) => {
     loadingGet.value = 'error'
     return
   }
-  router.customPush({
+  router.push({
     name: 'AdminManufacturers'
   })
 }
@@ -69,7 +69,7 @@ const save = async (fileActions: InputFileActions | undefined) => {
       <v-button
         class="mt-4"
         @click="
-          router.customPush({
+          router.push({
             name: 'AdminManufacturers',
             params: { id: manufactuerId }
           })

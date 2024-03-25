@@ -46,7 +46,7 @@ const cancel = () => {
   manufacturer.clear()
   search.value = ''
   currentPage.value = 0
-  router.customPush({ query: {} })
+  router.push({ query: {} })
 }
 
 const visibilityFilters = ref<boolean[]>([])

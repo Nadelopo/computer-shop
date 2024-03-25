@@ -62,7 +62,7 @@ const save = async (fileActions: InputFileActions | undefined) => {
     }
     form.value.img = data.url
     await updateCategory(form.value)
-    await router.customPush({
+    await router.push({
       name: 'AdminCategories'
     })
     loadingSave.value = 'success'
@@ -70,7 +70,7 @@ const save = async (fileActions: InputFileActions | undefined) => {
 }
 
 const back = async () => {
-  await router.customPush({ name: 'AdminCategories' })
+  await router.push({ name: 'AdminCategories' })
 }
 </script>
 

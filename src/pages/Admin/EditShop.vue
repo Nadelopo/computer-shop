@@ -41,7 +41,7 @@ const save = async () => {
     timeStart: `${start}:00`,
     timeEnd: `${end}:00`
   })
-  await router.customPush({
+  await router.push({
     name: 'AdminShops'
   })
   loadingSave.value = 'success'

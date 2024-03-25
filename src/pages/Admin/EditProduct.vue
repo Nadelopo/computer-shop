@@ -77,7 +77,7 @@ onBeforeMount(async () => {
 const router = useCustomRouter()
 const back = async () => {
   loading.value = 'loading'
-  router.customPush({
+  router.push({
     name: 'AdminProducts',
     params: {
       category: route.params.category as string,

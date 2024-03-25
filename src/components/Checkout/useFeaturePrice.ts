@@ -19,7 +19,7 @@ export const useFeaturePrice = () => {
   onBeforeMount(async () => {
     await store.setCartItems()
     if (!store.cartItems.length) {
-      router.customPush({ name: 'Cart' })
+      router.push({ name: 'Cart' })
     }
     const { data, error } = await getAll('products', {
       in: {

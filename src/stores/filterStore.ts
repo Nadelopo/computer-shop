@@ -93,7 +93,7 @@ export const useFilterStore = defineStore('filter', () => {
         query[value.enTitle] = value.values
       }
     }
-    router.customPush({
+    router.push({
       query: {
         ...route.query,
         ...query,

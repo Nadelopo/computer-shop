@@ -181,7 +181,7 @@ watch(
 
 const clickOnPaginate = () => {
   scrollTo(0, 0)
-  router.customPush({ query: { ...route.query, page: currentPage.value + 1 } })
+  router.push({ query: { ...route.query, page: currentPage.value + 1 } })
 }
 
 const isFiltersMobileOpen = ref(false)

@@ -49,7 +49,7 @@ const signIn = async () => {
     toast.warning('Неверная почта или пароль')
   }
   if (user) {
-    router.customPush({ name: 'Home' })
+    router.push({ name: 'Home' })
   }
 }
 
@@ -72,7 +72,7 @@ const signUp = async () => {
     id: user.id
   })
   if (!errorCreate) {
-    router.customPush({ name: 'Home' })
+    router.push({ name: 'Home' })
   }
 }
 

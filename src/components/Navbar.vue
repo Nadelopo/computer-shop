@@ -20,7 +20,7 @@ const router = useCustomRouter()
 const logout = async () => {
   const { error } = await supabase.auth.signOut()
   if (error) console.error(error)
-  router.customPush({ name: 'Home' })
+  router.push({ name: 'Home' })
 }
 
 const open = ref(false)

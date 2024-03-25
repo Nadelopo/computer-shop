@@ -17,7 +17,7 @@ const { sortAscents } = useFilterStore()
 const { sortColumn, loading } = storeToRefs(useFilterStore())
 
 const setQueryParams = () => {
-  router.customPush({
+  router.push({
     query: {
       ...route.query,
       sort: sortColumn.value + '_' + sortAscents[sortColumn.value]
