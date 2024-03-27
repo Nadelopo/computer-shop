@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import { getAll } from '@/db/queries/tables'
 import AppLink from '@/components/AppLink.vue'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 
 const { isUserAuthenticated } = useUserStore()
-
-const route = useRoute()
-const pageName = route.name
 
 const reviews = ref<ReviewWithDetails[]>([])
 const setReviews = async (limit?: number) => {
@@ -27,8 +23,7 @@ const setReviews = async (limit?: number) => {
 }
 
 onBeforeMount(() => {
-  console.log('onBeforeMount')
-  if (!reviews.value.length && pageName === 'ProfileMain') {
+  if (!reviews.value.length) {
     setReviews(4)
   }
 })
@@ -46,7 +41,7 @@ onBeforeMount(() => {
         <app-link :to="{ name: 'ProfileMain' }"> Настройки профиля </app-link>
       </div>
       <div>
-        <app-view
+        <router-view
           :reviews="reviews"
           :set-reviews="setReviews"
         />

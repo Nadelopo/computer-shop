@@ -9,23 +9,19 @@ import {
 import { vMaska, MaskaDetail } from 'maska'
 import { debounce } from '@/utils/debounce'
 
-export interface VInputTextProps<T>
+export interface VInputTextProps<T = string>
   extends /* @vue-ignore */ InputHTMLAttributes {
   modelValue: T | null
   type?: 'text' | 'number' | 'tel'
-  required?: boolean
   autofocus?: boolean
   id?: string
   showSpinButtons?: boolean
-  max?: number | string
-  min?: number | string
   debounce?: number
   error?: boolean
 }
 
 const props = withDefaults(defineProps<VInputTextProps<T>>(), {
   type: 'text',
-  required: true,
   autofocus: false,
   showSpinButtons: true,
   max: Infinity,
@@ -100,24 +96,22 @@ const bindOptions = computed(() => ({
 </script>
 
 <template>
-  <div>
-    <span
-      class="wrapper"
-      :class="{ error }"
-    >
-      <input
-        v-if="type === 'tel'"
-        v-maska="maskaDetails"
-        data-maska="7 (###) ### ##-##"
-        v-bind="bindOptions"
-        @input="chooseOnInputFunc"
-      />
-      <input
-        v-else
-        v-bind="bindOptions"
-        @input="chooseOnInputFunc"
-      />
-    </span>
+  <div
+    class="wrapper"
+    :class="{ error }"
+  >
+    <input
+      v-if="type === 'tel'"
+      v-maska="maskaDetails"
+      data-maska="7 (###) ### ##-##"
+      v-bind="bindOptions"
+      @input="chooseOnInputFunc"
+    />
+    <input
+      v-else
+      v-bind="bindOptions"
+      @input="chooseOnInputFunc"
+    />
   </div>
 </template>
 
@@ -129,7 +123,7 @@ const bindOptions = computed(() => ({
     width: 100%
     height: 2px
     position: absolute
-    bottom: -6px
+    bottom: 0
     left: 0
     background: var(--color-main)
     transition: 0.4s
@@ -141,7 +135,6 @@ const bindOptions = computed(() => ({
   &.error
     input
       border-bottom: 1px solid var(--danger-light)
-
 
 .input
   outline: none

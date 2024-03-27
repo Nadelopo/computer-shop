@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import ReviewBlock from '@/components/ReviewBlock.vue'
 import AppLink from '@/components/AppLink.vue'
+import { formatPhoneNumber } from '@/utils/formatPhone'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 
 defineProps<{
@@ -19,16 +20,16 @@ const { user } = storeToRefs(useUserStore())
       class="user__info"
     >
       <div class="row">
-        <div class="">Имя</div>
+        <div>Имя</div>
         <div>{{ user.name }}</div>
       </div>
       <div class="row">
-        <div class="">Почта</div>
+        <div>Почта</div>
         <div>{{ user.email }}</div>
       </div>
       <div class="row">
-        <div class=""></div>
-        <div>{{ user.phone }}</div>
+        <div>Телефон</div>
+        <div>{{ formatPhoneNumber(user.phone) }}</div>
       </div>
     </div>
     <div class="reviews__grid">

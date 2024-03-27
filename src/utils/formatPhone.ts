@@ -1,4 +1,5 @@
-export const formatPhoneNumber = (phoneNumber: number) => {
+export const formatPhoneNumber = (phoneNumber: number | null) => {
+  if (phoneNumber === null) return
   const digits = String(phoneNumber)
   if (digits.length === 11) {
     //prettier-ignore

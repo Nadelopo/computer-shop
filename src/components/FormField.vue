@@ -9,7 +9,9 @@ type Props = { name: string; label?: string } & Omit<
   'modelValue' | 'id' | 'required' | 'error'
 >
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  showSpinButtons: true
+})
 
 const { value, errors, errorMessage } = useField<T>(props.name)
 
@@ -26,12 +28,28 @@ const slots = useSlots()
 </script>
 
 <template>
-  <div v-if="slots.default">
+  <div>
     <slot
+      v-if="slots.default"
       :errors="errorMessages"
       :is-error="Boolean(errorMessage)"
       :value="value"
     />
+    <template v-else>
+      <label
+        :for="id"
+        :class="{ 'text-danger-light': Boolean(errorMessage) }"
+      >
+        {{ label }}
+      </label>
+      <v-input-text
+        v-bind="props"
+        :id="id"
+        v-model="value"
+        :required="false"
+        :error="Boolean(errorMessage)"
+      />
+    </template>
     <div
       v-for="error in errorMessages"
       :key="error"
@@ -40,28 +58,6 @@ const slots = useSlots()
       {{ error }}
     </div>
   </div>
-  <template v-else>
-    <label
-      :for="id"
-      :class="{ 'text-danger-light': Boolean(errorMessage) }"
-    >
-      {{ label }}
-    </label>
-    <v-input-text
-      v-bind="props"
-      :id="id"
-      v-model="value"
-      :required="false"
-      :error="Boolean(errorMessage)"
-    />
-    <div
-      v-for="error in errorMessages"
-      :key="error"
-      class="error"
-    >
-      {{ error }}
-    </div>
-  </template>
 </template>
 
 <style scoped lang="sass">
