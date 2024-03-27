@@ -25,6 +25,11 @@ export const profileRoutes = [
         path: 'delivery',
         name: 'ProfileDelivery',
         component: () => import('@/pages/Profile/Delivery.vue')
+      },
+      {
+        path: 'settings',
+        name: 'ProfileSettings',
+        component: () => import('@/pages/Profile/Settings.vue')
       }
     ]
   }

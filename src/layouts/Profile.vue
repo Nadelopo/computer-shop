@@ -38,7 +38,9 @@ onBeforeMount(() => {
         <app-link :to="{ name: 'ProfileReviews' }"> Отзывы</app-link>
         <app-link :to="{ name: 'ProfileDelivery' }"> Доставка </app-link>
         <app-link :to="{ name: 'ProfileMain' }"> Гарантийный отдел </app-link>
-        <app-link :to="{ name: 'ProfileMain' }"> Настройки профиля </app-link>
+        <app-link :to="{ name: 'ProfileSettings' }">
+          Настройки профиля
+        </app-link>
       </div>
       <div>
         <router-view

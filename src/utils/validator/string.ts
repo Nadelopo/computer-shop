@@ -5,6 +5,7 @@ type This = {
   equal: (this: This, _value: string) => This
   min: (this: This, min: number) => This
   max: (this: This, max: number) => This
+  onlyLetters: () => This
 }
 
 export function string(value?: string | null) {
@@ -70,5 +71,31 @@ export function string(value?: string | null) {
     if (isValid) return true
     return errorMessage
   }
-  return { required, email, valid, equal, notEqual, min, max }
+
+  function onlyLetters(this: This) {
+    const re = /^[A-Za-zА-Яа-я]+$/
+    if (!re.test(value ?? '')) {
+      isValid = false
+      setErrorMessage('Разрешены только буквы')
+    }
+
+    return this
+  }
+
+  function phone(this: This) {
+    if (value?.length !== 17) return 'Поле должно содержать 11 цифр'
+    return this
+  }
+
+  return {
+    required,
+    email,
+    valid,
+    equal,
+    notEqual,
+    min,
+    max,
+    onlyLetters,
+    phone
+  }
 }
