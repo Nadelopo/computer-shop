@@ -72,8 +72,15 @@ const onMove = (e: MouseEvent | TouchEvent) => {
     touchMoveDirection.value = isVertical ? 'vertical' : 'horizontal'
     isMovableOnEvents.value = true
   }
-  if (touchMoveDirectionValue === 'vertical') return
-  if (touchMoveDirectionValue === 'horizontal') e.preventDefault()
+  // if (touchMoveDirectionValue === 'vertical') return
+  // if (touchMoveDirectionValue === 'horizontal') e.preventDefault()
+  if (touchMoveDirectionValue === 'horizontal') {
+    document.body.style.overflow = 'hidden'
+  }
+  if (touchMoveDirectionValue === 'vertical') {
+    document.body.style.overflow = ''
+    return
+  }
   const currentPosXValue = currentPosX.value
   if (clientX !== currentPosXValue) {
     isMovableOnEvents.value = true

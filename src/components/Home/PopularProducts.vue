@@ -24,6 +24,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
+  1
   <product-list-carousel
     title="Популярные товары"
     :loading="loading"
