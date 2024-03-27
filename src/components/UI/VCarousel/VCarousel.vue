@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, toRef, watch } from 'vue'
+import { computed, ref, toRef, watch, watchEffect } from 'vue'
 import { useElementSize } from '@vueuse/core'
 //prettier-ignore
 import { useFeatureMouseUpListener, useFeatureMoveListener } from './useFeatureListeners'
@@ -18,7 +18,7 @@ type Props = {
   showArrows?: boolean | 'hover'
   showDots?: boolean | 'dot' | 'line'
   autoplay?: boolean | number
-  direction?: 'vertical' | 'horizontal'
+  // direction?: 'vertical' | 'horizontal'
   breakpoints?: CarouselBreakpoints
   slidePosition?: 'start' | 'center' | 'end'
 }
@@ -31,7 +31,7 @@ const props = withDefaults(defineProps<Props>(), {
   showArrows: false,
   showDots: false,
   autoplay: false,
-  direction: 'horizontal',
+  // direction: 'horizontal',
   breakpoints: () => ({}),
   slidePosition: 'center'
 })
@@ -42,8 +42,8 @@ const spaceBetween = ref(props.spaceBetween)
 const translate = ref(0)
 const carouselWrapperTransition = ref(3)
 const carouselWrapperCss = computed(() => {
-  const translateDirection =
-    props.direction === 'horizontal' ? 'translateX' : 'translateY'
+  const translateDirection = 'translateX'
+  //   props.direction === 'horizontal' ? 'translateX' : 'translateY'
   return `
     gap: ${spaceBetween.value}px;
     transform: ${translateDirection}(${translate.value}px);
@@ -55,14 +55,22 @@ const currentPosX = ref(0)
 const startPosX = ref(0)
 const touchMoveDirection = ref<'vertical' | 'horizontal' | null>(null)
 const isMovableOnEvents = ref(false)
+
+let startX = 0
+let startY = 0
+let isVertical: null | boolean = null
 const onMove = (e: MouseEvent | TouchEvent) => {
-  const { clientX } = e instanceof MouseEvent ? e : e.touches[0]
+  const { clientX, clientY } = e instanceof MouseEvent ? e : e.touches[0]
+  const deltaX = clientX - startX
+  const deltaY = clientY - startY
+  isVertical = Math.abs(deltaX) > Math.abs(deltaY) ? false : true
+
   const touchMoveDirectionValue = touchMoveDirection.value
   if (e instanceof MouseEvent) {
     touchMoveDirection.value = null
-  } else if (e instanceof TouchEvent && !isMovableOnEvents.value) {
-    touchMoveDirection.value =
-      Math.abs(clientX - startPosX.value) > 4 ? 'horizontal' : 'vertical'
+  } else if (e instanceof TouchEvent && isMovableOnEvents.value === false) {
+    touchMoveDirection.value = isVertical ? 'vertical' : 'horizontal'
+    isMovableOnEvents.value = true
   }
   if (touchMoveDirectionValue === 'vertical') return
   if (touchMoveDirectionValue === 'horizontal') e.preventDefault()
@@ -83,12 +91,14 @@ const { notMovable, countItems } = useFeatureNotMovable(
 const startTranslate = ref(0)
 const swipeSlide = (e: MouseEvent | TouchEvent) => {
   if (!props.draggable || notMovable.value) return
-  const { clientX } = e instanceof MouseEvent ? e : e.touches[0]
+  const { clientX, clientY } = e instanceof MouseEvent ? e : e.touches[0]
   const eventType = e instanceof MouseEvent ? 'mousemove' : 'touchmove'
   startTranslate.value = translate.value
   startPosX.value = clientX
   currentPosX.value = clientX
   moveListener.add(eventType)
+  startX = clientX
+  startY = clientY
 }
 
 const stopEvents = async (e: MouseEvent | TouchEvent) => {
