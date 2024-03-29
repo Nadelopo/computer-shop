@@ -169,7 +169,6 @@ const isSmall = useMediaQuery('(width < 520px)')
     display: grid
     grid-template-columns: auto 1fr
     gap: 16px
-    align-items: center
     margin-bottom: 16px
     font-size: 18px
     @media (width < 1536px)

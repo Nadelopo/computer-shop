@@ -15,6 +15,9 @@ export interface VInputTextProps<T = string>
   type?: 'text' | 'number' | 'tel'
   autofocus?: boolean
   id?: string
+  min?: number | string
+  max?: number | string
+  required?: boolean
   showSpinButtons?: boolean
   debounce?: number
   error?: boolean
@@ -25,7 +28,8 @@ const props = withDefaults(defineProps<VInputTextProps<T>>(), {
   autofocus: false,
   showSpinButtons: true,
   max: Infinity,
-  min: -Infinity
+  min: -Infinity,
+  required: true
 })
 
 const emit = defineEmits<{

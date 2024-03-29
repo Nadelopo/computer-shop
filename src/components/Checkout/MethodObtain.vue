@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useField } from 'vee-validate'
-import { VInputText, VButton, VModal, VLoader, VButtons } from '../UI'
+import { VButton, VModal, VLoader, VButtons } from '../UI'
 import { getAll } from '@/db/queries/tables'
 import { LocationResult, useGeoSuggest } from '@/utils/useGeoSuggest'
 import { formatTime } from '@/utils/formatTime'
@@ -17,16 +17,8 @@ const props = defineProps<{
   receiptDetails: ReceiptDetails
 }>()
 
-const emit = defineEmits<{
-  receiptDetails: [
-    field: `receiptDetails.${keyof ReceiptDetails}`,
-    value: ReceiptDetails[keyof ReceiptDetails]
-  ]
-}>()
-
 const locationResults = ref<LocationResult['results'] | null>(null)
 
-const { value: address } = useField<string>('receiptDetails.address')
 watch(
   () => props.receiptDetails.address,
   async (address) => {
@@ -81,74 +73,55 @@ const { value: shopAddress, errorMessage } = useField<string>(
   () => true,
   { initialValue: 'Выберите магазин' }
 )
+
+const { value: address } = useField<string>('receiptDetails.address')
+const { value: deliveryDate } = useField<Date>('receiptDetails.deliveryDate')
 </script>
 
 <template>
   <div v-if="obtainType === 'delivery'">
     <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
-      <div>
-        <form-field
-          v-slot="{ isError }"
-          name="receiptDetails.address"
-        >
-          <input-address
-            v-model="address"
-            name="address"
-            :location-results="locationResults"
-            text="Адрес*"
-            :required="false"
-            :error="isError"
-            @click-on-suggestion="address = $event"
-          />
-        </form-field>
-      </div>
-
-      <div>
-        <form-field
-          name="receiptDetails.apartment"
-          label="Квартира*"
-          type="number"
-          min="0"
-          max="5000"
-        />
-      </div>
-      <div>
-        <label for="floor">Этаж</label>
-        <v-input-text
-          id="floor"
-          type="number"
-          min="0"
+      <form-field
+        v-slot="{ isError }"
+        name="receiptDetails.address"
+      >
+        <input-address
+          v-model="address"
+          name="address"
+          :location-results="locationResults"
+          text="Адрес*"
           :required="false"
-          :model-value="receiptDetails.floor"
-          @update:model-value="
-            emit('receiptDetails', 'receiptDetails.floor', $event)
-          "
+          :error="isError"
+          @click-on-suggestion="address = $event"
         />
-      </div>
-      <div>
-        <label for="entrance">Подъезд</label>
-        <v-input-text
-          id="entrance"
-          type="number"
-          min="0"
-          :required="false"
-          :model-value="receiptDetails.entrance"
-          @update:model-value="
-            emit('receiptDetails', 'receiptDetails.entrance', $event)
-          "
-        />
-      </div>
+      </form-field>
+      <form-field
+        name="receiptDetails.apartment"
+        label="Квартира*"
+        type="number"
+        min="0"
+        max="5000"
+      />
+      <form-field
+        name="receiptDetails.floor"
+        label="Этаж"
+        min="0"
+        type="number"
+      />
+      <form-field
+        name="receiptDetails.entrance"
+        label="Подъезд"
+        min="0"
+        type="number"
+      />
     </div>
     <div class="mt-4">
       <div class="text-xl mb-2">Дата доставки</div>
       <div>
         <v-buttons
+          v-model="deliveryDate"
           :options="dates"
           width="150px"
-          :model-value="receiptDetails.deliveryDate"
-          @update:model-value="
-            emit('receiptDetails', 'receiptDetails.deliveryDate', $event)
-          "
         />
       </div>
     </div>

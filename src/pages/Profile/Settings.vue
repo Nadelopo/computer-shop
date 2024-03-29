@@ -122,16 +122,19 @@ const submit = handleSubmit(async (values) => {
         name="apartment"
         label="Квартира"
         type="number"
+        min="0"
       />
       <form-field
         name="floor"
         label="Этаж"
         type="number"
+        min="0"
       />
       <form-field
         name="entrance"
         label="Подъезд"
         type="number"
+        min="0"
       />
       <div>
         <v-button :loading="loadingSubmit === 'loading'"> сохранить </v-button>

@@ -231,7 +231,6 @@ const onSubmit = handleSubmit(async () => {
         <method-obtain
           :obtain-type="values.obtainType"
           :receipt-details="values.receiptDetails"
-          @receipt-details="(field, value) => setFieldValue(field, value)"
         />
       </div>
     </div>

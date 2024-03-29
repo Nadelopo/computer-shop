@@ -19,10 +19,17 @@ const errorMessages = computed((): string[] => {
   if (errors.value.length) {
     return errors.value
   }
-  return [errorMessage.value || ' ']
+  return ['']
 })
 
-const id = props.name + '-input'
+const name = computed(() => {
+  if (props.name.includes('.')) {
+    return props.name.split('.').at(-1)
+  }
+  return props.name
+})
+
+const id = name.value + '-input'
 
 const slots = useSlots()
 </script>
@@ -46,6 +53,7 @@ const slots = useSlots()
         v-bind="props"
         :id="id"
         v-model="value"
+        :name="name"
         :required="false"
         :error="Boolean(errorMessage)"
       />

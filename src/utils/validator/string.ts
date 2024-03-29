@@ -1,7 +1,7 @@
 type This = {
   required: () => This
   email: () => This
-  valid: () => string | true
+  valid: () => string[] | true
   equal: (this: This, _value: string) => This
   min: (this: This, min: number) => This
   max: (this: This, max: number) => This
@@ -10,11 +10,11 @@ type This = {
 
 export function string(value?: string | null) {
   let isValid = true
-  let errorMessage = ''
+  const errorMessages: string[] = []
 
   const setErrorMessage = (message: string) => {
-    if (errorMessage === '') {
-      errorMessage = message
+    if (!errorMessages.includes('Обязательное поле')) {
+      errorMessages.push(message)
     }
   }
 
@@ -69,7 +69,7 @@ export function string(value?: string | null) {
 
   function valid(this: This) {
     if (isValid) return true
-    return errorMessage
+    return errorMessages
   }
 
   function onlyLetters(this: This) {
