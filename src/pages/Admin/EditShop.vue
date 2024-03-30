@@ -28,15 +28,13 @@ onBeforeMount(async () => {
 
 const loadingSave = ref<Loading>('success')
 const router = useCustomRouter()
-const save = async () => {
-  const formValue = form.value
-  if (!formValue) return
+const save = async (values: ShopForm) => {
   loadingSave.value = 'loading'
-  const phone = Number(formValue.phone.replace(/[()\- ]/g, ''))
-  const [start, end] = formValue.time.split(' - ')
+  const phone = Number(values.phone.replace(/[()\- ]/g, ''))
+  const [start, end] = values.time.split(' - ')
 
   await updateOneById('shops', shopId, {
-    address: formValue.address,
+    address: values.address,
     phone,
     timeStart: `${start}:00`,
     timeEnd: `${end}:00`
@@ -53,7 +51,7 @@ const save = async () => {
     <div class="container">
       <shops-form
         v-if="form"
-        v-model="form"
+        :form-data="form"
         type="update"
         :loading-submit="loadingSave === 'loading'"
         @submit="save"

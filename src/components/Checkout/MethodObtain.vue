@@ -82,16 +82,15 @@ const { value: deliveryDate } = useField<Date>('receiptDetails.deliveryDate')
   <div v-if="obtainType === 'delivery'">
     <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
       <form-field
-        v-slot="{ isError }"
+        v-slot="{ fieldName }"
         name="receiptDetails.address"
+        label="Адрес*"
       >
         <input-address
           v-model="address"
-          name="address"
+          :name="fieldName"
           :location-results="locationResults"
-          text="Адрес*"
           :required="false"
-          :error="isError"
           @click-on-suggestion="address = $event"
         />
       </form-field>

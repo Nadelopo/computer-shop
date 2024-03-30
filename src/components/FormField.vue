@@ -1,19 +1,28 @@
-<script setup lang="ts" generic="T extends string | number">
+<script setup lang="ts" generic="T extends 'text' | 'number' | 'tel' = 'text'">
 import { computed, useSlots } from 'vue'
 import { useField } from 'vee-validate'
 import { VInputText } from '@/components/UI'
 import type { VInputTextProps } from './UI/VInputText.vue'
 
-type Props = { name: string; label?: string } & Omit<
-  VInputTextProps<T>,
-  'modelValue' | 'id' | 'required' | 'error'
->
+type Props = Omit<
+  VInputTextProps,
+  'modelValue' | 'id' | 'required' | 'error' | 'type'
+> & {
+  name?: string
+  label?: string
+  type?: T
+}
 
 const props = withDefaults(defineProps<Props>(), {
-  showSpinButtons: true
+  showSpinButtons: true,
+  name: '',
+  //@ts-ignore
+  type: 'text'
 })
 
-const { value, errors, errorMessage } = useField<T>(props.name)
+const { value, errors, errorMessage, setValue } = useField<
+  typeof props.type extends 'text' | 'tel' ? string : number
+>(props.name)
 
 const errorMessages = computed((): string[] => {
   if (errors.value.length) {
@@ -22,9 +31,9 @@ const errorMessages = computed((): string[] => {
   return ['']
 })
 
-const name = computed(() => {
+const name = computed((): string => {
   if (props.name.includes('.')) {
-    return props.name.split('.').at(-1)
+    return props.name.split('.').at(-1) ?? ''
   }
   return props.name
 })
@@ -36,19 +45,22 @@ const slots = useSlots()
 
 <template>
   <div>
+    <label
+      v-if="label !== undefined"
+      :for="id"
+      :class="{ 'text-danger-light': Boolean(errorMessage) }"
+    >
+      {{ label }}
+    </label>
     <slot
       v-if="slots.default"
       :errors="errorMessages"
       :is-error="Boolean(errorMessage)"
       :value="value"
+      :set-value="setValue"
+      :field-name="name"
     />
     <template v-else>
-      <label
-        :for="id"
-        :class="{ 'text-danger-light': Boolean(errorMessage) }"
-      >
-        {{ label }}
-      </label>
       <v-input-text
         v-bind="props"
         :id="id"

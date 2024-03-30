@@ -1,5 +1,5 @@
-import { string } from '@/utils/validator'
 import { useForm } from 'vee-validate'
+import { number, string } from '@/utils/validator'
 
 export type ReceiptDetails = {
   city: string | null
@@ -48,9 +48,9 @@ export const useFeatureForm = () => {
           if (value?.length !== 17) return 'Поле должно содержать 11 цифр'
           return true
         },
-        'receiptDetails.apartment': async (value?: string | null) => {
+        'receiptDetails.apartment': async (value?: number | null) => {
           if (values.obtainType === 'selfcall') return true
-          return string(value).required().valid()
+          return number(value).required().valid()
         },
         'receiptDetails.address': (value?: string | null) => {
           if (values.obtainType === 'selfcall') return true

@@ -5,7 +5,6 @@ import { VInputText } from '@/components/UI'
 import type { LocationResult } from '@/utils/useGeoSuggest'
 
 const props = defineProps<{
-  text: string
   locationResults: LocationResult['results'] | null
   required?: boolean
   error?: boolean
@@ -17,7 +16,7 @@ const emit = defineEmits<{
   clickOnInput: [string]
 }>()
 
-const model = defineModel<string | null>({ default: '' })
+const model = defineModel<string>({ default: '' })
 
 const chooseColored = (
   hl: { begin: number; end: number }[] | undefined,
@@ -94,12 +93,6 @@ const id = props.name + '-input'
 
 <template>
   <div class="wrapper">
-    <label
-      :class="{ 'text-danger-light': error }"
-      :for="id"
-    >
-      {{ text }}
-    </label>
     <div
       ref="inputRef"
       @click="onClick"
@@ -167,7 +160,7 @@ const id = props.name + '-input'
     z-index: 100
     width: 100%
     border-radius: 0 0 4px 4px
-    top: 53px
+    top: 28px
     border: 2px solid var(--color-main)
     overflow: hidden
     .suggestion
