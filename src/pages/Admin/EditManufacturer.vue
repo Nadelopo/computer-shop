@@ -32,20 +32,19 @@ onBeforeMount(async () => {
   loadingGet.value = 'success'
 })
 
-// const inputFileRef = ref<InputFileActions>()
 const loadingSave = ref<Loading>('success')
-const save = async (fileActions: InputFileActions | undefined) => {
-  if (!form.value) return
+const save = async (
+  values: ManufacturerCreate,
+  fileActions: InputFileActions | undefined
+) => {
   loadingSave.value = 'loading'
   const { error: errorImage, url } = (await fileActions?.onSave()) || {}
   if (errorImage) {
     loadingSave.value = 'error'
     return
   }
-  if (url) {
-    form.value.img = url
-  }
-  const { error } = await updateManufacturer(manufactuerId, form.value)
+  const img = url ?? ''
+  const { error } = await updateManufacturer(manufactuerId, { ...values, img })
   if (error) {
     loadingGet.value = 'error'
     return
@@ -60,7 +59,7 @@ const save = async (fileActions: InputFileActions | undefined) => {
   <div class="container">
     <template v-if="loadingGet === 'success' && form">
       <manufacturers-form
-        v-model="form"
+        :form-data="form"
         :loading="loadingSave === 'loading'"
         type="update"
         class="pt-10"
