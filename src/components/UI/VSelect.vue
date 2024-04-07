@@ -283,7 +283,7 @@ $back: var(--back-sec)
   cursor: pointer
   text-align: start
   width: calc(100% - 6px)
-  border-radius: 7px
+  border-radius: 4px
   margin-bottom: 2px
   &:hover, &:focus, &.active
     transform: translateX(6px)

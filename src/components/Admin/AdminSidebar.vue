@@ -230,7 +230,7 @@ $transition: .3s
   white-space: nowrap
   transition: $transition
   border-radius: 4px
-  &:hover
+  &:hover, &:has(.router-link-active)
     background: var(--back-sec)
   a
     width: 100%
@@ -255,7 +255,8 @@ $transition: .3s
   display: flex
   align-items: center
   border-radius: 4px
-  &:hover
+  transition: $transition
+  &:hover, &:has(.router-link-active)
     background: var(--back-sec)
   a
     width: 100%
