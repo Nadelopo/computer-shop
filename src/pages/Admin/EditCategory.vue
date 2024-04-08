@@ -51,17 +51,19 @@ onBeforeMount(async () => {
 })
 
 const loadingSave = ref<Loading>('success')
-const save = async (fileActions: InputFileActions | undefined) => {
+const save = async (
+  values: CategoryCreate,
+  fileActions: InputFileActions | undefined
+) => {
   loadingSave.value = 'loading'
-  if (categoryHasId(form.value)) {
+  if (categoryHasId(values)) {
     const data = await fileActions?.onSave()
     if (!data) return
     if (data.error) {
       loadingSave.value = 'error'
       return
     }
-    form.value.img = data.url
-    await updateCategory(form.value)
+    await updateCategory({ ...values, img: data.url })
     await router.push({
       name: 'AdminCategories'
     })
@@ -78,7 +80,7 @@ const back = async () => {
   <div class="container">
     <categories-form
       v-if="loading === 'success' && form"
-      v-model="form"
+      :form-data="form"
       type="update"
       :loading="loadingSave === 'loading'"
       class="pt-16"
