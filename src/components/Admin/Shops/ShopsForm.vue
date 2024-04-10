@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, reactive, watchEffect } from 'vue'
 import { useForm } from 'vee-validate'
+import { string } from 'yup'
 import { vMaska, type MaskInputOptions, type MaskaDetail } from 'maska'
 import { useGeoSuggest, type LocationResult } from '@/utils/useGeoSuggest'
-import { string } from '@/utils/validator'
 import { VInputText, VButton } from '@/components/UI'
 import InputAddress from '@/components/InputAddress.vue'
 import FormField from '@/components/FormField.vue'
@@ -29,17 +29,14 @@ const { values, handleSubmit, resetForm, setValues } = useForm<ShopForm>({
     phone: ''
   },
   validationSchema: {
-    address: (v?: string) => {
-      return string(v).required().valid()
-    },
-    time: (v?: string) => {
-      if (!v?.length) return 'Обязательное поле'
-      if (v?.length !== 13) {
-        return 'Введите данные в полном формате'
-      }
-      return true
-    },
-    phone: (v?: string) => string(v).required().phone().valid()
+    address: string().required(),
+    time: string()
+      .required()
+      .test('time', 'Введите данные в полном формате', (v) => {
+        if (v.length !== 13) return false
+        return true
+      }),
+    phone: string().required().min(10)
   }
 })
 

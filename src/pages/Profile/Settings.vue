@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { useForm } from 'vee-validate'
+import { string } from 'yup'
 import { useToast } from 'vue-toastification'
 import { useUserStore } from '@/stores/userStore'
 import { getOneById, updateOneById } from '@/db/queries/tables'
-import { string } from '@/utils/validator'
 import { VLoader } from '@/components/UI'
 import FormField from '@/components/FormField.vue'
 import { VButton } from '@/components/UI'
@@ -34,9 +34,9 @@ const { handleSubmit, setValues } = useForm<Form>({
     entrance: null
   },
   validationSchema: {
-    name: (v?: string) => string(v).required().onlyLetters().valid(),
+    name: string().required().onlyLetters(),
+    phone: string().phone()
     // email: (v?: string) => string(v).required().email().valid(),
-    phone: (v?: string) => string(v).phone()
   }
 })
 

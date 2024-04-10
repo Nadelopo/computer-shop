@@ -2,10 +2,10 @@
 import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
 import { useField, useForm } from 'vee-validate'
+import { string } from 'yup'
 import { supabase } from '@/db/supabase'
 import { createOne } from '@/db/queries/tables'
 import { useCustomRouter } from '@/utils/useCustomRouter'
-import { string } from '@/utils/validator'
 import { VButton } from '@/components/UI'
 
 const router = useCustomRouter()
@@ -20,18 +20,18 @@ const { handleSubmit } = useForm<{
 
 const { value: email, errorMessage: errorEmail } = useField<string>(
   'email',
-  (v) => string(v).required().email().valid()
+  string().required().email()
 )
 const { value: password, errorMessage: errorPassword } = useField<string>(
   'password',
-  (v) => string(v).required().min(6).max(50).valid()
+  string().required().min(6).max(50)
 )
 const { value: name, errorMessage: errorName } = useField<string>(
   'name',
-  (v) => {
-    if (isSignIn.value) return true
-    return string(v).required().min(2).max(50).valid()
-  }
+  string().when({
+    is: () => !isSignIn.value,
+    then: () => string().required().onlyLetters().min(2).max(50)
+  })
 )
 
 const toast = useToast()

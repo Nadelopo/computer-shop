@@ -11,13 +11,15 @@ type Props = Omit<
   name?: string
   label?: string
   type?: T
+  allErors?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   showSpinButtons: true,
   name: '',
   //@ts-ignore
-  type: 'text'
+  type: 'text',
+  allErors: false
 })
 
 const { value, errors, errorMessage, setValue } = useField<
@@ -25,8 +27,9 @@ const { value, errors, errorMessage, setValue } = useField<
 >(props.name)
 
 const errorMessages = computed((): string[] => {
-  if (errors.value.length) {
-    return errors.value
+  const errorsValue = errors.value
+  if (errorsValue.length) {
+    return props.allErors ? errorsValue : [errorsValue[0]]
   }
   return ['']
 })

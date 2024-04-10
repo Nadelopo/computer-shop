@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useForm } from 'vee-validate'
-import { string } from '@/utils/validator'
+import { string } from 'yup'
 import { VInputFile, VButton } from '@/components/UI'
 import FormField from '@/components/FormField.vue'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
@@ -20,9 +20,9 @@ const { values, handleSubmit, resetForm, setValues } = useForm<CategoryCreate>({
     title: ''
   },
   validationSchema: {
-    title: (v?: string) => string(v).required().valid(),
-    enTitle: (v?: string) => string(v).required().valid(),
-    img: (v?: string) => string(v).required().valid()
+    title: string().required(),
+    enTitle: string().required(),
+    img: string().required()
   }
 })
 
@@ -78,15 +78,6 @@ const submit = handleSubmit(() => {
       name="title"
       label="Наименование на русском"
     />
-    <!-- </div> -->
-    <!-- <div> -->
-    <!-- <label>наименование на английском</label>
-      <v-input-text v-model="form.enTitle" /> -->
-    <!-- </div> -->
-    <!-- <div>
-      <label>наименование на русском</label>
-      <v-input-text v-model="form.title" />
-    </div> -->
     <div>
       <v-button :loading="loading">
         {{ type === 'create' ? 'создать категорию' : 'сохранить' }}

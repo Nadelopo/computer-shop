@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useForm } from 'vee-validate'
-import { string } from '@/utils/validator'
+import { string } from 'yup'
 import { VButton, VInputFile, VTextarea } from '@/components/UI'
 import FormField from '@/components/FormField.vue'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
@@ -29,9 +29,9 @@ const { values, handleSubmit, resetForm, setValues, setFieldValue } =
       img: ''
     },
     validationSchema: {
-      title: (v?: string) => string(v).required().valid(),
-      description: (v?: string) => string(v).required().valid(),
-      img: (v?: string) => string(v).required().valid()
+      title: string().required(),
+      description: string().required(),
+      img: string().required()
     }
   })
 
