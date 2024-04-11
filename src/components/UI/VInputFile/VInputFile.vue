@@ -15,6 +15,7 @@ type Props = {
   placeholder?: string
   showImgs?: boolean
   multiple?: boolean
+  id?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -104,7 +105,7 @@ const onSave = async () => {
   return { url }
 }
 
-const id = self.crypto.randomUUID()
+const id = props.id ?? self.crypto.randomUUID()
 
 const inputRef = ref<HTMLInputElement>()
 const clear = () => {

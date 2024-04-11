@@ -56,10 +56,12 @@ const submit = handleSubmit(() => {
       label="Наименование"
     />
     <form-field
+      v-slot="{ id }"
       name="description"
       label="Описание"
     >
       <v-textarea
+        :id="id"
         auto-grow
         :required="false"
         :model-value="values.description"
@@ -67,10 +69,12 @@ const submit = handleSubmit(() => {
       />
     </form-field>
     <form-field
+      v-slot="{ id }"
       name="img"
       label="Изображение"
     >
       <v-input-file
+        :id="id"
         ref="inputFileRef"
         :file-url="values.img"
         folder="manufacturers"

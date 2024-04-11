@@ -57,11 +57,12 @@ const submit = handleSubmit(() => {
     @submit.prevent="submit"
   >
     <form-field
-      v-slot="{ setValue }"
+      v-slot="{ setValue, id }"
       name="img"
       label="Изображение"
     >
       <v-input-file
+        :id="id"
         ref="inputFileRef"
         :file-url="values.img"
         folder="manufacturers"

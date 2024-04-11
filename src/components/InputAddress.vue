@@ -9,6 +9,7 @@ const props = defineProps<{
   required?: boolean
   error?: boolean
   name?: string
+  id?: string
 }>()
 
 const emit = defineEmits<{
@@ -88,7 +89,7 @@ const onInputKey = (type: 'down' | 'up') => {
   }
 }
 
-const id = props.name + '-input'
+const id = props.id ?? props.name + '-input'
 </script>
 
 <template>

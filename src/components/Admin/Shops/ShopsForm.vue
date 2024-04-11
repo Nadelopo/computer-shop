@@ -86,11 +86,12 @@ watchEffect(async () => {
     @submit.prevent="onSubmit"
   >
     <form-field
-      v-slot="{ isError, value, setValue, fieldName }"
+      v-slot="{ isError, value, setValue, fieldName, id }"
       name="address"
       label="Адрес"
     >
       <input-address
+        :id="id"
         :name="fieldName"
         :location-results="locationResults"
         :error="isError"
@@ -101,12 +102,14 @@ watchEffect(async () => {
       />
     </form-field>
     <form-field
-      v-slot="{ value, setValue, isError }"
+      v-slot="{ value, setValue, isError, id }"
       name="time"
       label="Часы работы"
     >
       <v-input-text
+        :id="id"
         v-maska:[maskaOptions]="maskaDetail"
+        name="time"
         placeholder="00:00 - 00:00"
         :required="false"
         :error="isError"
@@ -116,11 +119,12 @@ watchEffect(async () => {
     </form-field>
 
     <form-field
-      v-slot="{ value, setValue, fieldName }"
+      v-slot="{ value, setValue, fieldName, id }"
       name="phone"
       label="Телефон"
     >
       <v-input-text
+        :id="id"
         :name="fieldName"
         :model-value="value"
         type="tel"

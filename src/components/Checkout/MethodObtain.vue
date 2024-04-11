@@ -82,11 +82,12 @@ const { value: deliveryDate } = useField<Date>('receiptDetails.deliveryDate')
   <div v-if="obtainType === 'delivery'">
     <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
       <form-field
-        v-slot="{ fieldName }"
+        v-slot="{ fieldName, id }"
         name="receiptDetails.address"
         label="Адрес*"
       >
         <input-address
+          :id="id"
           v-model="address"
           :name="fieldName"
           :location-results="locationResults"
