@@ -12,6 +12,7 @@ type Props = Omit<
   label?: string
   type?: T
   allErors?: boolean
+  hideErrors?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -41,7 +42,7 @@ const name = computed((): string => {
   return props.name
 })
 
-const id = name.value + '-input'
+const id = name.value + '-field'
 
 const slots = useSlots()
 </script>
@@ -57,6 +58,7 @@ const slots = useSlots()
     </label>
     <slot
       v-if="slots.default"
+      :id="id"
       :errors="errorMessages"
       :is-error="Boolean(errorMessage)"
       :value="value"
@@ -73,13 +75,15 @@ const slots = useSlots()
         :error="Boolean(errorMessage)"
       />
     </template>
-    <div
-      v-for="error in errorMessages"
-      :key="error"
-      class="error"
-    >
-      {{ error }}
-    </div>
+    <template v-if="!hideErrors">
+      <div
+        v-for="error in errorMessages"
+        :key="error"
+        class="error"
+      >
+        {{ error }}
+      </div>
+    </template>
   </div>
 </template>
 

@@ -29,4 +29,6 @@ export type CategorySpecificationCreate = {
     }
 )
 
-export type CategorySpecificationUpdate = Partial<CategorySpecificationCreate>
+export type CategorySpecificationUpdate = Partial<{
+  [K in keyof CategorySpecificationCreate]: CategorySpecificationCreate[K]
+}>

@@ -1,30 +1,80 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, unref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useForm } from 'vee-validate'
+import { number, string } from 'yup'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { VButtons, VInputText, VButton, VSelect } from '@/components/UI'
+import FormField from '@/components/FormField.vue'
 import type { CategorySpecificationForm } from './types'
+import type { CategorySpecificationCreate } from '@/types/tables/categorySpecifications.types'
+
+type FormData = Omit<
+  CategorySpecificationForm,
+  'categoryId' | 'title' | 'enTitle'
+>
 
 const props = defineProps<{
   loading?: boolean
   type: 'create' | 'update'
+  formData?: CategorySpecificationCreate
 }>()
 
 const emit = defineEmits<{
-  submit: [setInitialValues: boolean]
+  submit: [
+    values: CategorySpecificationForm,
+    setInitialValues: boolean,
+    reset: () => void
+  ]
 }>()
+
+const initialFormValue: FormData = {
+  type: 'number',
+  visible: false,
+  units: '',
+  step: 1,
+  min: 0,
+  max: 64,
+  variantsValues: null,
+  condition: 'greater'
+}
+
+const form = ref<FormData>({ ...initialFormValue })
+
+const { values, setValues, handleSubmit, resetForm } = useForm<
+  Pick<CategorySpecificationForm, 'categoryId' | 'title' | 'enTitle'>
+>({
+  initialValues: {
+    categoryId: null,
+    title: '',
+    enTitle: ''
+  },
+  validationSchema: {
+    categoryId: number().required(),
+    title: string().required(),
+    enTitle: string().required()
+  }
+})
+
+if (props.formData) {
+  const { categoryId, enTitle, title, ...rest } = unref(props.formData)
+  setValues({ categoryId, enTitle, title })
+  form.value = rest
+}
 
 const { categories } = storeToRefs(useCategoriesStore())
 const setInitialValue = ref(props.type === 'create')
 
-const form = defineModel<CategorySpecificationForm>({ required: true })
 const addVarianValues = () => {
   if (Array.isArray(form.value.variantsValues)) {
     form.value.variantsValues[form.value.variantsValues.length] = ''
   }
 }
 const deleteVarianValues = () => {
-  if (Array.isArray(form.value.variantsValues)) {
+  if (
+    Array.isArray(form.value.variantsValues) &&
+    form.value.variantsValues.length > 1
+  ) {
     form.value.variantsValues.splice(-1)
   }
 }
@@ -33,10 +83,10 @@ const savedVarianValues = ref<string[]>(form.value.variantsValues ?? [''])
 watch(
   () => form.value.type,
   (cur) => {
+    let fields: Partial<CategorySpecificationForm> = {}
     if (cur === 'number') {
       savedVarianValues.value = form.value.variantsValues ?? ['']
-      form.value = {
-        ...form.value,
+      fields = {
         type: 'number',
         step: 1,
         min: 0,
@@ -45,8 +95,7 @@ watch(
         condition: 'greater'
       }
     } else if (cur) {
-      form.value = {
-        ...form.value,
+      fields = {
         type: cur,
         step: null,
         min: null,
@@ -55,31 +104,50 @@ watch(
         condition: null
       }
     }
+    form.value = { ...form.value, ...fields }
   }
 )
+
+const reset = () => {
+  resetForm()
+  form.value = { ...initialFormValue }
+}
+const submit = handleSubmit(() => {
+  emit('submit', { ...values, ...form.value }, setInitialValue.value, reset)
+})
 </script>
 
 <template>
   <form
-    class="list__form"
-    @submit.prevent="emit('submit', setInitialValue)"
+    class="flex flex-col gap-y-2"
+    @submit.prevent="submit"
   >
-    <div v-if="categories">
+    <form-field
+      v-slot="{ value, setValue, isError }"
+      type="number"
+      name="categoryId"
+      label="Категория"
+      hide-errors
+    >
       <v-select
-        v-model="form.categoryId"
+        class="my-2"
         :options="categories.map((e) => ({ value: e.id, title: e.title }))"
+        :required="false"
+        :is-error="isError"
+        :model-value="value"
+        @update:model-value="setValue($event)"
       />
-    </div>
+    </form-field>
+    <form-field
+      name="title"
+      label="Наименование"
+    />
+    <form-field
+      name="enTitle"
+      label="Наименование на английском"
+    />
     <div>
-      <label>наименование</label>
-      <v-input-text v-model.trim="form.title" />
-    </div>
-    <div>
-      <label>наименование на английском</label>
-      <v-input-text v-model.trim="form.enTitle" />
-    </div>
-    <div>
-      <label>единицы измерения</label>
+      <label for="units">Единицы измерения</label>
       <v-input-text
         v-model.trim="form.units"
         :required="false"
@@ -88,7 +156,6 @@ watch(
     <div>
       <label>тип поля </label>
       <v-buttons
-        v-if="form.type !== undefined"
         v-model="form.type"
         :options="[
           { value: 'number', title: 'числовой' },
@@ -99,46 +166,44 @@ watch(
       />
     </div>
     <template v-if="form.type === 'number'">
-      <div>
-        <label>шаг изменения числа для поля ввода</label>
+      <div class="my-3">
+        <label for="step">шаг изменения числа для поля ввода</label>
         <v-input-text
-          v-if="form.step !== null"
+          id="step"
           v-model="form.step"
           type="number"
           :step="0.1"
+          :min="0"
         />
       </div>
-      <div>
-        <label>минимальное значение для поля ввода</label>
+      <div class="my-3">
+        <label for="min">Минимальное значение для поля ввода</label>
         <v-input-text
-          v-if="form.min !== null"
           v-model="form.min"
           type="number"
           :min="0"
         />
       </div>
-      <div>
-        <label>максимальное значение для поля ввода</label>
+      <div class="my-3">
+        <label for="max">Максимальное значение для поля ввода</label>
         <v-input-text
-          v-if="form.max !== null"
           v-model="form.max"
           type="number"
           :min="0"
         />
       </div>
-      <div>
+      <div class="my-3">
         <label>
           условия для лучшего значения
           <span class="text-xs"> (больще значит лучше или наоборот) </span>
         </label>
         <v-buttons
-          v-if="form.condition"
           v-model="form.condition"
-          class="mt-2"
           :options="[
             { value: 'greater', title: 'больше' },
             { value: 'less', title: 'меньше' }
           ]"
+          class="mt-2"
         />
       </div>
     </template>
@@ -170,7 +235,6 @@ watch(
     <div>
       <label>отображать на карточке товара </label>
       <v-buttons
-        v-if="form.visible !== undefined"
         v-model="form.visible"
         class="mt-2"
         :options="[
@@ -190,7 +254,7 @@ watch(
         class="mt-2"
       />
     </div>
-    <div>
+    <div class="mt-2">
       <v-button :loading="loading">
         {{ type === 'create' ? 'создать характеристику' : 'сохранить' }}
       </v-button>

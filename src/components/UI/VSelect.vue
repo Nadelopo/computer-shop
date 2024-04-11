@@ -7,6 +7,7 @@ type Props = {
   options: { title: string; value: T }[]
   required?: boolean
   width?: 'max' | 'static'
+  isError?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -149,7 +150,7 @@ const required = computed(() => {
       ref="btn"
       class="select"
       type="button"
-      :class="{ active }"
+      :class="{ active, error: isError }"
       :title="options.find((e) => e.value === modelValue)?.title"
       @focus="onFocus"
     >
@@ -215,7 +216,6 @@ $back: var(--back-sec)
   position: absolute
   z-index: 50
   &.active
-    // border-radius: 12px 12px 0 0
     border-radius: 4px 4px 0 0
   .head
     display: flex
@@ -226,6 +226,10 @@ $back: var(--back-sec)
       text-overflow: ellipsis
       white-space: nowrap
       overflow: hidden
+  &.error
+    color: #ff8383
+    svg
+      fill: #ff8383
 
 .icon-arrow
   width: 10px
