@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { onUnmounted, watch } from 'vue'
 
 defineOptions({
   inheritAttrs: false
@@ -13,6 +13,10 @@ watch(modelValue, () => {
   } else {
     document.body.style.overflow = 'visible'
   }
+})
+
+onUnmounted(() => {
+  document.body.style.overflow = 'visible'
 })
 </script>
 
