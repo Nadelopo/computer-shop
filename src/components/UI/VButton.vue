@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type ButtonHTMLAttributes } from 'vue'
+import type { ButtonHTMLAttributes } from 'vue'
 import VLoader from './VLoader.vue'
 
 interface Props extends /* @vue-ignore */ ButtonHTMLAttributes {

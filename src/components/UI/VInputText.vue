@@ -7,7 +7,7 @@ import {
   type InputHTMLAttributes
 } from 'vue'
 import { vMaska, MaskaDetail } from 'maska'
-import { debounce } from '@/utils/debounce'
+import { debounce as Debounce } from '@/utils/debounce'
 
 export interface VInputTextProps<T = string>
   extends /* @vue-ignore */ InputHTMLAttributes {
@@ -78,7 +78,7 @@ onMounted(() => {
 })
 
 const chooseOnInputFunc = computed(() =>
-  props.debounce ? debounce(onInput, props.debounce) : onInput
+  props.debounce ? Debounce(onInput, props.debounce) : onInput
 )
 
 const attrs = useAttrs()
