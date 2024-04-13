@@ -154,6 +154,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
               </app-link>
               <span class="ml-auto pr-4">
                 <cross-svg
+                  transform="rotate(45)"
                   class="cross"
                   @click="deleteItem(product)"
                 />

@@ -43,6 +43,7 @@ const titleActive = ref(true)
       <button class="cross">
         <cross-svg
           v-if="props.onDelete"
+          transform="rotate(45)"
           @mouseenter="titleActive = false"
           @mouseleave="titleActive = true"
           @click.prevent="emit('delete', item.id)"

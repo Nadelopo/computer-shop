@@ -164,7 +164,10 @@ const { value: deliveryDate } = useField<Date>('receiptDetails.deliveryDate')
                 </li>
               </ul>
               <div class="ml-auto block md:hidden">
-                <CrossSvg @click="toggleModal" />
+                <CrossSvg
+                  transform="rotate(45)"
+                  @click="toggleModal"
+                />
               </div>
             </div>
             <div
