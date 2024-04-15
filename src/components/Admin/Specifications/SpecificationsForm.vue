@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useForm } from 'vee-validate'
 import { number, string } from 'yup'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import { VButtons, VInputText, VButton, VSelect } from '@/components/UI'
+import { VButtons, VInputText, VButton, VSelect, VTags } from '@/components/UI'
 import FormField from '@/components/FormField.vue'
 import type { CategorySpecificationForm } from './types'
 import type { CategorySpecificationCreate } from '@/types/tables/categorySpecifications.types'
@@ -65,27 +65,13 @@ if (props.formData) {
 const { categories } = storeToRefs(useCategoriesStore())
 const setInitialValue = ref(props.type === 'create')
 
-const addVarianValues = () => {
-  if (Array.isArray(form.value.variantsValues)) {
-    form.value.variantsValues[form.value.variantsValues.length] = ''
-  }
-}
-const deleteVarianValues = () => {
-  if (
-    Array.isArray(form.value.variantsValues) &&
-    form.value.variantsValues.length > 1
-  ) {
-    form.value.variantsValues.splice(-1)
-  }
-}
-
-const savedVarianValues = ref<string[]>(form.value.variantsValues ?? [''])
+const savedVarianValues = ref<string[]>(form.value.variantsValues ?? [])
 watch(
   () => form.value.type,
   (cur) => {
     let fields: Partial<CategorySpecificationForm> = {}
     if (cur === 'number') {
-      savedVarianValues.value = form.value.variantsValues ?? ['']
+      savedVarianValues.value = form.value.variantsValues ?? []
       fields = {
         type: 'number',
         step: 1,
@@ -209,28 +195,7 @@ const submit = handleSubmit(() => {
     </template>
     <div v-else-if="form.variantsValues">
       <label>вартианты значений</label>
-      <div
-        v-for="(_, i) in form.variantsValues.length"
-        :key="i"
-      >
-        <v-input-text v-model.trim="form.variantsValues[i]" />
-      </div>
-      <div class="flex gap-4">
-        <v-button
-          class="mt-4"
-          type="button"
-          @click="addVarianValues"
-        >
-          добавить
-        </v-button>
-        <v-button
-          class="mt-4"
-          type="button"
-          @click="deleteVarianValues"
-        >
-          удалить
-        </v-button>
-      </div>
+      <v-tags v-model.trim="form.variantsValues" />
     </div>
     <div>
       <label>отображать на карточке товара </label>

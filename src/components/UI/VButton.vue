@@ -7,6 +7,7 @@ interface Props extends /* @vue-ignore */ ButtonHTMLAttributes {
   loading?: boolean
   width?: string
   size?: 'normal' | 'small'
+  static?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -15,8 +16,6 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   size: 'normal'
 })
-
-const width = computed(() => props.width ?? 'auto')
 </script>
 
 <template>
@@ -26,7 +25,8 @@ const width = computed(() => props.width ?? 'auto')
     :class="[
       {
         danger: variant === 'danger',
-        noactive: variant === 'noactive'
+        noactive: variant === 'noactive',
+        static
       },
       size
     ]"
@@ -41,7 +41,7 @@ const width = computed(() => props.width ?? 'auto')
 </template>
 
 <style scoped lang="sass">
-.btn, .danger
+.btn
   border: none
   border-radius: 4px
   padding: 0.375rem 0.75rem
@@ -55,7 +55,7 @@ const width = computed(() => props.width ?? 'auto')
   outline: 2px solid transparent
   @media (width < 426px)
     font-size: 14px
-  &:active
+  &:active:not(.static):not(:disabled)
     transform: scale(0.9)
   svg
     width: 24px
@@ -63,17 +63,22 @@ const width = computed(() => props.width ?? 'auto')
       width: 16px
   &.small svg
     width: 16px
+  &.static
+    pointer-events: none
+  &:disabled
+    opacity: 0.5
+    cursor: no-drop
 
 .btn
-  min-width: v-bind(width)
+  min-width: v-bind('props.width')
   background: var(--color-main)
   :slotted(svg)
     fill: #fff
   @media (hover: hover)
-    &:hover
+    &:hover:not(.static):not(:disabled)
       background: var(--color-sec)
   @media (hover: none)
-    &:active
+    &:active:not(.static):not(:disabled)
       background: var(--color-sec)
 
   &:focus-visible
@@ -94,28 +99,28 @@ const width = computed(() => props.width ?? 'auto')
       transition: fill .3s
       fill: var(--color-main)
     @media (hover: hover)
-      &:hover
+      &:hover:not(:disabled)
         :slotted(svg)
           fill: #fff
-      &:hover
+      &:hover:not(.static):not(:disabled)
         background: var(--color-sec)
         color: #fff
         box-shadow: inset 0px 0px 0px 2px var(--color-sec)
     @media (hover: none)
-      &:active
+      &:active:not(.static):not(:disabled)
         :slotted(svg)
           fill: #fff
-      &:active
+      &:active:not(.static):not(:disabled)
         background: var(--color-sec)
         color: #fff
         box-shadow: inset 0px 0px 0px 2px var(--color-sec)
   &.danger
     background: var(--danger)
     @media (hover: hover)
-      &:hover
+      &:hover:not(.static):not(:disabled)
         background: var(--danger-light)
     @media (hover: none)
-      &:active
+      &:active:not(.static):not(:disabled)
         background: var(--danger-light)
     &:focus-visible
       outline: 2px solid #ffa3a3
