@@ -140,9 +140,9 @@ const evalatuationClasses = computed(() => {
     margin-bottom: 10px
   .evaluation__count
     &.positive
-      color: var(--color-text)
+      color: var(--main-semi-light)
     &.negative
-      color: var(--danger-light)
+      color: var(--danger-semi-light)
     &.static
       padding: 0
       &::before
@@ -153,13 +153,13 @@ const evalatuationClasses = computed(() => {
     width: 16px
     transition: .1s
     &:hover.like
-      fill: var(--color-text)
+      fill: var(--main-semi-light)
     &:hover.dislike
-      fill: var(--danger-light)
+      fill: var(--danger-semi-light)
     &.dislike
       transform: rotate(180deg)
       &.coloured
-        fill: var(--danger-light)
+        fill: var(--danger-semi-light)
     &.like.coloured
-      fill: var(--color-text)
+      fill: var(--main-semi-light)
 </style>

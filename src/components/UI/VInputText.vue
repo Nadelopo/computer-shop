@@ -129,16 +129,16 @@ const bindOptions = computed(() => ({
     position: absolute
     bottom: 0
     left: 0
-    background: var(--color-main)
+    background: var(--main)
     transition: 0.4s
     transform: scaleX(0)
   &.error::after
-    background: var(--danger-light)
+    background: var(--danger-semi-light)
   &:focus-within::after
     transform: scaleX(1)
   &.error
     input
-      border-bottom: 1px solid var(--danger-light)
+      border-bottom: 1px solid var(--danger-semi-light)
 
 .input
   outline: none

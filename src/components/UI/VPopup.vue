@@ -113,7 +113,7 @@ const contentEnter = () => {
       cursor: pointer
       &:hover
         color: #fff
-        background: var(--color-main)
+        background: var(--main)
 
 .popup__animation-enter-active,
 .popup__animation-leave-active

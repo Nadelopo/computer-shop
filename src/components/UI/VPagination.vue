@@ -153,7 +153,7 @@ const setPage = (page: number) => {
     justify-content: center
     align-items: center
     transition: .2s
-    color: var(--color-text)
+    color: var(--main-semi-light)
     border-radius: 4px
     &:hover:not(.active):not([disabled])
       background: #EBF4F3
@@ -162,14 +162,14 @@ const setPage = (page: number) => {
       svg
         fill: var(--gray)
     &:focus-visible
-      outline: 1px solid var(--color-text)
+      outline: 1px solid var(--main-semi-light)
     svg
-      fill: var(--color-text)
+      fill: var(--main-semi-light)
   .active
     color: #fff
-    background: var(--color-main)
+    background: var(--main)
 
   .prev, .next
     &:focus-visible
-      outline: 1px solid var(--color-text)
+      outline: 1px solid var(--main-semi-light)
 </style>

@@ -294,7 +294,7 @@ $back: var(--back-sec)
     width: calc( 100% - 12px )
     margin-right: 6px
     outline: none
-    color: var(--color-text)
+    color: var(--main-semi-light)
   &:hover, &:focus
     background: #1f292b
 

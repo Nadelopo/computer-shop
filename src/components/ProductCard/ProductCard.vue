@@ -116,7 +116,7 @@ const titleActive = ref(true)
   &:hover
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px
     .title__active
-      color: var(--color-text)
+      color: var(--main-semi-light)
   .title
     display: -webkit-box
     -webkit-box-orient: vertical

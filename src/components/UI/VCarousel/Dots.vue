@@ -73,7 +73,7 @@ defineExpose({ setCurrentSlideIndex })
     width: 12px
     &.active
       width: 40px
-      background-color: var(--color-text)
+      background-color: var(--main-semi-light)
   .dot
     height: 8px
     width: 8px
@@ -82,5 +82,5 @@ defineExpose({ setCurrentSlideIndex })
     cursor: pointer
     transition: width .3s,background-color .3s cubic-bezier(.4,0,.2,1)
     &.active
-      background-color: var(--color-text)
+      background-color: var(--main-semi-light)
 </style>

@@ -89,7 +89,7 @@ const slots = useSlots()
 
 <style scoped lang="sass">
 .error
-  color: var(--danger-light)
+  color: var(--danger-semi-light)
   font-size: 14px
   min-height: 22px
 </style>

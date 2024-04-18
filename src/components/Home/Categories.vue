@@ -59,7 +59,7 @@ const { categories } = storeToRefs(useCategoriesStore())
   font-size: 20px
   transition: .2s
   .link__wrap:hover &
-    color: var(--color-text)
+    color: var(--main-semi-light)
 
 .grid
   display: grid

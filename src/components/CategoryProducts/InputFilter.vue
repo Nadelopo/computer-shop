@@ -117,7 +117,7 @@ const isActive = computed(
   outline: none
   transition: 0.3s
   &:focus
-    border-color: var(--color-main)
+    border-color: var(--main)
     transition: 0.3s
 .line
   border: 1px solid #000

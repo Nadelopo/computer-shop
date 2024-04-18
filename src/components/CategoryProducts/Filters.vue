@@ -247,11 +247,11 @@ onUnmounted(() => {
     transition: .2s
     border-radius: 4px
     &:hover, &.active
-      color: var(--color-text)
+      color: var(--main-semi-light)
       svg
-        fill: var(--color-text)
+        fill: var(--main-semi-light)
     &:hover
-      background: var(--light)
+      background: var(--main-light)
   :deep(.filter__content)
     padding: 0 16px
     > div

@@ -108,7 +108,7 @@ const createTag = () => {
     transition: .2s
     pointer-events: auto
     svg
-      stroke: var(--color-main)
+      stroke: var(--main)
     &:hover:not(:disabled)
       background: rgba(0, 0, 0, 0.04)
     &:disabled
@@ -142,5 +142,5 @@ const createTag = () => {
   pointer-events: none
 
 .cross
-  stroke: var(--color-main)
+  stroke: var(--main)
 </style>

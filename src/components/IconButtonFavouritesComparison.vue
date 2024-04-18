@@ -12,7 +12,7 @@ const { userLists, changeUserListsValueOnToggle } = useUserStore()
 
 const fill = computed(() =>
   userLists[props.listTitle].includes(props.productId)
-    ? 'var(--color-main)'
+    ? 'var(--main)'
     : 'var(--gray)'
 )
 
@@ -37,5 +37,5 @@ const ListIcon = props.listTitle === 'favourites' ? FavouriteSvg : ComparisonSvg
     transition: .2s
   &:hover
     svg
-      fill: var(--color-main)
+      fill: var(--main)
 </style>

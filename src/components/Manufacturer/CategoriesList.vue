@@ -67,7 +67,7 @@ const categoriesFormat = computed(() => {
   gap: 2px
   transition: .2s
   &:hover
-    color: var(--color-text)
+    color: var(--main-semi-light)
   img
     max-height: 128px
 </style>

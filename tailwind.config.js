@@ -11,9 +11,9 @@ module.exports = {
     },
     extend: {
       colors: {
-        text: 'var(--color-text)',
+        text: 'var(--main-semi-light)',
         danger: 'var(--danger)',
-        'danger-light': 'var(--danger-light)'
+        'danger-light': 'var(--danger-semi-light)'
       }
     }
   },

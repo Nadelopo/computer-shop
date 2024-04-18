@@ -71,7 +71,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 .btn
   min-width: v-bind('props.width')
-  background: var(--color-main)
+  background: var(--main)
   :slotted(svg)
     fill: #fff
   @media (hover: hover)
@@ -82,7 +82,7 @@ const props = withDefaults(defineProps<Props>(), {
       background: var(--color-sec)
 
   &:focus-visible
-    outline: 2px solid var(--color-text)
+    outline: 2px solid var(--main-semi-light)
   &.noactive
     border-radius: 4px
     padding: 0.375rem 0.75rem
@@ -92,12 +92,12 @@ const props = withDefaults(defineProps<Props>(), {
     vertical-align: middle
     align-items: center
     justify-content: center
-    color: var(--color-main)
-    box-shadow: inset 0px 0px 0px 2px var(--color-main)
+    color: var(--main)
+    box-shadow: inset 0px 0px 0px 2px var(--main)
     background: transparent
     :slotted(svg)
       transition: fill .3s
-      fill: var(--color-main)
+      fill: var(--main)
     @media (hover: hover)
       &:hover:not(:disabled)
         :slotted(svg)
@@ -118,10 +118,10 @@ const props = withDefaults(defineProps<Props>(), {
     background: var(--danger)
     @media (hover: hover)
       &:hover:not(.static):not(:disabled)
-        background: var(--danger-light)
+        background: var(--danger-semi-light)
     @media (hover: none)
       &:active:not(.static):not(:disabled)
-        background: var(--danger-light)
+        background: var(--danger-semi-light)
     &:focus-visible
       outline: 2px solid #ffa3a3
 </style>

@@ -63,7 +63,7 @@ const rows = props.autoGrow ? 1 : props.rows ?? 2
     position: absolute
     bottom: 4px
     left: 0
-    background: var(--color-main)
+    background: var(--main)
     transition: transform 0.4s
     transform: scaleX(0)
   &:focus-within::after

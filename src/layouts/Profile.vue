@@ -66,7 +66,7 @@ onBeforeMount(() => {
     font-weight: 400
     transition: .2s
     &:hover
-      color: var(--color-text)
+      color: var(--main-semi-light)
     &.router-link-exact-active
-      color: var(--color-text)
+      color: var(--main-semi-light)
 </style>

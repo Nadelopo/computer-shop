@@ -11,16 +11,17 @@
 :root
   --shadow: rgba(0, 0, 0, 0.1)
   --back-main: #1c1c1c
-  --light: #a7dfda9e
+  --main-light: #a7dfda9e
   --bright: #9fe7e0
   --back-sec: #333333
-  --color-main: #26a69a
+  --main: #26a69a
   --color-sec: #2bbbad
-  --color-text: #61BEB5
+  --main-semi-light: #61BEB5
   --gray: #C6C6C9
   --body-back: #f5f5f5
   --danger: #d10000
-  --danger-light: #ff4444
+  --danger-semi-light: #ff4444
+  --danger-light: #efc2c2
 
 body
   font-family: 'Roboto Flex'
@@ -47,10 +48,10 @@ body::-webkit-scrollbar-thumb
 progress::-webkit-progress-bar
   border-radius: 20px
   background: #fff
-  border: 2px solid var(--color-main)
+  border: 2px solid var(--main)
 
 progress::-webkit-progress-value
-  background: var(--color-main)
+  background: var(--main)
 
 .container
   margin: 0 auto
@@ -66,7 +67,7 @@ progress::-webkit-progress-value
   gap: 20px
 
 .color-text
-  color: var(--color-text)
+  color: var(--main-semi-light)
 
 .price
   font-size: 20px
@@ -77,11 +78,11 @@ progress::-webkit-progress-value
     color: #5d5d64
     text-decoration: line-through
   &.coloured
-    color: var(--color-text)
+    color: var(--main-semi-light)
   &.auto
     font-size: unset
     font-weight: unset
 
 // toastification
 .Vue-Toastification__toast.Vue-Toastification__toast--success
-  background: var(--color-main)
+  background: var(--main)

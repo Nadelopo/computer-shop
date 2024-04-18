@@ -255,7 +255,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
     &:nth-child(odd)
       background: #fff
     &:not(:first-child):not(:has(button)):hover
-      background: var(--light)
+      background: var(--main-light)
 
   .wrapper__cells
     position: relative
@@ -290,7 +290,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
       justify-content: space-between
       align-items: start
     .best__value
-      color: var(--color-text)
+      color: var(--main-semi-light)
     a
       max-width: 70%
     img
@@ -318,7 +318,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
     padding: 8px
     transition: .2s
     &:hover
-      background: var(--color-main)
+      background: var(--main)
       fill: #fff
     &.next
         right: 10px
@@ -338,7 +338,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
     &:before
       content: '★'
     &.coloured
-      color: var(--color-main)
+      color: var(--main)
   .cross
     transition: .2s
     cursor: pointer

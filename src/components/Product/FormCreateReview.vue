@@ -152,7 +152,7 @@ const createReview = async () => {
     max-height: 150px
     min-height: 150px
     border: none
-    box-shadow: 0 0 5px 0 var(--color-text)
+    box-shadow: 0 0 5px 0 var(--main-semi-light)
     transition: box-shadow .6s
     font-weight: 300
 

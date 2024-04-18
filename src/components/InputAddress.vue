@@ -162,7 +162,7 @@ const id = props.id ?? props.name + '-input'
     width: 100%
     border-radius: 0 0 4px 4px
     top: 28px
-    border: 2px solid var(--color-main)
+    border: 2px solid var(--main)
     overflow: hidden
     .suggestion
       width: 100%

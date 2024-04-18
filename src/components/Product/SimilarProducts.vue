@@ -97,7 +97,7 @@ watch(() => props.productId, loadSimilarProducts)
   justify-items: center
   &:hover
     span
-      color: var(--color-text)
+      color: var(--main-semi-light)
   img
     max-width: 160px
     max-height: 150px

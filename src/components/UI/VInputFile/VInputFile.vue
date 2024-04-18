@@ -215,7 +215,7 @@ const isRequired = computed(() => {
     position: absolute
     bottom: 0px
     left: -16px
-    background: var(--color-main)
+    background: var(--main)
     transition: 0.4s
     transform: scaleX(0)
   &:focus-within::after
@@ -274,7 +274,7 @@ const isRequired = computed(() => {
   align-items: end
   .file
     border-radius: 4px
-    background: var(--color-main)
+    background: var(--main)
     color: #fff
     padding: 0 10px
 
