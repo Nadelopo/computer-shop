@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { supabase } from '@/db/supabase'
 import {
   StorageError,
   insertInStorage,
   removeFromStorage,
   type Folder
 } from '@/db/queries/storage'
-import { supabase } from '@/db/supabase'
 
 type Props = {
   folder: Folder
@@ -182,14 +182,15 @@ const isRequired = computed(() => {
         </button>
       </span>
     </span>
-    <Transition
+    <!-- <Transition
       v-if="showImgs"
       name="images"
+    > -->
+    <div
+      v-if="showImgs && isFilesNotEmpty"
+      class="images"
     >
-      <div
-        v-if="isFilesNotEmpty"
-        class="images"
-      >
+      <div>
         <img
           v-for="file in files"
           :key="file.size"
@@ -197,7 +198,8 @@ const isRequired = computed(() => {
           alt="картинка"
         />
       </div>
-    </Transition>
+    </div>
+    <!-- </Transition> -->
   </div>
 </template>
 
@@ -265,7 +267,6 @@ const isRequired = computed(() => {
   translate: 100px
 
 .files
-  // position: absolute
   height: 100%
   width: 100%
   display: grid
@@ -312,21 +313,22 @@ const isRequired = computed(() => {
     background: #7b7b7b
     border-radius: 2px
   img
-    max-height: 150px
+    height: 156px
+    width: 100%
     border-radius: 4px
 
-.images-enter-from
-  height: 0
-  padding-top: 0
-.images-enter-to
-  height: 156px
-  padding-top: 6px
-  transition: height .3s
-.images-leave-from
-  height: 156px
-  padding-top: 6px
-.images-leave-to
-  height: 0
-  padding-top: 0
-  transition: height .3s
+// .images-enter-from
+//   height: 0
+//   // padding-top: 0
+// .images-enter-to
+//   height: 156px
+//   // padding-top: 6px
+//   transition: height .3s
+// .images-leave-from
+//   height: 156px
+//   // padding-top: 6px
+// .images-leave-to
+//   height: 0
+//   // padding-top: 0
+//   transition: height .3s
 </style>
