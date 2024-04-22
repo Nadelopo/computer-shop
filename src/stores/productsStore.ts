@@ -41,6 +41,7 @@ export const useProductsStore = defineStore('products', () => {
     params: {
       page: number
       limit: number
+      search?: string
     } = {
       limit: 300,
       page: 0
@@ -56,6 +57,7 @@ export const useProductsStore = defineStore('products', () => {
         params.page * params.limit,
         params.page * params.limit + params?.limit - 1
       ],
+      search: ['title', params.search],
       order: [
         ['id'],
         ['categorySpecificationsId', { foreignTable: 'specifications' }]

@@ -2,10 +2,12 @@
 import { onBeforeMount, ref } from 'vue'
 import { useToast } from 'vue-toastification'
 import { deleteOneById, getAll } from '@/db/queries/tables'
-import { VButton, VConfirm, VLoader, VTable } from '@/components/UI'
+import { VConfirm, VLoader, VTable } from '@/components/UI'
 import { formatPhoneNumber } from '@/utils/formatPhone'
 import { formatTime } from '@/utils/formatTime'
 import AppLink from '@/components/AppLink.vue'
+import ActionIcon from '@/components/ActionIcon.vue'
+import { EditSvg, TrashSvg } from '@/assets/icons'
 import type { Loading } from '@/types'
 import type { ShopRead } from '@/types/tables/shops.types'
 
@@ -68,7 +70,7 @@ const remove = async (id: number) => {
           <td>{{ formatPhoneNumber(shop.phone) }}</td>
           <td> {{ formatTime(shop.timeStart, shop.timeEnd) }} </td>
           <td>
-            <v-button class="mb-2">
+            <div class="flex">
               <app-link
                 :to="{
                   name: 'EditShop',
@@ -77,18 +79,27 @@ const remove = async (id: number) => {
                   }
                 }"
               >
-                изменить
+                <ActionIcon
+                  :svg="EditSvg"
+                  paint-type="stroke"
+                />
               </app-link>
-            </v-button>
-            <v-confirm
-              :message="'Вы точно хотите удалить?'"
-              :loading="
-                loadingRemove === 'loading' && currentRemoveShopId === shop.id
-              "
-              type="danger"
-              label="удалить"
-              @ok="remove(shop.id)"
-            />
+              <v-confirm
+                v-slot="{ openModal }"
+                :message="'Вы точно хотите удалить?'"
+                @ok="remove(shop.id)"
+              >
+                <action-icon
+                  :svg="TrashSvg"
+                  variant="danger"
+                  :loading="
+                    loadingRemove === 'loading' &&
+                    currentRemoveShopId === shop.id
+                  "
+                  @click="openModal"
+                />
+              </v-confirm>
+            </div>
           </td>
         </tr>
       </tbody>

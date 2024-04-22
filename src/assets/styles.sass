@@ -86,3 +86,19 @@ progress::-webkit-progress-value
 // toastification
 .Vue-Toastification__toast.Vue-Toastification__toast--success
   background: var(--main)
+
+//tooltips
+
+.v-popper__popper
+  font-size: 14px
+
+.v-popper__popper.v-popper__popper--show-to .v-popper__wrapper
+  transform: scale(1)
+  transition: transform .15s
+
+.v-popper__popper.v-popper__popper--show-from .v-popper__wrapper
+  transform: scale(.5)
+
+.v-popper__popper.v-popper__popper--hidden .v-popper__wrapper
+  transition: transform .15s
+  transform: scale(.5)

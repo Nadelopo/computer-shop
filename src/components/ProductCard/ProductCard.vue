@@ -63,7 +63,7 @@ const titleActive = ref(true)
       {{ item.title }}
     </div>
     <rating-stars :model-value="item.rating" />
-    <div class="flex gap-x-4">
+    <div class="flex gap-x-2">
       <icon-button-favourites-comparison
         v-if="props.favourites"
         list-title="favourites"

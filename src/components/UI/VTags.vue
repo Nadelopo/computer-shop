@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { CrossSvg } from '@/assets/icons'
-import { VButton } from '.'
 import { nextTick, ref } from 'vue'
+import { VButton } from '.'
+import { CrossSvg } from '@/assets/icons'
 
 type Props = {
   onCreate?: (tag: string) => string
@@ -58,6 +58,7 @@ const createTag = () => {
     >
       {{ tag }}
       <button
+        type="button"
         class="remove"
         :disabled
         @click="model = model.filter((t, j) => j !== i)"

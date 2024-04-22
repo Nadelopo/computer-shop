@@ -3,6 +3,7 @@ import { ref, watch, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProductsStore } from '@/stores/productsStore'
 import { useCategoriesStore } from '@/stores/categoriesStore'
+import { getOneById } from '@/db/queries/tables'
 import ProductsList from '@/components/Admin/Products/ProductsList.vue'
 import { VPagination } from '@/components/UI'
 import ProductsForm from '@/components/Admin/Products/ProductsForm.vue'
@@ -15,40 +16,61 @@ import type { Loading } from '@/types'
 import type { SpecificationCreate } from '@/types/tables/specifications.types'
 import type { SpecificationCreateForm } from '@/components/Admin/Products/types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
+import type { PostgrestError } from '@supabase/supabase-js'
 
-const { getProducts } = useProductsStore()
-
+const { createProduct, createSpecifications, getProducts } = useProductsStore()
 const route = useRoute()
-const page = ref(route.query.page ? Number(route.query.page) - 1 : 0)
+const page = ref(Number(route.query.page) - 1 || 0)
 const limit = ref(6)
+const search = ref('')
 const loadingProducts = ref<Loading>('loading')
 const products = ref<ProductWithSpecifications[]>([])
 const productCount = ref(0)
 const setProducts = async () => {
   const categoryId = Number(route.params.id)
-  if (categoryId) {
-    loadingProducts.value = 'loading'
-    const { data, count, error } = await getProducts(categoryId, {
-      limit: limit.value,
-      page: page.value
-    })
-    if (error) {
-      loadingProducts.value = 'error'
-      return error
+  if (!categoryId) return
+  loadingProducts.value = 'loading'
+  let error: PostgrestError | null = null
+  if (search.value[0] === '#') {
+    const result = await getOneById(
+      'products',
+      Number(search.value.slice(1)),
+      '*, categories(id, enTitle), manufacturers(id, title), specifications(*,  category_specifications(id, title, units, visible, type))'
+    )
+    if (result.data) {
+      products.value = [result.data]
     }
-    products.value = data
-    if (count !== null) {
-      productCount.value = count
-    }
-
-    if (products.value.length === 0) {
+    productCount.value = 0
+    if (result.error?.code === 'PGRST116') {
       loadingProducts.value = 'empty'
-    } else {
-      loadingProducts.value = 'success'
+      return
     }
+    error = result.error
+  } else {
+    const result = await getProducts(categoryId, {
+      page: page.value,
+      limit: limit.value,
+      search: search.value
+    })
+    if (result.data) {
+      products.value = result.data
+    }
+    error = result.error
+    productCount.value = result.count ?? 0
+  }
+
+  if (error) {
+    loadingProducts.value = 'error'
+    return
+  }
+
+  if (products.value.length === 0) {
+    loadingProducts.value = 'empty'
+  } else {
+    loadingProducts.value = 'success'
   }
 }
-watch([page, limit, () => route.params.id], setProducts, {
+watch([page, limit, search, () => route.params.id], setProducts, {
   immediate: true
 })
 
@@ -122,8 +144,6 @@ watchEffect(() => {
   )
 })
 
-const { createProduct } = useProductsStore()
-const { createSpecifications } = useProductsStore()
 const loadingCreateProduct = ref<Loading>('success')
 const product = ref<ProductCreate>({ ...emptyProductFields })
 const create = async (fileActions: InputFileActions<string[]> | undefined) => {
@@ -194,6 +214,7 @@ const create = async (fileActions: InputFileActions<string[]> | undefined) => {
     />
     <products-list
       v-model:products="products"
+      v-model:search="search"
       :specifications="categorySpecifications"
       :loading="loadingProducts"
     />

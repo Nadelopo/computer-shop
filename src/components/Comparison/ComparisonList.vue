@@ -5,6 +5,7 @@ import { formatPrice } from '@/utils/formatPrice'
 import { useFeatureFilteredProducts } from './useFeatureFilteredProducts'
 import IconButtonFavouritesComparison from '../IconButtonFavouritesComparison.vue'
 import ButtonCart from '../ButtonCart.vue'
+import ActionIcon from '../ActionIcon.vue'
 import AppLink from '../AppLink.vue'
 import { ArrowSvg, CrossSvg } from '@/assets/icons'
 import type { ComparisonProduct, CategorySpecifications } from './types'
@@ -153,9 +154,11 @@ const isSmall = useMediaQuery('(max-width: 420px)')
                 />
               </app-link>
               <span class="ml-auto pr-4">
-                <cross-svg
-                  transform="rotate(45)"
-                  class="cross"
+                <action-icon
+                  :svg="CrossSvg"
+                  :svg-attrs="{ transform: 'rotate(45)' }"
+                  variant="danger"
+                  paint-type="stroke"
                   @click="deleteItem(product)"
                 />
                 <icon-button-favourites-comparison
@@ -339,10 +342,4 @@ const isSmall = useMediaQuery('(max-width: 420px)')
       content: '★'
     &.coloured
       color: var(--main)
-  .cross
-    transition: .2s
-    cursor: pointer
-    margin-bottom: 10px
-    &:hover
-      transform: scale(1.3)
 </style>

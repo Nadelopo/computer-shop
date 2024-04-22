@@ -4,10 +4,12 @@ import VWave from 'v-wave'
 import App from './App.vue'
 import router from './router'
 import Toast from 'vue-toastification'
+import FloatingVue from 'floating-vue'
 import './utils/yup'
 import type { PluginOptions } from 'vue-toastification'
 import './assets/styles.sass'
 import 'vue-toastification/dist/index.css'
+import 'floating-vue/dist/style.css'
 
 const app = createApp(App)
 
@@ -22,5 +24,6 @@ app.use(router)
 app.use(VWave, {
   initialOpacity: 0.3
 })
+app.use(FloatingVue)
 app.use(Toast, options)
 app.mount('#app')

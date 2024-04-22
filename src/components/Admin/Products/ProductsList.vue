@@ -4,8 +4,10 @@ import { StorageError, removeFromStorage } from '@/db/queries/storage'
 import { deleteOneById } from '@/db/queries/tables'
 import { getSpecificationValue } from '@/utils/getSpecificationValue'
 import { formatPrice } from '@/utils/formatPrice'
-import { VButton, VLoader, VConfirm, VTable } from '@/components/UI'
+import { VLoader, VConfirm, VTable, VInputText } from '@/components/UI'
+import ActionIcon from '@/components/ActionIcon.vue'
 import AppLink from '@/components/AppLink.vue'
+import { EditSvg, TrashSvg } from '@/assets/icons'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
@@ -19,6 +21,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   'update:products': [ProductWithSpecifications[]]
 }>()
+
+const search = defineModel<string>('search', { required: true })
 
 const loadingRemove = ref<Loading>('success')
 const currentRemoveProductId = ref(0)
@@ -46,6 +50,16 @@ const remove = async (id: number, img: string[]) => {
 </script>
 
 <template>
+  <div
+    v-if="loading !== 'loading'"
+    class="py-4"
+  >
+    <v-input-text
+      v-model="search"
+      :debounce="1000"
+      placeholder="введите название товара или id"
+    />
+  </div>
   <v-table
     v-if="loading === 'success'"
     placement="center"
@@ -96,7 +110,7 @@ const remove = async (id: number, img: string[]) => {
           />
         </td>
         <td>
-          <v-button class="mb-2">
+          <div class="flex">
             <app-link
               :to="{
                 name: 'EditProducts',
@@ -107,19 +121,27 @@ const remove = async (id: number, img: string[]) => {
                 }
               }"
             >
-              изменить
+              <action-icon
+                :svg="EditSvg"
+                paint-type="stroke"
+              />
             </app-link>
-          </v-button>
-          <v-confirm
-            :message="'Вы точно хотите удалить продукт - ' + product.title"
-            :loading="
-              loadingRemove === 'loading' &&
-              currentRemoveProductId === product.id
-            "
-            type="danger"
-            label="удалить"
-            @ok="remove(product.id, product.img)"
-          />
+            <v-confirm
+              v-slot="{ openModal }"
+              :message="'Вы точно хотите удалить продукт - ' + product.title"
+              @ok="remove(product.id, product.img)"
+            >
+              <action-icon
+                :svg="TrashSvg"
+                variant="danger"
+                :loading="
+                  loadingRemove === 'loading' &&
+                  currentRemoveProductId === product.id
+                "
+                @click="openModal"
+              />
+            </v-confirm>
+          </div>
         </td>
       </tr>
     </tbody>
@@ -131,8 +153,8 @@ const remove = async (id: number, img: string[]) => {
     товары отсутствуют
   </div>
   <div
-    v-else
-    class="h-[50vh] flex items-center"
+    v-else-if="loading === 'loading'"
+    class="h-[20vh] flex items-center"
   >
     <v-loader />
   </div>

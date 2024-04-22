@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useUserStore } from '@/stores/userStore'
+import ActionIcon from './ActionIcon.vue'
 import { FavouriteSvg, ComparisonSvg } from '@/assets/icons'
 
 const props = defineProps<{
@@ -10,32 +11,26 @@ const props = defineProps<{
 
 const { userLists, changeUserListsValueOnToggle } = useUserStore()
 
-const fill = computed(() =>
+const isActive = computed(() =>
   userLists[props.listTitle].includes(props.productId)
-    ? 'var(--main)'
-    : 'var(--gray)'
 )
 
 const ListIcon = props.listTitle === 'favourites' ? FavouriteSvg : ComparisonSvg
+
+const loading = ref(false)
+const onIcon = async () => {
+  loading.value = true
+  await changeUserListsValueOnToggle(props.listTitle, props.productId)
+  loading.value = false
+}
 </script>
 
 <template>
-  <button
-    class="favourite-comparison__btn"
-    @click.prevent="
-      changeUserListsValueOnToggle(props.listTitle, props.productId)
-    "
-  >
-    <list-icon width="24" />
-  </button>
+  <action-icon
+    :svg="ListIcon"
+    :svg-attrs="{ width: 24 }"
+    :is-active
+    :loading
+    @click.prevent="onIcon"
+  />
 </template>
-
-<style scoped lang="sass">
-.favourite-comparison__btn
-  svg
-    fill: v-bind(fill)
-    transition: .2s
-  &:hover
-    svg
-      fill: var(--main)
-</style>

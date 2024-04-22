@@ -3,10 +3,12 @@ import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
-import { VButton, VConfirm, VTable } from '@/components/UI'
+import { VConfirm, VTable } from '@/components/UI'
 import { deleteOneById } from '@/db/queries/tables'
 import { removeFromStorage } from '@/db/queries/storage'
 import AppLink from '@/components/AppLink.vue'
+import ActionIcon from '@/components/ActionIcon.vue'
+import { EditSvg, TrashSvg } from '@/assets/icons'
 import type { Loading } from '@/types'
 
 const { manufacturers } = storeToRefs(useManufacturersStore())
@@ -65,7 +67,7 @@ const remove = async (id: number, img: string) => {
           />
         </td>
         <td>
-          <v-button class="mb-2">
+          <div class="flex">
             <app-link
               :to="{
                 name: 'EditManufacturer',
@@ -74,21 +76,29 @@ const remove = async (id: number, img: string) => {
                 }
               }"
             >
-              изменить
+              <ActionIcon
+                :svg="EditSvg"
+                paint-type="stroke"
+              />
             </app-link>
-          </v-button>
-          <v-confirm
-            :message="
-              'Вы точно хотите удалить производителя - ' + manufacturer.title
-            "
-            :loading="
-              loadingRemove === 'loading' &&
-              currentRemoveManufacturerId === manufacturer.id
-            "
-            type="danger"
-            label="удалить"
-            @ok="remove(manufacturer.id, manufacturer.img)"
-          />
+            <v-confirm
+              v-slot="{ openModal }"
+              :message="
+                'Вы точно хотите удалить производителя - ' + manufacturer.title
+              "
+              @ok="remove(manufacturer.id, manufacturer.img)"
+            >
+              <action-icon
+                :svg="TrashSvg"
+                variant="danger"
+                :loading="
+                  loadingRemove === 'loading' &&
+                  currentRemoveManufacturerId === manufacturer.id
+                "
+                @click="openModal"
+              />
+            </v-confirm>
+          </div>
         </td>
       </tr>
     </tbody>
