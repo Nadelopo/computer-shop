@@ -30,9 +30,9 @@ const emit = defineEmits<{
 const { user } = storeToRefs(useUserStore())
 
 const getUserEvaluation = (
-  review: ReviewReadWithDetails
+  usersRated: ReviewReadWithDetails['usersRated']
 ): 'like' | 'dislike' | null => {
-  const findUser = review.usersRated.find((e) => e.userId === user.value?.id)
+  const findUser = usersRated.find((e) => e.userId === user.value?.id)
   if (!findUser) return null
   return findUser.evaluation ? 'like' : 'dislike'
 }
@@ -54,9 +54,9 @@ const evaluationReview = async (
     return
   }
 
-  const prevEvaluation = getUserEvaluation(review)
+  const prevEvaluation = getUserEvaluation(review.usersRated)
   let newEvaluation = review.evaluation
-  let newUsersRated: UsersRated[] = review.usersRated
+  let newUsersRated: UsersRated[] = [...review.usersRated]
 
   if (!prevEvaluation) {
     if (evaluation === 'like') newEvaluation++
@@ -88,12 +88,14 @@ const evaluationReview = async (
     evaluation: newEvaluation,
     usersRated: newUsersRated
   }
-  const data = await updateOneById('reviews', review.id, newValues)
+  reviews.value = reviews.value.map((e) =>
+    review.id === e.id ? { ...e, ...newValues } : e
+  )
 
-  if (data) {
-    reviews.value = reviews.value.map((e) =>
-      review.id === e.id ? { ...e, ...newValues } : e
-    )
+  const { error } = await updateOneById('reviews', review.id, newValues)
+  if (error) {
+    toast.error('Не удалось обновить рейтинг')
+    reviews.value = reviews.value.map((e) => (review.id === e.id ? review : e))
   }
 }
 
@@ -123,6 +125,7 @@ const loadReviews = async () => {
     reviews.value = data
     reviewsCount.value = count
   }
+
   loading.value = 'success'
 }
 

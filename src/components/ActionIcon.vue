@@ -58,7 +58,8 @@ const variantLoader = computed(() =>
         stroke: $main
         fill: none
     &.danger
-      background: var(--danger-light)
+      @if $bg
+        background: var(--danger-light)
       svg
         fill: $danger
       &.stroke svg

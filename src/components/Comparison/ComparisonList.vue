@@ -159,6 +159,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
                   :svg-attrs="{ transform: 'rotate(45)' }"
                   variant="danger"
                   paint-type="stroke"
+                  class="block"
                   @click="deleteItem(product)"
                 />
                 <icon-button-favourites-comparison

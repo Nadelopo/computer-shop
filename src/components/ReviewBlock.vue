@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import RatingStars from './RatingStars.vue'
+import ActionIcon from './ActionIcon.vue'
 import { AvatarSvg, ArrowSvg } from '@/assets/icons'
 import type { ReviewReadWithDetails } from '@/types/tables/reviews.types'
 
@@ -10,7 +11,9 @@ type Props = {
   review: ReviewReadWithDetails
   color?: string
   static?: boolean
-  getUserEvaluation?: (review: ReviewReadWithDetails) => Evaluation | null
+  getUserEvaluation?: (
+    review: ReviewReadWithDetails['usersRated']
+  ) => Evaluation | null
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -27,14 +30,9 @@ const onClick = (review: ReviewReadWithDetails, type: Evaluation) => {
   emit('onClick', review, type)
 }
 
-const arrowSvgClasse = (review: ReviewReadWithDetails, type: Evaluation) => {
-  if (props.static) {
-    return type + ' coloured'
-  } else {
-    const isColoured =
-      props.getUserEvaluation?.(review) === type ? ' coloured' : ''
-    return type + isColoured
-  }
+const isArrowActive = (review: ReviewReadWithDetails, type: Evaluation) => {
+  if (props.static) return
+  return props.getUserEvaluation?.(review.usersRated) === type
 }
 
 const evalatuationClasses = computed(() => {
@@ -89,10 +87,10 @@ const evalatuationClasses = computed(() => {
     </div>
     <div class="flex mt-4">
       <div class="flex">
-        <arrow-svg
+        <action-icon
           v-if="!static"
-          :class="arrowSvgClasse(review, 'like')"
-          class="arrow"
+          :svg="ArrowSvg"
+          :is-active="isArrowActive(review, 'like')"
           @click="onClick(review, 'like')"
         />
         <span
@@ -102,10 +100,12 @@ const evalatuationClasses = computed(() => {
         >
           {{ review.evaluation }}
         </span>
-        <arrow-svg
+        <action-icon
           v-if="!static"
-          :class="arrowSvgClasse(review, 'dislike')"
-          class="arrow"
+          :svg="ArrowSvg"
+          :svg-attrs="{ transform: 'rotate(180)' }"
+          variant="danger"
+          :is-active="isArrowActive(review, 'dislike')"
           @click="onClick(review, 'dislike')"
         />
       </div>
@@ -114,7 +114,6 @@ const evalatuationClasses = computed(() => {
 </template>
 
 <style scoped lang="sass">
-
 .review__root
   background: v-bind(color)
   border-radius: 8px
@@ -139,6 +138,10 @@ const evalatuationClasses = computed(() => {
     font-weight: 500
     margin-bottom: 10px
   .evaluation__count
+    width: 44px
+    display: flex
+    justify-content: center
+    align-items: center
     &.positive
       color: var(--main-semi-light)
     &.negative
