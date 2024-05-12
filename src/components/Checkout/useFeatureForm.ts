@@ -42,7 +42,6 @@ export const useFeatureForm = () => {
         email: string().required().email(),
         phone: string().required().phone(),
         'receiptDetails.apartment': (v?: string) => {
-          console.log('test', v)
           if (values.obtainType === 'selfcall') return true
           return number()
             .required()
