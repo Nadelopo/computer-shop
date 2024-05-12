@@ -4,6 +4,7 @@ import VWave from 'v-wave'
 import App from './App.vue'
 import router from './router'
 import Toast from 'vue-toastification'
+import gtag from 'vue-gtag'
 import FloatingVue from 'floating-vue'
 import './utils/yup'
 import type { PluginOptions } from 'vue-toastification'
@@ -26,4 +27,9 @@ app.use(VWave, {
 })
 app.use(FloatingVue)
 app.use(Toast, options)
+app.use(gtag, {
+  config: {
+    id: 'G-8QWVPMMTTC'
+  }
+})
 app.mount('#app')
