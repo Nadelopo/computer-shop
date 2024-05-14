@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useProductsStore } from '@/stores/productsStore'
-import { getOneById } from '@/db/queries/tables'
+import { getOneById, updateManyById, updateOneById } from '@/db/queries/tables'
 import { useCustomRouter } from '@/utils/useCustomRouter'
 import ProductsForm from '@/components/Admin/Products/ProductsForm.vue'
 import { VButton, VLoader } from '@/components/UI'
@@ -14,11 +13,10 @@ import type {
 } from '@/types/tables/products.types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 import type { SpecificationUpdateForm } from '@/components/Admin/Products/types'
+import type { UpdateMany } from '@/db/queries/types'
 
 type SpecificationUpdateMany = SpecificationUpdate &
   Required<Pick<SpecificationUpdate, 'id'>>
-
-const { updateProduct, updateProductSpecifications } = useProductsStore()
 
 const route = useRoute()
 const productId = Number(route.params.id)
@@ -86,6 +84,18 @@ const back = async () => {
   })
 }
 
+async function updateProductSpecifications(
+  specifications: UpdateMany<SpecificationUpdate>[]
+) {
+  const updatedSpecifications = await updateManyById(
+    'specifications',
+    specifications
+  )
+  return updatedSpecifications.sort(
+    (a, b) => a.categorySpecificationsId - b.categorySpecificationsId
+  )
+}
+
 const save = async (fileActions: InputFileActions<string[]> | undefined) => {
   const productValue = product.value
   if (!productValue) return
@@ -129,7 +139,7 @@ const save = async (fileActions: InputFileActions<string[]> | undefined) => {
   product.value = null
   const response = await Promise.all([
     updateProductSpecifications(newSpecifications),
-    updateProduct(productId, productUpdate)
+    updateOneById('products', productId, productUpdate)
   ])
 
   const error = response.some((e) => e === null)

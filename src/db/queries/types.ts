@@ -24,10 +24,10 @@ export type GetAllParams<S, T extends Table> = {
   neq?: [column: ReadData<T>, value: number | string]
   range?: [from: number, to: number]
   onlyCount?: boolean
-  gt?: [column: ReadData<T>, value: number]
-  lt?: [column: ReadData<T>, value: number]
-  gte?: [column: ReadData<T>, value: number]
-  lte?: [column: ReadData<T>, value: number]
+  gt?: [column: ReadData<T>, value: number | string]
+  lt?: [column: ReadData<T>, value: number | string]
+  gte?: [column: ReadData<T>, value: number | string]
+  lte?: [column: ReadData<T>, value: number | string]
 }
 
 export type UpdateMany<T> = T & Required<Pick<T, keyof T & 'id'>>

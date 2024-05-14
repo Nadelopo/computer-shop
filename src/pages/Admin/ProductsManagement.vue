@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref, watch, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
-import { useProductsStore } from '@/stores/productsStore'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import { getOneById } from '@/db/queries/tables'
+import { createMany, createOne, getAll, getOneById } from '@/db/queries/tables'
 import ProductsList from '@/components/Admin/Products/ProductsList.vue'
 import { VPagination } from '@/components/UI'
 import ProductsForm from '@/components/Admin/Products/ProductsForm.vue'
@@ -18,7 +17,6 @@ import type { SpecificationCreateForm } from '@/components/Admin/Products/types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 import type { PostgrestError } from '@supabase/supabase-js'
 
-const { createProduct, createSpecifications, getProducts } = useProductsStore()
 const route = useRoute()
 const page = ref(Number(route.query.page) - 1 || 0)
 const limit = ref(6)
@@ -31,11 +29,13 @@ const setProducts = async () => {
   if (!categoryId) return
   loadingProducts.value = 'loading'
   let error: PostgrestError | null = null
+  const select =
+    '*, categories(id, enTitle), manufacturers(id, title), specifications(*,  category_specifications(id, title, units, visible, type))'
   if (search.value[0] === '#') {
     const result = await getOneById(
       'products',
       Number(search.value.slice(1)),
-      '*, categories(id, enTitle), manufacturers(id, title), specifications(*,  category_specifications(id, title, units, visible, type))'
+      select
     )
     if (result.data) {
       products.value = [result.data]
@@ -47,10 +47,19 @@ const setProducts = async () => {
     }
     error = result.error
   } else {
-    const result = await getProducts(categoryId, {
-      page: page.value,
-      limit: limit.value,
-      search: search.value
+    const limitValue = limit.value
+    const result = await getAll('products', {
+      match: { categoryId: categoryId },
+      select,
+      range: [
+        page.value * limitValue,
+        page.value * limitValue + limitValue - 1
+      ],
+      search: ['title', search.value],
+      order: [
+        ['id'],
+        ['categorySpecificationsId', { foreignTable: 'specifications' }]
+      ]
     })
     if (result.data) {
       products.value = result.data
@@ -162,7 +171,7 @@ const create = async (fileActions: InputFileActions<string[]> | undefined) => {
           (product.value.priceWithoutDiscount * product.value.discount) / 100
       : product.value.priceWithoutDiscount
   )
-  const { data, error } = await createProduct(product.value)
+  const { data, error } = await createOne('products', product.value)
   if (error) {
     loadingCreateProduct.value = 'error'
     return
@@ -179,7 +188,8 @@ const create = async (fileActions: InputFileActions<string[]> | undefined) => {
       }
     }
   )
-  const { error: errorSpecifications } = await createSpecifications(
+  const { error: errorSpecifications } = await createMany(
+    'specifications',
     specifications
   )
   if (errorSpecifications) {

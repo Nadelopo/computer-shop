@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ArrowSvg } from '@/assets/icons'
-import { supabase } from '@/db/supabase'
-import { Loading } from '@/types'
-import { getCurrentTime } from '@/utils/getCurrentTime'
 import { computed, onBeforeMount, ref } from 'vue'
+import { getAll } from '@/db/queries/tables'
+import { getCurrentTime } from '@/utils/getCurrentTime'
+import { ArrowSvg } from '@/assets/icons'
+import type { Loading } from '@/types'
 
 const formatDate = (date: Date): string => {
   return String(date.toLocaleDateString()).split('.').reverse().join('-')
@@ -20,21 +20,14 @@ onBeforeMount(async () => {
   const twoMothsAgo = new Date(currentDate.setDate(monthAgo.getDate() - 30))
 
   const results = await Promise.all([
-    supabase
-      .from('orders')
-      .select('', {
-        count: 'estimated',
-        head: true
-      })
-      .gte('created_at', formatDate(monthAgo)),
-    supabase
-      .from('orders')
-      .select('', {
-        count: 'estimated',
-        head: true
-      })
-      .gte('created_at', formatDate(twoMothsAgo))
-      .lte('created_at', formatDate(monthAgo))
+    getAll('orders', {
+      gte: ['created_at', formatDate(monthAgo)]
+    }),
+    getAll('orders', {
+      onlyCount: true,
+      gte: ['created_at', formatDate(twoMothsAgo)],
+      lte: ['created_at', formatDate(monthAgo)]
+    })
   ])
   currentMothCount.value = results[0].count ?? 0
   previousMothCount.value = results[1].count ?? 0

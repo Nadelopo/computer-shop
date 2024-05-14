@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed, onBeforeMount } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import { getAll } from '@/db/queries/tables'
 import { useLocalStorage } from '@/utils/localStorage'
@@ -29,6 +29,7 @@ const products = ref<ComparisonProduct[]>([])
 const showDifferences = ref(false)
 const loading = ref<Loading>('success')
 const route = useRoute()
+const router = useRouter()
 const loadData = async () => {
   if (loading.value === 'loading') return
   loading.value = 'loading'
@@ -51,11 +52,10 @@ const loadData = async () => {
     loading.value = 'error'
     return
   }
-
-  const modifiedProducts: ComparisonProduct[] = data
+  products.value = data
   categories.value = []
 
-  for (const product of data) {
+  for (const product of data.sort((a, b) => b.categoryId - a.categoryId)) {
     if (!categories.value.some((e) => e.id === product.categoryId)) {
       categories.value.push({
         id: product.categoryId,
@@ -68,39 +68,35 @@ const loadData = async () => {
         e.id === product.categoryId ? { ...e, count: e.count + 1 } : e
       )
     }
+  }
+  const categoryId = Number(route.query.category_id)
 
-    const categoryId = Number(route.query.category_id)
-    if (categories.value.some((e) => e.id === categoryId)) {
-      currentCategoryId.value = categoryId
-    } else {
-      currentCategoryId.value = categories.value[0].id
-    }
+  if (categories.value.some((e) => e.id === categoryId)) {
+    currentCategoryId.value = categoryId
+  } else {
+    currentCategoryId.value = categories.value[0].id
+    router.replace({ query: { category_id: currentCategoryId.value } })
+  }
 
-    products.value = modifiedProducts
-    const { data: categoriesSpecifications, error } = await getAll(
-      'category_specifications',
-      {
-        in: {
-          categoryId: [...new Set(products.value.map((e) => e.categoryId))]
-        },
-        select: 'condition, title, units, id, categories(id, enTitle)'
-      }
+  const { data: categoriesSpecifications, error: errorSpecifications } =
+    await getAll('category_specifications', {
+      in: { categoryId: categories.value.map((c) => c.id) },
+      select: 'condition, title, units, id, categories(id, enTitle)'
+    })
+  if (errorSpecifications) {
+    loading.value = 'error'
+    return
+  }
+
+  for (const category of categories.value) {
+    const categorySpecifications = categoriesSpecifications.filter(
+      (e) => e.categories.id === category.id
     )
-    if (error) {
-      loading.value = 'error'
-      return
-    }
-
-    for (const category of categories.value) {
-      const categorySpecifications = categoriesSpecifications.filter(
-        (e) => e.categories.id === category.id
-      )
-      if (categorySpecifications) {
-        category.specifications = categorySpecifications.map((e) => {
-          e.title = e.title[0].toUpperCase() + e.title.slice(1)
-          return e
-        })
-      }
+    if (categorySpecifications) {
+      category.specifications = categorySpecifications.map((e) => {
+        e.title = e.title[0].toUpperCase() + e.title.slice(1)
+        return e
+      })
     }
   }
 

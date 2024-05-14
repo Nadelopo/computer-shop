@@ -25,7 +25,6 @@ const bestProducts = ref<ProductCardData[]>([])
 onBeforeMount(async () => {
   const data = await Promise.all([
     supabase.from('distinct_categories').select().match({ manufacturerId }),
-
     getAll('products', {
       match: {
         manufacturerId

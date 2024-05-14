@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { updateOneById } from '@/db/queries/tables'
-import { useProductsStore } from '@/stores/productsStore'
+import { getOneById, updateOneById } from '@/db/queries/tables'
 import { useLocalStorage } from '@/utils/localStorage'
 import Header from '@/components/Product/Header.vue'
 import ProductSpecifications from '@/components/Product/ProductSpecifications.vue'
@@ -17,8 +16,6 @@ export type UpdateProductRating = {
   rating: number
 }
 
-const { getProduct } = useProductsStore()
-
 const route = useRoute()
 const product = ref<ProductWithSpecifications>()
 const loading = ref<Loading>('loading')
@@ -27,7 +24,14 @@ const loadData = async () => {
   window.scroll(0, 0)
   const productId = Number(route.params.productId)
   loading.value = 'loading'
-  const { data, error } = await getProduct(productId)
+  const { data, error } = await getOneById(
+    'products',
+    productId,
+    '*, categories(id, enTitle), manufacturers(id, title), specifications(*, category_specifications!inner(id, title, units, visible, type))',
+    {
+      order: ['categorySpecificationsId', { foreignTable: 'specifications' }]
+    }
+  )
   if (error) {
     loading.value = 'error'
     return

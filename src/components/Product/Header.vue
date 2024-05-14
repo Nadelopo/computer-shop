@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useMediaQuery } from '@vueuse/core'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { formatPrice } from '@/utils/formatPrice'
@@ -15,10 +16,18 @@ const props = defineProps<{
 }>()
 
 const { getManufacturer } = useManufacturersStore()
+const { manufacturers } = storeToRefs(useManufacturersStore())
 const manufacturer = ref<ManufacturerRead>()
 
 const loading = ref<Loading>('loading')
 onBeforeMount(async () => {
+  const item = manufacturers.value.find(
+    (m) => m.id === props.product.manufacturers.id
+  )
+  if (item) {
+    manufacturer.value = item
+    return
+  }
   const { data, error } = await getManufacturer(props.product.manufacturers.id)
   if (error) {
     loading.value = 'error'
