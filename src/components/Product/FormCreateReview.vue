@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
 import { useUserStore } from '@/stores/userStore'
-import { createOne, updateOneById } from '@/db/queries/tables'
+import { createOne, getAll, updateOneById } from '@/db/queries/tables'
 import { VButton } from '../UI'
 import RatingStars from '../RatingStars.vue'
 import type { UpdateProductRating } from '@/pages/Product.vue'
@@ -20,11 +19,7 @@ type ReviewFormCreate = {
   rating: ReviewRating | 0
 }
 
-const props = defineProps<{
-  productId: number
-  productRating: number
-  countReviews: number
-}>()
+const props = defineProps<{ productId: number }>()
 
 const emit = defineEmits<{
   createReview: [review: ReviewReadWithDetails]
@@ -42,7 +37,7 @@ const { user } = storeToRefs(useUserStore())
 const toast = useToast()
 const showReviewForm = ref(false)
 
-const toggleFormVisibility = () => {
+const toggleForm = () => {
   if (!user.value) {
     toast.warning('Требуется авторизация')
     return
@@ -53,13 +48,12 @@ const toggleFormVisibility = () => {
 const form = ref<ReviewFormCreate>({
   ...purifiedForm
 })
-const route = useRoute()
 const createReview = async () => {
   if (!user.value) return
   if (form.value.rating === 0) {
     toast.warning('Укажите оценку')
   } else {
-    const { data, error } = await createOne(
+    const { data: createdReview, error } = await createOne(
       'reviews',
       {
         userId: user.value.id,
@@ -67,39 +61,37 @@ const createReview = async () => {
         dignities: form.value.dignities || null,
         disadvantages: form.value.disadvantages || null,
         comment: form.value.comment || null,
-        rating: form.value.rating,
-        categoryId: Number(route.params.categoryId)
+        rating: form.value.rating
       },
       '*, users(name)'
     )
     if (error) return
 
-    emit('createReview', data)
+    emit('createReview', createdReview)
     form.value = { ...purifiedForm }
     showReviewForm.value = false
 
+    const { data: reviewsRating } = await getAll('reviews', {
+      match: { productId: props.productId },
+      select: 'rating'
+    })
+    if (!reviewsRating) return
+
     const newProductRating =
-      (props.productRating * props.countReviews + data.rating) /
-      (props.countReviews + 1)
-    const { data: productData, error: errorProduct } = await updateOneById(
+      reviewsRating.reduce((a, b) => a + b.rating, 0) / reviewsRating.length
+    const { data: productUpdated, error: errorProduct } = await updateOneById(
       'products',
       props.productId,
-      {
-        countReviews: props.countReviews + 1,
-        rating: newProductRating
-      }
+      { rating: newProductRating, countReviews: reviewsRating.length }
     )
     if (errorProduct) return
-    emit('updateProductRating', {
-      countReviews: productData.countReviews,
-      rating: productData.rating
-    })
+    emit('updateProductRating', { rating: productUpdated.rating })
   }
 }
 </script>
 
 <template>
-  <v-button @click="toggleFormVisibility">
+  <v-button @click="toggleForm">
     {{ showReviewForm ? 'закрыть' : 'написать отзыв' }}
   </v-button>
   <Transition name="review__form">

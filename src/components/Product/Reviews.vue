@@ -19,8 +19,6 @@ import type { Loading } from '@/types'
 
 const props = defineProps<{
   productId: number
-  countReviews: number
-  productRating: number
 }>()
 
 const emit = defineEmits<{
@@ -171,8 +169,6 @@ const isPageSmall = useMediaQuery('(width < 400px)')
     <div>
       <form-create-review
         :product-id="productId"
-        :product-rating="productRating"
-        :count-reviews="countReviews"
         @update-product-rating="emit('updateProductRating', $event)"
         @create-review="reviews.unshift($event)"
       />

@@ -26,12 +26,12 @@ onUnmounted(() => {
       <div
         v-if="modelValue"
         class="dialog"
-        @click.stop="modelValue = false"
+        @mousedown.stop="modelValue = false"
       >
         <div
           class="dialog__content"
           v-bind="$attrs"
-          @click.stop
+          @mousedown.stop
         >
           <slot />
         </div>

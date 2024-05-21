@@ -31,7 +31,6 @@ export type ReviewCreate = {
   rating: ReviewRating
   userId: string
   usersRated?: UsersRated[]
-  categoryId: number
 }
 
 export type ReviewUpdate = Partial<ReviewCreate>

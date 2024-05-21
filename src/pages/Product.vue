@@ -12,7 +12,6 @@ import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
 
 export type UpdateProductRating = {
-  countReviews: number
   rating: number
 }
 
@@ -58,8 +57,7 @@ const updateProductRating = (newData: UpdateProductRating) => {
   if (product.value) {
     product.value = {
       ...product.value,
-      rating: newData.rating,
-      countReviews: newData.countReviews
+      rating: newData.rating
     }
   }
 }
@@ -95,8 +93,6 @@ onBeforeMount(() => {
       />
       <Reviews
         :product-id="product.id"
-        :count-reviews="product.countReviews"
-        :product-rating="product.rating"
         @update-product-rating="updateProductRating"
       />
     </div>
