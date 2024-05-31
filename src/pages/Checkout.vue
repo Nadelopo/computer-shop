@@ -173,6 +173,7 @@ const onSubmit = handleSubmit(async () => {
     return
   }
   await addOrderedProducts(data.id)
+  toast.success(`Заказ под номером ${data.id} оформлен`)
   router.push({ name: 'Cart' })
 })
 </script>

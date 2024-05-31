@@ -3,7 +3,7 @@ import { computed, FunctionalComponent, SVGAttributes } from 'vue'
 import { VLoader } from './UI'
 
 type Props = {
-  variant?: 'primary' | 'danger'
+  variant?: 'primary' | 'danger' | 'default'
   svg: FunctionalComponent<SVGAttributes>
   paintType?: 'stroke' | 'fill'
   tooltip?: string
@@ -17,9 +17,20 @@ const props = withDefaults(defineProps<Props>(), {
   svgType: 'fill'
 })
 
-const variantLoader = computed(() =>
-  props.variant === 'primary' ? 'var(--main)' : 'var(--danger)'
-)
+const variantLoader = computed(() => {
+  if (props.variant === 'primary') {
+    return 'var(--main)'
+  }
+  if (props.variant === 'danger') {
+    return 'var(--danger)'
+  }
+  return 'var(--back-sec)'
+})
+
+const widthWithHeight = computed(() => ({
+  width: props.svgAttrs?.width ?? '24px',
+  height: props.svgAttrs?.height
+}))
 </script>
 
 <template>
@@ -30,14 +41,16 @@ const variantLoader = computed(() =>
   >
     <v-loader
       v-if="loading"
-      :style="{ width: svgAttrs?.width ?? 24, height: svgAttrs?.height }"
+      :style="widthWithHeight"
       :color="variantLoader"
     />
     <component
       :is="svg"
       v-else
+      :style="widthWithHeight"
       v-bind="svgAttrs"
     />
+    <slot />
   </button>
 </template>
 
@@ -45,9 +58,11 @@ const variantLoader = computed(() =>
 @mixin mymixin($selector, $bg: false,$active: false)
   $danger: var(--danger-semi-light)
   $main: var(--main-semi-light)
+  $default: var(--gray)
   @if $active
     $danger: var(--danger)
     $main: var(--main)
+    $default: #fff
   #{$selector}
     &.primary
       @if $bg
@@ -64,6 +79,14 @@ const variantLoader = computed(() =>
         fill: $danger
       &.stroke svg
         stroke: $danger
+        fill: none
+    &.default
+      @if $bg
+        background: var(--back-sec)
+      svg
+        fill: $default
+      &.stroke svg
+        stroke: $default
         fill: none
 
 .action-icon

@@ -106,7 +106,7 @@ const submit = handleSubmit(() => {
       </div>
       <div
         v-if="!isSignIn"
-        class="flex flex-col"
+        class="flex flex-col mb-4 sm:mb-0"
       >
         <label
           class="label"
@@ -121,9 +121,11 @@ const submit = handleSubmit(() => {
           name="name"
           type="text"
         />
-        <div class="text-danger-light pl-4 h-6">{{ errorName }}</div>
+        <div class="text-danger-light pl-4 h-6 text-sm sm:text-base">
+          {{ errorName }}
+        </div>
       </div>
-      <div class="flex flex-col">
+      <div class="flex flex-col mb-4 sm:mb-0">
         <label
           class="label"
           for="email"
@@ -137,7 +139,9 @@ const submit = handleSubmit(() => {
           class="input"
           type="email"
         />
-        <div class="text-danger-light pl-4 h-6">{{ errorEmail }}</div>
+        <div class="text-danger-light pl-4 h-6 text-sm sm:text-base">
+          {{ errorEmail }}
+        </div>
       </div>
       <div class="flex flex-col">
         <label
@@ -152,7 +156,9 @@ const submit = handleSubmit(() => {
           name="password"
           type="password"
         />
-        <div class="text-danger-light pl-4 h-6">{{ errorPassword }}</div>
+        <div class="text-danger-light pl-4 h-6 text-sm sm:text-base">
+          {{ errorPassword }}
+        </div>
       </div>
       <div class="mb-6 mt-4">
         <v-button class="btnn">

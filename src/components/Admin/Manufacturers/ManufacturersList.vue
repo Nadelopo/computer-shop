@@ -76,7 +76,7 @@ const remove = async (id: number, img: string) => {
                 }
               }"
             >
-              <ActionIcon
+              <action-icon
                 :svg="EditSvg"
                 paint-type="stroke"
               />

@@ -58,6 +58,7 @@ onUnmounted(() => {
       <Filters
         :loading-properties="loadingProperties"
         type="mobile"
+        @apply="$emit('close')"
       />
     </div>
   </div>

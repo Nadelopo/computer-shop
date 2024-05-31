@@ -10,6 +10,7 @@ import { AvatarSvg, FavouriteSvg, CartSvg, ComparisonSvg } from '@/assets/icons'
 import { Role } from '@/types/tables/users.types'
 import { useCartStore } from '@/stores/cartStore'
 import AppLink from './AppLink.vue'
+import ActionIcon from './ActionIcon.vue'
 import type { RouteName } from '@/router/types'
 
 const { user, userLists } = storeToRefs(useUserStore())
@@ -110,9 +111,9 @@ const links: { text: string; page: RouteName }[] = [
           <div>
             <v-popup>
               <template #active>
-                <avatar-svg
-                  width="25"
-                  class="user__svg"
+                <action-icon
+                  :svg="AvatarSvg"
+                  variant="default"
                 />
               </template>
               <template #content>
@@ -139,35 +140,44 @@ const links: { text: string; page: RouteName }[] = [
             </v-popup>
           </div>
           <app-link :to="{ name: 'Favourites' }">
-            <favourite-svg
-              fill="#fff"
-              width="25"
-              class="cursor-pointer"
-            />
-            <span
-              v-if="userLists.favourites.length"
-              class="count"
+            <action-icon
+              :svg="FavouriteSvg"
+              variant="default"
+              :svg-attrs="{ width: 25 }"
             >
-              {{ userLists.favourites.length }}
-            </span>
+              <span
+                v-if="userLists.favourites.length"
+                class="count"
+              >
+                {{ userLists.favourites.length }}
+              </span>
+            </action-icon>
           </app-link>
           <app-link :to="{ name: 'Comparison' }">
-            <comparison-svg width="25" />
-            <span
-              v-if="userLists.comparison.length"
-              class="count"
+            <action-icon
+              :svg="ComparisonSvg"
+              variant="default"
             >
-              {{ userLists.comparison.length }}
-            </span>
+              <span
+                v-if="userLists.comparison.length"
+                class="count"
+              >
+                {{ userLists.comparison.length }}
+              </span>
+            </action-icon>
           </app-link>
           <app-link :to="{ name: 'Cart' }">
-            <cart-svg height="25" />
-            <span
-              v-if="countCartItems"
-              class="count"
+            <action-icon
+              :svg="CartSvg"
+              variant="default"
             >
-              {{ countCartItems }}
-            </span>
+              <span
+                v-if="countCartItems"
+                class="count"
+              >
+                {{ countCartItems }}
+              </span>
+            </action-icon>
           </app-link>
         </div>
       </div>
@@ -254,13 +264,6 @@ header
     transform: rotate(25deg) translateY(13px)
     margin: -10px 0 10px 30px
 
-.user__svg
-  fill: rgba(255,255,255, .8)
-  transition: .2s
-  cursor: pointer
-  &:hover
-    fill: rgba(255,255,255, 1)
-
 .nav__rigth
   display: grid
   grid-template-columns: repeat(4, 60px)
@@ -270,8 +273,8 @@ header
     position: relative
     .count
       position: absolute
-      top: -10px
-      left: 14px
+      top: -2px
+      left: 20px
       background: #26a69a
       align-items: center
       justify-content: center

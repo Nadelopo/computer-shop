@@ -14,10 +14,13 @@ export type RouterTo<T extends RouteName> = Exclude<
   params?: RouteParams<T>
 }
 
-export type CustomRouter = Omit<Router, 'push'> & {
+export type CustomRouter = Omit<Router, 'push' | 'replace'> & {
   push: <T extends RouteName>(
     to: RouterTo<T>
   ) => Promise<void | NavigationFailure | undefined>
+  replace: <T extends RouteName>(
+    to: RouterTo<T>
+  ) => Promise<NavigationFailure | void | undefined>
 }
 
 export const useCustomRouter = (): CustomRouter => {

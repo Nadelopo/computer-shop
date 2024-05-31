@@ -19,6 +19,10 @@ const props = withDefaults(defineProps<Props>(), {
   type: 'desktop'
 })
 
+const emit = defineEmits<{
+  apply: []
+}>()
+
 const { setQueryParams, productsPrice, warranty, manufacturer } =
   useFilterStore()
 const { specificationsValues, search, currentPage } = storeToRefs(
@@ -210,6 +214,7 @@ onUnmounted(() => {
         <v-button
           class="mb-4"
           width="100%"
+          @click="emit('apply')"
         >
           применить
         </v-button>

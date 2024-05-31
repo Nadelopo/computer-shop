@@ -188,7 +188,7 @@ watch(
                       }
                     }"
                   >
-                    <ActionIcon
+                    <action-icon
                       :svg="EditSvg"
                       paint-type="stroke"
                     />
