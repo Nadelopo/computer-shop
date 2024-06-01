@@ -14,9 +14,11 @@ export type ReviewReadWithDetails = ReviewRead & {
 }
 
 export type ReviewWithDetails = ReviewReadWithDetails & {
-  categories: {
-    id: number
-    enTitle: string
+  products: {
+    categories: {
+      id: number
+      enTitle: string
+    }
   }
 }
 

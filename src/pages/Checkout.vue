@@ -134,7 +134,7 @@ const addOrderedProducts = async (orderId: number) => {
 }
 
 const router = useCustomRouter()
-const { getMarkup } = useCartStore()
+const { getMarkup, setCartItems } = useCartStore()
 const onSubmit = handleSubmit(async () => {
   const {
     name,
@@ -173,8 +173,9 @@ const onSubmit = handleSubmit(async () => {
     return
   }
   await addOrderedProducts(data.id)
+  setCartItems()
   toast.success(`Заказ под номером ${data.id} оформлен`)
-  router.push({ name: 'Cart' })
+  router.push({ name: 'Home' })
 })
 </script>
 

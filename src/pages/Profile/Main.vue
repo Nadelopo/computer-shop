@@ -52,8 +52,8 @@ const { user } = storeToRefs(useUserStore())
           :to="{
             name: 'Product',
             params: {
-              categoryId: review.categories.id,
-              category: review.categories.enTitle,
+              categoryId: review.products.categories.id,
+              category: review.products.categories.enTitle,
               productId: review.productId
             },
             query: {

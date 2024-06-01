@@ -13,7 +13,7 @@ const setReviews = async (limit?: number) => {
   if (!user) return
   const { data } = await getAll('reviews', {
     match: { userId: user.id },
-    select: '*, users(name), categories(id, enTitle)',
+    select: '*, users(name), products(categories(id, enTitle))',
     order: ['created_at', { ascending: false }],
     limit
   })
