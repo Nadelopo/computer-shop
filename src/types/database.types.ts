@@ -273,8 +273,10 @@ export type Database = {
     Enums: {
       category_specification_condition: 'greater' | 'less'
       category_specification_type: 'number' | 'string' | 'union'
-      //prettier-ignore
-      order_status: 'processing' | 'awaiting payment' | 'preparing for shipment' | 'shipped' | 'delivered'| 'cancelled'| 'returned'| 'completed'| 'awaiting'
+      // prettier-ignore
+      order_status: 'processing'| 'shipped' | 'cancelled' | 'returned' | 'completed' | 'waiting in store'
+      // prettier-ignore
+      order_payment_status: 'pending' | 'processing' | 'paid' | 'failed' | 'cancelled' | 'refunded'
       order_type: 'selfcall' | 'delivery'
     }
     CompositeTypes: {

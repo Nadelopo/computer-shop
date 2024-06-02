@@ -38,6 +38,7 @@ export type OrderCreate = {
   created_at?: string
   price: number
   status: DbEnum<'order_status'>
+  paymentStatus: DbEnum<'order_payment_status'>
   userId: string | null
   type: DbEnum<'order_type'>
   shopAddress: string | null

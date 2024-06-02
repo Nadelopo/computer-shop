@@ -163,7 +163,8 @@ const onSubmit = handleSubmit(async () => {
     entrance: obtainType === 'delivery' ? entrance || null : null,
     deliveryDate: obtainType === 'delivery' ? formatDate : null,
     shopAddress: obtainType === 'selfcall' ? shopAddress : null,
-    status: 'awaiting',
+    status: 'processing',
+    paymentStatus: 'pending',
     price: price.value
   }
   const { data, error } = await createOne('orders', order)
