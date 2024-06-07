@@ -2,7 +2,7 @@ import { reactive, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { supabase } from '@/db/supabase'
 import { getAll } from '@/db/queries/tables'
-import { formatSearch } from '@/utils/formatSearch'
+import { getOrFilterForSearch } from '@/utils/getOrFilterForSearch'
 import {
   useFeatureNumberStaticFilter,
   useFeatureStringStaticFilter
@@ -117,7 +117,9 @@ export const useFilterStore = defineStore('filter', () => {
           'products.categoryId': categoryId,
           categorySpecificationsId: specification.id
         })
-        .ilike('products.title', formatSearch(search.value))
+        .or(getOrFilterForSearch(search.value, 'title'), {
+          foreignTable: 'products'
+        })
 
       if (specification.type === 'number') {
         query
