@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { onUnmounted, watch } from 'vue'
 
+defineProps<{
+  fullScreen?: boolean
+}>()
+
 defineOptions({
   inheritAttrs: false
 })
@@ -26,6 +30,7 @@ onUnmounted(() => {
       <div
         v-if="modelValue"
         class="dialog"
+        :class="{ full__screen: fullScreen }"
         @mousedown.stop="modelValue = false"
       >
         <div
@@ -52,6 +57,12 @@ onUnmounted(() => {
   z-index: 1000
   padding: 10px
   overflow: auto
+  &.full__screen
+    padding: 0
+    .dialog__content
+      border-radius: 0
+      width: 100%
+      height: 100%
 
 .dialog__content
   margin: auto

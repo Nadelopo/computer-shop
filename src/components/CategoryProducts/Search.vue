@@ -11,7 +11,7 @@ const router = useCustomRouter()
 const { search } = storeToRefs(useFilterStore())
 const { setQueryParams } = useFilterStore()
 
-const onEnter = () => {
+const applySearchQuery = () => {
   setQueryParams(router, route)
   ;(document.activeElement as HTMLElement).blur()
 }
@@ -22,7 +22,8 @@ const onEnter = () => {
     <v-input-text
       v-model="search"
       placeholder="поиск..."
-      @keyup.enter="onEnter"
+      @keyup.enter="applySearchQuery"
+      @clear=";(search = ''), applySearchQuery()"
     />
   </div>
 </template>

@@ -8,6 +8,7 @@ import {
 } from 'vue'
 import { vMaska, MaskaDetail } from 'maska'
 import { debounce as Debounce } from '@/utils/debounce'
+import { CrossSvg, SearchSvg } from '@/assets/icons'
 
 export interface VInputTextProps<T = string>
   extends /* @vue-ignore */ InputHTMLAttributes {
@@ -21,6 +22,9 @@ export interface VInputTextProps<T = string>
   showSpinButtons?: boolean
   debounce?: number
   error?: boolean
+  onSearch?: any
+  onClear?: any
+  textPlacement?: 'start' | 'center' | 'end'
 }
 
 const props = withDefaults(defineProps<VInputTextProps<T>>(), {
@@ -34,6 +38,8 @@ const props = withDefaults(defineProps<VInputTextProps<T>>(), {
 
 const emit = defineEmits<{
   'update:modelValue': [model: T, MaskaDetail?: MaskaDetail]
+  search: []
+  clear: []
 }>()
 
 defineOptions({
@@ -87,7 +93,7 @@ const bindOptions = computed(() => ({
   class: [
     'input',
     { hidden__spin__buttons: !props.showSpinButtons },
-    attrs.class
+    props.textPlacement && `text-${props.textPlacement}`
   ],
   id: props.id,
   ref: inputRef,
@@ -97,12 +103,25 @@ const bindOptions = computed(() => ({
   min: props.min,
   required: props.required
 }))
+
+defineExpose({ ref: inputRef })
+
+const showClearButton = computed(() => {
+  if (!props.onClear) return
+  if (typeof props.modelValue === 'string') {
+    return props.modelValue.length > 0
+  }
+  if (typeof props.modelValue === 'number') {
+    return props.modelValue > 0
+  }
+  return false
+})
 </script>
 
 <template>
   <div
     class="wrapper"
-    :class="{ error }"
+    :class="[{ error }, attrs.class]"
   >
     <input
       v-if="type === 'tel'"
@@ -116,12 +135,29 @@ const bindOptions = computed(() => ({
       v-bind="bindOptions"
       @input="chooseOnInputFunc"
     />
+    <button
+      v-if="showClearButton"
+      class="clear"
+      @mousedown.prevent="emit('clear')"
+      @focus.stop
+    >
+      <cross-svg transform="rotate(45)" />
+    </button>
+    <button
+      v-if="onSearch"
+      class="search"
+      @click="emit('search')"
+    >
+      <search-svg />
+    </button>
   </div>
 </template>
 
 <style scoped lang="sass">
 .wrapper
   position: relative
+  &:not(:has(.search)) .clear
+    right: 0
   &::after
     content: ''
     width: 100%
@@ -134,7 +170,7 @@ const bindOptions = computed(() => ({
     transform: scaleX(0)
   &.error::after
     background: var(--danger-semi-light)
-  &:focus-within::after
+  &:focus-within:has(input:focus)::after
     transform: scaleX(1)
   &.error
     input
@@ -153,4 +189,32 @@ const bindOptions = computed(() => ({
       margin: 0
   &:disabled
     opacity: .5
+
+.search
+  position: absolute
+  top: 0
+  right: 0
+  padding: 0 6px
+  &:focus-visible
+    outline: none
+    svg
+      fill: var(--main)
+  &:hover svg
+    fill: var(--main)
+  svg
+    fill: var(--gray)
+
+.clear
+  position: absolute
+  top: 0
+  right: 40px
+  padding: 0 6px
+  &:focus-visible
+    outline: none
+    svg
+      stroke: var(--main)
+  &:hover svg
+    stroke: var(--main)
+  svg
+    stroke: var(--gray)
 </style>
