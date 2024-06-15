@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onBeforeMount, onUnmounted, ref, watch } from 'vue'
+import { nextTick, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useMediaQuery } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
@@ -68,13 +68,12 @@ watch(
   }
 )
 
-const categoryId = Number(route.params.id)
 const loadingProperties = ref<Loading>('loading')
 const { getCategorySpecifications } = useCategoriesStore()
 const manufacturers = ref<
   { manufacturerId: number; manufacturerTitle: string }[]
 >([])
-onBeforeMount(async () => {
+const setSpecificationsValues = async (categoryId: number) => {
   const [{ data }, { data: manufacturersData }] = await Promise.all([
     getCategorySpecifications(categoryId),
     supabase
@@ -118,7 +117,14 @@ onBeforeMount(async () => {
   })
   await setFilterProperties()
   setFilteredProducts(categoryId)
-})
+}
+watch(
+  () => route.params.id,
+  (id) => {
+    setSpecificationsValues(Number(id))
+  },
+  { immediate: true }
+)
 
 const setFilterProperties = async () => {
   const query = route.query
@@ -167,16 +173,19 @@ const setFilterProperties = async () => {
   loadingProperties.value = 'success'
 }
 
+let routeParamCategory = route.params.category
 watch(
-  () => route.params,
+  () => route.query,
   async () => {
+    if (route.params.category !== routeParamCategory) {
+      routeParamCategory = route.params.category
+      return
+    }
     loading.value = 'loading'
     await setFilterProperties()
-    setFilteredProducts(categoryId)
+    setFilteredProducts(Number(route.params.id))
   },
-  {
-    flush: 'post'
-  }
+  { flush: 'post' }
 )
 
 const clickOnPaginate = () => {

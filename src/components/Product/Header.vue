@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useToast } from 'vue-toastification'
 import { useMediaQuery } from '@vueuse/core'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { formatPrice } from '@/utils/formatPrice'
@@ -41,6 +42,11 @@ const isLargeScreen = useMediaQuery('(width >= 1024px)')
 const buttonCartWidth = computed(() => {
   return isLargeScreen.value ? '400px' : '100%'
 })
+
+const copyProductCode = (id: number) => {
+  navigator.clipboard.writeText('#' + id)
+  useToast().success('Код скопирован')
+}
 </script>
 
 <template>
@@ -52,7 +58,15 @@ const buttonCartWidth = computed(() => {
     />
     <div class="w-full">
       <div class="product__title">
-        <div class="text-3xl font-medium">{{ product.title }}</div>
+        <div class="text-3xl font-medium">
+          <div> {{ product.title }}</div>
+          <span
+            class="product__code"
+            @click="copyProductCode(product.id)"
+          >
+            Код товара: #{{ product.id }}
+          </span>
+        </div>
         <div class="ml-auto hidden sm:block">
           <img
             class="max-h-14"
@@ -121,6 +135,15 @@ const buttonCartWidth = computed(() => {
     @media (width < 640px)
       grid-template-columns: 1fr
       grid-template-rows: auto auto
+  .product__code
+    font-size: 14px
+    font-weight: 300
+    margin-top: 4px
+    color: #444
+    cursor: pointer
+    &:hover
+      color: #000
+
   .list__btns
     margin-top: 6px
     max-width: 400px

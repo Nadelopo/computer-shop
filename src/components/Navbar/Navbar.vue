@@ -1,17 +1,36 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, toRef, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
+import { getAll } from '@/db/queries/tables'
 import { useCustomRouter } from '@/utils/useCustomRouter'
-import { useUserStore } from '../stores/userStore'
-import { VPopup } from '@/components/UI'
-import SidebarMobile from './Sidebar.mobile.vue'
-import { AvatarSvg, FavouriteSvg, CartSvg, ComparisonSvg } from '@/assets/icons'
-import { Role } from '@/types/tables/users.types'
+import { debounce } from '@/utils/debounce'
+import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
+import { getOrFilterForSearch } from '@/utils/getOrFilterForSearch'
 import { useCartStore } from '@/stores/cartStore'
-import AppLink from './AppLink.vue'
-import ActionIcon from './ActionIcon.vue'
-import type { RouteName } from '@/router/types'
+import { useUserStore } from '@/stores/userStore'
+import AppLink from '../AppLink.vue'
+import ActionIcon from '../ActionIcon.vue'
+import Suggestions from './Suggestions.vue'
+import Search from './Search.vue'
+import { VPopup, VModal, VButton } from '@/components/UI'
+import {
+  AvatarSvg,
+  FavouriteSvg,
+  CartSvg,
+  ComparisonSvg,
+  SearchSvg
+} from '@/assets/icons'
+import { Role } from '@/types/tables/users.types'
+import type { CategoryRead } from '@/types/tables/categories.types'
+
+export type Suggestion = {
+  id: number
+  title: string
+  type: 'category' | 'product'
+  enTitle?: string
+  categories?: Pick<CategoryRead, 'id' | 'enTitle'>
+}
 
 const { user, userLists } = storeToRefs(useUserStore())
 const { countCartItems } = storeToRefs(useCartStore())
@@ -24,65 +43,72 @@ const logout = async () => {
   router.push({ name: 'Home' })
 }
 
-const open = ref(false)
+const inputRef = ref<{ ref: { ref: HTMLInputElement } }>()
+const isSuggestionsOpen = onClickOutsideClose(
+  toRef(() => inputRef.value?.ref.ref)
+)
 
-const links: { text: string; page: RouteName }[] = [
-  {
-    text: 'Главная',
-    page: 'Home'
-  },
-  {
-    text: 'Товары',
-    page: 'Home'
-  },
-  {
-    text: 'О нас',
-    page: 'Home'
-  },
-  {
-    text: 'Доставка',
-    page: 'Home'
-  },
-  {
-    text: 'Контакты',
-    page: 'Home'
+const search = ref('')
+const suggestions = ref<Suggestion[]>([])
+const debouncedSearch = debounce(async () => {
+  const searchValue = search.value
+  if (!searchValue || searchValue === '#') return
+
+  const or = getOrFilterForSearch(searchValue, 'title')
+  const [{ data: categoriesData }, { data: productsData }] = await Promise.all([
+    getAll('categories', {
+      select: 'id, title, enTitle',
+      limit: 2,
+      or: [or]
+    }),
+    getAll('products', {
+      select: 'id, title, categories(id, enTitle)',
+      limit: 6,
+      or: [or]
+    })
+  ])
+
+  if (!categoriesData || !productsData) return
+  suggestions.value = [
+    ...categoriesData.map((c) => ({ ...c, type: 'category' as const })),
+    ...productsData.map((p) => ({ ...p, type: 'product' as const }))
+  ]
+  isSuggestionsOpen.value = true
+})
+
+const stopRequests = ref(false)
+watch(search, () => {
+  if (stopRequests.value) return
+  debouncedSearch()
+})
+
+const openModal = ref(false)
+const clear = () => {
+  search.value = ''
+  suggestions.value = []
+  if (openModal.value) {
+    openModal.value = false
   }
-]
+}
+
+const onKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    stopRequests.value = true
+  } else stopRequests.value = false
+}
+
+const setSearch = (title: string) => {
+  search.value = title
+  setTimeout(() => {
+    if (!inputRef.value) return
+    inputRef.value.ref.ref.selectionStart = title.length
+  })
+}
 </script>
 
 <template>
   <header class="mb-10 py-1">
     <div class="container">
-      <div class="root__small">
-        <div>
-          <button
-            class="dots"
-            @click="open = !open"
-          >
-            <div
-              class="dot"
-              :class="{ 'dot__active-f': open }"
-            />
-            <div
-              class="dot"
-              :class="{ dot__middle__active: open }"
-            />
-            <div
-              class="dot"
-              :class="{ 'dot__active-l': open }"
-            />
-          </button>
-        </div>
-        <div class="flex justify-end">
-          <app-link :to="{ name: 'Home' }">
-            <img
-              src="/img/logoChangeWhiteSizeFnew.png"
-              width="95"
-              alt=""
-            />
-          </app-link>
-        </div>
-      </div>
       <div class="root">
         <div class="logo">
           <app-link :to="{ name: 'Home' }">
@@ -93,20 +119,18 @@ const links: { text: string; page: RouteName }[] = [
             />
           </app-link>
         </div>
-        <ul class="nav">
-          <li
-            v-for="(link, i) in links"
-            :key="link.text"
-            class="li"
-          >
-            <app-link
-              :to="{ name: link.page }"
-              :class="{ li__line: i !== links.length - 1 }"
-            >
-              {{ link.text }}
-            </app-link>
-          </li>
-        </ul>
+        <Search
+          ref="inputRef"
+          v-model="search"
+          :suggestions
+          class="hidden lg:block"
+          @click="isSuggestionsOpen = true"
+          @navigate-to-product="
+            ;(isSuggestionsOpen = false), (suggestions = [])
+          "
+          @keydown="onKeyDown"
+          @clear="suggestions = []"
+        />
         <div class="nav__rigth">
           <div>
             <v-popup>
@@ -180,16 +204,46 @@ const links: { text: string; page: RouteName }[] = [
             </action-icon>
           </app-link>
         </div>
+        <div class="flex justify-end">
+          <ActionIcon
+            class="block lg:hidden"
+            :svg="SearchSvg"
+            variant="default"
+            @click="openModal = true"
+          />
+        </div>
+        <v-modal
+          v-model="openModal"
+          full-screen
+          class="py-2 xs:px-8 px-2"
+        >
+          <div class="flex gap-2 items-center">
+            <Search
+              v-model="search"
+              :suggestions
+              class="w-full"
+              @navigate-to-product=";(suggestions = []), (openModal = false)"
+              @clear="suggestions = []"
+            />
+            <v-button @click="openModal = false">отмена</v-button>
+          </div>
+          <Suggestions
+            :is-suggestions-open
+            :suggestions
+            mobile
+            @click-on-suggestion="clear"
+          />
+        </v-modal>
       </div>
     </div>
-  </header>
-  <Transition name="sidebar">
-    <sidebar-mobile
-      v-if="open"
-      v-model:is-open="open"
-      :links="links"
+    <Suggestions
+      v-if="!openModal"
+      :is-suggestions-open
+      :suggestions
+      @click-on-suggestion="clear"
+      @set-search="setSearch"
     />
-  </Transition>
+  </header>
 </template>
 
 <style scoped lang="sass">
@@ -213,11 +267,12 @@ header
 .root
   color: #fff
   display: grid
-  grid-template-columns:  240px 1fr 240px
+  // grid-template-columns:  240px 1fr 240px
+  grid-template-columns:  240px 1fr auto
   align-items: center
   height: 60px
-  @media (width <= 1023px)
-    display: none
+  // @media (width <= 1023px)
+  //   display: none
 
 .nav
   display: grid
@@ -269,6 +324,9 @@ header
   grid-template-columns: repeat(4, 60px)
   align-items: center
   justify-items: end
+  gap: 10px
+  @media (width < 1024px)
+    display: none
   a
     position: relative
     .count
