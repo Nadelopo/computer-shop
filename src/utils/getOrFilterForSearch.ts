@@ -6,7 +6,9 @@ import {
 
 export const getOrFilterForSearch = (search: string, column: string) => {
   const filter = column + '.ilike'
-  return `${filter}.${formatSearch(search)},${filter}.${formatSearch(
-    translateKeysEnToRu(search)
-  )},${filter}.${formatSearch(translateKeysRuToEn(search))}`
+  return search[0] === '#'
+    ? `id.eq.${search.slice(1)}`
+    : `${filter}.${formatSearch(search)},${filter}.${formatSearch(
+        translateKeysEnToRu(search)
+      )},${filter}.${formatSearch(translateKeysRuToEn(search))}`
 }
