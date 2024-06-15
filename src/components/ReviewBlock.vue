@@ -140,7 +140,6 @@ const evalatuationClasses = computed(() => {
   .evaluation__count
     width: 44px
     display: flex
-    justify-content: center
     align-items: center
     &.positive
       color: var(--main-semi-light)

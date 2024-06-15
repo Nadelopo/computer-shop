@@ -65,7 +65,8 @@ export const getAll = async <T extends Table = Table, S extends string = '*'>(
     gt,
     gte,
     lt,
-    lte
+    lte,
+    or
   } = params || {}
 
   const query = supabase.from(table).select(select, {
@@ -121,6 +122,9 @@ export const getAll = async <T extends Table = Table, S extends string = '*'>(
   }
   if (lte) {
     query.lte(lte[0] as string, lte[1])
+  }
+  if (or) {
+    query.or(or[0], { foreignTable: or[1] })
   }
 
   const response = await query

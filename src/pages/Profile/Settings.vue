@@ -89,8 +89,6 @@ const submit = handleSubmit(async (values) => {
   }
   loadingSubmit.value = 'success'
   useToast().success('Данные успешно обновлены')
-  console.log(phone)
-  console.log(values)
 })
 </script>
 

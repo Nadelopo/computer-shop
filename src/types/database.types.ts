@@ -274,9 +274,9 @@ export type Database = {
       category_specification_condition: 'greater' | 'less'
       category_specification_type: 'number' | 'string' | 'union'
       // prettier-ignore
-      order_status: 'processing'| 'shipped' | 'cancelled' | 'returned' | 'completed' | 'waiting in store'
+      order_status: 'processing'| 'shipped' | 'canceled' | 'returned' | 'completed' | 'waiting in store'
       // prettier-ignore
-      order_payment_status: 'pending' | 'processing' | 'paid' | 'failed' | 'cancelled' | 'refunded'
+      order_payment_status: 'pending' | 'processing' | 'paid' | 'failed' | 'canceled' | 'refunded'
       order_type: 'selfcall' | 'delivery'
     }
     CompositeTypes: {

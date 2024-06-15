@@ -28,6 +28,7 @@ export type GetAllParams<S, T extends Table> = {
   lt?: [column: ReadData<T>, value: number | string]
   gte?: [column: ReadData<T>, value: number | string]
   lte?: [column: ReadData<T>, value: number | string]
+  or?: [string, foreignTable?: Table]
 }
 
 export type UpdateMany<T> = T & Required<Pick<T, keyof T & 'id'>>
