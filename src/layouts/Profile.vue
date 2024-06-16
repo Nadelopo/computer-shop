@@ -4,27 +4,27 @@ import { useUserStore } from '@/stores/userStore'
 import { getAll } from '@/db/queries/tables'
 import AppLink from '@/components/AppLink.vue'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
+import type { Loading } from '@/types'
 
 const { isUserAuthenticated } = useUserStore()
-
 const reviews = ref<ReviewWithDetails[]>([])
-const setReviews = async (limit?: number) => {
+const loading = ref<Loading>('loading')
+onBeforeMount(async () => {
   const user = await isUserAuthenticated()
   if (!user) return
   const { data } = await getAll('reviews', {
     match: { userId: user.id },
     select: '*, users(name), products(categories(id, enTitle))',
     order: ['created_at', { ascending: false }],
-    limit
+    limit: 4
   })
+  if (data?.length === 0) {
+    loading.value = 'empty'
+    return
+  }
   if (data) {
     reviews.value = data
-  }
-}
-
-onBeforeMount(() => {
-  if (!reviews.value.length) {
-    setReviews(4)
+    loading.value = 'success'
   }
 })
 </script>
@@ -44,8 +44,8 @@ onBeforeMount(() => {
       </div>
       <div>
         <router-view
-          :reviews="reviews"
-          :set-reviews="setReviews"
+          :reviews
+          :loading
         />
       </div>
     </div>

@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
+import { formatPhoneNumber } from '@/utils/formatPhone'
 import ReviewBlock from '@/components/ReviewBlock.vue'
 import AppLink from '@/components/AppLink.vue'
-import { formatPhoneNumber } from '@/utils/formatPhone'
+import { VLoader } from '@/components/UI'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
+import type { Loading } from '@/types'
 
 defineProps<{
   reviews: ReviewWithDetails[]
+  loading: Loading
 }>()
 
 const { user } = storeToRefs(useUserStore())
@@ -43,7 +46,7 @@ const { user } = storeToRefs(useUserStore())
         </app-link>
       </div>
       <div
-        v-if="reviews.length"
+        v-if="loading === 'success'"
         class="last__reviews"
       >
         <app-link
@@ -67,12 +70,13 @@ const { user } = storeToRefs(useUserStore())
           />
         </app-link>
       </div>
+      <v-loader v-else-if="loading === 'loading'" />
+      <div v-else-if="loading === 'empty'">Вы не оставили ни одного отзыва</div>
     </div>
   </div>
 </template>
 
 <style scoped lang="sass">
-
 .user__info
   margin-bottom: 100px
   .row
