@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { supabase } from '@/db/supabase'
 import { getOneById, updateOneById } from '@/db/queries/tables'
-import { useCustomRouter } from '@/utils/useCustomRouter'
+import { useCustomRoute, useCustomRouter } from '@/utils/customRouter'
 import SpecificationsForm from '@/components/Admin/Specifications/SpecificationsForm.vue'
 import { VButton, VLoader } from '@/components/UI'
 import type {
@@ -18,7 +17,7 @@ import type { CategorySpecificationForm } from '@/components/Admin/Specification
 
 const { categories } = storeToRefs(useCategoriesStore())
 const form = ref<CategorySpecificationCreate>()
-const route = useRoute()
+const route = useCustomRoute('EditSpecification')
 const router = useCustomRouter()
 const loading = ref<Loading>('loading')
 let formInitType: CategorySpecificationRead['type'] = 'string'

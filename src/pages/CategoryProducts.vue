@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { nextTick, onUnmounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
 import { useMediaQuery } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useFilterStore } from '@/stores/filterStore'
-import { useCustomRouter } from '@/utils/useCustomRouter'
+import { useCustomRouter, useCustomRoute } from '@/utils/customRouter'
 import { VPagination, VButton } from '@/components/UI'
 import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
 import Search from '@/components/CategoryProducts/Search.vue'
@@ -44,7 +43,7 @@ const {
 } = useFilterStore()
 
 const router = useCustomRouter()
-const route = useRoute()
+
 const styles = ref('card__disable')
 
 onUnmounted(() => {
@@ -118,6 +117,8 @@ const setSpecificationsValues = async (categoryId: number) => {
   await setFilterProperties()
   setFilteredProducts(categoryId)
 }
+
+const route = useCustomRoute('CategoryProducts')
 watch(
   () => route.params.id,
   (id) => {

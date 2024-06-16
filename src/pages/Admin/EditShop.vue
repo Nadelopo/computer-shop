@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { useRoute } from 'vue-router'
 import { getOneById, updateOneById } from '@/db/queries/tables'
-import { useCustomRouter } from '@/utils/useCustomRouter'
+import { useCustomRoute, useCustomRouter } from '@/utils/customRouter'
 import ShopsForm from '@/components/Admin/Shops/ShopsForm.vue'
 import { VLoader } from '@/components/UI'
 import type { ShopForm } from '@/components/Admin/Shops/types'
 import type { Loading } from '@/types'
 
-const route = useRoute()
+const route = useCustomRoute('EditShop')
 const shopId = Number(route.params.id)
 const form = ref<ShopForm>()
 const loadingGet = ref<Loading>('loading')

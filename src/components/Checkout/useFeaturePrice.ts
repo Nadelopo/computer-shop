@@ -1,7 +1,7 @@
 import { onBeforeMount, ref } from 'vue'
 import { useCartStore } from '@/stores/cartStore'
 import { getAll } from '@/db/queries/tables'
-import { useCustomRouter } from '@/utils/useCustomRouter'
+import { useCustomRouter } from '@/utils/customRouter'
 import type { Loading } from '@/types'
 import type { ProductRead } from '@/types/tables/products.types'
 

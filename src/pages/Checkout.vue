@@ -13,7 +13,7 @@ import {
   updateManyById,
   updateOneById
 } from '@/db/queries/tables'
-import { useCustomRouter } from '@/utils/useCustomRouter'
+import { useCustomRouter } from '@/utils/customRouter'
 import { formatPrice } from '@/utils/formatPrice'
 import { VButton, VButtons, VLoader } from '@/components/UI'
 import { useLocalStorage } from '@/utils/localStorage'

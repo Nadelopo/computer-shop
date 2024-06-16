@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useCustomRouter } from '@/utils/useCustomRouter'
+import { useCustomRouter } from '@/utils/customRouter'
 import { getRouteTo } from './getRouteTo'
 import { VInputText } from '@/components/UI'
 import type { Suggestion } from './Navbar.vue'

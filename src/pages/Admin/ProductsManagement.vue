@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, watch, watchEffect } from 'vue'
-import { useRoute } from 'vue-router'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { createMany, createOne, getAll, getOneById } from '@/db/queries/tables'
 import ProductsList from '@/components/Admin/Products/ProductsList.vue'
@@ -16,8 +15,9 @@ import type { SpecificationCreate } from '@/types/tables/specifications.types'
 import type { SpecificationCreateForm } from '@/components/Admin/Products/types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 import type { PostgrestError } from '@supabase/supabase-js'
+import { useCustomRoute } from '@/utils/customRouter'
 
-const route = useRoute()
+const route = useCustomRoute('AdminProducts')
 const page = ref(Number(route.query.page) - 1 || 0)
 const limit = ref(6)
 const search = ref('')

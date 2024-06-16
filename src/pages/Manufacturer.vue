@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue'
-import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
 import { getAll } from '@/db/queries/tables'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
+import { useCustomRoute } from '@/utils/customRouter'
 import CategoriesList from '@/components/Manufacturer/CategoriesList.vue'
 import BestProductsList from '@/components/Manufacturer/BestProductsList.vue'
 import { VLoader } from '@/components/UI'
@@ -13,7 +13,7 @@ import type { Loading } from '@/types'
 import type { ProductCardData } from '@/components/ProductCard/types'
 
 const { manufacturers } = storeToRefs(useManufacturersStore())
-const route = useRoute()
+const route = useCustomRoute('Manufacturer')
 const manufacturerId = Number(route.params.id)
 const manufacturer = computed(() =>
   manufacturers.value.find((m) => m.id === manufacturerId)
@@ -26,9 +26,7 @@ onBeforeMount(async () => {
   const data = await Promise.all([
     supabase.from('distinct_categories').select().match({ manufacturerId }),
     getAll('products', {
-      match: {
-        manufacturerId
-      },
+      match: { manufacturerId },
       select:
         'id, img, discount, price, priceWithoutDiscount, title, rating, quantity, categories(id, enTitle)',
       gt: ['discount', 0]

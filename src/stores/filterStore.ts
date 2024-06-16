@@ -12,7 +12,7 @@ import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
 import type { PostgrestError } from '@supabase/supabase-js'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
-import type { CustomRouter } from '@/utils/useCustomRouter'
+import type { CustomRouter } from '@/utils/customRouter'
 
 type SpecificationsValues = Pick<
   CategorySpecificationRead,

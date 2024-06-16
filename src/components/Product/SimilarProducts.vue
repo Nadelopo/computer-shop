@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
 import { getAll } from '@/db/queries/tables'
+import { useCustomRoute } from '@/utils/customRouter'
 import { VCarousel, VCarouselSlide } from '../UI'
 import AppLink from '../AppLink.vue'
 import type { ProductRead } from '@/types/tables/products.types'
 
-const route = useRoute()
-
+const route = useCustomRoute('Product')
 const categoryId = Number(route.params.categoryId)
-const category = route.params.category as string
+const category = route.params.category
 
 const props = defineProps<{
   productPrice: number

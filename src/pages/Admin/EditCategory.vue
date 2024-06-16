@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, onBeforeMount } from 'vue'
-import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { getOneById } from '@/db/queries/tables'
-import { useCustomRouter } from '@/utils/useCustomRouter'
+import { useCustomRouter, useCustomRoute } from '@/utils/customRouter'
 import { VButton, VLoader } from '@/components/UI'
 import CategoriesForm from '@/components/Admin/Categories/CategoriesForm.vue'
 import type {
@@ -24,11 +23,10 @@ const categoryHasId = (
   return false
 }
 
-const route = useRoute()
-const router = useCustomRouter()
-
 const { categories } = storeToRefs(useCategoriesStore())
 const { updateCategory } = useCategoriesStore()
+
+const route = useCustomRoute('EditCategory')
 const categoryId = Number(route.params.id)
 
 const loading = ref<Loading>('loading')
@@ -50,6 +48,7 @@ onBeforeMount(async () => {
   loading.value = 'success'
 })
 
+const router = useCustomRouter()
 const loadingSave = ref<Loading>('success')
 const save = async (
   values: CategoryCreate,

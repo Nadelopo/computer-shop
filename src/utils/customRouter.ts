@@ -1,7 +1,9 @@
 import {
+  useRoute,
   useRouter,
-  Router,
-  NavigationFailure,
+  type RouteLocationNormalizedLoaded,
+  type Router,
+  type NavigationFailure,
   type RouteLocationRaw
 } from 'vue-router'
 import type { RouteName, RouteParams } from '@/router/types'
@@ -25,4 +27,24 @@ export type CustomRouter = Omit<Router, 'push' | 'replace'> & {
 
 export const useCustomRouter = (): CustomRouter => {
   return useRouter()
+}
+
+//-----------------------------------------------------------------
+
+type RouteModified<T extends RouteName> = {
+  [K in keyof RouteParams<T>]: string
+}
+
+export type CustomRoute<T extends RouteName> = Omit<
+  RouteLocationNormalizedLoaded,
+  'params'
+> & {
+  params: RouteModified<T>
+}
+
+export const useCustomRoute = <T extends RouteName>(
+  //eslint-disable-next-line
+  _: T
+): CustomRoute<T> => {
+  return useRoute() as CustomRoute<T>
 }

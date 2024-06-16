@@ -5,7 +5,7 @@ import { useField, useForm } from 'vee-validate'
 import { string } from 'yup'
 import { supabase } from '@/db/supabase'
 import { createOne } from '@/db/queries/tables'
-import { useCustomRouter } from '@/utils/useCustomRouter'
+import { useCustomRouter } from '@/utils/customRouter'
 import { VButton } from '@/components/UI'
 
 const router = useCustomRouter()

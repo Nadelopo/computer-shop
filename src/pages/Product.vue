@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
 import { getOneById, updateOneById } from '@/db/queries/tables'
+import { useCustomRoute } from '@/utils/customRouter'
 import { useLocalStorage } from '@/utils/localStorage'
 import Header from '@/components/Product/Header.vue'
 import ProductSpecifications from '@/components/Product/ProductSpecifications.vue'
@@ -15,7 +15,7 @@ export type UpdateProductRating = {
   rating: number
 }
 
-const route = useRoute()
+const route = useCustomRoute('Product')
 const product = ref<ProductWithSpecifications>()
 const loading = ref<Loading>('loading')
 

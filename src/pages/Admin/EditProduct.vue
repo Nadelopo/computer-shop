@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { useRoute } from 'vue-router'
 import { getOneById, updateManyById, updateOneById } from '@/db/queries/tables'
-import { useCustomRouter } from '@/utils/useCustomRouter'
+import { useCustomRoute, useCustomRouter } from '@/utils/customRouter'
 import ProductsForm from '@/components/Admin/Products/ProductsForm.vue'
 import { VButton, VLoader } from '@/components/UI'
 import type { Loading } from '@/types'
@@ -18,7 +17,7 @@ import type { UpdateMany } from '@/db/queries/types'
 type SpecificationUpdateMany = SpecificationUpdate &
   Required<Pick<SpecificationUpdate, 'id'>>
 
-const route = useRoute()
+const route = useCustomRoute('EditProducts')
 const productId = Number(route.params.id)
 const product = ref<ProductCreate | null>(null)
 const specifications = ref<SpecificationUpdateForm[]>([])
@@ -78,7 +77,7 @@ const back = async () => {
   router.push({
     name: 'AdminProducts',
     params: {
-      category: route.params.category as string,
+      category: route.params.category,
       id: Number(route.params.categoryId)
     }
   })
