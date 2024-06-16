@@ -38,13 +38,21 @@ import type {
   UserReadWithDetails,
   UserUpdate
 } from '@/types/tables/users.types'
-import type { ShopCreate, ShopRead, ShopUpdate } from './tables/shops.types'
-import type { OrderCreate, OrderRead, OrderUpdate } from './tables/orders.types'
+import type {
+  ShopCreate,
+  ShopRead,
+  ShopUpdate
+} from '../types/tables/shops.types'
+import type {
+  OrderCreate,
+  OrderRead,
+  OrderUpdate
+} from '../types/tables/orders.types'
 import type {
   OrderedProductCreate,
   OrderedProductRead,
   OrderedProductUpdate
-} from './tables/orderedProducts.types'
+} from '../types/tables/orderedProducts.types'
 
 export type Json =
   | string

@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import CategorySkeleton from '@/components/Manufacturer/CategorySkeleton.vue'
 import AppLink from '../AppLink.vue'
 import type { Loading } from '@/types'
-import type { View } from '@/types/database.types'
+import type { View } from '@/db/database.types'
 
 const props = defineProps<{
   loading: Loading

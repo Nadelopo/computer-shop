@@ -1,7 +1,7 @@
 import { supabase } from '@/db/supabase'
 import { formatSearch } from '../../utils/formatSearch'
 import type { GetAllParams, Id, QueryOrder, UpdateMany } from './types'
-import type { CreateData, Table, UpdateData } from '@/types/database.types'
+import type { CreateData, Table, UpdateData } from '@/db/database.types'
 
 type IsKeyInValues<K extends PropertyKey> = K extends Table ? true : false
 

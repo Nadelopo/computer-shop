@@ -1,4 +1,4 @@
-import type { DbEnum } from '../database.types'
+import type { DbEnum } from '@/db/database.types'
 import type { CategoryRead } from './categories.types'
 import type { OrderedProductRead } from './orderedProducts.types'
 import type { ProductRead } from './products.types'
@@ -8,6 +8,7 @@ export type OrderRead = {
   created_at: string
   price: number
   status: DbEnum<'order_status'>
+  paymentStatus: DbEnum<'order_payment_status'>
 } & (
   | OrderDetails<string, 'selfcall'>
   | OrderDetails<string, 'delivery'>

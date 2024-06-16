@@ -1,4 +1,4 @@
-import type { Database, Table } from '@/types/database.types'
+import type { Database, Table } from '../database.types'
 
 type ReadData<T extends keyof Database['public']['Tables']> =
   | keyof Database['public']['Tables'][T]['Row']

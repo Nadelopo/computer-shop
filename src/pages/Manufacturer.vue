@@ -8,7 +8,7 @@ import { useCustomRoute } from '@/utils/customRouter'
 import CategoriesList from '@/components/Manufacturer/CategoriesList.vue'
 import BestProductsList from '@/components/Manufacturer/BestProductsList.vue'
 import { VLoader } from '@/components/UI'
-import type { View } from '@/types/database.types'
+import type { View } from '@/db/database.types'
 import type { Loading } from '@/types'
 import type { ProductCardData } from '@/components/ProductCard/types'
 
