@@ -72,6 +72,8 @@ const widthWithHeight = computed(() => ({
       &.stroke svg
         stroke: $main
         fill: none
+      &:focus-visible
+        outline: $main 2px solid
     &.danger
       @if $bg
         background: var(--danger-light)
@@ -80,6 +82,8 @@ const widthWithHeight = computed(() => ({
       &.stroke svg
         stroke: $danger
         fill: none
+      &:focus-visible
+        outline: $danger 2px solid
     &.default
       @if $bg
         background: var(--back-sec)
@@ -90,7 +94,7 @@ const widthWithHeight = computed(() => ({
         fill: none
 
 .action-icon
-  transition: .2s
+  transition: background .2s
   border-radius: 4px
   padding: 8px
   cursor: pointer
@@ -100,6 +104,8 @@ const widthWithHeight = computed(() => ({
   &.stroke svg
     stroke: var(--gray)
     fill: none
+  &:focus-visible
+    outline: var(--gray) 2px solid
   @include mymixin("&:hover", true)
   @include mymixin("&.active", false, true)
 </style>

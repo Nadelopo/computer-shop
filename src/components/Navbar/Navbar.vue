@@ -132,42 +132,39 @@ const setSearch = (title: string) => {
           @clear="suggestions = []"
         />
         <div class="nav__rigth">
-          <div>
-            <v-popup>
-              <template #active>
-                <action-icon
-                  :svg="AvatarSvg"
-                  variant="default"
-                />
-              </template>
-              <template #content>
-                <app-link
-                  v-if="user?.role == Role.ADMIN"
-                  :to="{ name: 'AdminMain' }"
-                >
-                  admin
-                </app-link>
-                <div
-                  v-if="user"
-                  @click="logout"
-                >
-                  выйти
-                </div>
-                <app-link
-                  v-else
-                  :to="{ name: 'Auth' }"
-                >
-                  войти
-                </app-link>
-                <app-link :to="{ name: 'ProfileMain' }"> профиль </app-link>
-              </template>
-            </v-popup>
-          </div>
+          <v-popup>
+            <template #active>
+              <action-icon
+                :svg="AvatarSvg"
+                variant="default"
+              />
+            </template>
+            <template #content>
+              <app-link
+                v-if="user?.role == Role.ADMIN"
+                :to="{ name: 'AdminMain' }"
+              >
+                admin
+              </app-link>
+              <div
+                v-if="user"
+                @click="logout"
+              >
+                выйти
+              </div>
+              <app-link
+                v-else
+                :to="{ name: 'Auth' }"
+              >
+                войти
+              </app-link>
+              <app-link :to="{ name: 'ProfileMain' }"> профиль </app-link>
+            </template>
+          </v-popup>
           <app-link :to="{ name: 'Favourites' }">
             <action-icon
               :svg="FavouriteSvg"
               variant="default"
-              :svg-attrs="{ width: 25 }"
             >
               <span
                 v-if="userLists.favourites.length"
@@ -205,7 +202,7 @@ const setSearch = (title: string) => {
           </app-link>
         </div>
         <div class="flex justify-end">
-          <ActionIcon
+          <action-icon
             class="block lg:hidden"
             :svg="SearchSvg"
             variant="default"

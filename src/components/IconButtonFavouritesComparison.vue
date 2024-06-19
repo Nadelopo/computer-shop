@@ -28,7 +28,6 @@ const onIcon = async () => {
 <template>
   <action-icon
     :svg="ListIcon"
-    :svg-attrs="{ width: 24 }"
     :is-active
     :loading
     @click.prevent="onIcon"

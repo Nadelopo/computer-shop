@@ -90,6 +90,7 @@ const evalatuationClasses = computed(() => {
         <action-icon
           v-if="!static"
           :svg="ArrowSvg"
+          :svg-attrs="{ width: 16 }"
           :is-active="isArrowActive(review, 'like')"
           @click="onClick(review, 'like')"
         />
@@ -103,7 +104,7 @@ const evalatuationClasses = computed(() => {
         <action-icon
           v-if="!static"
           :svg="ArrowSvg"
-          :svg-attrs="{ transform: 'rotate(180)' }"
+          :svg-attrs="{ transform: 'rotate(180)', width: 16 }"
           variant="danger"
           :is-active="isArrowActive(review, 'dislike')"
           @click="onClick(review, 'dislike')"
