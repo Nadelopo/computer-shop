@@ -44,6 +44,7 @@ const remove = async (id: number, img: string) => {
     class="mt-6"
     line
   >
+    <template #header> Производители</template>
     <thead>
       <tr>
         <th>Наименование</th>

@@ -106,10 +106,10 @@ watch(
         query-param-name="specificationId"
       />
       <v-table
-        title="Характеристики категории"
         placement="center"
         line
       >
+        <template #header>Характеристики категории </template>
         <div
           v-if="loadingGetSpecifications === 'loading'"
           class="py-4"

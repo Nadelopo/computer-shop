@@ -44,8 +44,8 @@ const remove = async (id: number) => {
   <v-table
     class="mt-6"
     line
-    title="Магазины"
   >
+    <template #header> Магазины </template>
     <div
       v-if="loadingShops === 'loading'"
       class="p-4"
