@@ -39,6 +39,16 @@ const differentPreviousCount = computed(() => {
   const percentageIncrease = (increase / previousMothCount.value) * 100
   return Number(percentageIncrease.toFixed(2))
 })
+
+const text = computed(() => {
+  if (differentPreviousCount.value === Infinity) {
+    return 'В прошлом месяце не было продаж'
+  }
+  if (differentPreviousCount.value === 0) {
+    return 'В этом месяце не бло продаж'
+  }
+  return differentPreviousCount.value + ' %'
+})
 </script>
 
 <template>
@@ -56,7 +66,7 @@ const differentPreviousCount = computed(() => {
             :class="[differentPreviousCount < 0 && 'negative']"
           >
             <arrow-svg />
-            <div> {{ differentPreviousCount }}&nbsp;% </div>
+            <div>{{ text }} </div>
           </div>
         </div>
       </div>

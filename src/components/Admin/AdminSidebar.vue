@@ -172,6 +172,26 @@ watchEffect(() => {
             <span> Магазины </span>
           </app-link>
         </div>
+        <div
+          class="head"
+          title="Заказы"
+        >
+          <app-link
+            :to="{
+              name: 'AdminOrders'
+            }"
+          >
+            <div class="icon">
+              <img
+                src="/icons/orders.svg"
+                alt=""
+                class="invert"
+                style="width: 32px"
+              />
+            </div>
+            <span> Заказы </span>
+          </app-link>
+        </div>
       </div>
       <button
         class="toggle"

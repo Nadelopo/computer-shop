@@ -60,6 +60,17 @@ export const adminRoutes = [
         path: 'shops/edit/:id',
         name: 'EditShop',
         component: () => import('@/pages/Admin/EditShop.vue')
+      },
+      {
+        path: 'orders',
+        name: 'AdminOrders',
+        component: () => import('@/pages/Admin/Orders.vue')
+      },
+
+      {
+        path: 'order/:id',
+        name: 'AdminOrderDetails',
+        component: () => import('@/pages/Admin/OrderDetails.vue')
       }
     ]
   }

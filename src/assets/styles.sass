@@ -102,3 +102,24 @@ progress::-webkit-progress-value
 .v-popper__popper.v-popper__popper--hidden .v-popper__wrapper
   transition: transform .15s
   transform: scale(.5)
+
+// orders
+.order__status
+  border-radius: 4px
+  color: #fff
+  padding: 2px 4px
+  background: #65089dba
+  &.completed
+    background: var(--main)
+  &.canceled
+    background: var(--danger)
+
+.order__payment-status
+  border-radius: 4px
+  color: #fff
+  padding: 2px 4px
+  background: #65089dba
+  &.paid
+    background: var(--main)
+  &.canceled, &.failed
+    background: var(--danger)
