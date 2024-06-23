@@ -1,7 +1,6 @@
 import { reactive, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { supabase } from '@/db/supabase'
-import { getAll } from '@/db/queries/tables'
 import { getOrFilterForSearch } from '@/utils/getOrFilterForSearch'
 import {
   useFeatureNumberStaticFilter,
@@ -10,7 +9,6 @@ import {
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
-import type { PostgrestError } from '@supabase/supabase-js'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import type { CustomRouter } from '@/utils/customRouter'
 
@@ -37,12 +35,6 @@ type SpecificationsValues = Pick<
 export type CheckboxData = {
   id: number
   title: string
-}
-
-type QueryData = {
-  products: {
-    id: number
-  }
 }
 
 export const useFilterStore = defineStore('filter', () => {
@@ -126,7 +118,7 @@ export const useFilterStore = defineStore('filter', () => {
           for (const value of specification.values) {
             v += `valueString.cs.{${value}},`
           }
-  
+
           console.log(v)
           or += `and(categorySpecificationsId.eq.${
             specification.id
@@ -189,7 +181,7 @@ export const useFilterStore = defineStore('filter', () => {
       .gte('warranty', warranty.min.value)
       .lte('warranty', warranty.max.value)
       .in('id', numbersWithMaxRepetitions)
-      .ilike('title', formatSearch(search.value))
+      .or(getOrFilterForSearch(search.value, 'title'))
       .range(
         currentPage.value * limit.value,
         currentPage.value * limit.value + limit.value - 1
