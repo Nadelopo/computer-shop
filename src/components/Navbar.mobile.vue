@@ -112,8 +112,8 @@ const links = computed((): Links[] => [
       border-radius: 50px
       font-size: 12px
     &.router-link-exact-active
-      color: var(--color-text)
-      fill: var(--color-text)
+      color: var(--main-semi-light)
+      fill: var(--main-semi-light)
     svg
       height: 20px
       width: 20px

@@ -89,7 +89,7 @@ $actionBtnsWidth: 40px
     &.next
       right: -40px
   &:hover
-    background: var(--color-main)
+    background: var(--main)
     fill: #fff
   &.next
     rotate: 90deg

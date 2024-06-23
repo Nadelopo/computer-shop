@@ -6,6 +6,7 @@ interface Props extends /* @vue-ignore */ TextareaHTMLAttributes {
   autofocus?: true
   rows?: number
   autoGrow?: boolean
+  id?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -40,6 +41,7 @@ const rows = props.autoGrow ? 1 : props.rows ?? 2
   <div>
     <span class="wrapper">
       <textarea
+        :id="id"
         ref="textareaRef"
         v-model="modelValue"
         :required="required"
@@ -61,7 +63,7 @@ const rows = props.autoGrow ? 1 : props.rows ?? 2
     position: absolute
     bottom: 4px
     left: 0
-    background: var(--color-main)
+    background: var(--main)
     transition: transform 0.4s
     transform: scaleX(0)
   &:focus-within::after

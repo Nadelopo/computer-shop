@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
+import { formatPhoneNumber } from '@/utils/formatPhone'
 import ReviewBlock from '@/components/ReviewBlock.vue'
 import AppLink from '@/components/AppLink.vue'
+import { VLoader } from '@/components/UI'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
+import type { Loading } from '@/types'
 
 defineProps<{
   reviews: ReviewWithDetails[]
+  loading: Loading
 }>()
 
 const { user } = storeToRefs(useUserStore())
@@ -19,16 +23,16 @@ const { user } = storeToRefs(useUserStore())
       class="user__info"
     >
       <div class="row">
-        <div class="">Имя</div>
+        <div>Имя</div>
         <div>{{ user.name }}</div>
       </div>
       <div class="row">
-        <div class="">Почта</div>
+        <div>Почта</div>
         <div>{{ user.email }}</div>
       </div>
       <div class="row">
-        <div class=""></div>
-        <div>{{ user.phone }}</div>
+        <div>Телефон</div>
+        <div>{{ formatPhoneNumber(user.phone) }}</div>
       </div>
     </div>
     <div class="reviews__grid">
@@ -42,7 +46,7 @@ const { user } = storeToRefs(useUserStore())
         </app-link>
       </div>
       <div
-        v-if="reviews.length"
+        v-if="loading === 'success'"
         class="last__reviews"
       >
         <app-link
@@ -51,8 +55,8 @@ const { user } = storeToRefs(useUserStore())
           :to="{
             name: 'Product',
             params: {
-              categoryId: review.categories.id,
-              category: review.categories.enTitle,
+              categoryId: review.products.categories.id,
+              category: review.products.categories.enTitle,
               productId: review.productId
             },
             query: {
@@ -66,12 +70,13 @@ const { user } = storeToRefs(useUserStore())
           />
         </app-link>
       </div>
+      <v-loader v-else-if="loading === 'loading'" />
+      <div v-else-if="loading === 'empty'">Вы не оставили ни одного отзыва</div>
     </div>
   </div>
 </template>
 
 <style scoped lang="sass">
-
 .user__info
   margin-bottom: 100px
   .row

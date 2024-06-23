@@ -1,50 +1,90 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { VButton, VInputFile, VInputText, VTextarea } from '@/components/UI'
+import { useForm } from 'vee-validate'
+import { string } from 'yup'
+import { VButton, VInputFile, VTextarea } from '@/components/UI'
+import FormField from '@/components/FormField.vue'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 import type { ManufacturerCreate } from '@/types/tables/manufacturers.types'
 
-defineProps<{
+const props = defineProps<{
   loading?: boolean
   type: 'create' | 'update'
+  formData?: ManufacturerCreate
 }>()
 
 const emit = defineEmits<{
-  submit: [FileActions: InputFileActions | undefined]
+  submit: [
+    values: ManufacturerCreate,
+    FileActions: InputFileActions | undefined,
+    reset: () => void
+  ]
 }>()
 
-const form = defineModel<ManufacturerCreate>({
-  required: true
-})
+const { values, handleSubmit, resetForm, setValues, setFieldValue } =
+  useForm<ManufacturerCreate>({
+    initialValues: {
+      title: '',
+      description: '',
+      img: ''
+    },
+    validationSchema: {
+      title: string().required(),
+      description: string().required(),
+      img: string().required()
+    }
+  })
+
+if (props.type === 'update' && props.formData) {
+  setValues(props.formData)
+}
 
 const inputFileRef = ref<InputFileActions>()
+
+const submit = handleSubmit(() => {
+  emit('submit', values, inputFileRef.value, resetForm)
+})
 </script>
 
 <template>
   <form
-    class="list__form"
-    @submit.prevent="emit('submit', inputFileRef)"
+    class="flex flex-col gap-y-2"
+    @submit.prevent="submit"
   >
-    <div>
-      <label>наименование</label>
-      <v-input-text v-model.trim="form.title" />
-    </div>
-    <div>
-      <label>описание</label>
+    <form-field
+      name="title"
+      label="Наименование"
+    />
+    <form-field
+      v-slot="{ id }"
+      name="description"
+      label="Описание"
+    >
       <v-textarea
-        v-if="form.description !== undefined"
-        v-model="form.description"
+        :id="id"
         auto-grow
+        :required="false"
+        :model-value="values.description"
+        @update:model-value="setFieldValue('description', $event)"
       />
-    </div>
-    <div>
-      <label>изображение</label>
+    </form-field>
+    <form-field
+      v-slot="{ id }"
+      name="img"
+      label="Изображение"
+    >
       <v-input-file
+        :id="id"
         ref="inputFileRef"
-        :file-url="form.img"
+        :file-url="values.img"
         folder="manufacturers"
+        :required="false"
+        @update="
+          setFieldValue('img', ($event.target as HTMLInputElement).value)
+        "
+        @delete="setFieldValue('img', props.formData?.img ?? '')"
       />
-    </div>
+    </form-field>
     <div>
       <v-button :loading="loading">
         {{ type === 'create' ? 'добавить' : 'обновить' }}

@@ -1,4 +1,4 @@
-import type { Database, Table } from '@/types/database.types'
+import type { Database, Table } from '../database.types'
 
 type ReadData<T extends keyof Database['public']['Tables']> =
   | keyof Database['public']['Tables'][T]['Row']
@@ -24,10 +24,11 @@ export type GetAllParams<S, T extends Table> = {
   neq?: [column: ReadData<T>, value: number | string]
   range?: [from: number, to: number]
   onlyCount?: boolean
-  gt?: [column: ReadData<T>, value: number]
-  lt?: [column: ReadData<T>, value: number]
-  gte?: [column: ReadData<T>, value: number]
-  lte?: [column: ReadData<T>, value: number]
+  gt?: [column: ReadData<T>, value: number | string]
+  lt?: [column: ReadData<T>, value: number | string]
+  gte?: [column: ReadData<T>, value: number | string]
+  lte?: [column: ReadData<T>, value: number | string]
+  or?: [string, foreignTable?: Table]
 }
 
 export type UpdateMany<T> = T & Required<Pick<T, keyof T & 'id'>>

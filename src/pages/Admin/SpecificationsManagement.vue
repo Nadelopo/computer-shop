@@ -14,36 +14,24 @@ import type { CategorySpecificationForm } from '@/components/Admin/Specification
 
 const { createCategorySpecifications } = useCategoriesStore()
 
-const initialFormValue: CategorySpecificationForm = {
-  categoryId: null,
-  title: '',
-  enTitle: '',
-  type: 'number',
-  visible: false,
-  units: '',
-  step: 1,
-  min: 0,
-  max: 64,
-  variantsValues: null,
-  condition: 'greater'
-}
-
-const form = ref<CategorySpecificationForm>({ ...initialFormValue })
-
 const specifications = ref<CategorySpecificationRead[]>([])
 const loading = ref<Loading>('success')
-const create = async (setValue: boolean) => {
-  if (typeof form.value.categoryId !== 'number') return
+const create = async (
+  values: CategorySpecificationForm,
+  setValue: boolean,
+  resetForm: () => void
+) => {
+  if (typeof values.categoryId !== 'number') return
   loading.value = 'loading'
   const { data, error } = await createCategorySpecifications(
-    form.value as CategorySpecificationCreate
+    values as CategorySpecificationCreate
   )
   if (error) {
     loading.value = 'error'
     return
   }
   specifications.value.push(data)
-  form.value = { ...initialFormValue }
+  resetForm()
   loading.value = 'success'
 
   const { data: products, error: errorProducts } = await getAll('products', {
@@ -78,14 +66,11 @@ const create = async (setValue: boolean) => {
 </script>
 
 <template>
-  <div>
-    <admin-specifications-form
-      v-model="form"
-      type="create"
-      :loading="loading === 'loading'"
-      use-set-initial-value
-      @submit="create"
-    />
-    <specifications-list v-model="specifications" />
-  </div>
+  <admin-specifications-form
+    type="create"
+    :loading="loading === 'loading'"
+    use-set-initial-value
+    @submit="create"
+  />
+  <specifications-list v-model="specifications" />
 </template>

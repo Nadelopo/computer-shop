@@ -43,6 +43,7 @@ const titleActive = ref(true)
       <button class="cross">
         <cross-svg
           v-if="props.onDelete"
+          transform="rotate(45)"
           @mouseenter="titleActive = false"
           @mouseleave="titleActive = true"
           @click.prevent="emit('delete', item.id)"
@@ -62,7 +63,7 @@ const titleActive = ref(true)
       {{ item.title }}
     </div>
     <rating-stars :model-value="item.rating" />
-    <div class="flex gap-x-4">
+    <div class="flex gap-x-2">
       <icon-button-favourites-comparison
         v-if="props.favourites"
         list-title="favourites"
@@ -115,7 +116,7 @@ const titleActive = ref(true)
   &:hover
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px
     .title__active
-      color: var(--color-text)
+      color: var(--main-semi-light)
   .title
     display: -webkit-box
     -webkit-box-orient: vertical

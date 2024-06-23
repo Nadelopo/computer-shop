@@ -2,8 +2,10 @@
 import { computed, onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { deleteOneById, getAll } from '@/db/queries/tables'
-import { VTabs, VTable, VLoader, VButton, VConfirm } from '@/components/UI'
+import { VTabs, VTable, VLoader, VConfirm } from '@/components/UI'
 import AppLink from '@/components/AppLink.vue'
+import ActionIcon from '@/components/ActionIcon.vue'
+import { EditSvg, TrashSvg } from '@/assets/icons'
 import type { Loading } from '@/types'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 
@@ -104,10 +106,10 @@ watch(
         query-param-name="specificationId"
       />
       <v-table
-        title="Характеристики категории"
         placement="center"
         line
       >
+        <template #header>Характеристики категории </template>
         <div
           v-if="loadingGetSpecifications === 'loading'"
           class="py-4"
@@ -176,7 +178,7 @@ watch(
                 <span v-if="!specification.variantsValues?.length"> - </span>
               </td>
               <td>
-                <v-button class="mb-2">
+                <div class="flex">
                   <app-link
                     :to="{
                       name: 'EditSpecification',
@@ -186,22 +188,30 @@ watch(
                       }
                     }"
                   >
-                    изменить
+                    <action-icon
+                      :svg="EditSvg"
+                      paint-type="stroke"
+                    />
                   </app-link>
-                </v-button>
-                <v-confirm
-                  :message="
-                    'Вы точно хотите удалитть характеристику - ' +
-                    specification.title
-                  "
-                  :loading="
-                    loadingRemoveData === 'loading' &&
-                    currentRemoveSpecificationId === specification.id
-                  "
-                  type="danger"
-                  label="удалить"
-                  @ok="remove(specification.id)"
-                />
+                  <v-confirm
+                    v-slot="{ openModal }"
+                    :message="
+                      'Вы точно хотите удалитть характеристику - ' +
+                      specification.title
+                    "
+                    @ok="remove(specification.id)"
+                  >
+                    <action-icon
+                      :svg="TrashSvg"
+                      variant="danger"
+                      :loading="
+                        loadingRemoveData === 'loading' &&
+                        currentRemoveSpecificationId === specification.id
+                      "
+                      @click="openModal"
+                    />
+                  </v-confirm>
+                </div>
               </td>
             </tr>
           </tbody>

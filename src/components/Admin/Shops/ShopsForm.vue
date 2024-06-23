@@ -1,23 +1,48 @@
 <script setup lang="ts">
 import { ref, reactive, watchEffect } from 'vue'
-import { vMaska, MaskInputOptions, MaskaDetail } from 'maska'
+import { useForm } from 'vee-validate'
+import { string } from 'yup'
+import { vMaska, type MaskInputOptions, type MaskaDetail } from 'maska'
+import { useGeoSuggest, type LocationResult } from '@/utils/useGeoSuggest'
 import { VInputText, VButton } from '@/components/UI'
 import InputAddress from '@/components/InputAddress.vue'
-import { useGeoSuggest, type LocationResult } from '@/utils/useGeoSuggest'
-import type { ShopForm } from '@/components/Admin/Shops/types'
+import FormField from '@/components/FormField.vue'
+import type { ShopForm } from './types'
 
 type Props = {
   loadingSubmit?: boolean
   type?: 'create' | 'update'
+  formData?: ShopForm
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   type: 'create'
 })
-const model = defineModel<ShopForm>({ required: true })
 const emit = defineEmits<{
-  submit: []
+  submit: [values: ShopForm, reset: () => void]
 }>()
+
+const { values, handleSubmit, resetForm, setValues } = useForm<ShopForm>({
+  initialValues: {
+    address: '',
+    time: '',
+    phone: ''
+  },
+  validationSchema: {
+    address: string().required(),
+    time: string()
+      .required()
+      .test('time', 'Введите данные в полном формате', (v) => {
+        if (v.length !== 13) return false
+        return true
+      }),
+    phone: string().required().min(10)
+  }
+})
+
+if (props.type === 'update' && props.formData) {
+  setValues(props.formData)
+}
 
 const maskaOptions: MaskInputOptions = reactive({
   mask: '2#:5# - 2#:5#',
@@ -34,19 +59,21 @@ const maskaDetail = ref<MaskaDetail>({
   unmasked: ''
 })
 
-const phoneMaskaCompleted = ref(false)
-
-const onSubmit = () => {
-  if (!maskaDetail.value.completed || !phoneMaskaCompleted.value) {
-    return
-  }
-  emit('submit')
+const reset = async () => {
+  resetForm()
+  setTimeout(() => {
+    resetForm()
+  }, 10)
 }
+
+const onSubmit = handleSubmit(() => {
+  emit('submit', values, reset)
+})
 
 const locationResults = ref<LocationResult['results'] | null>(null)
 watchEffect(async () => {
   const { data } = await useGeoSuggest({
-    text: 'Ульяновск ' + model.value.address,
+    text: 'Ульяновск ' + values.address.trim(),
     type: 'house'
   })
   locationResults.value = data
@@ -55,36 +82,57 @@ watchEffect(async () => {
 
 <template>
   <form
-    class="list__form"
+    class="flex flex-col gap-y-2"
     @submit.prevent="onSubmit"
   >
-    <div>
+    <form-field
+      v-slot="{ isError, value, setValue, fieldName, id }"
+      name="address"
+      label="Адрес"
+    >
       <input-address
-        v-model="model.address"
+        :id="id"
+        :name="fieldName"
         :location-results="locationResults"
-        text="Адрес"
-        @click-on-suggestion="model.address = $event"
-      />
-    </div>
-    <div>
-      <label>Часы работы</label>
-      <v-input-text
-        v-model="model.time"
-        v-maska:[maskaOptions]="maskaDetail"
+        :error="isError"
         placeholder="00:00 - 00:00"
-        required
+        :model-value="value"
+        @update:model-value="setValue($event.trim())"
+        @click-on-suggestion="setValue($event)"
       />
-    </div>
-    <div>
-      <label>Телефон</label>
+    </form-field>
+    <form-field
+      v-slot="{ value, setValue, isError, id }"
+      name="time"
+      label="Часы работы"
+    >
       <v-input-text
-        v-model="model.phone"
+        :id="id"
+        v-maska:[maskaOptions]="maskaDetail"
+        name="time"
+        placeholder="00:00 - 00:00"
+        :required="false"
+        :error="isError"
+        :model-value="value"
+        @update:model-value="setValue($event)"
+      />
+    </form-field>
+
+    <form-field
+      v-slot="{ value, setValue, fieldName, id }"
+      name="phone"
+      label="Телефон"
+    >
+      <v-input-text
+        :id="id"
+        :name="fieldName"
+        :model-value="value"
         type="tel"
         placeholder="7 (###) ###-##-##"
-        required
-        @update:model-value="(_, b) => (phoneMaskaCompleted = b?.completed!)"
+        :required="false"
+        @update:model-value="setValue($event)"
       />
-    </div>
+    </form-field>
     <div>
       <v-button :loading="loadingSubmit">
         {{ type === 'create' ? 'создать' : 'сохранить' }}

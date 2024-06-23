@@ -164,12 +164,11 @@ const isSmall = useMediaQuery('(width < 520px)')
   transition: color 1s
   &:hover
     transition: color .3s
-    color: var(--color-text)
+    color: var(--main-semi-light)
   .card__head
     display: grid
     grid-template-columns: auto 1fr
     gap: 16px
-    align-items: center
     margin-bottom: 16px
     font-size: 18px
     @media (width < 1536px)

@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { nextTick, onBeforeMount, onUnmounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { nextTick, onUnmounted, ref, watch } from 'vue'
 import { useMediaQuery } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useFilterStore } from '@/stores/filterStore'
-import { useCustomRouter } from '@/utils/useCustomRouter'
+import { useCustomRouter, useCustomRoute } from '@/utils/customRouter'
 import { VPagination, VButton } from '@/components/UI'
 import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
 import Search from '@/components/CategoryProducts/Search.vue'
@@ -44,7 +43,7 @@ const {
 } = useFilterStore()
 
 const router = useCustomRouter()
-const route = useRoute()
+
 const styles = ref('card__disable')
 
 onUnmounted(() => {
@@ -68,13 +67,12 @@ watch(
   }
 )
 
-const categoryId = Number(route.params.id)
 const loadingProperties = ref<Loading>('loading')
 const { getCategorySpecifications } = useCategoriesStore()
 const manufacturers = ref<
   { manufacturerId: number; manufacturerTitle: string }[]
 >([])
-onBeforeMount(async () => {
+const setSpecificationsValues = async (categoryId: number) => {
   const [{ data }, { data: manufacturersData }] = await Promise.all([
     getCategorySpecifications(categoryId),
     supabase
@@ -118,7 +116,16 @@ onBeforeMount(async () => {
   })
   await setFilterProperties()
   setFilteredProducts(categoryId)
-})
+}
+
+const route = useCustomRoute('CategoryProducts')
+watch(
+  () => route.params.id,
+  (id) => {
+    setSpecificationsValues(Number(id))
+  },
+  { immediate: true }
+)
 
 const setFilterProperties = async () => {
   const query = route.query
@@ -167,16 +174,19 @@ const setFilterProperties = async () => {
   loadingProperties.value = 'success'
 }
 
+let routeParamCategory = route.params.category
 watch(
-  () => route.params,
+  () => route.query,
   async () => {
+    if (route.params.category !== routeParamCategory) {
+      routeParamCategory = route.params.category
+      return
+    }
     loading.value = 'loading'
     await setFilterProperties()
-    setFilteredProducts(categoryId)
+    setFilteredProducts(Number(route.params.id))
   },
-  {
-    flush: 'post'
-  }
+  { flush: 'post' }
 )
 
 const clickOnPaginate = () => {

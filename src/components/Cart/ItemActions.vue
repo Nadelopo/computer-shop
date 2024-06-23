@@ -55,6 +55,7 @@ const onChange = async (e: Event) => {
       <div class="w-7">
         <v-input-text
           class="text-center"
+          text-placement="center"
           type="number"
           :show-spin-buttons="false"
           :max="product.quantity"

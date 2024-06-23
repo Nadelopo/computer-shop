@@ -14,9 +14,11 @@ export type ReviewReadWithDetails = ReviewRead & {
 }
 
 export type ReviewWithDetails = ReviewReadWithDetails & {
-  categories: {
-    id: number
-    enTitle: string
+  products: {
+    categories: {
+      id: number
+      enTitle: string
+    }
   }
 }
 
@@ -31,7 +33,6 @@ export type ReviewCreate = {
   rating: ReviewRating
   userId: string
   usersRated?: UsersRated[]
-  categoryId: number
 }
 
 export type ReviewUpdate = Partial<ReviewCreate>

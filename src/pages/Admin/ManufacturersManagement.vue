@@ -9,30 +9,22 @@ import type { Loading } from '@/types'
 
 const { createManufacturer } = useManufacturersStore()
 
-const form = ref<ManufacturerCreate>({
-  title: '',
-  img: '',
-  description: ''
-})
-
 const loading = ref<Loading>('success')
-const create = async (fileActions: InputFileActions | undefined) => {
+const create = async (
+  values: ManufacturerCreate,
+  fileActions: InputFileActions | undefined,
+  resetForm: () => void
+) => {
   loading.value = 'loading'
   const { error: errorImage, url } = (await fileActions?.onSave()) || {}
   if (errorImage) {
     loading.value = 'error'
     return
   }
-  if (url) {
-    form.value.img = url
-  }
-  const data = await createManufacturer(form.value)
+  const img = url ?? ''
+  const data = await createManufacturer({ ...values, img })
   if (data) {
-    form.value = {
-      title: '',
-      img: '',
-      description: ''
-    }
+    resetForm()
   }
   fileActions?.clear()
   loading.value = 'success'
@@ -42,7 +34,6 @@ const create = async (fileActions: InputFileActions | undefined) => {
 <template>
   <div>
     <manufacturers-form
-      v-model="form"
       :loading="loading === 'loading'"
       type="create"
       @submit="create"

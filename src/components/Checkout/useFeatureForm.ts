@@ -1,5 +1,5 @@
-import { string } from '@/utils/validator'
 import { useForm } from 'vee-validate'
+import { number, string } from 'yup'
 
 export type ReceiptDetails = {
   city: string | null
@@ -38,27 +38,32 @@ export const useFeatureForm = () => {
         }
       },
       validationSchema: {
-        name: (value?: string) => {
-          return string(value).required().valid()
-        },
-        email: (value?: string) => {
-          return string(value).required().email().valid()
-        },
-        phone: (value?: string) => {
-          if (value?.length !== 17) return 'Поле должно содержать 11 цифр'
-          return true
-        },
-        'receiptDetails.apartment': async (value?: string | null) => {
+        name: string().required(),
+        email: string().required().email(),
+        phone: string().required().phone(),
+        'receiptDetails.apartment': (v?: string) => {
           if (values.obtainType === 'selfcall') return true
-          return string(value).required().valid()
+          return number()
+            .required()
+            .validate(v)
+            .then(() => true)
+            .catch((e) => e.errors)
         },
         'receiptDetails.address': (value?: string | null) => {
           if (values.obtainType === 'selfcall') return true
-          return string(value).required().valid()
+          return string()
+            .required()
+            .validate(value)
+            .then(() => true)
+            .catch((e) => e.errors)
         },
-        'receiptDetails.shopAddress': async (value: string) => {
+        'receiptDetails.shopAddress': (v?: string | null) => {
           if (values.obtainType === 'delivery') return true
-          return string(value).notEqual('Выберите магазин').valid()
+          return string()
+            .notOneOf(['Выберите магазин'])
+            .validate(v)
+            .then(() => true)
+            .catch((e) => e.errors)
         }
       }
     }

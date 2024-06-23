@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { supabase } from '@/db/supabase'
 import { getOneById, updateOneById } from '@/db/queries/tables'
-import { useCustomRouter } from '@/utils/useCustomRouter'
+import { useCustomRoute, useCustomRouter } from '@/utils/customRouter'
 import SpecificationsForm from '@/components/Admin/Specifications/SpecificationsForm.vue'
 import { VButton, VLoader } from '@/components/UI'
 import type {
@@ -14,10 +13,11 @@ import type {
 } from '@/types/tables/categorySpecifications.types'
 import type { Loading } from '@/types'
 import type { SpecificationRead } from '@/types/tables/specifications.types'
+import type { CategorySpecificationForm } from '@/components/Admin/Specifications/types'
 
 const { categories } = storeToRefs(useCategoriesStore())
 const form = ref<CategorySpecificationCreate>()
-const route = useRoute()
+const route = useCustomRoute('EditSpecification')
 const router = useCustomRouter()
 const loading = ref<Loading>('loading')
 let formInitType: CategorySpecificationRead['type'] = 'string'
@@ -35,31 +35,31 @@ onBeforeMount(async () => {
   loading.value = 'success'
 })
 
-const save = async () => {
-  if (!form.value?.id) return
+const save = async (values: CategorySpecificationForm) => {
+  if (!values?.id || !values.categoryId) return
   loading.value = 'loading'
-  const { error } = await updateOneById(
-    'category_specifications',
-    form.value.id,
-    form.value
-  )
+  const { error } = await updateOneById('category_specifications', values.id, {
+    ...values,
+    categoryId: values.categoryId
+  })
+
   if (error) return
-  if (formInitType !== form.value.type) {
+  if (formInitType !== values.type) {
     let updateValues: Pick<SpecificationRead, 'valueString' | 'valueNumber'> = {
-      valueNumber: form.value.min!,
+      valueNumber: values.min!,
       valueString: null
     }
-    if (form.value.type !== 'number') {
+    if (values.type !== 'number') {
       updateValues = {
         valueNumber: null,
-        valueString: form.value.variantsValues!
+        valueString: values.variantsValues!
       }
     }
 
     const { error: errorUpdate } = await supabase
       .from('specifications')
       .update(updateValues)
-      .eq('categorySpecificationsId', form.value.id)
+      .eq('categorySpecificationsId', values.id)
     if (errorUpdate) {
       console.error(errorUpdate)
     }
@@ -76,7 +76,7 @@ const save = async () => {
     >
       <specifications-form
         v-if="form"
-        v-model="form"
+        :form-data="form"
         type="update"
         @submit="save"
       />

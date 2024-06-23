@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { VModal, VButton } from '@/components/UI'
 
 type Props = {
-  label: string
+  label?: string
   message: string
   title?: string
   type?: 'primary' | 'danger' | 'noactive'
@@ -36,33 +36,40 @@ const onOk = () => {
   showModal.value = false
   emit('ok')
 }
+
+const openModal = () => (showModal.value = true)
 </script>
 
 <template>
   <v-button
+    v-if="!$slots.default"
     :variant="type"
     :width="width"
     :loading="loading"
     v-bind="$attrs"
-    @click="showModal = true"
+    @click="openModal"
   >
     {{ label }}
-    <v-modal v-model="showModal">
-      <div class="confirm">
-        <div class="label">{{ title }}</div>
-        <div class="message">{{ message }}</div>
-        <div class="buttons">
-          <v-button
-            variant="noactive"
-            @click="onCancel"
-          >
-            отменить
-          </v-button>
-          <v-button @click="onOk">подтвердить</v-button>
-        </div>
-      </div>
-    </v-modal>
   </v-button>
+  <slot
+    v-else
+    :open-modal
+  />
+  <v-modal v-model="showModal">
+    <div class="confirm">
+      <div class="label">{{ title }}</div>
+      <div class="message">{{ message }}</div>
+      <div class="buttons">
+        <v-button
+          variant="noactive"
+          @click="onCancel"
+        >
+          отменить
+        </v-button>
+        <v-button @click="onOk">подтвердить</v-button>
+      </div>
+    </div>
+  </v-modal>
 </template>
 
 <style scoped lang="sass">

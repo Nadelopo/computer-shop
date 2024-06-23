@@ -3,7 +3,7 @@ import { computed, ref, type ButtonHTMLAttributes } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
 import { VButton } from '@/components/UI'
-import { CartInButtonSvg, InCartSvg, AbsentForCart } from '@/assets/icons'
+import { CartInButtonSvg, InCartSvg, AbsentForCartSvg } from '@/assets/icons'
 
 interface Props extends /* @vue-ignore */ ButtonHTMLAttributes {
   productId: number
@@ -48,7 +48,7 @@ const width = computed(() => {
 const icon = computed(() => {
   if (productStatus.value === 'in') return InCartSvg
   if (productStatus.value === 'outside') return CartInButtonSvg
-  return AbsentForCart
+  return AbsentForCartSvg
 })
 
 const buttonText = computed(() => {

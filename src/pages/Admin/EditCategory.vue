@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, onBeforeMount } from 'vue'
-import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { getOneById } from '@/db/queries/tables'
-import { useCustomRouter } from '@/utils/useCustomRouter'
+import { useCustomRouter, useCustomRoute } from '@/utils/customRouter'
 import { VButton, VLoader } from '@/components/UI'
 import CategoriesForm from '@/components/Admin/Categories/CategoriesForm.vue'
 import type {
@@ -24,11 +23,10 @@ const categoryHasId = (
   return false
 }
 
-const route = useRoute()
-const router = useCustomRouter()
-
 const { categories } = storeToRefs(useCategoriesStore())
 const { updateCategory } = useCategoriesStore()
+
+const route = useCustomRoute('EditCategory')
 const categoryId = Number(route.params.id)
 
 const loading = ref<Loading>('loading')
@@ -50,18 +48,21 @@ onBeforeMount(async () => {
   loading.value = 'success'
 })
 
+const router = useCustomRouter()
 const loadingSave = ref<Loading>('success')
-const save = async (fileActions: InputFileActions | undefined) => {
+const save = async (
+  values: CategoryCreate,
+  fileActions: InputFileActions | undefined
+) => {
   loadingSave.value = 'loading'
-  if (categoryHasId(form.value)) {
+  if (categoryHasId(values)) {
     const data = await fileActions?.onSave()
     if (!data) return
     if (data.error) {
       loadingSave.value = 'error'
       return
     }
-    form.value.img = data.url
-    await updateCategory(form.value)
+    await updateCategory({ ...values, img: data.url })
     await router.push({
       name: 'AdminCategories'
     })
@@ -78,7 +79,7 @@ const back = async () => {
   <div class="container">
     <categories-form
       v-if="loading === 'success' && form"
-      v-model="form"
+      :form-data="form"
       type="update"
       :loading="loadingSave === 'loading'"
       class="pt-16"

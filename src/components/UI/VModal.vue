@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { onUnmounted, watch } from 'vue'
+
+defineProps<{
+  fullScreen?: boolean
+}>()
 
 defineOptions({
   inheritAttrs: false
@@ -14,6 +18,10 @@ watch(modelValue, () => {
     document.body.style.overflow = 'visible'
   }
 })
+
+onUnmounted(() => {
+  document.body.style.overflow = 'visible'
+})
 </script>
 
 <template>
@@ -22,12 +30,13 @@ watch(modelValue, () => {
       <div
         v-if="modelValue"
         class="dialog"
-        @click.stop="modelValue = false"
+        :class="{ full__screen: fullScreen }"
+        @mousedown.stop="modelValue = false"
       >
         <div
           class="dialog__content"
           v-bind="$attrs"
-          @click.stop
+          @mousedown.stop
         >
           <slot />
         </div>
@@ -48,6 +57,12 @@ watch(modelValue, () => {
   z-index: 1000
   padding: 10px
   overflow: auto
+  &.full__screen
+    padding: 0
+    .dialog__content
+      border-radius: 0
+      width: 100%
+      height: 100%
 
 .dialog__content
   margin: auto

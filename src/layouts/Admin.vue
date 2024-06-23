@@ -16,5 +16,5 @@ import AdminSidebar from '@/components/Admin/AdminSidebar.vue'
 .roottt
   display: grid
   grid-template-columns: auto 1fr
-  background: #fff
+  // background: #fff
 </style>

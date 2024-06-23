@@ -1,35 +1,30 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import { getAll } from '@/db/queries/tables'
 import AppLink from '@/components/AppLink.vue'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
+import type { Loading } from '@/types'
 
 const { isUserAuthenticated } = useUserStore()
-
-const route = useRoute()
-const pageName = route.name
-
 const reviews = ref<ReviewWithDetails[]>([])
-const setReviews = async (limit?: number) => {
+const loading = ref<Loading>('loading')
+onBeforeMount(async () => {
   const user = await isUserAuthenticated()
   if (!user) return
   const { data } = await getAll('reviews', {
     match: { userId: user.id },
-    select: '*, users(name), categories(id, enTitle)',
+    select: '*, users(name), products(categories(id, enTitle))',
     order: ['created_at', { ascending: false }],
-    limit
+    limit: 4
   })
+  if (data?.length === 0) {
+    loading.value = 'empty'
+    return
+  }
   if (data) {
     reviews.value = data
-  }
-}
-
-onBeforeMount(() => {
-  console.log('onBeforeMount')
-  if (!reviews.value.length && pageName === 'ProfileMain') {
-    setReviews(4)
+    loading.value = 'success'
   }
 })
 </script>
@@ -43,12 +38,14 @@ onBeforeMount(() => {
         <app-link :to="{ name: 'ProfileReviews' }"> Отзывы</app-link>
         <app-link :to="{ name: 'ProfileDelivery' }"> Доставка </app-link>
         <app-link :to="{ name: 'ProfileMain' }"> Гарантийный отдел </app-link>
-        <app-link :to="{ name: 'ProfileMain' }"> Настройки профиля </app-link>
+        <app-link :to="{ name: 'ProfileSettings' }">
+          Настройки профиля
+        </app-link>
       </div>
       <div>
-        <app-view
-          :reviews="reviews"
-          :set-reviews="setReviews"
+        <router-view
+          :reviews
+          :loading
         />
       </div>
     </div>
@@ -69,7 +66,7 @@ onBeforeMount(() => {
     font-weight: 400
     transition: .2s
     &:hover
-      color: var(--color-text)
+      color: var(--main-semi-light)
     &.router-link-exact-active
-      color: var(--color-text)
+      color: var(--main-semi-light)
 </style>

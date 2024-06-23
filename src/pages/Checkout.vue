@@ -13,7 +13,7 @@ import {
   updateManyById,
   updateOneById
 } from '@/db/queries/tables'
-import { useCustomRouter } from '@/utils/useCustomRouter'
+import { useCustomRouter } from '@/utils/customRouter'
 import { formatPrice } from '@/utils/formatPrice'
 import { VButton, VButtons, VLoader } from '@/components/UI'
 import { useLocalStorage } from '@/utils/localStorage'
@@ -134,7 +134,7 @@ const addOrderedProducts = async (orderId: number) => {
 }
 
 const router = useCustomRouter()
-const { getMarkup } = useCartStore()
+const { getMarkup, setCartItems } = useCartStore()
 const onSubmit = handleSubmit(async () => {
   const {
     name,
@@ -163,7 +163,8 @@ const onSubmit = handleSubmit(async () => {
     entrance: obtainType === 'delivery' ? entrance || null : null,
     deliveryDate: obtainType === 'delivery' ? formatDate : null,
     shopAddress: obtainType === 'selfcall' ? shopAddress : null,
-    status: 'awaiting',
+    status: 'processing',
+    paymentStatus: 'pending',
     price: price.value
   }
   const { data, error } = await createOne('orders', order)
@@ -173,7 +174,9 @@ const onSubmit = handleSubmit(async () => {
     return
   }
   await addOrderedProducts(data.id)
-  router.push({ name: 'Cart' })
+  setCartItems()
+  toast.success(`Заказ под номером ${data.id} оформлен`)
+  router.push({ name: 'Home' })
 })
 </script>
 
@@ -231,7 +234,6 @@ const onSubmit = handleSubmit(async () => {
         <method-obtain
           :obtain-type="values.obtainType"
           :receipt-details="values.receiptDetails"
-          @receipt-details="(field, value) => setFieldValue(field, value)"
         />
       </div>
     </div>

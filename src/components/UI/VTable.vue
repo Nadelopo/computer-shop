@@ -1,6 +1,5 @@
 <script setup lang="ts">
 type Props = {
-  title?: string
   striped?: boolean
   column?: boolean
   line?: boolean
@@ -26,10 +25,10 @@ const props = withDefaults(defineProps<Props>(), {
     }"
   >
     <div
-      v-if="title"
+      v-if="$slots.header"
       class="header"
     >
-      {{ title }}
+      <slot name="header" />
     </div>
     <div class="wrapper__one">
       <div class="wrappper__two">

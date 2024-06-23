@@ -2,10 +2,12 @@
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import { VTable, VButton, VConfirm } from '@/components/UI'
+import { VTable, VConfirm } from '@/components/UI'
 import { removeFromStorage } from '@/db/queries/storage'
 import { deleteOneById } from '@/db/queries/tables'
 import AppLink from '@/components/AppLink.vue'
+import ActionIcon from '@/components/ActionIcon.vue'
+import { EditSvg, TrashSvg } from '@/assets/icons'
 import type { Loading } from '@/types'
 
 const { categories } = storeToRefs(useCategoriesStore())
@@ -35,6 +37,7 @@ const remove = async (id: number, img: string) => {
     class="mt-6"
     line
   >
+    <template #header>Категории</template>
     <thead>
       <tr>
         <th>Наименование</th>
@@ -58,7 +61,7 @@ const remove = async (id: number, img: string) => {
           />
         </td>
         <td>
-          <v-button class="mb-2">
+          <div class="flex">
             <app-link
               :to="{
                 name: 'EditCategory',
@@ -68,19 +71,27 @@ const remove = async (id: number, img: string) => {
                 }
               }"
             >
-              изменить
+              <action-icon
+                :svg="EditSvg"
+                paint-type="stroke"
+              />
             </app-link>
-          </v-button>
-          <v-confirm
-            :message="'Вы точно хотите удалить категорю - ' + category.title"
-            :loading="
-              loadingRemove === 'loading' &&
-              currentRemoveCategoryId === category.id
-            "
-            type="danger"
-            label="удалить"
-            @ok="remove(category.id, category.img)"
-          />
+            <v-confirm
+              v-slot="{ openModal }"
+              :message="'Вы точно хотите удалить категорю - ' + category.title"
+              @ok="remove(category.id, category.img)"
+            >
+              <action-icon
+                :svg="TrashSvg"
+                variant="danger"
+                :loading="
+                  loadingRemove === 'loading' &&
+                  currentRemoveCategoryId === category.id
+                "
+                @click="openModal"
+              />
+            </v-confirm>
+          </div>
         </td>
       </tr>
     </tbody>

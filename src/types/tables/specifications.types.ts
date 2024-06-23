@@ -1,4 +1,4 @@
-import type { DbEnum } from '../database.types'
+import type { DbEnum } from '@/db/database.types'
 
 export type SpecificationRead = Required<SpecificationCreate>
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
-import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { useCustomRoute } from '@/utils/customRouter'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import {
   VInputText,
@@ -33,7 +33,7 @@ const emit = defineEmits<{
   submit: [fileActions: InputFileActions<string[]> | undefined]
 }>()
 
-const route = useRoute()
+const route = useCustomRoute('AdminProducts')
 watchEffect(() => {
   const categoryId = route.params.id
   if (!categoryId) return

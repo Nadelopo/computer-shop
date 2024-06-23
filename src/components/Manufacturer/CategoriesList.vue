@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import CategorySkeleton from '@/components/Manufacturer/CategorySkeleton.vue'
 import AppLink from '../AppLink.vue'
 import type { Loading } from '@/types'
-import type { View } from '@/types/database.types'
+import type { View } from '@/db/database.types'
 
 const props = defineProps<{
   loading: Loading
@@ -67,7 +67,7 @@ const categoriesFormat = computed(() => {
   gap: 2px
   transition: .2s
   &:hover
-    color: var(--color-text)
+    color: var(--main-semi-light)
   img
     max-height: 128px
 </style>

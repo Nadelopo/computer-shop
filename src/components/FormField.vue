@@ -1,72 +1,95 @@
-<script setup lang="ts" generic="T extends string | number">
+<script setup lang="ts" generic="T extends 'text' | 'number' | 'tel' = 'text'">
 import { computed, useSlots } from 'vue'
 import { useField } from 'vee-validate'
 import { VInputText } from '@/components/UI'
 import type { VInputTextProps } from './UI/VInputText.vue'
 
-type Props = { name: string; label?: string } & Omit<
-  VInputTextProps<T>,
-  'modelValue' | 'id' | 'required' | 'error'
->
+type Props = Omit<
+  VInputTextProps,
+  'modelValue' | 'id' | 'required' | 'error' | 'type'
+> & {
+  name?: string
+  label?: string
+  type?: T
+  allErors?: boolean
+  hideErrors?: boolean
+}
 
-const props = defineProps<Props>()
-
-const { value, errors, errorMessage } = useField<T>(props.name)
-
-const errorMessages = computed((): string[] => {
-  if (errors.value.length) {
-    return errors.value
-  }
-  return [errorMessage.value || ' ']
+const props = withDefaults(defineProps<Props>(), {
+  showSpinButtons: true,
+  name: '',
+  //@ts-ignore
+  type: 'text',
+  allErors: false
 })
 
-const id = props.name + '-input'
+const { value, errors, errorMessage, setValue } = useField<
+  typeof props.type extends 'text' | 'tel' ? string : number
+>(props.name)
+
+const errorMessages = computed((): string[] => {
+  const errorsValue = errors.value
+  if (errorsValue.length) {
+    return props.allErors ? errorsValue : [errorsValue[0]]
+  }
+  return ['']
+})
+
+const name = computed((): string => {
+  if (props.name.includes('.')) {
+    return props.name.split('.').at(-1) ?? ''
+  }
+  return props.name
+})
+
+const id = name.value + '-field'
 
 const slots = useSlots()
 </script>
 
 <template>
-  <div v-if="slots.default">
-    <slot
-      :errors="errorMessages"
-      :is-error="Boolean(errorMessage)"
-      :value="value"
-    />
-    <div
-      v-for="error in errorMessages"
-      :key="error"
-      class="error"
-    >
-      {{ error }}
-    </div>
-  </div>
-  <template v-else>
+  <div>
     <label
+      v-if="label !== undefined"
       :for="id"
       :class="{ 'text-danger-light': Boolean(errorMessage) }"
     >
       {{ label }}
     </label>
-    <v-input-text
-      v-bind="props"
+    <slot
+      v-if="slots.default"
       :id="id"
-      v-model="value"
-      :required="false"
-      :error="Boolean(errorMessage)"
+      :errors="errorMessages"
+      :is-error="Boolean(errorMessage)"
+      :value="value"
+      :set-value="setValue"
+      :field-name="name"
     />
-    <div
-      v-for="error in errorMessages"
-      :key="error"
-      class="error"
-    >
-      {{ error }}
-    </div>
-  </template>
+    <template v-else>
+      <v-input-text
+        v-bind="props"
+        :id="id"
+        v-model="value"
+        :name="name"
+        :required="false"
+        :error="Boolean(errorMessage)"
+      />
+    </template>
+    <template v-if="!hideErrors">
+      <div
+        v-for="error in errorMessages"
+        :key="error"
+        class="error"
+      >
+        {{ error }}
+      </div>
+    </template>
+  </div>
 </template>
 
 <style scoped lang="sass">
 .error
-  color: var(--danger-light)
+  color: var(--danger-semi-light)
   font-size: 14px
   min-height: 22px
 </style>

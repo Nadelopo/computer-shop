@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { updateOneById } from '@/db/queries/tables'
-import { useProductsStore } from '@/stores/productsStore'
+import { getOneById, updateOneById } from '@/db/queries/tables'
+import { useCustomRoute } from '@/utils/customRouter'
 import { useLocalStorage } from '@/utils/localStorage'
 import Header from '@/components/Product/Header.vue'
 import ProductSpecifications from '@/components/Product/ProductSpecifications.vue'
@@ -13,13 +12,10 @@ import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
 
 export type UpdateProductRating = {
-  countReviews: number
   rating: number
 }
 
-const { getProduct } = useProductsStore()
-
-const route = useRoute()
+const route = useCustomRoute('Product')
 const product = ref<ProductWithSpecifications>()
 const loading = ref<Loading>('loading')
 
@@ -27,7 +23,14 @@ const loadData = async () => {
   window.scroll(0, 0)
   const productId = Number(route.params.productId)
   loading.value = 'loading'
-  const { data, error } = await getProduct(productId)
+  const { data, error } = await getOneById(
+    'products',
+    productId,
+    '*, categories(id, enTitle), manufacturers(id, title), specifications(*, category_specifications!inner(id, title, units, visible, type))',
+    {
+      order: ['categorySpecificationsId', { foreignTable: 'specifications' }]
+    }
+  )
   if (error) {
     loading.value = 'error'
     return
@@ -54,8 +57,7 @@ const updateProductRating = (newData: UpdateProductRating) => {
   if (product.value) {
     product.value = {
       ...product.value,
-      rating: newData.rating,
-      countReviews: newData.countReviews
+      rating: newData.rating
     }
   }
 }
@@ -91,8 +93,6 @@ onBeforeMount(() => {
       />
       <Reviews
         :product-id="product.id"
-        :count-reviews="product.countReviews"
-        :product-rating="product.rating"
         @update-product-rating="updateProductRating"
       />
     </div>

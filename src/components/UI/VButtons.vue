@@ -26,10 +26,10 @@ const onClick = (value: { value: Value; title: string }, i: number) => {
   }
   if (Array.isArray(props.modelValue)) {
     let updatedValues: string[] = []
-    if (props.modelValue.includes(value.value as string)) {
+    if (props.modelValue.includes(value.value)) {
       updatedValues = props.modelValue.filter((item) => item !== value.value)
     } else {
-      updatedValues = [...props.modelValue, value.value as T]
+      updatedValues = [...props.modelValue, value.value]
     }
     emit('update:modelValue', updatedValues as T)
   } else {
@@ -39,7 +39,7 @@ const onClick = (value: { value: Value; title: string }, i: number) => {
 
 const isActive = (value: { value: Value; title: string }) => {
   if (Array.isArray(props.modelValue)) {
-    return props.modelValue.includes(value.value as string)
+    return props.modelValue.includes(value.value)
   } else if (value.value instanceof Date && props.modelValue instanceof Date) {
     return value.value.getTime() === props.modelValue.getTime()
   } else {

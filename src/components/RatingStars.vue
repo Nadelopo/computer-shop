@@ -98,29 +98,29 @@ const arr = [5, 4, 3, 2, 1]
     > label:hover
       transition: 0.3s
       transform: scale(1.1)
-      color: var(--color-main)
+      color: var(--main)
 
       ~ label
         transition: 0.3s
-        color: var(--color-main)
+        color: var(--main)
 
   > input:checked ~ label
-    color: var(--color-main)
+    color: var(--main)
     transition: 0.3s
-    text-shadow: 1px 1px var(--color-main)
+    text-shadow: 1px 1px var(--main)
 
   >
     input:checked
       + label:hover, ~ label:hover
-        color: var(--color-main)
+        color: var(--main)
         transition: 0.3s
 
         ~ label
-          color: var(--color-main)
+          color: var(--main)
 
 
     label:hover ~ input:checked ~ label
-      color: var(--color-main)
+      color: var(--main)
 
 
 .rating__static
@@ -135,7 +135,7 @@ const arr = [5, 4, 3, 2, 1]
   &:before
     content: '★'
   &.coloured
-    color: var(--color-main)
+    color: var(--main)
   &.small
     font-size: 16px
     width: 16px

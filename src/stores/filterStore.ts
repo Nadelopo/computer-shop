@@ -2,7 +2,7 @@ import { reactive, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { supabase } from '@/db/supabase'
 import { getAll } from '@/db/queries/tables'
-import { formatSearch } from '@/utils/formatSearch'
+import { getOrFilterForSearch } from '@/utils/getOrFilterForSearch'
 import {
   useFeatureNumberStaticFilter,
   useFeatureStringStaticFilter
@@ -12,7 +12,7 @@ import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
 import type { PostgrestError } from '@supabase/supabase-js'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
-import type { CustomRouter } from '@/utils/useCustomRouter'
+import type { CustomRouter } from '@/utils/customRouter'
 
 type SpecificationsValues = Pick<
   CategorySpecificationRead,
@@ -109,12 +109,9 @@ export const useFilterStore = defineStore('filter', () => {
     products.value = []
 
     let or = ''
-    // .or(
-    //   'and(categorySpecificationsId.eq.6,valueNumber.gte.12),and(categorySpecificationsId.eq.4,valueNumber.gte.1)'
-    // )
+
     const usedSpecifications: number[] = []
     for (const specification of specificationsValues.value) {
-      // console.log(index, specificationsValues.value.length)
       if (specification.type === 'number') {
         if (
           specification.minValue !== specification.min ||
@@ -129,7 +126,7 @@ export const useFilterStore = defineStore('filter', () => {
           for (const value of specification.values) {
             v += `valueString.cs.{${value}},`
           }
-          // or += `and(categorySpecificationsId.eq.${specification.id},valueString.overlaps.${specification.values}),`
+  
           console.log(v)
           or += `and(categorySpecificationsId.eq.${
             specification.id
@@ -239,119 +236,6 @@ export const useFilterStore = defineStore('filter', () => {
     })
     productCount.value = count ?? 0
     loading.value = 'success'
-
-    // const promises = []
-    // for (const specification of specificationsValues.value) {
-    //   const query = supabase
-    //     .from('specifications')
-    //     .select('products!inner(id)')
-    //     .match({
-    //       'products.categoryId': categoryId,
-    //       categorySpecificationsId: specification.id
-    //     })
-    //     .ilike('products.title', formatSearch(search.value))
-
-    //   if (specification.type === 'number') {
-    //     query
-    //       .gte('valueNumber', specification.minValue)
-    //       .lte('valueNumber', specification.maxValue)
-    //   } else {
-    //     if (specification.values.length) {
-    //       query.overlaps('valueString', specification.values)
-    //     }
-    //   }
-    //   promises.push(query.returns<QueryData[]>())
-    // }
-
-    // const results = await Promise.all(promises)
-
-    // let errorFilters: PostgrestError | null = null
-    // const data = results
-    //   .map((e) => {
-    //     if (e.error) {
-    //       errorFilters = e.error
-    //     }
-    //     return e.data
-    //   })
-    //   .filter((e): e is NonNullable<typeof e> => e !== null)
-    // if (errorFilters) {
-    //   loading.value = 'error'
-    //   return
-    // }
-    // const idList = data.map((e) => e.map((e) => e.products.id))
-    // const filteredProductsId = idList.reduce((a, b) =>
-    //   a.filter((c) => b.includes(c))
-    // )
-    // const productsIn: Partial<Record<'id' | 'manufacturerId', number[]>> = {
-    //   id: filteredProductsId
-    // }
-    // if (manufacturer.values.value.length) {
-    //   productsIn.manufacturerId = manufacturer.values.value
-    // }
-    // const {
-    //   data: productsData,
-    //   count,
-    //   error: productsError
-    // } = await getAll('products', {
-    //   select: '*, categories(id, enTitle), manufacturers(id, title)',
-    //   in: productsIn,
-    //   order: [sortColumn.value, { ascending: sortAscents[sortColumn.value] }],
-    //   between: [
-    //     {
-    //       column: 'price',
-    //       begin: productsPrice.min.value,
-    //       end: productsPrice.max.value
-    //     },
-    //     {
-    //       column: 'warranty',
-    //       begin: warranty.min.value,
-    //       end: warranty.max.value
-    //     }
-    //   ],
-    //   range: [
-    //     currentPage.value * limit.value,
-    //     currentPage.value * limit.value + limit.value - 1
-    //   ]
-    // })
-    // if (productsError) {
-    //   loading.value = 'error'
-    //   return
-    // }
-
-    // const { data: specificationsData, error: errorSpecifications } =
-    //   await getAll('specifications', {
-    //     select: '*, category_specifications(id, title, units, visible, type)',
-    //     in: { productId: productsData?.map((e) => e.id) || [] }
-    //   })
-    // if (errorSpecifications) {
-    //   loading.value = 'error'
-    //   return
-    // }
-    // productCount.value = count ?? 0
-
-    // if (productsData && specificationsData) {
-    //   products.value = productsData.map((p) => {
-    //     const specifications = specificationsData
-    //       .filter((s) => p.id === s.productId)
-    //       .map((s) => {
-    //         s.category_specifications.title =
-    //           s.category_specifications.title[0].toUpperCase() +
-    //           s.category_specifications.title.slice(1)
-    //         return s
-    //       })
-    //       .sort((a, b) =>
-    //         a.category_specifications.title.localeCompare(
-    //           b.category_specifications.title
-    //         )
-    //       )
-    //     return { ...p, specifications }
-    //   })
-    // }
-    // if (productCount.value === 0) {
-    //   loading.value = 'empty'
-    // } else {
-    //   loading.value = 'success'
-    // }
   }
 
   return {

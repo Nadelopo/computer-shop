@@ -110,7 +110,7 @@ const clickOnTab = (value: number | string) => {
     z-index: 1
   &::after
     transition: .2s
-    border-bottom: 2px solid var(--color-text)
+    border-bottom: 2px solid var(--main-semi-light)
     width: v-bind('tabLineStyles.width')
     margin-left: v-bind('tabLineStyles.marginLeft')
   .tab
@@ -122,9 +122,9 @@ const clickOnTab = (value: number | string) => {
       z-index: 1
       transition: color .3s
       &:hover
-        color: var(--color-text)
+        color: var(--main-semi-light)
       &.active
-        color: var(--color-text)
+        color: var(--main-semi-light)
         font-weight: 700
       .link
         white-space: nowrap

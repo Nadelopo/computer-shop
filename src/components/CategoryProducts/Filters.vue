@@ -2,7 +2,7 @@
 import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { useCustomRouter } from '@/utils/useCustomRouter'
+import { useCustomRouter } from '@/utils/customRouter'
 import { useFilterStore } from '@/stores/filterStore'
 import { VButton } from '@/components/UI'
 import InputFilter from '@/components/CategoryProducts/InputFilter.vue'
@@ -18,6 +18,10 @@ type Props = {
 const props = withDefaults(defineProps<Props>(), {
   type: 'desktop'
 })
+
+const emit = defineEmits<{
+  apply: []
+}>()
 
 const { setQueryParams, productsPrice, warranty, manufacturer } =
   useFilterStore()
@@ -210,6 +214,7 @@ onUnmounted(() => {
         <v-button
           class="mb-4"
           width="100%"
+          @click="emit('apply')"
         >
           применить
         </v-button>
@@ -247,11 +252,11 @@ onUnmounted(() => {
     transition: .2s
     border-radius: 4px
     &:hover, &.active
-      color: var(--color-text)
+      color: var(--main-semi-light)
       svg
-        fill: var(--color-text)
+        fill: var(--main-semi-light)
     &:hover
-      background: var(--light)
+      background: var(--main-light)
   :deep(.filter__content)
     padding: 0 16px
     > div

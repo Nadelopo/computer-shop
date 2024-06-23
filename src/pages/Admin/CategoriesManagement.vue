@@ -9,33 +9,25 @@ import type { InputFileActions } from '@/components/UI/VInputFile/types'
 
 const { createCategory } = useCategoriesStore()
 
-let form = ref<CategoryCreate>({
-  img: '',
-  title: '',
-  enTitle: ''
-})
-
 const loadingCreate = ref<Loading>('success')
-const create = async (fileActions: InputFileActions | undefined) => {
+const create = async (
+  values: CategoryCreate,
+  fileActions: InputFileActions | undefined,
+  resetForm: () => void
+) => {
   loadingCreate.value = 'loading'
   const { error: errorImage, url } = (await fileActions?.onSave()) || {}
   if (errorImage) {
     loadingCreate.value = 'error'
     return
   }
-  if (url) {
-    form.value.img = url
-  }
-  const { error } = await createCategory(form.value)
+  const img = url ?? ''
+  const { error } = await createCategory({ ...values, img })
   if (error) {
     loadingCreate.value = 'error'
     return
   }
-  form.value = {
-    img: '',
-    title: '',
-    enTitle: ''
-  }
+  resetForm()
   fileActions?.clear()
   loadingCreate.value = 'success'
 }
@@ -43,7 +35,6 @@ const create = async (fileActions: InputFileActions | undefined) => {
 
 <template>
   <categories-form
-    v-model="form"
     type="create"
     :loading="loadingCreate === 'loading'"
     @submit="create"

@@ -1,4 +1,4 @@
-import type { DbEnum } from '../database.types'
+import type { DbEnum } from '@/db/database.types'
 
 export type CategorySpecificationRead = Required<CategorySpecificationCreate>
 
@@ -29,4 +29,6 @@ export type CategorySpecificationCreate = {
     }
 )
 
-export type CategorySpecificationUpdate = Partial<CategorySpecificationCreate>
+export type CategorySpecificationUpdate = Partial<{
+  [K in keyof CategorySpecificationCreate]: CategorySpecificationCreate[K]
+}>

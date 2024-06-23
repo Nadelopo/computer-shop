@@ -5,6 +5,7 @@ import { formatPrice } from '@/utils/formatPrice'
 import { useFeatureFilteredProducts } from './useFeatureFilteredProducts'
 import IconButtonFavouritesComparison from '../IconButtonFavouritesComparison.vue'
 import ButtonCart from '../ButtonCart.vue'
+import ActionIcon from '../ActionIcon.vue'
 import AppLink from '../AppLink.vue'
 import { ArrowSvg, CrossSvg } from '@/assets/icons'
 import type { ComparisonProduct, CategorySpecifications } from './types'
@@ -153,8 +154,12 @@ const isSmall = useMediaQuery('(max-width: 420px)')
                 />
               </app-link>
               <span class="ml-auto pr-4">
-                <cross-svg
-                  class="cross"
+                <action-icon
+                  :svg="CrossSvg"
+                  :svg-attrs="{ transform: 'rotate(45)' }"
+                  variant="danger"
+                  paint-type="stroke"
+                  class="block"
                   @click="deleteItem(product)"
                 />
                 <icon-button-favourites-comparison
@@ -254,7 +259,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
     &:nth-child(odd)
       background: #fff
     &:not(:first-child):not(:has(button)):hover
-      background: var(--light)
+      background: var(--main-light)
 
   .wrapper__cells
     position: relative
@@ -289,7 +294,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
       justify-content: space-between
       align-items: start
     .best__value
-      color: var(--color-text)
+      color: var(--main-semi-light)
     a
       max-width: 70%
     img
@@ -317,7 +322,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
     padding: 8px
     transition: .2s
     &:hover
-      background: var(--color-main)
+      background: var(--main)
       fill: #fff
     &.next
         right: 10px
@@ -337,11 +342,5 @@ const isSmall = useMediaQuery('(max-width: 420px)')
     &:before
       content: '★'
     &.coloured
-      color: var(--color-main)
-  .cross
-    transition: .2s
-    cursor: pointer
-    margin-bottom: 10px
-    &:hover
-      transform: scale(1.3)
+      color: var(--main)
 </style>

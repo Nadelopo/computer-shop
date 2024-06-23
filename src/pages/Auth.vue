@@ -2,10 +2,10 @@
 import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
 import { useField, useForm } from 'vee-validate'
+import { string } from 'yup'
 import { supabase } from '@/db/supabase'
 import { createOne } from '@/db/queries/tables'
-import { useCustomRouter } from '@/utils/useCustomRouter'
-import { string } from '@/utils/validator'
+import { useCustomRouter } from '@/utils/customRouter'
 import { VButton } from '@/components/UI'
 
 const router = useCustomRouter()
@@ -20,18 +20,18 @@ const { handleSubmit } = useForm<{
 
 const { value: email, errorMessage: errorEmail } = useField<string>(
   'email',
-  (v) => string(v).required().email().valid()
+  string().required().email()
 )
 const { value: password, errorMessage: errorPassword } = useField<string>(
   'password',
-  (v) => string(v).required().min(6).max(50).valid()
+  string().required().min(6).max(50)
 )
 const { value: name, errorMessage: errorName } = useField<string>(
   'name',
-  (v) => {
-    if (isSignIn.value) return true
-    return string(v).required().min(2).max(50).valid()
-  }
+  string().when({
+    is: () => !isSignIn.value,
+    then: () => string().required().onlyLetters().min(2).max(50)
+  })
 )
 
 const toast = useToast()
@@ -106,7 +106,7 @@ const submit = handleSubmit(() => {
       </div>
       <div
         v-if="!isSignIn"
-        class="flex flex-col"
+        class="flex flex-col mb-4 sm:mb-0"
       >
         <label
           class="label"
@@ -121,9 +121,11 @@ const submit = handleSubmit(() => {
           name="name"
           type="text"
         />
-        <div class="text-danger-light pl-4 h-6">{{ errorName }}</div>
+        <div class="text-danger-light pl-4 h-6 text-sm sm:text-base">
+          {{ errorName }}
+        </div>
       </div>
-      <div class="flex flex-col">
+      <div class="flex flex-col mb-4 sm:mb-0">
         <label
           class="label"
           for="email"
@@ -137,7 +139,9 @@ const submit = handleSubmit(() => {
           class="input"
           type="email"
         />
-        <div class="text-danger-light pl-4 h-6">{{ errorEmail }}</div>
+        <div class="text-danger-light pl-4 h-6 text-sm sm:text-base">
+          {{ errorEmail }}
+        </div>
       </div>
       <div class="flex flex-col">
         <label
@@ -152,7 +156,9 @@ const submit = handleSubmit(() => {
           name="password"
           type="password"
         />
-        <div class="text-danger-light pl-4 h-6">{{ errorPassword }}</div>
+        <div class="text-danger-light pl-4 h-6 text-sm sm:text-base">
+          {{ errorPassword }}
+        </div>
       </div>
       <div class="mb-6 mt-4">
         <v-button class="btnn">

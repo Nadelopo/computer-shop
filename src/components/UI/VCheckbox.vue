@@ -64,10 +64,10 @@ const value = computed(() => {
   margin-bottom: 0
   input:checked
     & + .checkbox
-      border-color: var(--color-main)
+      border-color: var(--main)
       svg
         path
-          fill: var(--color-main)
+          fill: var(--main)
         polyline
           stroke-dashoffset: 0
   &:hover
@@ -90,7 +90,7 @@ const value = computed(() => {
       left: -2px
       path
         fill: none
-        stroke: var(--color-main)
+        stroke: var(--main)
         stroke-width: 2
         stroke-linecap: round
         stroke-linejoin: round
