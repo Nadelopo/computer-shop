@@ -118,8 +118,6 @@ export const useFilterStore = defineStore('filter', () => {
           for (const value of specification.values) {
             v += `valueString.cs.{${value}},`
           }
-
-          console.log(v)
           or += `and(categorySpecificationsId.eq.${
             specification.id
           },or(${v.slice(0, -1)})),`
@@ -140,12 +138,7 @@ export const useFilterStore = defineStore('filter', () => {
       loading.value = 'error'
       return
     }
-    console.log(
-      data.map((e) => e.products?.id),
-      error,
-      usedSpecifications.length
-    )
-    console.log(or)
+
     let idList = data
       .map((e) => e.products?.id)
       .filter((e): e is number => Boolean(e))
@@ -168,7 +161,6 @@ export const useFilterStore = defineStore('filter', () => {
       .filter(([, value]) => value === maxCount)
       .map(([key]) => key)
 
-    console.log(usedSpecifications, numbersWithMaxRepetitions)
     const queryProduct = supabase
       .from('products')
       .select(
@@ -197,7 +189,6 @@ export const useFilterStore = defineStore('filter', () => {
       error: productsError,
       count
     } = await queryProduct.returns<ProductWithSpecifications[]>()
-    console.log(productsData)
     if (productsError) {
       loading.value = 'error'
       return

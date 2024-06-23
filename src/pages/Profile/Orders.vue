@@ -41,7 +41,6 @@ const loadingOrders = async () => {
   totalOrders.value = count ?? 0
   orders.value = data
   showProducts.value = Array(data.length).fill(false)
-  console.log(data)
   loading.value = 'success'
 }
 watch(currentPage, loadingOrders, { immediate: true })

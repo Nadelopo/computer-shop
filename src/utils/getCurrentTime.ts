@@ -5,7 +5,7 @@ export const getCurrentTime = async (): Promise<Date | null> => {
     const data = await response.json()
     return data.datetime
   } catch (error) {
-    console.log(error)
+    console.error(error)
     return null
   }
 }

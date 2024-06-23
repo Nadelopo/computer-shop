@@ -40,12 +40,9 @@ const navigateToProduct = () => {
     const idNotFound =
       suggestionsValue.find((s) => s.id === Number(search.value.slice(1))) ===
       undefined
-    console.log(idNotFound, suggestionsValue[0])
 
     if (search.value.length === 1 || idNotFound) return
     if (!suggestionsValue[0]?.categories) return
-    console.log('test')
-
     router.push({
       name: 'Product',
       params: {
