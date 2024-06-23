@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { deleteOneById, getAll } from '@/db/queries/tables'
+import { useToast } from 'vue-toastification'
+import { deleteOneById, getAll, getOneById } from '@/db/queries/tables'
 import { useUserStore } from '@/stores/userStore'
 import { useOrders } from '@/utils/useOrders'
 import { formatPrice } from '@/utils/formatPrice'
-import { VTable, VPagination, VLoader, VConfirm } from '@/components/UI'
+import {
+  VTable,
+  VPagination,
+  VLoader,
+  VConfirm,
+  VInputText
+} from '@/components/UI'
 import AppLink from '@/components/AppLink.vue'
 import ActionIcon from '@/components/ActionIcon.vue'
 import { EditSvg, TrashSvg } from '@/assets/icons'
@@ -55,10 +62,45 @@ const removeOrder = async (id: number) => {
   if (error) return
   orders.value = orders.value.filter((e) => e.id !== data.id)
 }
+
+const searchOrderId = ref<number | null>(null)
+
+const searchOrder = async () => {
+  if (!searchOrderId.value) {
+    loadOrders()
+    return
+  }
+  const { data, error } = await getOneById(
+    'orders',
+    searchOrderId.value,
+    'id, created_at, name, price, status, paymentStatus'
+  )
+  if (error) {
+    useToast().warning('Заказ не найден')
+    return
+  }
+  orders.value = [data]
+  totalOrders.value = 0
+}
+
+const clear = () => {
+  searchOrderId.value = null
+  if (orders.value.length <= 1) {
+    loadOrders()
+  }
+}
 </script>
 
 <template>
   <div>
+    <v-input-text
+      v-model="searchOrderId"
+      placeholder="номер заказа"
+      class="mb-2"
+      @keyup.enter="searchOrder"
+      @search="searchOrder"
+      @clear="clear"
+    />
     <v-table v-if="loading === 'success'">
       <template #header> Заказы</template>
       <thead>
@@ -136,6 +178,7 @@ const removeOrder = async (id: number) => {
       v-model="currentPage"
       :item-count="totalOrders"
       :page-size="limit"
+      class="mt-4"
     />
   </div>
 </template>
