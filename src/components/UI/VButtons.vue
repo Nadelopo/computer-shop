@@ -1,15 +1,16 @@
-<script setup lang="ts" generic="T ">
+<script
+  setup
+  lang="ts"
+  generic="T, U extends {value: Option<T>; title: string}"
+>
 import { ref, watchEffect } from 'vue'
 import { VButton } from '@/components/UI'
 
-type Value = T extends Array<infer U> ? U : T
+export type Option<T> = T extends Array<infer V> ? V : T
 
 const props = defineProps<{
   modelValue: T
-  options: {
-    value: Value
-    title: string
-  }[]
+  options: U[]
   loading?: boolean
   width?: string
 }>()
@@ -19,7 +20,7 @@ const emit = defineEmits<{
 }>()
 
 const currentBtnIndex = ref(-1)
-const onClick = (value: { value: Value; title: string }, i: number) => {
+const onClick = (value: { value: Option<T>; title: string }, i: number) => {
   if (props.loading !== undefined) {
     currentBtnIndex.value = i
     if (props.loading) return
@@ -37,7 +38,7 @@ const onClick = (value: { value: Value; title: string }, i: number) => {
   }
 }
 
-const isActive = (value: { value: Value; title: string }) => {
+const isActive = (value: { value: Option<T>; title: string }) => {
   if (Array.isArray(props.modelValue)) {
     return props.modelValue.includes(value.value)
   } else if (value.value instanceof Date && props.modelValue instanceof Date) {
@@ -59,16 +60,22 @@ if (props.loading !== undefined) {
 <template>
   <div>
     <v-button
-      v-for="(value, i) in options"
+      v-for="(option, i) in options"
       :key="i"
       type="button"
-      :variant="isActive(value) ? 'primary' : 'noactive'"
+      :variant="isActive(option) ? 'primary' : 'noactive'"
       :loading="loading && currentBtnIndex === i"
       class="buttons__button"
       :width="width"
-      @click="onClick(value, i)"
+      @click="onClick(option, i)"
     >
-      {{ value.title }}
+      <slot
+        v-if="$slots.default"
+        v-bind="option"
+      />
+      <template v-else>
+        {{ option.title }}
+      </template>
     </v-button>
   </div>
 </template>

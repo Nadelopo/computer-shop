@@ -143,11 +143,13 @@ const setSearch = (title: string) => {
               <app-link
                 v-if="user?.role == Role.ADMIN"
                 :to="{ name: 'AdminMain' }"
+                class="popup__el"
               >
                 admin
               </app-link>
               <div
                 v-if="user"
+                class="popup__el"
                 @click="logout"
               >
                 выйти
@@ -155,10 +157,16 @@ const setSearch = (title: string) => {
               <app-link
                 v-else
                 :to="{ name: 'Auth' }"
+                class="popup__el"
               >
                 войти
               </app-link>
-              <app-link :to="{ name: 'ProfileMain' }"> профиль </app-link>
+              <app-link
+                :to="{ name: 'ProfileMain' }"
+                class="popup__el"
+              >
+                профиль
+              </app-link>
             </template>
           </v-popup>
           <app-link :to="{ name: 'Favourites' }">
@@ -201,9 +209,8 @@ const setSearch = (title: string) => {
             </action-icon>
           </app-link>
         </div>
-        <div class="flex justify-end">
+        <div class="flex justify-end lg:hidden">
           <action-icon
-            class="block lg:hidden"
             :svg="SearchSvg"
             variant="default"
             @click="openModal = true"

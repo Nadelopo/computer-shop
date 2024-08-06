@@ -108,7 +108,7 @@ const setPage = (page: number) => {
       </button>
       <template v-else>
         <v-popup
-          width="40px"
+          min-width="40px"
           type="hover"
           float="center"
         >
@@ -119,7 +119,7 @@ const setPage = (page: number) => {
             <div
               v-for="j in value === -1 ? otherPrefPages : otherNextPages"
               :key="j"
-              class="justify-center"
+              class="justify-center popup__el"
               @click="setPage(j - 1)"
             >
               {{ j }}

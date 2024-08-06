@@ -1,34 +1,28 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-
 type Props = {
-  value: string | { id: number; title: string }
+  value?: string | boolean | number
+  title: string | number
   units?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   units: ''
 })
+
 const modelValue = defineModel<string | string[] | boolean | number[]>()
 
-const title = computed(() => {
-  return typeof props.value === 'string' ? props.value : props.value.title
-})
-
-const value = computed(() => {
-  return typeof props.value === 'string' ? props.value : props.value.id
-})
+const id = crypto.randomUUID()
 </script>
 
 <template>
   <div class="flex m-auto main">
     <div>
       <label
-        :for="title"
+        :for="id"
         class="label-cbx"
       >
         <input
-          :id="title"
+          :id="id"
           v-model="modelValue"
           :value="value"
           type="checkbox"
@@ -42,14 +36,14 @@ const value = computed(() => {
           >
             <path
               d="M3,1 L17,1 L17,1 C18.1045695,1 19,1.8954305 19,3 L19,17 L19,17 C19,18.1045695 18.1045695,19 17,19 L3,19 L3,19 C1.8954305,19 1,18.1045695 1,17 L1,3 L1,3 C1,1.8954305 1.8954305,1 3,1 Z"
-            ></path>
+            />
             <polyline points="4 11 8 15 16 6"></polyline>
           </svg>
         </div>
       </label>
     </div>
     <label
-      :for="title"
+      :for="id"
       class="cursor-pointer"
     >
       {{ title }} {{ units }}
@@ -62,6 +56,8 @@ const value = computed(() => {
   user-select: none
   cursor: pointer
   margin-bottom: 0
+  input
+    display: none
   input:checked
     & + .checkbox
       border-color: var(--main)

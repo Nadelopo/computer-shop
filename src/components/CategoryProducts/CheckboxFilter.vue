@@ -9,6 +9,15 @@ defineProps<{
 
 const visibility = defineModel<boolean>({ required: true })
 const values = defineModel<number[] | string[]>('values', { required: true })
+
+const getProps = (
+  value: string | { id: number; title: string }
+): { value: string | number; title: string } => {
+  if (typeof value === 'string') {
+    return { value, title: value }
+  }
+  return { value: value.id, title: value.title }
+}
 </script>
 
 <template>
@@ -33,7 +42,7 @@ const values = defineModel<number[] | string[]>('values', { required: true })
           v-for="(value, i) in variantsValues"
           :key="i"
           v-model="values"
-          :value="value"
+          v-bind="getProps(value)"
         />
       </div>
     </v-accordion>

@@ -1,32 +1,40 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref, watch } from 'vue'
 import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
 
 type Props = {
   type?: 'click' | 'hover'
-  width?: string
+  minWidth?: string
   float?: 'start' | 'end' | 'center'
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  type: 'click'
+  type: 'click',
+  minWidth: 'auto'
 })
 
-const minWidth = props.width ?? '100px'
 let left = ref('0')
 
-const activeRef = ref()
-const isOpen = onClickOutsideClose(activeRef)
+const activeRef = ref<HTMLElement>()
+const contentRef = ref<HTMLElement>()
+const rootRef = ref<HTMLElement>()
+const isOpen = onClickOutsideClose(rootRef)
 let timeout = 0
 
-onMounted(() => {
-  const activeWidth = activeRef.value.scrollWidth
-  if (props.float === 'start') {
-    left.value = `-${parseInt(minWidth) - activeWidth}px`
-  } else if (props.float === 'center') {
-    left.value = `-${parseInt(minWidth) / 2 - activeWidth / 2}px`
-  }
-})
+watch(
+  contentRef,
+  () => {
+    if (!activeRef.value || !contentRef.value) return
+    const activeWidth = activeRef.value.scrollWidth
+    const contentWidth = contentRef.value.scrollWidth
+    if (props.float === 'start') {
+      left.value = `-${contentWidth - activeWidth}px`
+    } else if (props.float === 'center') {
+      left.value = `-${contentWidth / 2 - activeWidth / 2}px`
+    }
+  },
+  { once: true }
+)
 const onEnter = () => {
   if (props.type === 'hover') {
     clearTimeout(timeout)
@@ -54,7 +62,10 @@ const contentEnter = () => {
 </script>
 
 <template>
-  <div class="popup__rootasd32bs34">
+  <div
+    ref="rootRef"
+    class="popup__rootasd32bs34"
+  >
     <div
       ref="activeRef"
       @click="isOpen = !isOpen"
@@ -69,23 +80,23 @@ const contentEnter = () => {
     <transition name="popup__animation">
       <div
         v-if="isOpen"
+        ref="contentRef"
         class="popup__contentlksdn553"
         @mouseenter="contentEnter"
         @mouseleave="onLeave"
       >
-        <slot name="content"></slot>
+        <slot name="content" />
       </div>
     </transition>
   </div>
 </template>
 
-<style lang="sass">
+<style scoped lang="sass">
 .popup__rootasd32bs34
   position: relative
-  .popup__slotdgh345c
-    position: absolute
   .popup__contentlksdn553
     min-width: v-bind(minWidth)
+    width: max-content
     top: 35px
     position: absolute
     background: #fff
@@ -102,7 +113,7 @@ const contentEnter = () => {
     &::-webkit-scrollbar-thumb
       background: #888
       border-radius: 80px
-    div, a
+    :slotted(.popup__el)
       min-width: 100%
       font-size: 18px
       display: flex
@@ -117,8 +128,7 @@ const contentEnter = () => {
 
 .popup__animation-enter-active,
 .popup__animation-leave-active
-  transition:  0.2s
-
+  transition: transform .2s, opacity .2s
 
 .popup__animation-enter-from,
 .popup__animation-leave-to
