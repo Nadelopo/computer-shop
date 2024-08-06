@@ -7,7 +7,7 @@ import { formatPhoneNumber } from '@/utils/formatPhone'
 import { formatTime } from '@/utils/formatTime'
 import AppLink from '@/components/AppLink.vue'
 import ActionIcon from '@/components/ActionIcon.vue'
-import { EditSvg, TrashSvg } from '@/assets/icons'
+import { DetailsSvg, EditSvg, TrashSvg } from '@/assets/icons'
 import type { Loading } from '@/types'
 import type { ShopRead } from '@/types/tables/shops.types'
 
@@ -82,6 +82,15 @@ const remove = async (id: number) => {
                 <action-icon
                   :svg="EditSvg"
                   paint-type="stroke"
+                />
+              </app-link>
+              <app-link
+                :to="{ name: 'AdminShopDetails', params: { id: shop.id } }"
+              >
+                <action-icon
+                  :svg="DetailsSvg"
+                  paint-type="stroke"
+                  tooltip="Детали"
                 />
               </app-link>
               <v-confirm

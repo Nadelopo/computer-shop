@@ -53,6 +53,11 @@ import type {
   OrderedProductRead,
   OrderedProductUpdate
 } from '../types/tables/orderedProducts.types'
+import type {
+  ProductQuantityInStoreRead,
+  ProductQuantityInStoreCreate,
+  ProductQuantityInStoreUpdate
+} from '@/types/tables/ProductQuantityInStores'
 
 export type Json =
   | string
@@ -183,6 +188,27 @@ export type Database = {
         Insert: ShopCreate
         Update: ShopUpdate
         Relationships: []
+      }
+      product_quantity_in_stores: {
+        Row: ProductQuantityInStoreRead
+        Insert: ProductQuantityInStoreCreate
+        Update: ProductQuantityInStoreUpdate
+        Relationships: [
+          {
+            foreignKeyName: 'product_quantity_in_stores_productId_fkey'
+            columns: ['productId']
+            isOneToOne: false
+            referencedRelation: 'products'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'product_quantity_in_stores_shopId_fkey'
+            columns: ['shopId']
+            isOneToOne: false
+            referencedRelation: 'shops'
+            referencedColumns: ['id']
+          }
+        ]
       }
       orders: {
         Row: OrderRead
