@@ -4,13 +4,19 @@ import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
 import { useMediaQuery } from '@vueuse/core'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
+import { getAll } from '@/db/queries/tables'
 import { formatPrice } from '@/utils/formatPrice'
+import ProductInShops from './ProductInShops.vue'
 import ButtonCart from '@/components/ButtonCart.vue'
 import RatingStars from '../RatingStars.vue'
 import ButtonFavouritesComparison from './ButtonFavouritesComparison.vue'
 import type { ManufacturerRead } from '@/types/tables/manufacturers.types'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
+import type { ProductQuantityInStoreRead } from '@/types/tables/ProductQuantityInStores'
+import type { ShopRead } from '@/types/tables/shops.types'
+
+export type ShopWithProduct = ProductQuantityInStoreRead & { shops: ShopRead }
 
 const props = defineProps<{
   product: ProductWithSpecifications
@@ -21,20 +27,32 @@ const { manufacturers } = storeToRefs(useManufacturersStore())
 const manufacturer = ref<ManufacturerRead>()
 
 const loading = ref<Loading>('loading')
+const shops = ref<ShopWithProduct[]>([])
+const getShops = async () =>
+  getAll('product_quantity_in_stores', {
+    match: { productId: props.product.id },
+    select: '*, shops(*)'
+  })
+
 onBeforeMount(async () => {
   const item = manufacturers.value.find(
     (m) => m.id === props.product.manufacturers.id
   )
   if (item) {
     manufacturer.value = item
-    return
+    const { data } = await getShops()
+    shops.value = data ?? []
+  } else {
+    const [manufacturerResult, shopsResult] = await Promise.all([
+      getManufacturer(props.product.manufacturers.id),
+      getShops()
+    ])
+    if (manufacturerResult.data) {
+      manufacturer.value = manufacturerResult.data
+    }
+    shops.value = shopsResult.data ?? []
   }
-  const { data, error } = await getManufacturer(props.product.manufacturers.id)
-  if (error) {
-    loading.value = 'error'
-    return
-  }
-  manufacturer.value = data
+  loading.value = 'success'
 })
 
 const isLargeScreen = useMediaQuery('(width >= 1024px)')
@@ -44,7 +62,7 @@ const buttonCartWidth = computed(() => {
 })
 
 const copyProductCode = (id: number) => {
-  navigator.clipboard.writeText('#' + id)
+  navigator.clipboard.writeText(`#${  id}`)
   useToast().success('Код скопирован')
 }
 </script>
@@ -89,10 +107,13 @@ const copyProductCode = (id: number) => {
       >
         {{ formatPrice(product.price) }}
       </div>
-      <rating-stars
-        class="mb-4"
-        :model-value="product.rating"
-      />
+
+      <div class="flex max-w-[400px] justify-between mb-4 h-12">
+        <rating-stars :model-value="product.rating" />
+        <div v-if="loading === 'success'">
+          <product-in-shops :shops />
+        </div>
+      </div>
       <div>
         <button-cart
           :width="buttonCartWidth"
@@ -143,7 +164,6 @@ const copyProductCode = (id: number) => {
     cursor: pointer
     &:hover
       color: #000
-
   .list__btns
     margin-top: 6px
     max-width: 400px

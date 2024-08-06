@@ -11,6 +11,9 @@ dependencies:
   '@vueuse/core':
     specifier: ^10.2.1
     version: 10.2.1(vue@3.4.21)
+  '@yandex/ymaps3-types':
+    specifier: ^0.0.27
+    version: 0.0.27
   floating-vue:
     specifier: ^5.2.2
     version: 5.2.2(vue@3.4.21)
@@ -38,6 +41,9 @@ dependencies:
   vue-toastification:
     specifier: 2.0.0-rc.5
     version: 2.0.0-rc.5(vue@3.4.21)
+  vue-yandex-maps:
+    specifier: ^2.1.4
+    version: 2.1.4(vue@3.4.21)
   yup:
     specifier: ^1.4.0
     version: 1.4.0
@@ -1062,6 +1068,21 @@ packages:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
+    dev: false
+
+  /@yandex/ymaps3-types@0.0.27:
+    resolution: {integrity: sha512-aQ2FNLXekN810mwfY7vfP8jh9pNu2AZA7N/W0T2ziSdaooWPvUFY+QWE7+PhXbJU5L8E4LKk5jW61m56rs9AJg==}
+    peerDependencies:
+      '@types/react': 16-18
+      '@types/react-dom': 16-18
+      '@vue/runtime-core': '3'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+      '@vue/runtime-core':
+        optional: true
     dev: false
 
   /acorn-jsx@5.3.2(acorn@8.11.2):
@@ -3373,6 +3394,27 @@ packages:
       semver: 7.6.0
       typescript: 5.2.2
     dev: true
+
+  /vue-yandex-maps@2.1.4(vue@3.4.21):
+    resolution: {integrity: sha512-W/vJPbBRkSXpGxeDgHBYQmyViq4ct4T4Vih7RM2uhXMJySSHrVMl1yKUDE0qpg2Or4ZD9BiwYOm3HG/JtvcHxg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@vue/composition-api': '>=1'
+      nuxt: ^2.16 || ^3
+      vue: ^2.7 || ^3.3
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+      nuxt:
+        optional: true
+    dependencies:
+      '@yandex/ymaps3-types': 0.0.27
+      vue: 3.4.21(typescript@5.2.2)
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
+      - '@vue/runtime-core'
+    dev: false
 
   /vue@3.4.21(typescript@5.2.2):
     resolution: {integrity: sha512-5hjyV/jLEIKD/jYl4cavMcnzKwjMKohureP8ejn3hhEjwhWIhWeuzL2kJAjzl/WyVsgPY56Sy4Z40C3lVshxXA==}
