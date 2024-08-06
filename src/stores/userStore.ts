@@ -9,7 +9,7 @@ import type { PostgrestError, User } from '@supabase/supabase-js'
 
 type listTitle = 'favourites' | 'comparison'
 
-type UsersLists = {
+type UserLists = {
   favourites: number[]
   comparison: number[]
 }
@@ -18,7 +18,7 @@ const toast = useToast()
 
 export const useUserStore = defineStore('user', () => {
   const user = ref<UserRead | null>(null)
-  const userLists = reactive<UsersLists>({
+  const userLists = reactive<UserLists>({
     favourites: [],
     comparison: []
   })

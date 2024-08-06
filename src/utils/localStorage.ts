@@ -7,6 +7,7 @@ type Key =
   | 'adminSidebar'
   | 'recentlyProducts'
   | 'favourites'
+  | 'admin.shop.matchingValues'
 
 type Options<T> = {
   onChange?: (newValue: T) => void
