@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { StorageError, removeFromStorage } from '@/db/queries/storage'
+import { removeFromStorage, type StorageError } from '@/db/queries/storage'
 import { deleteOneById } from '@/db/queries/tables'
 import { getSpecificationValue } from '@/utils/getSpecificationValue'
 import { formatPrice } from '@/utils/formatPrice'

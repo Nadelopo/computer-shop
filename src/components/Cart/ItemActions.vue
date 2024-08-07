@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ProductCart, useCartStore } from '@/stores/cartStore'
+import { useCartStore, type ProductCart } from '@/stores/cartStore'
 import { TrashSvg } from '@/assets/icons'
 import { VInputText } from '../UI'
 

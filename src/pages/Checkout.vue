@@ -20,7 +20,10 @@ import { useLocalStorage } from '@/utils/localStorage'
 import { useGeoSuggest } from '@/utils/useGeoSuggest'
 import MethodObtain from '@/components/Checkout/MethodObtain.vue'
 import FormField from '@/components/FormField.vue'
-import { OrderData, useFeatureForm } from '@/components/Checkout/useFeatureForm'
+import {
+  type OrderData,
+  useFeatureForm
+} from '@/components/Checkout/useFeatureForm'
 import { useFeaturePrice } from '@/components/Checkout/useFeaturePrice'
 import { useFeatureInitialUserDataInstallation } from '@/components/Checkout/useFeatureInitialUserDataInstallation'
 import type { Loading } from '@/types'

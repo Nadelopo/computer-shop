@@ -6,7 +6,7 @@ import {
   useAttrs,
   type InputHTMLAttributes
 } from 'vue'
-import { vMaska, MaskaDetail } from 'maska'
+import { vMaska, type MaskaDetail } from 'maska'
 import { debounce as Debounce } from '@/utils/debounce'
 import { CrossSvg, SearchSvg } from '@/assets/icons'
 

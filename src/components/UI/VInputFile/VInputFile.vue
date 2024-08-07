@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { supabase } from '@/db/supabase'
 import {
-  StorageError,
+  type StorageError,
   insertInStorage,
   removeFromStorage,
   type Folder

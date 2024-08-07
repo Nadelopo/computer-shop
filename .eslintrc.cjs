@@ -18,13 +18,6 @@ module.exports = {
     }
   },
   rules: {
-    // 'vue/singleline-html-element-content-newline': 'off',
-    // 'vue/multi-word-component-names': 'off',
-    // 'vue/max-attributes-per-line': 'off',
-    // 'vue/html-self-closing': 'off',
-    // 'vue/html-indent': 'off',
-    // 'vue/require-explicit-emits': 'off',
-    // 'vue/require-default-prop': 'off',
     'no-undef': 'off',
     'import/prefer-default-export': 'off',
     'no-unused-vars': 'off',
@@ -46,11 +39,5 @@ module.exports = {
     ],
     'no-console': ['error', { allow: ['error'] }],
     'guard-for-in': 'off'
-
-    /* eslint no-restricted-syntax: ["error", "FunctionExpression", "WithStatement", "BinaryExpression[operator='in']"] */
-    /* eslint no-restricted-syntax: ["error", "FunctionExpression", "WithStatement", "BinaryExpression[operator='in']"] */
-
-    // '@typescript-eslint/no-unused-vars': 'off'
-    // '@typescript/no-unused-vars': 'off'
   }
 }

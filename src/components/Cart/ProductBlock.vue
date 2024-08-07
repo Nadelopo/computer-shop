@@ -5,7 +5,7 @@ import { useMediaQuery } from '@vueuse/core'
 import { useUserStore } from '@/stores/userStore'
 import {
   useCartStore,
-  ProductStorage,
+  type ProductStorage,
   type ProductCart
 } from '@/stores/cartStore'
 import { updateOneById } from '@/db/queries/tables'

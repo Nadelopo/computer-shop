@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, FunctionalComponent, SVGAttributes } from 'vue'
+import { computed, type FunctionalComponent, type SVGAttributes } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
 import { useUserStore } from '@/stores/userStore'

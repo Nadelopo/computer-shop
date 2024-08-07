@@ -1,4 +1,4 @@
-import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
+import { type RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { useUserStore } from '@/stores/userStore'
 import { getOneById } from '@/db/queries/tables'
