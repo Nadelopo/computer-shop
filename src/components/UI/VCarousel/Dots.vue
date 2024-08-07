@@ -41,9 +41,10 @@ defineExpose({ setCurrentSlideIndex })
     v-if="showDots"
     class="dots"
   >
-    <div
+    <button
       v-for="(_, i) in countSlides"
       :key="i"
+      type="button"
       :class="[
         { active: i === currentSlideIndex },
         showDots === true ? 'line' : showDots

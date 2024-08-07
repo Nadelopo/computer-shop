@@ -91,7 +91,7 @@ const submit = handleSubmit(() => {
       <div class="head">
         <div
           class="cursor-pointer uppercase text"
-          :class="{ isSignIn: isSignIn }"
+          :class="{ isSignIn }"
           @click="isSignIn = true"
         >
           войти
@@ -151,6 +151,7 @@ const submit = handleSubmit(() => {
           ПАРОЛЬ
         </label>
         <input
+          id="password"
           v-model="password"
           class="input"
           name="password"
@@ -161,7 +162,10 @@ const submit = handleSubmit(() => {
         </div>
       </div>
       <div class="mb-6 mt-4">
-        <v-button class="btnn">
+        <v-button
+          type="submit"
+          class="btnn"
+        >
           {{ isSignIn ? 'Войти' : 'Зарегистрироваться' }}
         </v-button>
       </div>
@@ -170,16 +174,11 @@ const submit = handleSubmit(() => {
         v-if="isSignIn"
         class="text-center"
       >
-        <span
-          class="link cursor-pointer"
-          @click="$router.push({ name: 'Reset' })"
-        >
-          Забыли пароль?
-        </span>
+        <span class="link cursor-pointer"> Забыли пароль? </span>
       </div>
       <div
         class="text-center mt-2"
-        @click="$router.push('/')"
+        @click="router.back()"
       >
         <span class="link cursor-pointer">Назад</span>
       </div>

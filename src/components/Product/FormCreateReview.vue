@@ -101,16 +101,40 @@ const createReview = async () => {
       @submit.prevent="createReview"
     >
       <div class="mb-4">
-        <div class="title">Достоинства</div>
-        <textarea v-model.trim="form.dignities" />
+        <label
+          for="dignities"
+          class="title"
+        >
+          Достоинства
+        </label>
+        <textarea
+          id="dignities"
+          v-model.trim="form.dignities"
+        />
       </div>
       <div class="mb-4">
-        <div class="title">Недостатки</div>
-        <textarea v-model.trim="form.disadvantages" />
+        <label
+          for="disadvantages"
+          class="title"
+        >
+          Недостатки
+        </label>
+        <textarea
+          id="disadvantages"
+          v-model.trim="form.disadvantages"
+        />
       </div>
       <div class="mb-4">
-        <div class="title">Комментарий</div>
-        <textarea v-model.trim="form.comment" />
+        <label
+          for="comment"
+          class="title"
+        >
+          Комментарий
+        </label>
+        <textarea
+          id="comment"
+          v-model.trim="form.comment"
+        />
       </div>
       <div>
         <rating-stars
@@ -131,6 +155,7 @@ const createReview = async () => {
   margin-top: 30px
   height: 720px
   .title
+    display: block
     margin-bottom: 10px
   textarea
     padding: 10px

@@ -107,6 +107,7 @@ const remove = async (id: number, img: string[]) => {
           <img
             :src="product.img[0]"
             class="max-w-[120px]"
+            alt=""
           />
         </td>
         <td>
@@ -128,7 +129,7 @@ const remove = async (id: number, img: string[]) => {
             </app-link>
             <v-confirm
               v-slot="{ openModal }"
-              :message="'Вы точно хотите удалить продукт - ' + product.title"
+              :message="`Вы точно хотите удалить продукт - ${product.title}`"
               @ok="remove(product.id, product.img)"
             >
               <action-icon

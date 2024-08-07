@@ -15,21 +15,21 @@ const height = ref(props.visibility ? 'auto' : '0')
 watchEffect(async () => {
   if (!parent.value) return
   if (props.visibility) {
-    height.value = parent.value.scrollHeight + 'px'
+    height.value = `${parent.value.scrollHeight}px`
     setTimeout(() => {
       if (props.visibility) {
         height.value = 'auto'
       }
     }, props.transition * 1000)
   } else {
-    height.value = parent.value.scrollHeight + 'px'
+    height.value = `${parent.value.scrollHeight}px`
     setTimeout(() => {
       height.value = '0'
     })
   }
 })
 
-const transition = props.transition + 's'
+const transition = `${props.transition}s`
 </script>
 
 <template>

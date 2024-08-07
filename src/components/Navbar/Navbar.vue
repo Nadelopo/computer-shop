@@ -141,19 +141,20 @@ const setSearch = (title: string) => {
             </template>
             <template #content>
               <app-link
-                v-if="user?.role == Role.ADMIN"
+                v-if="user?.role === Role.ADMIN"
                 :to="{ name: 'AdminMain' }"
                 class="popup__el"
               >
                 admin
               </app-link>
-              <div
+              <button
                 v-if="user"
+                type="button"
                 class="popup__el"
                 @click="logout"
               >
                 выйти
-              </div>
+              </button>
               <app-link
                 v-else
                 :to="{ name: 'Auth' }"

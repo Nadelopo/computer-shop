@@ -28,7 +28,7 @@ const defaultSpecifications = [
         v-for="(specification, i) in product.specifications"
         :key="specification.id"
         class="specification"
-        :class="{ colored: i % 2 == 0 }"
+        :class="{ colored: i % 2 === 0 }"
       >
         <div class="specification__title">
           {{ specification.category_specifications.title }}

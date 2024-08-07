@@ -54,19 +54,24 @@ const onSubmit = () => {
     @submit.prevent="onSubmit"
   >
     <div>
-      <label>Наименование</label>
-      <v-input-text v-model="product.title" />
+      <label for="title">Наименование</label>
+      <v-input-text
+        id="title"
+        v-model="product.title"
+      />
     </div>
     <div>
-      <label>Описание</label>
+      <label for="description">Описание</label>
       <v-textarea
+        id="description"
         v-model="product.description"
         auto-grow
       />
     </div>
     <div>
-      <label>Изображение</label>
+      <label for="img">Изображение</label>
       <v-input-file
+        id="img"
         ref="inputFileRef"
         folder="products"
         :file-url="product.img"
@@ -76,9 +81,10 @@ const onSubmit = () => {
       v-for="specification in productSpecifications"
       :key="specification.id"
     >
-      <label>{{ specification.title }}</label>
+      <label :for="specification.title">{{ specification.title }}</label>
       <v-input-text
         v-if="specification.type === 'number'"
+        :id="specification.title"
         v-model="specification.valueNumber"
         type="number"
         :max="specification.max"
@@ -107,9 +113,10 @@ const onSubmit = () => {
     </div>
 
     <div>
-      <label>производитель</label>
+      <label for="manufacturer">производитель</label>
       <div>
         <v-select
+          id="manufacturer"
           v-model="product.manufacturerId"
           :options="manufacturers.map((e) => ({ value: e.id, title: e.title }))"
           class="mt-4"
@@ -117,14 +124,15 @@ const onSubmit = () => {
       </div>
     </div>
     <div>
-      <label>гарантия</label>
+      <label for="warranty">гарантия</label>
       <v-input-text
+        id="warranty"
         v-model="product.warranty"
         type="number"
       />
     </div>
     <div v-if="type === 'update' && product.sell !== undefined">
-      <label>продажи</label>
+      <div>продажи</div>
       <v-buttons
         v-model="product.sell"
         class="mt-2"
@@ -135,22 +143,27 @@ const onSubmit = () => {
       />
     </div>
     <div>
-      <label>цена</label>
+      <label for="price">цена</label>
       <v-input-text
+        id="price"
         v-model="product.priceWithoutDiscount"
         type="number"
       />
     </div>
     <div v-if="product.discount !== undefined">
-      <label>скидка %</label>
+      <label for="discount">скидка %</label>
       <v-input-text
+        id="discount"
         v-model="product.discount"
         type="number"
       />
     </div>
 
     <div>
-      <v-button :loading="loadingSubmit === 'loading'">
+      <v-button
+        type="submit"
+        :loading="loadingSubmit === 'loading'"
+      >
         {{ type === 'create' ? 'создать' : 'сохранить' }}
       </v-button>
     </div>

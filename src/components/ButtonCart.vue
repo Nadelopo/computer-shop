@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, type ButtonHTMLAttributes } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useCustomRouter } from '@/utils/customRouter'
 import { useCartStore } from '@/stores/cartStore'
 import { VButton } from '@/components/UI'
 import { CartInButtonSvg, InCartSvg, AbsentForCartSvg } from '@/assets/icons'
@@ -56,6 +57,8 @@ const buttonText = computed(() => {
   if (productStatus.value === 'outside') return 'купить'
   return 'отсутсвует'
 })
+
+const router = useCustomRouter()
 </script>
 
 <template>
@@ -65,7 +68,7 @@ const buttonText = computed(() => {
     :size="size"
     :variant="productStatus === 'absent' ? 'noactive' : 'primary'"
     @click.prevent="
-      productStatus === 'in' ? $router.push({ name: 'Cart' }) : add()
+      productStatus === 'in' ? router.push({ name: 'Cart' }) : add()
     "
   >
     <component

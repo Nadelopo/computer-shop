@@ -162,8 +162,8 @@ watch(
                   specification.condition === 'greater'
                     ? 'больше'
                     : specification.condition === 'less'
-                    ? 'меньше'
-                    : '-'
+                      ? 'меньше'
+                      : '-'
                 }}
               </td>
               <td>
@@ -195,10 +195,9 @@ watch(
                   </app-link>
                   <v-confirm
                     v-slot="{ openModal }"
-                    :message="
-                      'Вы точно хотите удалитть характеристику - ' +
+                    :message="`Вы точно хотите удалитть характеристику - ${
                       specification.title
-                    "
+                    }`"
                     @ok="remove(specification.id)"
                   >
                     <action-icon

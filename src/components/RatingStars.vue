@@ -30,10 +30,10 @@ const arr = [5, 4, 3, 2, 1]
   >
     <div>
       <template v-if="modelValue === 0">
-        <label class="rating__static" />
+        <div class="rating__static" />
       </template>
       <template v-else>
-        <label
+        <div
           v-for="i in arr"
           :key="i"
           :title="`Оценка «${i}»`"
@@ -55,14 +55,14 @@ const arr = [5, 4, 3, 2, 1]
       :key="i"
     >
       <input
-        :id="'star-' + i"
+        :id="`star-${i}`"
         v-model="stars"
         type="radio"
         name="rating"
         :value="i"
       />
       <label
-        :for="'star-' + i"
+        :for="`star-${i}`"
         :title="`Оценка «${i}»`"
         :class="[size]"
       />

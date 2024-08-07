@@ -21,6 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
 <template>
   <button
     v-wave
+    type="button"
     class="btn"
     :class="[
       {

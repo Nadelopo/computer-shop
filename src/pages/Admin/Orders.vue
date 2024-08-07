@@ -153,7 +153,7 @@ const clear = () => {
 
               <v-confirm
                 v-slot="{ openModal }"
-                :message="'Вы точно хотите удалить заказ - ' + order.id"
+                :message="`Вы точно хотите удалить заказ - ${order.id}`"
                 @ok="removeOrder(order.id)"
               >
                 <action-icon

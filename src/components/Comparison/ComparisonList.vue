@@ -96,10 +96,10 @@ const onDrag = (e: DragEvent, i: string | number) => {
   e.dataTransfer.setData('itemId', String(i))
 }
 
-const onDrop = (e: DragEvent, i: string | number) => {
-  if (!e.dataTransfer) return
+const onDrop = (event: DragEvent, i: string | number) => {
+  if (!event.dataTransfer) return
   const propsProducts = props.products
-  const itemId = e.dataTransfer.getData('itemId')
+  const itemId = event.dataTransfer.getData('itemId')
   const index1 = propsProducts.findIndex((e) => e.img[0] === i)
   const index2 = propsProducts.findIndex((e) => e.img[0] === itemId)
   ;[propsProducts[index1], propsProducts[index2]] = [
@@ -122,12 +122,16 @@ const isSmall = useMediaQuery('(max-width: 420px)')
         <div class="title__mobile" />
         <div
           class="cells"
-          :style="{ translate: translateCells + 'px' }"
+          :style="{ translate: `${translateCells}px` }"
         >
           <div
             v-for="(product, i) in categoryProducts"
             :key="product.id"
-            :ref="i === 0 && (!cellRef || !widthCell) ? (e) => (cellRef = e as HTMLElement) : undefined"
+            :ref="
+              i === 0 && (!cellRef || !widthCell)
+                ? (e) => (cellRef = e as HTMLElement)
+                : undefined
+            "
             :draggable="true"
             class="cell img"
             @dragstart="onDrag($event, product.img[0])"
@@ -191,7 +195,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
         <div class="title__mobile">{{ data.title }}</div>
         <div
           class="cells"
-          :style="{ translate: translateCells + 'px' }"
+          :style="{ translate: `${translateCells}px` }"
         >
           <div
             v-for="(value, j) in data.values"
@@ -218,7 +222,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
               <span :class="{ best__value: data.max === value }">
                 {{ value }} {{ data.units }}
               </span>
-              <label
+              <div
                 v-if="data.title === 'Рейтинг'"
                 class="rating"
                 :class="{ coloured: Number(value) > 0 }"
@@ -230,6 +234,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
       <template v-if="data.title === 'Наименование'">
         <button
           v-show="showPrevBtn"
+          type="button"
           class="control__btn prev"
           @click="updateItemsList('prev')"
         >
@@ -237,6 +242,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
         </button>
         <button
           v-show="showNextBtn"
+          type="button"
           class="control__btn next"
           @click="updateItemsList('next')"
         >

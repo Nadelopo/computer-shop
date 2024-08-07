@@ -18,7 +18,7 @@ type Props = Omit<
 const props = withDefaults(defineProps<Props>(), {
   showSpinButtons: true,
   name: '',
-  //@ts-ignore
+  // @ts-ignore
   type: 'text',
   allErors: false
 })
@@ -42,7 +42,7 @@ const name = computed((): string => {
   return props.name
 })
 
-const id = name.value + '-field'
+const id = `${name.value}-field`
 
 const slots = useSlots()
 </script>

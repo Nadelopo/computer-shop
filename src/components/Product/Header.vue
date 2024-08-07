@@ -44,7 +44,7 @@ const buttonCartWidth = computed(() => {
 })
 
 const copyProductCode = (id: number) => {
-  navigator.clipboard.writeText('#' + id)
+  navigator.clipboard.writeText(`#${id}`)
   useToast().success('Код скопирован')
 }
 </script>
@@ -71,6 +71,7 @@ const copyProductCode = (id: number) => {
           <img
             class="max-h-14"
             :src="manufacturer?.img"
+            alt="..."
           />
         </div>
       </div>

@@ -36,7 +36,7 @@ const loadData = async () => {
     return
   }
   data.specifications = data.specifications.map((e) => {
-    const title = e.category_specifications.title
+    const { title } = e.category_specifications
     e.category_specifications.title =
       title.charAt(0).toUpperCase() + title.slice(1)
     return e

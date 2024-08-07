@@ -28,14 +28,17 @@ watchEffect(() => {
       style="width: inherit"
     >
       <div class="mb-6 flex justify-between items-center h-[56px]">
-        <h1>
-          <app-link :to="{ name: 'AdminMain' }">
-            <home-svg
-              width="40"
-              fill="#fff"
-            />
-          </app-link>
-        </h1>
+        <!-- <h1> -->
+        <app-link
+          :to="{ name: 'AdminMain' }"
+          class="main"
+        >
+          <home-svg
+            width="40"
+            fill="#fff"
+          />
+        </app-link>
+        <!-- </h1> -->
         <app-link :to="{ name: 'Home' }">
           <img
             class="logo"
@@ -83,7 +86,7 @@ watchEffect(() => {
                 :title="category.title"
               >
                 <img
-                  :src="'/icons/' + category.enTitle + '.svg'"
+                  :src="`/icons/${category.enTitle}.svg`"
                   alt=""
                 />
               </div>
@@ -195,6 +198,7 @@ watchEffect(() => {
       </div>
       <button
         class="toggle"
+        type="button"
         @click="isCollapsed = !isCollapsed"
       >
         <arrow-svg fill="#fff" />
@@ -218,7 +222,7 @@ $transition: .3s
     width: 124px
     .head span, .li span
       opacity: 0
-    h1
+    .main
       width: 0px
       transform: scale(0)
       transition: $transition
@@ -235,7 +239,7 @@ $transition: .3s
     padding: 6px
     transform: rotate(-90deg)
     transition:$transition
-  h1
+  .main
     width: 50px
     transform: scale(1)
     transition: $transition

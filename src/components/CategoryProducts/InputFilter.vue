@@ -71,6 +71,7 @@ const isActive = computed(
     >
       <div class="grid">
         <div>
+          <!-- eslint-disable-next-line -->
           <input
             ref="minRef"
             v-model.number="minValue"
@@ -85,6 +86,7 @@ const isActive = computed(
         </div>
         <div class="line"></div>
         <div class="text-end">
+          <!-- eslint-disable-next-line -->
           <input
             ref="maxRef"
             v-model.number="maxValue"

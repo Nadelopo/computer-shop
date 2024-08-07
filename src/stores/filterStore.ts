@@ -1,12 +1,12 @@
 import { reactive, ref } from 'vue'
 import { defineStore } from 'pinia'
+import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { supabase } from '@/db/supabase'
 import { getOrFilterForSearch } from '@/utils/getOrFilterForSearch'
 import {
   useFeatureNumberStaticFilter,
   useFeatureStringStaticFilter
 } from '@/components/CategoryProducts/useFeatureStaticFilter'
-import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
@@ -39,6 +39,7 @@ export type CheckboxData = {
 
 export const useFilterStore = defineStore('filter', () => {
   type SortType = keyof typeof sortAscents
+
   const specificationsValues = ref<SpecificationsValues[]>([])
 
   const sortAscents = reactive({
@@ -48,6 +49,7 @@ export const useFilterStore = defineStore('filter', () => {
     popularity: false,
     rating: true
   })
+
   const sortColumn = ref<SortType>('popularity')
   const search = ref('')
   const productsPrice = useFeatureNumberStaticFilter({
@@ -112,17 +114,15 @@ export const useFilterStore = defineStore('filter', () => {
           or += `and(categorySpecificationsId.eq.${specification.id},valueNumber.gte.${specification.minValue},valueNumber.lte.${specification.maxValue}),`
           usedSpecifications.push(specification.id)
         }
-      } else {
-        if (specification.values.length) {
-          let v = ''
-          for (const value of specification.values) {
-            v += `valueString.cs.{${value}},`
-          }
-          or += `and(categorySpecificationsId.eq.${
-            specification.id
-          },or(${v.slice(0, -1)})),`
-          usedSpecifications.push(specification.id)
+      } else if (specification.values.length) {
+        let v = ''
+        for (const value of specification.values) {
+          v += `valueString.cs.{${value}},`
         }
+        or += `and(categorySpecificationsId.eq.${
+          specification.id
+        },or(${v.slice(0, -1)})),`
+        usedSpecifications.push(specification.id)
       }
     }
     or = or.slice(0, -1)

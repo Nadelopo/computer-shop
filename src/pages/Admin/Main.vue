@@ -47,7 +47,7 @@ const text = computed(() => {
   if (differentPreviousCount.value === 0) {
     return 'В этом месяце не бло продаж'
   }
-  return differentPreviousCount.value + ' %'
+  return `${differentPreviousCount.value} %`
 })
 </script>
 

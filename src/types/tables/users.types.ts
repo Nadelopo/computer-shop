@@ -1,16 +1,7 @@
-export type UserRead = Required<
-  Omit<
-    UserCreate,
-    | 'address'
-    | 'floor'
-    | 'apartment'
-    | 'entrance'
-    | 'city'
-    | 'comparison'
-    | 'favourites'
-  >
->
-export type UserReadWithDetails = Required<UserCreate>
+export const Role = {
+  ADMIN: 0,
+  USER: 1
+} as const
 
 export type UserCreate = {
   created_at?: string
@@ -28,9 +19,18 @@ export type UserCreate = {
   city?: string | null
 }
 
-export type UserUpdate = Partial<UserCreate>
+export type UserRead = Required<
+  Omit<
+    UserCreate,
+    | 'address'
+    | 'floor'
+    | 'apartment'
+    | 'entrance'
+    | 'city'
+    | 'comparison'
+    | 'favourites'
+  >
+>
+export type UserReadWithDetails = Required<UserCreate>
 
-export const Role = {
-  ADMIN: 0,
-  USER: 1
-} as const
+export type UserUpdate = Partial<UserCreate>

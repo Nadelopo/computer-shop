@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useCustomRouter } from '@/utils/customRouter'
 import { useUserStore } from '@/stores/userStore'
 import { VButton } from '@/components/UI'
 import { FavouriteSvg, ComparisonSvg } from '@/assets/icons'
@@ -28,6 +29,8 @@ const inListTitle =
 
 const routerTitle =
   props.listTitle === 'favourites' ? 'Favourites' : 'Comparison'
+
+const router = useCustomRouter()
 </script>
 
 <template>
@@ -43,7 +46,7 @@ const routerTitle =
   <v-button
     v-else
     class="product__button"
-    @click="$router.push({ name: routerTitle })"
+    @click="router.push({ name: routerTitle })"
   >
     <list-icon fill="#60efe1" />
     {{ inListTitle }}

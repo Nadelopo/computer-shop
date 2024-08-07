@@ -78,7 +78,7 @@ const remove = async (id: number, img: string) => {
             </app-link>
             <v-confirm
               v-slot="{ openModal }"
-              :message="'Вы точно хотите удалить категорю - ' + category.title"
+              :message="`Вы точно хотите удалить категорю - ${category.title}`"
               @ok="remove(category.id, category.img)"
             >
               <action-icon

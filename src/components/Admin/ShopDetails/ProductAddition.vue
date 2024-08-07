@@ -103,14 +103,13 @@ const loadingCrete = ref<Loading>('success')
 const setQuantityProductsInShops = async () => {
   if (!productsInShop.value.length) return
   loadingCrete.value = 'loading'
-  const { data: products } = await getAll('product_quantity_in_stores', {
+  const { data: productsData } = await getAll('product_quantity_in_stores', {
     in: { shopId: productsInShop.value.map((e) => e.shopId) }
   })
-  console.log(products, productsInShop.value)
   const forUpdate: { id: number; quantity: number }[] = []
   const forCreate: ProductQuantityInStoreCreate[] = []
   for (const product of productsInShop.value) {
-    const foundProduct = products?.find(
+    const foundProduct = productsData?.find(
       (e) => e.productId === product.productId
     )
     if (foundProduct) {
@@ -157,7 +156,10 @@ const setQuantityProductsInShops = async () => {
       />
       <v-popup float="start">
         <template #active>
-          <button class="dots">
+          <button
+            type="button"
+            class="dots"
+          >
             <div class="dot" />
             <div class="dot" />
             <div class="dot" />

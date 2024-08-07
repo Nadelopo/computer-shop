@@ -140,7 +140,7 @@ const onSubmit = handleSubmit(async () => {
     name,
     email,
     obtainType,
-    //prettier-ignore
+    // prettier-ignore
     receiptDetails: { address, apartment, floor, entrance, city, deliveryDate, shopAddress }
   } = values
   const phone = Number(values.phone.replace(/[()\- ]/g, ''))
@@ -148,7 +148,7 @@ const onSubmit = handleSubmit(async () => {
   const isAddressValid = await checkAddressValid(address, city, obtainType)
   if (!isAddressValid) return
   updateUserData(phone)
-  //prettier-ignore
+  // prettier-ignore
   const formatDate = `${deliveryDate.getFullYear()}-${ deliveryDate.getMonth() + 1}-${deliveryDate.getDate()}`
   const order: OrderCreate = {
     userId: user.value?.id ?? null,

@@ -59,7 +59,6 @@ const create = async (
     )
     if (errorSpecifications) {
       loading.value = 'error'
-      return
     }
   }
 }

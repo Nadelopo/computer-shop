@@ -79,6 +79,7 @@ const createTag = () => {
         v-if="showInput"
         class="relative w-full"
       >
+        <!-- eslint-disable-next-line -->
         <input
           ref="inputRef"
           v-model="newTag"

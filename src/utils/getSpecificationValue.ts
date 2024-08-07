@@ -5,9 +5,9 @@ export const getSpecificationValue = (
 ): number | string => {
   if (specification.category_specifications.type === 'number') {
     return specification.valueNumber as number
-  } else if (specification.category_specifications.type === 'string') {
-    return specification.valueString?.[0] as string
-  } else {
-    return specification.valueString?.join(', ') as string
   }
+  if (specification.category_specifications.type === 'string') {
+    return specification.valueString?.[0] as string
+  }
+  return specification.valueString?.join(', ') as string
 }

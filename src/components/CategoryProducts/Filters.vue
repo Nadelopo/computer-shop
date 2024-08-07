@@ -25,9 +25,8 @@ const emit = defineEmits<{
 
 const { setQueryParams, productsPrice, warranty, manufacturer } =
   useFilterStore()
-const { specificationsValues, search, currentPage } = storeToRefs(
-  useFilterStore()
-)
+const { specificationsValues, search, currentPage } =
+  storeToRefs(useFilterStore())
 
 const route = useRoute()
 const router = useCustomRouter()
@@ -83,7 +82,7 @@ const setScrollPosition = () => {
   prevSCrollY = currentScrollY
 }
 
-//refactor
+// refactor
 const classes = ref('')
 const onScroll = () => {
   if (props.type === 'mobile') return

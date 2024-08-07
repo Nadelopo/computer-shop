@@ -1,5 +1,3 @@
-export type OrderedProductRead = Required<OrderedProductCreate>
-
 export type OrderedProductCreate = {
   id?: number
   created_at?: string
@@ -10,5 +8,7 @@ export type OrderedProductCreate = {
   servicePrice: number
   orderId: number
 }
+
+export type OrderedProductRead = Required<OrderedProductCreate>
 
 export type OrderedProductUpdate = Partial<OrderedProductCreate>

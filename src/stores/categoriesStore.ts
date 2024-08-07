@@ -58,7 +58,7 @@ export const useCategoriesStore = defineStore('categories', () => {
     categoryId: number
   ): Promise<DataError<CategorySpecificationRead[]>> {
     const { data, error } = await getAll('category_specifications', {
-      match: { categoryId: categoryId }
+      match: { categoryId }
     })
     return { data, error } as DataError<CategorySpecificationRead[]>
   }

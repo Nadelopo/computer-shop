@@ -14,16 +14,16 @@ const loading = ref(false)
 
 const { setItemCount, deleteItem } = useCartStore()
 
-const action = async (action: Action) => {
+const action = async (actionType: Action) => {
   loading.value = true
-  const id = props.product.id
-  if (action === 'reduce') {
+  const { id } = props.product
+  if (actionType === 'reduce') {
     await setItemCount(id, props.product.count - 1, props.product.cartItemId)
   }
-  if (action === 'increase') {
+  if (actionType === 'increase') {
     await setItemCount(id, props.product.count + 1, props.product.cartItemId)
   }
-  if (action === 'delete') {
+  if (actionType === 'delete') {
     await deleteItem(id)
   }
   loading.value = false
@@ -46,6 +46,7 @@ const onChange = async (e: Event) => {
     <div class="flex items-center gap-3">
       <button
         :disabled="loading"
+        type="button"
         @click="action('reduce')"
       >
         <div class="quantity__control">
@@ -67,6 +68,7 @@ const onChange = async (e: Event) => {
       </div>
       <button
         :disabled="loading"
+        type="button"
         @click="action('increase')"
       >
         <div class="quantity__control">
@@ -79,6 +81,7 @@ const onChange = async (e: Event) => {
   <div>
     <button
       :disabled="loading"
+      type="button"
       class="disabled:opacity-50"
       @click="action('delete')"
     >

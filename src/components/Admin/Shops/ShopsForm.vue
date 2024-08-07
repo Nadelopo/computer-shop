@@ -73,7 +73,7 @@ const onSubmit = handleSubmit(() => {
 const locationResults = ref<LocationResult['results'] | null>(null)
 watchEffect(async () => {
   const { data } = await useGeoSuggest({
-    text: 'Ульяновск ' + values.address.trim(),
+    text: `Ульяновск ${values.address.trim()}`,
     type: 'house'
   })
   locationResults.value = data

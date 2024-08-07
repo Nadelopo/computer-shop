@@ -41,7 +41,7 @@ const color = ref('#a9a9a9')
 watch(
   [modelValue, () => props.options],
   () => {
-    const value = modelValue.value
+    const { value } = modelValue
     const findSelectedValue = props.options.find((e) => e.value === value)
     if (findSelectedValue) {
       selected.value = findSelectedValue.title
@@ -118,14 +118,14 @@ const onFocus = () => {
 
 watchEffect(() => {
   if (active.value) {
-    addEventListener('keydown', stopScrollDocument)
+    window.addEventListener('keydown', stopScrollDocument)
   } else {
-    removeEventListener('keydown', stopScrollDocument)
+    window.removeEventListener('keydown', stopScrollDocument)
   }
 })
 
 onUnmounted(() => {
-  removeEventListener('keydown', stopScrollDocument)
+  window.removeEventListener('keydown', stopScrollDocument)
 })
 
 const required = computed(() => {
@@ -135,9 +135,8 @@ const required = computed(() => {
       value = false
     }
     return value
-  } else {
-    return false
   }
+  return false
 })
 </script>
 
@@ -185,6 +184,7 @@ const required = computed(() => {
       </div>
     </transition>
     <select
+      aria-label="Выберите значение"
       :required="required"
       class="required"
     />

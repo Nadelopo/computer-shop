@@ -138,6 +138,7 @@ const showClearButton = computed(() => {
     <button
       v-if="showClearButton"
       class="clear"
+      type="button"
       @mousedown.prevent="emit('clear')"
       @focus.stop
     >
@@ -145,6 +146,7 @@ const showClearButton = computed(() => {
     </button>
     <button
       v-if="onSearch"
+      type="button"
       class="search"
       @click="emit('search')"
     >

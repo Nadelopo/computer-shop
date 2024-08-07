@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue'
+import { useToast } from 'vue-toastification'
 import { getOneById, updateOneById } from '@/db/queries/tables'
 import { useUserStore } from '@/stores/userStore'
 import { useCustomRoute } from '@/utils/customRouter'
 import { useOrders } from '@/utils/useOrders'
 import { VSelect, VButton, VTable, VLoader } from '@/components/UI'
+import AppLink from '@/components/AppLink.vue'
+import { formatPrice } from '@/utils/formatPrice'
 import type { Loading } from '@/types'
 import type { OrderReadWithDetails } from '@/types/tables/orders.types'
-import AppLink from '@/components/AppLink.vue'
-import { useToast } from 'vue-toastification'
-import { formatPrice } from '@/utils/formatPrice'
 
 const route = useCustomRoute('AdminOrderDetails')
 const orderId = Number(route.params.id)
@@ -72,7 +72,7 @@ const updateOrder = async () => {
         :striped="false"
       >
         <template #header>
-          <div> {{ 'Номер заказа ' + order.id }}</div>
+          <div> {{ `Номер заказа ${order.id}` }}</div>
           <div class="text-base flex flex-col gap-4">
             <div>
               Дата заказа:

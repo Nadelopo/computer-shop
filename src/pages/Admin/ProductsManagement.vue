@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, watchEffect } from 'vue'
+import type { PostgrestError } from '@supabase/supabase-js'
+import { useCustomRoute } from '@/utils/customRouter'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { createMany, createOne, getAll, getOneById } from '@/db/queries/tables'
 import ProductsList from '@/components/Admin/Products/ProductsList.vue'
@@ -14,8 +16,6 @@ import type { Loading } from '@/types'
 import type { SpecificationCreate } from '@/types/tables/specifications.types'
 import type { SpecificationCreateForm } from '@/components/Admin/Products/types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
-import type { PostgrestError } from '@supabase/supabase-js'
-import { useCustomRoute } from '@/utils/customRouter'
 
 const route = useCustomRoute('AdminProducts')
 const page = ref(Number(route.query.page) - 1 || 0)
@@ -49,7 +49,7 @@ const setProducts = async () => {
   } else {
     const limitValue = limit.value
     const result = await getAll('products', {
-      match: { categoryId: categoryId },
+      match: { categoryId },
       select,
       range: [
         page.value * limitValue,
@@ -137,17 +137,16 @@ watchEffect(() => {
           min,
           step
         }
-      } else {
-        return {
-          ...staticFields,
-          valueNumber: null,
-          type: categorySpecification.type,
-          valueString: [],
-          variantsValues: categorySpecification.variantsValues,
-          max: null,
-          min: null,
-          step: null
-        }
+      }
+      return {
+        ...staticFields,
+        valueNumber: null,
+        type: categorySpecification.type,
+        valueString: [],
+        variantsValues: categorySpecification.variantsValues,
+        max: null,
+        min: null,
+        step: null
       }
     }
   )
@@ -205,9 +204,8 @@ const create = async (fileActions: InputFileActions<string[]> | undefined) => {
     const specificationsValue = categorySpecifications.value[i]
     if (e.type === 'number') {
       return { ...e, valueNumber: specificationsValue.min as number }
-    } else {
-      return { ...e, valueString: [] }
     }
+    return { ...e, valueString: [] }
   })
 }
 </script>

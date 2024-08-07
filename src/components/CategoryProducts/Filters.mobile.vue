@@ -30,6 +30,7 @@ onUnmounted(() => {
       @click.stop
     >
       <button
+        type="button"
         class="w-16"
         @click="$emit('close')"
       >

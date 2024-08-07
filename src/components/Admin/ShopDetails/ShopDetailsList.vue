@@ -29,8 +29,6 @@ const loadProductsInShops = async () => {
     select: '*, products!inner(title)',
     or: [getOrFilterForSearch(search.value, 'title'), 'products']
   })
-  console.log(data)
-
   if (error) {
     loading.value = 'error'
     return

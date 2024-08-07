@@ -1,7 +1,5 @@
 import type { DbEnum } from '@/db/database.types'
 
-export type SpecificationRead = Required<SpecificationCreate>
-
 export type SpecificationReadWithDetails = {
   categorySpecificationsId: number
   category_specifications: {
@@ -26,5 +24,7 @@ export type SpecificationCreate = {
   valueString: string[] | null
   valueNumber: number | null
 }
+
+export type SpecificationRead = Required<SpecificationCreate>
 
 export type SpecificationUpdate = Partial<SpecificationCreate>

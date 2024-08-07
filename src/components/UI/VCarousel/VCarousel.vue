@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, ref, toRef, watch } from 'vue'
 import { useElementSize } from '@vueuse/core'
-//prettier-ignore
+// prettier-ignore
 import { useFeatureMouseUpListener, useFeatureMoveListener } from './useFeatureListeners'
-//prettier-ignore
+// prettier-ignore
 import { useFeatureBreakpoints, type CarouselBreakpoints } from './useFeatureBreakpoints'
 import { useFeatureAutoPlay } from './useFeatureAutoplay'
 import { useFeatureNotMovable } from './useFeatureNotMovable'
@@ -111,7 +111,7 @@ const { width: carouselWidth } = useElementSize(carouselRef)
 const slideWidth = computed((): string => {
   const carouselWidthValue =
     carouselWidth.value - spaceBetween.value * (slidesPerView.value - 1)
-  return carouselWidthValue / slidesPerView.value + 'px'
+  return `${carouselWidthValue / slidesPerView.value}px`
 })
 
 const lastTranslate = computed((): number => {
@@ -164,7 +164,6 @@ watch(isMovableOnEvents, () => {
   }
   if (direction === 'left') {
     translate.value = startTranslate.value - swipeTranslateValue * offsetBlocks
-    return
   }
 })
 

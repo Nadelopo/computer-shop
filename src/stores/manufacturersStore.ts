@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import type { PostgrestError } from '@supabase/supabase-js'
 import type {
   ManufacturerCreate,
   ManufacturerRead,
@@ -11,7 +12,6 @@ import {
   getOneById,
   updateOneById
 } from '@/db/queries/tables'
-import type { PostgrestError } from '@supabase/supabase-js'
 import type { DataError } from '@/types'
 
 export const useManufacturersStore = defineStore('manufacturers', () => {

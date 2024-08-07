@@ -47,7 +47,7 @@ router.beforeEach(async (to, from) => {
   if (!isAuth) {
     useToast().warning('Требуется авторизация')
     if (!from.name) return { name: 'Home' }
-    else return false
+    return false
   }
   const requireAdmin = to.matched.some((record) => record.meta.admin)
   if (!requireAdmin) return true

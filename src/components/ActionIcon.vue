@@ -36,6 +36,7 @@ const widthWithHeight = computed(() => ({
 <template>
   <button
     v-tooltip="tooltip"
+    type="button"
     class="action-icon"
     :class="[variant, paintType, isActive && 'active']"
   >

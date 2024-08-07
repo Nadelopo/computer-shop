@@ -19,12 +19,12 @@ const currentSuggestionIndex = ref(-1)
 const onArrow = (e: KeyboardEvent) => {
   if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return
   if (e.key === 'ArrowDown') {
-    currentSuggestionIndex.value++
+    currentSuggestionIndex.value += 1
     if (currentSuggestionIndex.value === props.suggestions.length) {
       currentSuggestionIndex.value = 0
     }
   } else {
-    currentSuggestionIndex.value--
+    currentSuggestionIndex.value -= 1
     if (currentSuggestionIndex.value < 0) {
       currentSuggestionIndex.value = props.suggestions.length - 1
     }
