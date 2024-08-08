@@ -13,7 +13,9 @@
   "dependencies": {
     "@supabase/supabase-js": "2.38.1",
     "@vueuse/core": "^10.2.1",
+    "@vueuse/integrations": "^10.11.0",
     "floating-vue": "^5.2.2",
+    "focus-trap": "^7",
     "maska": "^2.1.11",
     "pinia": "^2.1.4",
     "v-wave": "^1.5.0",
