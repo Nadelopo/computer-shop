@@ -6,7 +6,6 @@ import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { VConfirm, VTable } from '@/components/UI'
 import { deleteOneById } from '@/db/queries/tables'
 import { removeFromStorage } from '@/db/queries/storage'
-import AppLink from '@/components/AppLink.vue'
 import ActionIcon from '@/components/ActionIcon.vue'
 import { EditSvg, TrashSvg } from '@/assets/icons'
 import type { Loading } from '@/types'
@@ -69,19 +68,17 @@ const remove = async (id: number, img: string) => {
         </td>
         <td>
           <div class="flex">
-            <app-link
+            <action-icon
+              tag="a"
               :to="{
                 name: 'EditManufacturer',
                 params: {
                   id: manufacturer.id
                 }
               }"
-            >
-              <action-icon
-                :svg="EditSvg"
-                paint-type="stroke"
-              />
-            </app-link>
+              :svg="EditSvg"
+              paint-type="stroke"
+            />
             <v-confirm
               v-slot="{ openModal }"
               :message="`Вы точно хотите удалить производителя - ${manufacturer.title}`"

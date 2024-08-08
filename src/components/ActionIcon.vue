@@ -1,6 +1,13 @@
-<script setup lang="ts">
+<script
+  setup
+  lang="ts"
+  generic="To extends RouteName, Tag extends 'button' | 'a' = 'button'"
+>
 import { computed, type FunctionalComponent, type SVGAttributes } from 'vue'
+import AppLink from './AppLink.vue'
 import { VLoader } from './UI'
+import type { RouteName } from '@/router/types'
+import type { RouterTo } from '@/utils/customRouter'
 
 type Props = {
   variant?: 'primary' | 'danger' | 'default'
@@ -10,11 +17,14 @@ type Props = {
   svgAttrs?: SVGAttributes
   isActive?: boolean
   loading?: boolean
+  tag?: Tag
+  to?: Tag extends 'a' ? RouterTo<To> : undefined
 }
 
 const props = withDefaults(defineProps<Props>(), {
   variant: 'primary',
-  svgType: 'fill'
+  svgType: 'fill',
+  tag: 'button' as any
 })
 
 const variantLoader = computed(() => {
@@ -26,15 +36,18 @@ const variantLoader = computed(() => {
   }
   return 'var(--back-sec)'
 })
-
 const widthWithHeight = computed(() => ({
   width: props.svgAttrs?.width ?? '24px',
   height: props.svgAttrs?.height
 }))
+
+const is = computed(() => (props.tag === 'button' ? 'button' : AppLink))
 </script>
 
 <template>
-  <button
+  <component
+    :is="is"
+    v-bind="props.tag === 'a' ? { to } : {}"
     v-tooltip="tooltip"
     type="button"
     class="action-icon"
@@ -52,7 +65,7 @@ const widthWithHeight = computed(() => ({
       v-bind="svgAttrs"
     />
     <slot />
-  </button>
+  </component>
 </template>
 
 <style scoped lang="sass">

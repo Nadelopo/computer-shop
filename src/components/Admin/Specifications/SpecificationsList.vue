@@ -3,7 +3,6 @@ import { computed, onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { deleteOneById, getAll } from '@/db/queries/tables'
 import { VTabs, VTable, VLoader, VConfirm } from '@/components/UI'
-import AppLink from '@/components/AppLink.vue'
 import ActionIcon from '@/components/ActionIcon.vue'
 import { EditSvg, TrashSvg } from '@/assets/icons'
 import type { Loading } from '@/types'
@@ -179,7 +178,8 @@ watch(
               </td>
               <td>
                 <div class="flex">
-                  <app-link
+                  <action-icon
+                    tag="a"
                     :to="{
                       name: 'EditSpecification',
                       params: {
@@ -187,12 +187,9 @@ watch(
                         id: specification.id
                       }
                     }"
-                  >
-                    <action-icon
-                      :svg="EditSvg"
-                      paint-type="stroke"
-                    />
-                  </app-link>
+                    :svg="EditSvg"
+                    paint-type="stroke"
+                  />
                   <v-confirm
                     v-slot="{ openModal }"
                     :message="`Вы точно хотите удалитть характеристику - ${

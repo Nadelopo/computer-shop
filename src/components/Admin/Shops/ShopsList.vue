@@ -5,7 +5,6 @@ import { deleteOneById, getAll } from '@/db/queries/tables'
 import { VConfirm, VLoader, VTable } from '@/components/UI'
 import { formatPhoneNumber } from '@/utils/formatPhone'
 import { formatTime } from '@/utils/formatTime'
-import AppLink from '@/components/AppLink.vue'
 import ActionIcon from '@/components/ActionIcon.vue'
 import { DetailsSvg, EditSvg, TrashSvg } from '@/assets/icons'
 import type { Loading } from '@/types'
@@ -71,28 +70,24 @@ const remove = async (id: number) => {
           <td> {{ formatTime(shop.timeStart, shop.timeEnd) }} </td>
           <td>
             <div class="flex">
-              <app-link
+              <action-icon
+                tag="a"
                 :to="{
                   name: 'EditShop',
                   params: {
                     id: shop.id
                   }
                 }"
-              >
-                <action-icon
-                  :svg="EditSvg"
-                  paint-type="stroke"
-                />
-              </app-link>
-              <app-link
+                :svg="EditSvg"
+                paint-type="stroke"
+              />
+              <action-icon
+                tag="a"
                 :to="{ name: 'AdminShopDetails', params: { id: shop.id } }"
-              >
-                <action-icon
-                  :svg="DetailsSvg"
-                  paint-type="stroke"
-                  tooltip="Детали"
-                />
-              </app-link>
+                :svg="DetailsSvg"
+                paint-type="stroke"
+                tooltip="Детали"
+              />
               <v-confirm
                 v-slot="{ openModal }"
                 :message="'Вы точно хотите удалить?'"
