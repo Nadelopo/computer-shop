@@ -18,13 +18,12 @@ type Props = Omit<
 const props = withDefaults(defineProps<Props>(), {
   showSpinButtons: true,
   name: '',
-  // @ts-ignore
-  type: 'text',
+  type: 'text' as any,
   allErors: false
 })
 
 const { value, errors, errorMessage, setValue } = useField<
-  typeof props.type extends 'text' | 'tel' ? string : number
+  T extends 'text' | 'tel' ? string : number
 >(props.name)
 
 const errorMessages = computed((): string[] => {
