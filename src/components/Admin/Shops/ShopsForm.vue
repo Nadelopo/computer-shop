@@ -134,7 +134,10 @@ watchEffect(async () => {
       />
     </form-field>
     <div>
-      <v-button :loading="loadingSubmit">
+      <v-button
+        type="submit"
+        :loading="loadingSubmit"
+      >
         {{ type === 'create' ? 'создать' : 'сохранить' }}
       </v-button>
     </div>

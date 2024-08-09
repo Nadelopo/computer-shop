@@ -213,12 +213,12 @@ onUnmounted(() => {
         <v-button
           class="mb-4"
           width="100%"
+          type="submit"
           @click="emit('apply')"
         >
           применить
         </v-button>
         <v-button
-          type="button"
           width="100%"
           @click="cancel"
         >

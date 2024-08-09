@@ -86,7 +86,10 @@ const submit = handleSubmit(() => {
       />
     </form-field>
     <div>
-      <v-button :loading="loading">
+      <v-button
+        type="submit"
+        :loading="loading"
+      >
         {{ type === 'create' ? 'добавить' : 'обновить' }}
       </v-button>
     </div>

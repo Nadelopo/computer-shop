@@ -142,7 +142,7 @@ const createReview = async () => {
           :static="false"
           class="mb-4 mt-8"
         />
-        <v-button>оставить отзыв</v-button>
+        <v-button type="submit">ставить отзыв</v-button>
       </div>
     </form>
   </Transition>

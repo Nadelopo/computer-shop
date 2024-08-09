@@ -134,7 +134,12 @@ const submit = handleSubmit(async (values) => {
         min="0"
       />
       <div>
-        <v-button :loading="loadingSubmit === 'loading'"> сохранить </v-button>
+        <v-button
+          type="submit"
+          :loading="loadingSubmit === 'loading'"
+        >
+          сохранить
+        </v-button>
       </div>
     </form>
   </div>

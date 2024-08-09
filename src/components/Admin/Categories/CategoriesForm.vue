@@ -80,7 +80,10 @@ const submit = handleSubmit(() => {
       label="Наименование на русском"
     />
     <div>
-      <v-button :loading="loading">
+      <v-button
+        type="submit"
+        :loading="loading"
+      >
         {{ type === 'create' ? 'создать категорию' : 'сохранить' }}
       </v-button>
     </div>

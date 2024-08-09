@@ -221,7 +221,10 @@ const submit = handleSubmit(() => {
       />
     </div>
     <div class="mt-2">
-      <v-button :loading="loading">
+      <v-button
+        type="submit"
+        :loading="loading"
+      >
         {{ type === 'create' ? 'создать характеристику' : 'сохранить' }}
       </v-button>
     </div>
