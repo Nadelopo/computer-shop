@@ -20,7 +20,10 @@ import { useLocalStorage } from '@/utils/localStorage'
 import { useGeoSuggest } from '@/utils/useGeoSuggest'
 import MethodObtain from '@/components/Checkout/MethodObtain.vue'
 import FormField from '@/components/FormField.vue'
-import { OrderData, useFeatureForm } from '@/components/Checkout/useFeatureForm'
+import {
+  type OrderData,
+  useFeatureForm
+} from '@/components/Checkout/useFeatureForm'
 import { useFeaturePrice } from '@/components/Checkout/useFeaturePrice'
 import { useFeatureInitialUserDataInstallation } from '@/components/Checkout/useFeatureInitialUserDataInstallation'
 import type { Loading } from '@/types'
@@ -140,7 +143,7 @@ const onSubmit = handleSubmit(async () => {
     name,
     email,
     obtainType,
-    //prettier-ignore
+    // prettier-ignore
     receiptDetails: { address, apartment, floor, entrance, city, deliveryDate, shopAddress }
   } = values
   const phone = Number(values.phone.replace(/[()\- ]/g, ''))
@@ -148,7 +151,7 @@ const onSubmit = handleSubmit(async () => {
   const isAddressValid = await checkAddressValid(address, city, obtainType)
   if (!isAddressValid) return
   updateUserData(phone)
-  //prettier-ignore
+  // prettier-ignore
   const formatDate = `${deliveryDate.getFullYear()}-${ deliveryDate.getMonth() + 1}-${deliveryDate.getDate()}`
   const order: OrderCreate = {
     userId: user.value?.id ?? null,

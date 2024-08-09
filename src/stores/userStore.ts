@@ -1,13 +1,13 @@
 import { reactive, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useToast } from 'vue-toastification'
+import type { PostgrestError, User } from '@supabase/supabase-js'
 import { supabase } from '@/db/supabase'
 import { getOneById, updateOneById } from '@/db/queries/tables'
 import { useLocalStorage } from '@/utils/localStorage'
 import type { UserRead } from '@/types/tables/users.types'
-import type { PostgrestError, User } from '@supabase/supabase-js'
 
-type listTitle = 'favourites' | 'comparison'
+type ListTitle = 'favourites' | 'comparison'
 
 type UserLists = {
   favourites: number[]
@@ -49,9 +49,9 @@ export const useUserStore = defineStore('user', () => {
   }
 
   async function isUserAuthenticated(): Promise<User | null> {
-    const user = (await supabase.auth.getSession()).data.session?.user
-    if (user) {
-      return user
+    const sessionUser = (await supabase.auth.getSession()).data.session?.user
+    if (sessionUser) {
+      return sessionUser
     }
     return null
   }
@@ -80,7 +80,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   async function changeUserListsValueOnToggle(
-    listTitle: listTitle,
+    listTitle: ListTitle,
     productId: number
   ): Promise<PostgrestError | null> {
     const isUser = await isUserAuthenticated()
@@ -120,7 +120,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   async function deleteItemFromUserList(
-    listTitle: listTitle,
+    listTitle: ListTitle,
     productId: number
   ): Promise<{ error: PostgrestError | null }> {
     const isUser = await isUserAuthenticated()
@@ -140,7 +140,7 @@ export const useUserStore = defineStore('user', () => {
     return { error: null }
   }
 
-  async function clearUserLists(listTitle: listTitle, products: number[]) {
+  async function clearUserLists(listTitle: ListTitle, products: number[]) {
     if (user.value) {
       const { error } = await updateOneById('users', user.value.id, {
         [listTitle]: products

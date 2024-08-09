@@ -8,7 +8,7 @@ import type { ProductRead } from '@/types/tables/products.types'
 
 const route = useCustomRoute('Product')
 const categoryId = Number(route.params.categoryId)
-const category = route.params.category
+const { category } = route.params
 
 const props = defineProps<{
   productPrice: number
@@ -19,7 +19,7 @@ const similarProducts = ref<ProductRead[]>([])
 
 const loadSimilarProducts = async () => {
   const { data } = await getAll('products', {
-    match: { categoryId: categoryId },
+    match: { categoryId },
     between: [
       {
         column: 'price',

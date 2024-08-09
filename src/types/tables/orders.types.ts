@@ -3,6 +3,19 @@ import type { CategoryRead } from './categories.types'
 import type { OrderedProductRead } from './orderedProducts.types'
 import type { ProductRead } from './products.types'
 
+type OrderDetails<
+  U extends string | null,
+  T extends 'selfcall' | 'delivery' = 'selfcall'
+> = {
+  userId: U
+  type: T
+  shopAddress: T extends 'selfcall' ? string : null
+  deliveryDate: T extends 'delivery' ? string : null
+  address: T extends 'delivery' ? string : null
+  apartment: T extends 'delivery' ? number : null
+  city: T extends 'delivery' ? string : null
+}
+
 export type OrderRead = {
   id: number
   created_at: string
@@ -20,19 +33,6 @@ export type OrderRead = {
   | OrderDetails<null, 'selfcall'>
   | OrderDetails<null, 'delivery'>
 )
-
-type OrderDetails<
-  U extends string | null,
-  T extends 'selfcall' | 'delivery' = 'selfcall'
-> = {
-  userId: U
-  type: T
-  shopAddress: T extends 'selfcall' ? string : null
-  deliveryDate: T extends 'delivery' ? string : null
-  address: T extends 'delivery' ? string : null
-  apartment: T extends 'delivery' ? number : null
-  city: T extends 'delivery' ? string : null
-}
 
 export type OrderCreate = {
   id?: number

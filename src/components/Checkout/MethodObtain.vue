@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import { useField } from 'vee-validate'
 import { VButton, VModal, VLoader, VButtons } from '../UI'
 import { getAll } from '@/db/queries/tables'
-import { LocationResult, useGeoSuggest } from '@/utils/useGeoSuggest'
+import { useGeoSuggest, type LocationResult } from '@/utils/useGeoSuggest'
 import { formatTime } from '@/utils/formatTime'
 import InputAddress from '@/components/InputAddress.vue'
 import FormField from '../FormField.vue'
@@ -56,7 +56,7 @@ const tomorrow = new Date()
 tomorrow.setDate(tomorrow.getDate() + 1)
 const dates = ref<{ title: string; value: Date }[]>([])
 
-for (let i = 0; i < 7; i++) {
+for (let i = 0; i < 7; i += 1) {
   const date = new Date(props.receiptDetails.deliveryDate)
   const value = new Date(date.setDate(date.getDate() + i))
   const formatDate = new Intl.DateTimeFormat('ru', {
@@ -64,7 +64,7 @@ for (let i = 0; i < 7; i++) {
     weekday: 'short',
     day: 'numeric'
   }).format(date)
-  let title = formatDate.split(',').reverse().join(', ') + '.'
+  const title = `${formatDate.split(',').reverse().join(', ')}.`
   dates.value.push({ title, value })
 }
 
@@ -175,6 +175,7 @@ const { value: deliveryDate } = useField<Date>('receiptDetails.deliveryDate')
               class="flex justify-center items-center"
             >
               <iframe
+                title="map"
                 src="https://yandex.ru/map-widget/v1/?um=constructor%3A3b411b61aeb6a307ac31c151dfc3b1ab5d3112f10702e0cf3baf14dd3a81ef39&amp;source=constructor"
                 width="100%"
                 height="100%"

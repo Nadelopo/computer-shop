@@ -7,7 +7,6 @@ import AppLink from './AppLink.vue'
 import type { RouteName } from '@/router/types'
 
 defineProps<{
-  isOpen: boolean
   links: {
     text: string
     page: RouteName
@@ -16,13 +15,11 @@ defineProps<{
 
 const { user } = storeToRefs(useUserStore())
 
-const emit = defineEmits<{
-  'update:isOpen': [boolean]
-}>()
+const isOpen = defineModel<boolean>({ required: true })
 
 const sidebarRef = ref()
 const closeSidebar = () => {
-  emit('update:isOpen', false)
+  isOpen.value = false
 }
 
 const logout = async () => {
@@ -40,6 +37,7 @@ onUnmounted(() => {
 </script>
 
 <template>
+  <!-- eslint-disable-next-line -->
   <div
     class="wrapper"
     @click="closeSidebar"
@@ -63,7 +61,10 @@ onUnmounted(() => {
           </app-link>
         </div>
         <div class="text-end">
-          <button @click="closeSidebar">
+          <button
+            type="button"
+            @click="closeSidebar"
+          >
             <div class="dot dot-f"></div>
             <div class="dot dot-l"></div>
           </button>

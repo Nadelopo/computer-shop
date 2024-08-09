@@ -22,7 +22,7 @@ onMounted(() => {
     textareaRef.value.focus()
   }
   if (props.autoGrow) {
-    textareaRef.value.style.height = textareaRef.value.scrollHeight + 'px'
+    textareaRef.value.style.height = `${textareaRef.value.scrollHeight}px`
   }
 })
 if (props.autoGrow) {
@@ -30,11 +30,11 @@ if (props.autoGrow) {
     if (!textareaRef.value) return
 
     textareaRef.value.style.height = '0'
-    textareaRef.value.style.height = textareaRef.value.scrollHeight + 'px'
+    textareaRef.value.style.height = `${textareaRef.value.scrollHeight}px`
   })
 }
 
-const rows = props.autoGrow ? 1 : props.rows ?? 2
+const rows = props.autoGrow ? 1 : (props.rows ?? 2)
 </script>
 
 <template>

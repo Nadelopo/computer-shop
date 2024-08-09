@@ -28,6 +28,7 @@ const chooseColored = (
       return true
     }
   }
+  return false
 }
 
 const inputRef = ref<HTMLElement>()
@@ -47,19 +48,19 @@ const stopScrollDocument = (e: KeyboardEvent) => {
 const suggestionsRef = ref<HTMLElement>()
 watchEffect(() => {
   if (suggestionsRef.value) {
-    addEventListener('keydown', stopScrollDocument)
+    window.addEventListener('keydown', stopScrollDocument)
   } else {
-    removeEventListener('keydown', stopScrollDocument)
+    window.removeEventListener('keydown', stopScrollDocument)
   }
 })
 onUnmounted(() => {
-  removeEventListener('keydown', stopScrollDocument)
+  window.removeEventListener('keydown', stopScrollDocument)
 })
 
 const onSuggestionKey = (e: Event, type: 'down' | 'up') => {
   if (!suggestionsRef.value) return
   const target = e.target as HTMLElement
-  const children = suggestionsRef.value.children
+  const { children } = suggestionsRef.value
   let nextFocusedElement: HTMLElement | undefined
   if (type === 'down') {
     nextFocusedElement = target.nextElementSibling as HTMLElement
@@ -78,18 +79,18 @@ const onSuggestionKey = (e: Event, type: 'down' | 'up') => {
 
 const onInputKey = (type: 'down' | 'up') => {
   if (!suggestionsRef.value) return
-  const children = suggestionsRef.value.children
+  const { children } = suggestionsRef.value
   if (type === 'down') {
-    //prettier-ignore
-    (children[0] as HTMLElement).focus()
+    // prettier-ignore
+    ;(children[0] as HTMLElement).focus()
   }
   if (type === 'up') {
-    //prettier-ignore
-    (children[children.length - 1] as HTMLElement).focus()
+    // prettier-ignore
+    ;(children[children.length - 1] as HTMLElement).focus()
   }
 }
 
-const id = props.id ?? props.name + '-input'
+const id = props.id ?? `${props.name}-input`
 </script>
 
 <template>

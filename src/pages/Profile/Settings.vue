@@ -3,12 +3,11 @@ import { onBeforeMount, ref } from 'vue'
 import { useForm } from 'vee-validate'
 import { string } from 'yup'
 import { useToast } from 'vue-toastification'
+import type { User } from '@supabase/supabase-js'
 import { useUserStore } from '@/stores/userStore'
 import { getOneById, updateOneById } from '@/db/queries/tables'
-import { VLoader } from '@/components/UI'
+import { VLoader, VButton } from '@/components/UI'
 import FormField from '@/components/FormField.vue'
-import { VButton } from '@/components/UI'
-import type { User } from '@supabase/supabase-js'
 import type { Loading } from '@/types'
 
 const { isUserAuthenticated } = useUserStore()
@@ -135,7 +134,12 @@ const submit = handleSubmit(async (values) => {
         min="0"
       />
       <div>
-        <v-button :loading="loadingSubmit === 'loading'"> сохранить </v-button>
+        <v-button
+          type="submit"
+          :loading="loadingSubmit === 'loading'"
+        >
+          сохранить
+        </v-button>
       </div>
     </form>
   </div>

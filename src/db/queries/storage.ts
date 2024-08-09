@@ -42,6 +42,7 @@ export const removeFromStorage = async (
   folder: Folder,
   imgUrl: string
 ): Promise<
+  // eslint-disable-next-line
   | { data: NonNullable<typeof data>; error: null }
   | { data: null; error: StorageError }
 > => {

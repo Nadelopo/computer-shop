@@ -55,17 +55,16 @@ onBeforeMount(async () => {
         min: min!,
         step: step!
       }
-    } else {
-      return {
-        ...staticFields,
-        valueNumber: null,
-        type: s.category_specifications.type,
-        valueString: s.valueString!,
-        variantsValues: s.category_specifications.variantsValues!,
-        min: null,
-        max: null,
-        step: null
-      }
+    }
+    return {
+      ...staticFields,
+      valueNumber: null,
+      type: s.category_specifications.type,
+      valueString: s.valueString!,
+      variantsValues: s.category_specifications.variantsValues!,
+      min: null,
+      max: null,
+      step: null
     }
   })
   loading.value = 'success'
@@ -84,13 +83,13 @@ const back = async () => {
 }
 
 async function updateProductSpecifications(
-  specifications: UpdateMany<SpecificationUpdate>[]
+  updatedSpecifications: UpdateMany<SpecificationUpdate>[]
 ) {
-  const updatedSpecifications = await updateManyById(
+  const newSpecifications = await updateManyById(
     'specifications',
-    specifications
+    updatedSpecifications
   )
-  return updatedSpecifications.sort(
+  return newSpecifications.sort(
     (a, b) => a.categorySpecificationsId - b.categorySpecificationsId
   )
 }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onUnmounted, watch } from 'vue'
+import { nextTick, onUnmounted, ref, watch } from 'vue'
+import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
 
 defineProps<{
   fullScreen?: boolean
@@ -11,16 +12,27 @@ defineOptions({
 
 const modelValue = defineModel<boolean>({ required: true })
 
-watch(modelValue, () => {
-  if (modelValue.value) {
+const target = ref<HTMLElement>()
+const { activate, deactivate } = useFocusTrap(target)
+
+const tabindex = ref(0)
+watch(modelValue, async (value) => {
+  if (value) {
     document.body.style.overflow = 'hidden'
+    await nextTick()
+    activate()
+    tabindex.value = -1
   } else {
     document.body.style.overflow = 'visible'
+    await nextTick()
+    deactivate()
+    tabindex.value = 0
   }
 })
 
 onUnmounted(() => {
   document.body.style.overflow = 'visible'
+  deactivate()
 })
 </script>
 
@@ -29,6 +41,7 @@ onUnmounted(() => {
     <transition-group name="fade">
       <div
         v-if="modelValue"
+        ref="target"
         class="dialog"
         :class="{ full__screen: fullScreen }"
         @mousedown.stop="modelValue = false"
@@ -36,6 +49,7 @@ onUnmounted(() => {
         <div
           class="dialog__content"
           v-bind="$attrs"
+          :tabindex
           @mousedown.stop
         >
           <slot />
@@ -70,6 +84,7 @@ onUnmounted(() => {
   border-radius: 8px
   min-height: 50px
   min-width: 300px
+  outline: none
 
 .fade-enter-active,
 .fade-leave-active

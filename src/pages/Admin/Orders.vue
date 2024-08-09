@@ -12,7 +12,6 @@ import {
   VConfirm,
   VInputText
 } from '@/components/UI'
-import AppLink from '@/components/AppLink.vue'
 import ActionIcon from '@/components/ActionIcon.vue'
 import { EditSvg, TrashSvg } from '@/assets/icons'
 import type { OrderRead } from '@/types/tables/orders.types'
@@ -141,19 +140,16 @@ const clear = () => {
           </td>
           <td>
             <div class="flex">
-              <app-link
+              <action-icon
+                tag="a"
                 :to="{ name: 'AdminOrderDetails', params: { id: order.id } }"
-              >
-                <action-icon
-                  :svg="EditSvg"
-                  paint-type="stroke"
-                  tooltip="Детали заказа"
-                />
-              </app-link>
-
+                :svg="EditSvg"
+                paint-type="stroke"
+                tooltip="Детали заказа"
+              />
               <v-confirm
                 v-slot="{ openModal }"
-                :message="'Вы точно хотите удалить заказ - ' + order.id"
+                :message="`Вы точно хотите удалить заказ - ${order.id}`"
                 @ok="removeOrder(order.id)"
               >
                 <action-icon

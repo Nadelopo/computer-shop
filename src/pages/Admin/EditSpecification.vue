@@ -82,7 +82,7 @@ const save = async (values: CategorySpecificationForm) => {
       />
       <v-button
         class="mt-4"
-        @click="$router.push({ name: 'AdminSpecifications' })"
+        @click="router.push({ name: 'AdminSpecifications' })"
       >
         назад
       </v-button>

@@ -13,8 +13,8 @@ type ForeignWithoutNull<T> = {
         : U
       : never
     : T[K] extends object
-    ? ForeignWithoutNull<T[K]>
-    : T[K]
+      ? ForeignWithoutNull<T[K]>
+      : T[K]
 }
 
 type ReturnType<D> = {

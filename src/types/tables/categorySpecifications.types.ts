@@ -1,7 +1,5 @@
 import type { DbEnum } from '@/db/database.types'
 
-export type CategorySpecificationRead = Required<CategorySpecificationCreate>
-
 export type CategorySpecificationCreate = {
   categoryId: number
   created_at?: string
@@ -28,6 +26,8 @@ export type CategorySpecificationCreate = {
       variantsValues: string[]
     }
 )
+
+export type CategorySpecificationRead = Required<CategorySpecificationCreate>
 
 export type CategorySpecificationUpdate = Partial<{
   [K in keyof CategorySpecificationCreate]: CategorySpecificationCreate[K]

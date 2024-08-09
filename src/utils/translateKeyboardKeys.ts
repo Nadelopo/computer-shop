@@ -1,4 +1,4 @@
-//prettier-ignore
+// prettier-ignore
 const enToRuMap: Record<string, string> = {
   'q': 'й', 'w': 'ц', 'e': 'у', '`': 'ё', 'r': 'к', 't': 'е', 'y': 'н', 'u': 'г',
   'i': 'ш', 'o': 'щ', 'p': 'з', '[': 'х', ']': 'ъ', 'a': 'ф', 's': 'ы',
@@ -13,7 +13,7 @@ const enToRuMap: Record<string, string> = {
   'N': 'Т', 'M': 'Ь', '<': 'Б', '>': 'Ю'
 }
 
-//prettier-ignore
+// prettier-ignore
 const ruToEnMap: Record<string, string>  = {
   'ф': 'a', 'и': 'b', 'с': 'c', 'в': 'd', 'у': 'e',
   'а': 'f', 'п': 'g', 'р': 'h', 'ш': 'i', 'о': 'j',

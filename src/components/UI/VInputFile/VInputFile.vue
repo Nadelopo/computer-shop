@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { supabase } from '@/db/supabase'
 import {
-  StorageError,
+  type StorageError,
   insertInStorage,
   removeFromStorage,
   type Folder
@@ -91,9 +91,9 @@ const onSave = async () => {
     return { error }
   }
   if (Array.isArray(props.fileUrl)) {
-    props.fileUrl.forEach((url) => {
-      if (Array.isArray(url) && url.find((u) => u !== url)) {
-        removeFromStorage(props.folder, url)
+    props.fileUrl.forEach((fileUrl) => {
+      if (Array.isArray(fileUrl) && fileUrl.find((u) => u !== fileUrl)) {
+        removeFromStorage(props.folder, fileUrl)
       }
     })
   } else if (props.fileUrl !== undefined) {
@@ -105,7 +105,7 @@ const onSave = async () => {
   return { url }
 }
 
-const id = props.id ?? self.crypto.randomUUID()
+const id = props.id ?? crypto.randomUUID()
 
 const inputRef = ref<HTMLInputElement>()
 const clear = () => {
@@ -127,9 +127,8 @@ const isRequired = computed(() => {
   if (!props.required) return false
   if (Array.isArray(props.fileUrl)) {
     return props.fileUrl.length === 0 || !props.fileUrl[0]
-  } else {
-    return !props.fileUrl
   }
+  return !props.fileUrl
 })
 </script>
 
@@ -139,20 +138,20 @@ const isRequired = computed(() => {
       class="wrapper"
       :class="{ not__empty: isFilesNotEmpty }"
     >
-      <label
+      <div
         class="placeholder"
         :class="{ top: isFilesNotEmpty }"
       >
         {{ placeholder }}
-      </label>
+      </div>
       <div class="files">
-        <label
+        <div
           v-for="file in files"
           :key="file.name"
           class="file"
         >
           {{ file.name }}
-        </label>
+        </div>
       </div>
       <input
         :id="id"
@@ -163,6 +162,7 @@ const isRequired = computed(() => {
         :multiple="multiple"
         @input="onUpdate"
       />
+      <!-- eslint-disable-next-line -->
       <input
         tabindex="-1"
         type="text"
@@ -174,6 +174,7 @@ const isRequired = computed(() => {
       >
         <button
           tabindex="-1"
+          type="button"
           class="remove__btn"
           @click.prevent="clear"
         >

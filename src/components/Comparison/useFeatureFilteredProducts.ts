@@ -1,4 +1,4 @@
-import { ComputedRef, Ref, computed } from 'vue'
+import { computed, type ComputedRef, type Ref } from 'vue'
 import type { CategorySpecifications, ComparisonProduct } from './types'
 import { formatPrice } from '@/utils/formatPrice'
 
@@ -52,16 +52,16 @@ export const useFeatureFilteredProducts = (
       units: 'мес'
     })
     const categoryProductsValue = categoryProducts.value
-    for (let i = 0; i < categoryProductsValue.length; i++) {
+    for (let i = 0; i < categoryProductsValue.length; i += 1) {
       const product = categoryProductsValue[i]
       fields[0].values.push(product.title)
       fields[1].values.push(formatPrice(product.price))
       fields[2].values.push(Number(product.rating.toFixed(1)))
-      for (let j = 0; j < currentCategorySpecificationsValue.length; j++) {
+      for (let j = 0; j < currentCategorySpecificationsValue.length; j += 1) {
         const category = currentCategorySpecificationsValue[j]
         let index = 3
-        const specification = product.specifications.find((e, i) => {
-          index = i + 3
+        const specification = product.specifications.find((e, _i) => {
+          index = _i + 3
           return e.categorySpecificationsId === category.id
         })
         if (!specification) continue
@@ -99,7 +99,7 @@ export const useFeatureFilteredProducts = (
       return productsDataValue
     }
     let filtered = productsDataValue
-    for (let i = 3; i < productsDataValue.length; i++) {
+    for (let i = 3; i < productsDataValue.length; i += 1) {
       const data = productsDataValue[i]
       if (data.values.every((e) => e === data.values[0])) {
         filtered = filtered.filter((e) => e.title !== data.title)

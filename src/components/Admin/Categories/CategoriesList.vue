@@ -5,7 +5,6 @@ import { useCategoriesStore } from '@/stores/categoriesStore'
 import { VTable, VConfirm } from '@/components/UI'
 import { removeFromStorage } from '@/db/queries/storage'
 import { deleteOneById } from '@/db/queries/tables'
-import AppLink from '@/components/AppLink.vue'
 import ActionIcon from '@/components/ActionIcon.vue'
 import { EditSvg, TrashSvg } from '@/assets/icons'
 import type { Loading } from '@/types'
@@ -62,7 +61,8 @@ const remove = async (id: number, img: string) => {
         </td>
         <td>
           <div class="flex">
-            <app-link
+            <action-icon
+              tag="a"
               :to="{
                 name: 'EditCategory',
                 params: {
@@ -70,15 +70,12 @@ const remove = async (id: number, img: string) => {
                   id: category.id
                 }
               }"
-            >
-              <action-icon
-                :svg="EditSvg"
-                paint-type="stroke"
-              />
-            </app-link>
+              :svg="EditSvg"
+              paint-type="stroke"
+            />
             <v-confirm
               v-slot="{ openModal }"
-              :message="'Вы точно хотите удалить категорю - ' + category.title"
+              :message="`Вы точно хотите удалить категорю - ${category.title}`"
               @ok="remove(category.id, category.img)"
             >
               <action-icon

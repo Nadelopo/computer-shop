@@ -1,7 +1,7 @@
 <script
   setup
   lang="ts"
-  generic="T, U extends {value: Option<T>; title: string}"
+  generic="T, U extends { value: Option<T>; title: string }"
 >
 import { ref, watchEffect } from 'vue'
 import { VButton } from '@/components/UI'
@@ -41,11 +41,11 @@ const onClick = (value: { value: Option<T>; title: string }, i: number) => {
 const isActive = (value: { value: Option<T>; title: string }) => {
   if (Array.isArray(props.modelValue)) {
     return props.modelValue.includes(value.value)
-  } else if (value.value instanceof Date && props.modelValue instanceof Date) {
-    return value.value.getTime() === props.modelValue.getTime()
-  } else {
-    return props.modelValue === value.value
   }
+  if (value.value instanceof Date && props.modelValue instanceof Date) {
+    return value.value.getTime() === props.modelValue.getTime()
+  }
+  return props.modelValue === value.value
 }
 
 if (props.loading !== undefined) {

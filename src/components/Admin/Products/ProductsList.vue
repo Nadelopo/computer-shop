@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { StorageError, removeFromStorage } from '@/db/queries/storage'
+import { removeFromStorage, type StorageError } from '@/db/queries/storage'
 import { deleteOneById } from '@/db/queries/tables'
 import { getSpecificationValue } from '@/utils/getSpecificationValue'
 import { formatPrice } from '@/utils/formatPrice'
 import { VLoader, VConfirm, VTable, VInputText } from '@/components/UI'
 import ActionIcon from '@/components/ActionIcon.vue'
-import AppLink from '@/components/AppLink.vue'
 import { EditSvg, TrashSvg } from '@/assets/icons'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
@@ -107,11 +106,13 @@ const remove = async (id: number, img: string[]) => {
           <img
             :src="product.img[0]"
             class="max-w-[120px]"
+            alt=""
           />
         </td>
         <td>
           <div class="flex">
-            <app-link
+            <action-icon
+              tag="a"
               :to="{
                 name: 'EditProducts',
                 params: {
@@ -120,15 +121,12 @@ const remove = async (id: number, img: string[]) => {
                   id: product.id
                 }
               }"
-            >
-              <action-icon
-                :svg="EditSvg"
-                paint-type="stroke"
-              />
-            </app-link>
+              :svg="EditSvg"
+              paint-type="stroke"
+            />
             <v-confirm
               v-slot="{ openModal }"
-              :message="'Вы точно хотите удалить продукт - ' + product.title"
+              :message="`Вы точно хотите удалить продукт - ${product.title}`"
               @ok="remove(product.id, product.img)"
             >
               <action-icon

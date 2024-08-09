@@ -1,5 +1,3 @@
-export type CategoryRead = Required<CategoryCreate>
-
 export type CategoryCreate = {
   created_at?: string
   enTitle: string
@@ -7,5 +5,7 @@ export type CategoryCreate = {
   img: string
   title: string
 }
+
+export type CategoryRead = Required<CategoryCreate>
 
 export type CategoryUpdate = Partial<CategoryCreate>

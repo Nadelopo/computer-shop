@@ -40,7 +40,10 @@ const titleActive = ref(true)
     class="card"
   >
     <div class="flex">
-      <button class="cross">
+      <button
+        type="button"
+        class="cross"
+      >
         <cross-svg
           v-if="props.onDelete"
           transform="rotate(45)"

@@ -1,8 +1,6 @@
 type FuncWithArgs = (...args: any) => void
 type FuncWithoutArgs = () => void
 
-export function debounce(func: FuncWithArgs, ms?: number): FuncWithArgs
-export function debounce(func: FuncWithoutArgs, ms?: number): FuncWithoutArgs
 export function debounce(
   func: FuncWithArgs | FuncWithoutArgs,
   ms: number = 500

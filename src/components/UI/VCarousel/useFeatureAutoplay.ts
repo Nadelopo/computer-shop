@@ -1,6 +1,6 @@
 import { type Ref, watchEffect } from 'vue'
 
-//prettier-ignore
+// prettier-ignore
 export type ArrowRef =  Ref<{
     swipeSlideByClick: (direction: 'next' | 'prev') => void;
 } | undefined>

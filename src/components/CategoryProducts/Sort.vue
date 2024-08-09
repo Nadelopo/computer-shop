@@ -20,7 +20,7 @@ const setQueryParams = () => {
   router.push({
     query: {
       ...route.query,
-      sort: sortColumn.value + '_' + sortAscents[sortColumn.value]
+      sort: `${sortColumn.value}_${sortAscents[sortColumn.value]}`
     }
   })
 }
@@ -57,7 +57,7 @@ const sortData: { type: SortType; text: string }[] = [
 
 onUnmounted(() => {
   sortColumn.value = 'popularity'
-  sortAscents['popularity'] = false
+  sortAscents.popularity = false
 })
 
 const isSmallScreen = useMediaQuery('(width < 1024px)')

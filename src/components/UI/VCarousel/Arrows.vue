@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ArrowSvg } from '@/assets/icons'
 import { nextTick } from 'vue'
+import { ArrowSvg } from '@/assets/icons'
 
 const props = defineProps<{
   translate: number
@@ -52,7 +52,7 @@ defineExpose({ swipeSlideByClick })
 
 <template>
   <template
-    v-for="arrowDirection in (['prev', 'next'] as const)"
+    v-for="arrowDirection in ['prev', 'next'] as const"
     :key="arrowDirection"
   >
     <arrow-svg

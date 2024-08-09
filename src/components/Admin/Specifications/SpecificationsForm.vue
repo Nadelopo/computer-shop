@@ -135,12 +135,13 @@ const submit = handleSubmit(() => {
     <div>
       <label for="units">Единицы измерения</label>
       <v-input-text
+        id="units"
         v-model.trim="form.units"
         :required="false"
       />
     </div>
     <div>
-      <label>тип поля </label>
+      <div>тип поля </div>
       <v-buttons
         v-model="form.type"
         :options="[
@@ -179,10 +180,10 @@ const submit = handleSubmit(() => {
         />
       </div>
       <div class="my-3">
-        <label>
+        <div>
           условия для лучшего значения
           <span class="text-xs"> (больще значит лучше или наоборот) </span>
-        </label>
+        </div>
         <v-buttons
           v-model="form.condition"
           :options="[
@@ -194,11 +195,11 @@ const submit = handleSubmit(() => {
       </div>
     </template>
     <div v-else-if="form.variantsValues">
-      <label>вартианты значений</label>
+      <div>вартианты значений</div>
       <v-tags v-model.trim="form.variantsValues" />
     </div>
     <div>
-      <label>отображать на карточке товара </label>
+      <div>отображать на карточке товара </div>
       <v-buttons
         v-model="form.visible"
         class="mt-2"
@@ -209,7 +210,7 @@ const submit = handleSubmit(() => {
       />
     </div>
     <div v-if="props.type === 'create'">
-      <label>задать значение по умолчанию для товаров</label>
+      <div>задать значение по умолчанию для товаров</div>
       <v-buttons
         v-model="setInitialValue"
         :options="[
@@ -220,7 +221,10 @@ const submit = handleSubmit(() => {
       />
     </div>
     <div class="mt-2">
-      <v-button :loading="loading">
+      <v-button
+        type="submit"
+        :loading="loading"
+      >
         {{ type === 'create' ? 'создать характеристику' : 'сохранить' }}
       </v-button>
     </div>

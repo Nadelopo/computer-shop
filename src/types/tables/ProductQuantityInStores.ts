@@ -1,5 +1,3 @@
-export type ProductQuantityInStoreRead = Required<ProductQuantityInStoreCreate>
-
 export type ProductQuantityInStoreCreate = {
   id?: number
   created_at?: string
@@ -7,5 +5,7 @@ export type ProductQuantityInStoreCreate = {
   quantity: number
   shopId: number
 }
+
+export type ProductQuantityInStoreRead = Required<ProductQuantityInStoreCreate>
 
 export type ProductQuantityInStoreUpdate = Partial<ProductQuantityInStoreCreate>

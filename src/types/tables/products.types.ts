@@ -1,7 +1,5 @@
 import type { SpecificationReadWithDetails } from './specifications.types'
 
-export type ProductRead = Required<ProductCreate>
-
 export type ProductReadWithDetails = {
   categories: {
     id: number
@@ -47,6 +45,8 @@ export type ProductCreate = {
   sell?: boolean
   warranty: number
 }
+
+export type ProductRead = Required<ProductCreate>
 
 export type ProductUpdate = Partial<ProductCreate>
 

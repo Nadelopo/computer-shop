@@ -25,9 +25,8 @@ const emit = defineEmits<{
 
 const { setQueryParams, productsPrice, warranty, manufacturer } =
   useFilterStore()
-const { specificationsValues, search, currentPage } = storeToRefs(
-  useFilterStore()
-)
+const { specificationsValues, search, currentPage } =
+  storeToRefs(useFilterStore())
 
 const route = useRoute()
 const router = useCustomRouter()
@@ -83,7 +82,7 @@ const setScrollPosition = () => {
   prevSCrollY = currentScrollY
 }
 
-//refactor
+// refactor
 const classes = ref('')
 const onScroll = () => {
   if (props.type === 'mobile') return
@@ -214,12 +213,12 @@ onUnmounted(() => {
         <v-button
           class="mb-4"
           width="100%"
+          type="submit"
           @click="emit('apply')"
         >
           применить
         </v-button>
         <v-button
-          type="button"
           width="100%"
           @click="cancel"
         >

@@ -6,14 +6,16 @@ type Props = {
   type?: 'click' | 'hover'
   minWidth?: string
   float?: 'start' | 'end' | 'center'
+  isCloseOnClick?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   type: 'click',
-  minWidth: 'auto'
+  minWidth: 'auto',
+  isCloseOnClick: true
 })
 
-let left = ref('0')
+const left = ref('0')
 
 const activeRef = ref<HTMLElement>()
 const contentRef = ref<HTMLElement>()
@@ -68,9 +70,15 @@ const contentEnter = () => {
   >
     <div
       ref="activeRef"
-      @click="isOpen = !isOpen"
-      @mouseenter="onEnter"
-      @mouseleave="onLeave"
+      v-on="
+        props.type === 'click'
+          ? { click: () => (isOpen = !isOpen) }
+          : {
+              mouseenter: onEnter,
+              mouseleave: onLeave,
+              click: () => (isOpen = !isOpen)
+            }
+      "
     >
       <slot
         name="active"
@@ -82,8 +90,12 @@ const contentEnter = () => {
         v-if="isOpen"
         ref="contentRef"
         class="popup__contentlksdn553"
-        @mouseenter="contentEnter"
-        @mouseleave="onLeave"
+        @click="isCloseOnClick && (isOpen = false)"
+        v-on="
+          props.type === 'hover'
+            ? { mouseenter: contentEnter, mouseleave: onLeave }
+            : {}
+        "
       >
         <slot name="content" />
       </div>

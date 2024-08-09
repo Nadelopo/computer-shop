@@ -37,7 +37,9 @@ const onOk = () => {
   emit('ok')
 }
 
-const openModal = () => (showModal.value = true)
+const openModal = () => {
+  showModal.value = true
+}
 </script>
 
 <template>

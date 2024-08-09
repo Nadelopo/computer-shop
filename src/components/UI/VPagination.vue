@@ -4,7 +4,7 @@ import { arrayRange } from '@/utils/arrayRange'
 import { ArrowSvg } from '@/assets/icons'
 import VPopup from './VPopup.vue'
 
-//prettier-ignore
+// prettier-ignore
 type PageSlots = 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20
 
 const props = defineProps<{
@@ -28,7 +28,7 @@ const items = computed(() => {
   const count = pageCount.value
   const currentPageValue = currentPage.value
   const pageSlots = props.pageSlots ?? 7
-  const isSlotsEven = pageSlots % 2 === 0 ? true : false
+  const isSlotsEven = pageSlots % 2 === 0
   const withOtherPrefPages = Math.ceil(pageSlots / 2)
   const togglePagesCount = pageSlots - 4
   const middlePageIndex = Math.floor(togglePagesCount / 2)
@@ -40,16 +40,16 @@ const items = computed(() => {
     currentPageValue <= count - (withOtherPrefPages + (isSlotsEven ? 2 : 1))
   if (isStartPosition) {
     return [...arrayRange(1, pageSlots - 1), 0, count]
-  } else if (isMiddlePosition) {
+  }
+  if (isMiddlePosition) {
     let minPage = currentPageValue - middlePageIndex + 1
     const maxPage = currentPageValue + middlePageIndex + 2
     if (isSlotsEven) {
       minPage += 1
     }
     return [1, -1, ...arrayRange(minPage, maxPage), 0, count]
-  } else {
-    return [1, -1, ...arrayRange(count - (pageSlots - 3), count + 1)]
   }
+  return [1, -1, ...arrayRange(count - (pageSlots - 3), count + 1)]
 })
 
 const otherPrefPages = computed(() => {
@@ -66,12 +66,12 @@ const otherNextPages = computed(() => {
 })
 
 const setPrev = () => {
-  currentPage.value--
+  currentPage.value -= 1
   emit('click')
 }
 
 const setNext = () => {
-  currentPage.value++
+  currentPage.value += 1
   emit('click')
 }
 
@@ -89,6 +89,7 @@ const setPage = (page: number) => {
     <button
       v-wave="currentPage !== 0"
       :disabled="currentPage === 0"
+      type="button"
       class="prev"
       @click="setPrev"
     >
@@ -101,6 +102,7 @@ const setPage = (page: number) => {
       <button
         v-if="value > 0"
         v-wave
+        type="button"
         :class="{ active: currentPage + 1 === value }"
         @click="setPage(value - 1)"
       >
@@ -113,23 +115,30 @@ const setPage = (page: number) => {
           float="center"
         >
           <template #active>
-            <button class="page-switch"> ...</button>
+            <button
+              type="button"
+              class="page-switch"
+            >
+              ...</button
+            >
           </template>
           <template #content>
-            <div
+            <button
               v-for="j in value === -1 ? otherPrefPages : otherNextPages"
               :key="j"
+              type="button"
               class="justify-center popup__el"
               @click="setPage(j - 1)"
             >
               {{ j }}
-            </div>
+            </button>
           </template>
         </v-popup>
       </template>
     </template>
     <button
       v-wave="currentPage !== pageCount - 1"
+      type="button"
       :disabled="currentPage === pageCount - 1"
       class="next"
       @click="setNext"
@@ -143,7 +152,7 @@ const setPage = (page: number) => {
 .pagination
   display: flex
   gap: 6px
-  button
+  button:not(.popup__el)
     font-weight: 300
     width: 28px
     height: 28px
@@ -155,6 +164,9 @@ const setPage = (page: number) => {
     transition: .2s
     color: var(--main-semi-light)
     border-radius: 4px
+    &.active
+      color: #fff
+      background: var(--main)
     &:hover:not(.active):not([disabled])
       background: #EBF4F3
     &:disabled
@@ -165,9 +177,7 @@ const setPage = (page: number) => {
       outline: 1px solid var(--main-semi-light)
     svg
       fill: var(--main-semi-light)
-  .active
-    color: #fff
-    background: var(--main)
+
 
   .prev, .next
     &:focus-visible

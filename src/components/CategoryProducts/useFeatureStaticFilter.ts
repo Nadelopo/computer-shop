@@ -18,11 +18,10 @@ export const getValuesFromQuery = <T extends boolean>(
   if (type) {
     const [minValue, maxValue] = String(value).split('_').map(Number)
     return { min: minValue, max: maxValue } as ReturnValuesFromQuery<T>
-  } else {
-    return {
-      values: Array.isArray(value) ? value : [value]
-    } as ReturnValuesFromQuery<T>
   }
+  return {
+    values: Array.isArray(value) ? value : [value]
+  } as ReturnValuesFromQuery<T>
 }
 
 export const useFeatureStringStaticFilter = (options?: Options) => {

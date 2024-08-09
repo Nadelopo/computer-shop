@@ -102,16 +102,15 @@ const setSpecificationsValues = async (categoryId: number) => {
         step,
         visible
       }
-    } else {
-      return {
-        id,
-        enTitle,
-        title: e.title[0].toUpperCase() + e.title.slice(1),
-        type: e.type,
-        variantsValues: e.variantsValues,
-        values: [],
-        visible
-      }
+    }
+    return {
+      id,
+      enTitle,
+      title: e.title[0].toUpperCase() + e.title.slice(1),
+      type: e.type,
+      variantsValues: e.variantsValues,
+      values: [],
+      visible
     }
   })
   await setFilterProperties()
@@ -128,14 +127,14 @@ watch(
 )
 
 const setFilterProperties = async () => {
-  const query = route.query
+  const { query } = route
   currentPage.value = query.page ? Number(query.page) - 1 : 0
   search.value = query.q ? String(query.q) : ''
   const querySort =
     typeof query.sort === 'string' ? query.sort.split('_') : null
   if (querySort) {
     const querySortTitle = querySort[0]
-    const querySortValue: boolean = !(querySort[1] == 'false')
+    const querySortValue: boolean = !(querySort[1] === 'false')
     if (isSortType(querySortTitle)) {
       sortAscents[querySortTitle] = querySortValue
       sortColumn.value = querySortTitle
@@ -190,7 +189,7 @@ watch(
 )
 
 const clickOnPaginate = () => {
-  scrollTo(0, 0)
+  window.scrollTo(0, 0)
   router.push({ query: { ...route.query, page: currentPage.value + 1 } })
 }
 

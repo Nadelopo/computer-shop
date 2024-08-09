@@ -13,7 +13,7 @@ import type {
 import type { Loading } from '@/types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 
-//type
+// type
 const categoryHasId = (
   category: CategoryUpdate | undefined
 ): category is Omit<CategoryUpdate, 'id'> & { id: number } => {

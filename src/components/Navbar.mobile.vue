@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { computed, type FunctionalComponent, type SVGAttributes } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cartStore'
 import { useUserStore } from '@/stores/userStore'
-import { storeToRefs } from 'pinia'
 import {
   HomeSvg,
   FavouriteSvg,
@@ -9,7 +10,6 @@ import {
   ComparisonSvg,
   AvatarSvg
 } from '@/assets/icons'
-import { computed, FunctionalComponent, SVGAttributes } from 'vue'
 import AppLink from './AppLink.vue'
 import type { RouteName } from '@/router/types'
 

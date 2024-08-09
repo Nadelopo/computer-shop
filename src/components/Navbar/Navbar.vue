@@ -141,19 +141,20 @@ const setSearch = (title: string) => {
             </template>
             <template #content>
               <app-link
-                v-if="user?.role == Role.ADMIN"
+                v-if="user?.role === Role.ADMIN"
                 :to="{ name: 'AdminMain' }"
                 class="popup__el"
               >
                 admin
               </app-link>
-              <div
+              <button
                 v-if="user"
+                type="button"
                 class="popup__el"
                 @click="logout"
               >
                 выйти
-              </div>
+              </button>
               <app-link
                 v-else
                 :to="{ name: 'Auth' }"
@@ -169,45 +170,45 @@ const setSearch = (title: string) => {
               </app-link>
             </template>
           </v-popup>
-          <app-link :to="{ name: 'Favourites' }">
-            <action-icon
-              :svg="FavouriteSvg"
-              variant="default"
+          <action-icon
+            :svg="FavouriteSvg"
+            variant="default"
+            tag="a"
+            :to="{ name: 'Favourites' }"
+          >
+            <span
+              v-if="userLists.favourites.length"
+              class="count"
             >
-              <span
-                v-if="userLists.favourites.length"
-                class="count"
-              >
-                {{ userLists.favourites.length }}
-              </span>
-            </action-icon>
-          </app-link>
-          <app-link :to="{ name: 'Comparison' }">
-            <action-icon
-              :svg="ComparisonSvg"
-              variant="default"
+              {{ userLists.favourites.length }}
+            </span>
+          </action-icon>
+          <action-icon
+            tag="a"
+            :to="{ name: 'Comparison' }"
+            :svg="ComparisonSvg"
+            variant="default"
+          >
+            <span
+              v-if="userLists.comparison.length"
+              class="count"
             >
-              <span
-                v-if="userLists.comparison.length"
-                class="count"
-              >
-                {{ userLists.comparison.length }}
-              </span>
-            </action-icon>
-          </app-link>
-          <app-link :to="{ name: 'Cart' }">
-            <action-icon
-              :svg="CartSvg"
-              variant="default"
+              {{ userLists.comparison.length }}
+            </span>
+          </action-icon>
+          <action-icon
+            tag="a"
+            :to="{ name: 'Cart' }"
+            :svg="CartSvg"
+            variant="default"
+          >
+            <span
+              v-if="countCartItems"
+              class="count"
             >
-              <span
-                v-if="countCartItems"
-                class="count"
-              >
-                {{ countCartItems }}
-              </span>
-            </action-icon>
-          </app-link>
+              {{ countCartItems }}
+            </span>
+          </action-icon>
         </div>
         <div class="flex justify-end lg:hidden">
           <action-icon

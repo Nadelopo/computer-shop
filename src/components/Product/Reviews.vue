@@ -57,31 +57,30 @@ const evaluationReview = async (
   let newUsersRated: UsersRated[] = [...review.usersRated]
 
   if (!prevEvaluation) {
-    if (evaluation === 'like') newEvaluation++
-    else newEvaluation--
+    if (evaluation === 'like') newEvaluation += 1
+    else newEvaluation -= 1
     newUsersRated.push({
       userId: user.value.id,
-      evaluation: evaluation === 'like' ? true : false
+      evaluation: evaluation === 'like'
     })
-  } else {
-    if (prevEvaluation === 'like' && evaluation === 'like') {
-      newEvaluation--
-      newUsersRated = newUsersRated.filter((e) => e.userId !== user.value?.id)
-    } else if (prevEvaluation === 'like' && evaluation === 'dislike') {
-      newEvaluation -= 2
-      newUsersRated = newUsersRated.map((e) =>
-        e.userId === user.value?.id ? { ...e, evaluation: false } : e
-      )
-    } else if (prevEvaluation === 'dislike' && evaluation === 'like') {
-      newEvaluation += 2
-      newUsersRated = newUsersRated.map((e) =>
-        e.userId === user.value?.id ? { ...e, evaluation: true } : e
-      )
-    } else if (prevEvaluation === 'dislike' && evaluation === 'dislike') {
-      newEvaluation++
-      newUsersRated = newUsersRated.filter((e) => e.userId !== user.value?.id)
-    }
+  } else if (prevEvaluation === 'like' && evaluation === 'like') {
+    newEvaluation -= 1
+    newUsersRated = newUsersRated.filter((e) => e.userId !== user.value?.id)
+  } else if (prevEvaluation === 'like' && evaluation === 'dislike') {
+    newEvaluation -= 2
+    newUsersRated = newUsersRated.map((e) =>
+      e.userId === user.value?.id ? { ...e, evaluation: false } : e
+    )
+  } else if (prevEvaluation === 'dislike' && evaluation === 'like') {
+    newEvaluation += 2
+    newUsersRated = newUsersRated.map((e) =>
+      e.userId === user.value?.id ? { ...e, evaluation: true } : e
+    )
+  } else if (prevEvaluation === 'dislike' && evaluation === 'dislike') {
+    newEvaluation += 1
+    newUsersRated = newUsersRated.filter((e) => e.userId !== user.value?.id)
   }
+
   const newValues = {
     evaluation: newEvaluation,
     usersRated: newUsersRated
@@ -148,7 +147,7 @@ onMounted(async () => {
         }
       })
       await loadReviews()
-      const el = document.getElementById('comment_' + commId)
+      const el = document.getElementById(`comment_${commId}`)
       if (el) {
         el.scrollIntoView()
       }
@@ -182,7 +181,7 @@ const isPageSmall = useMediaQuery('(width < 400px)')
             :key="review.id"
           >
             <review-block
-              :id="'comment_' + review.id"
+              :id="`comment_${review.id}`"
               :review="review"
               :class="{ active: commId === String(review.id) }"
               :get-user-evaluation="getUserEvaluation"

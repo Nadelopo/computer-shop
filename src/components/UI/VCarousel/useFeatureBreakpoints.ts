@@ -1,5 +1,5 @@
-import { useBreakpoints } from '@/utils/useBreakpoints'
 import type { Ref } from 'vue'
+import { useBreakpoints } from '@/utils/useBreakpoints'
 
 type TailwindPoints = 1536 | 1280 | 1024 | 768 | 640
 

@@ -59,7 +59,7 @@ const share = () => {
   const categoryProducts = products.value.filter(
     (e) => e.categoryId === currentCategoryId.value
   )
-  href = href + '?ids=' + categoryProducts.map((e) => e.id).join(' ')
+  href = `${href}?ids=${categoryProducts.map((e) => e.id).join(' ')}`
   navigator.clipboard.writeText(encodeURI(href))
 }
 </script>

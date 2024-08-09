@@ -10,8 +10,8 @@ import {
   YandexMapDefaultSchemeLayer,
   YandexMapDefaultFeaturesLayer,
   YandexMapMarker,
-  YandexMapListener,
-  YandexMapClusterer
+  YandexMapListener
+  // YandexMapClusterer
 } from 'vue-yandex-maps'
 import { getAll } from '@/db/queries/tables'
 
@@ -35,7 +35,6 @@ onMounted(async () => {
   const responses = (await Promise.all(result.map((r) => r.json()))).map(
     (j) => j.response
   )
-  console.log(responses)
   for (const response of responses) {
     markers.value.push(
       response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos
@@ -54,7 +53,7 @@ const onZoom: BehaviorMapEventHandler = (event) => {
   zoom.value = event.location.zoom
 }
 
-const clusterer = ref()
+// const clusterer = ref()
 </script>
 
 <template>

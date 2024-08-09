@@ -1,5 +1,3 @@
-export type CartRead = Required<CartCreate>
-
 export type CartCreate = {
   id?: number
   created_at?: string
@@ -9,5 +7,7 @@ export type CartCreate = {
   additionalWarranty: number
   isPriceChanged: boolean
 }
+
+export type CartRead = Required<CartCreate>
 
 export type CartUpdate = Partial<CartCreate>
