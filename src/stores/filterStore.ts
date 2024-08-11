@@ -164,10 +164,13 @@ export const useFilterStore = defineStore('filter', () => {
     const queryProduct = supabase
       .from('products')
       .select(
-        '*, categories(id, enTitle), manufacturers(id, title), specifications(*,category_specifications(id, title, units, visible, type))',
+        '*, categories(id, enTitle), manufacturers(id, title), specifications!inner(*,category_specifications!inner(id, title, units, visible, type))',
         { count: 'estimated' }
       )
-      .eq('categoryId', categoryId)
+      .match({
+        categoryId,
+        'specifications.category_specifications.visible': true
+      })
       .gte('price', productsPrice.min.value)
       .lte('price', productsPrice.max.value)
       .gte('warranty', warranty.min.value)
