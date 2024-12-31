@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
 import { getAll } from '@/db/queries/tables'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
+import { getProductQuantity } from '@/utils/getProductQuantity'
 import { useCustomRoute } from '@/utils/customRouter'
 import CategoriesList from '@/components/Manufacturer/CategoriesList.vue'
 import BestProductsList from '@/components/Manufacturer/BestProductsList.vue'
@@ -23,22 +24,25 @@ const loading = ref<Loading>('loading')
 const categories = ref<View<'distinct_categories'>[]>()
 const bestProducts = ref<ProductCardData[]>([])
 onBeforeMount(async () => {
-  const data = await Promise.all([
+  const [categoriesResult, productsResult] = await Promise.all([
     supabase.from('distinct_categories').select().match({ manufacturerId }),
     getAll('products', {
       match: { manufacturerId },
       select:
-        'id, img, discount, price, priceWithoutDiscount, title, rating, quantity, categories(id, enTitle)',
+        'id, img, discount, price, priceWithoutDiscount, title, rating,  categories(id, enTitle), product_quantity_in_stores(quantity)',
       gt: ['discount', 0]
     })
   ])
-  if (data[0].error || data[1].error) {
+  if (categoriesResult.error || productsResult.error) {
     loading.value = 'error'
     return
   }
 
-  categories.value = data[0].data
-  bestProducts.value = data[1].data
+  categories.value = categoriesResult.data
+  bestProducts.value = productsResult.data.map((p) => ({
+    ...p,
+    quantity: getProductQuantity(p.product_quantity_in_stores)
+  }))
   loading.value = 'success'
 })
 </script>

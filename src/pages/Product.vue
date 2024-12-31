@@ -3,6 +3,7 @@ import { onBeforeMount, ref, watch } from 'vue'
 import { getOneById, updateOneById } from '@/db/queries/tables'
 import { useCustomRoute } from '@/utils/customRouter'
 import { useLocalStorage } from '@/utils/localStorage'
+import { getProductQuantity } from '@/utils/getProductQuantity'
 import Header from '@/components/Product/Header.vue'
 import ProductSpecifications from '@/components/Product/ProductSpecifications.vue'
 import SimilarProducts from '@/components/Product/SimilarProducts.vue'
@@ -26,7 +27,7 @@ const loadData = async () => {
   const { data, error } = await getOneById(
     'products',
     productId,
-    '*, categories(id, enTitle), manufacturers(id, title), specifications(*, category_specifications!inner(id, title, units, visible, type))',
+    '*, categories(id, enTitle), manufacturers(id, title), specifications(*, category_specifications!inner(id, title, units, visible, type)), product_quantity_in_stores(quantity)',
     {
       order: ['categorySpecificationsId', { foreignTable: 'specifications' }]
     }
@@ -41,7 +42,13 @@ const loadData = async () => {
       title.charAt(0).toUpperCase() + title.slice(1)
     return e
   })
-  product.value = data
+
+  const { product_quantity_in_stores: _, ...need } = data
+  product.value = {
+    ...need,
+    quantity: getProductQuantity(data.product_quantity_in_stores)
+  }
+
   loading.value = 'success'
   updateOneById('products', product.value.id, {
     popularity: product.value.popularity + 1

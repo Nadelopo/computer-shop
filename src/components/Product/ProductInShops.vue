@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import VModal from '../UI/VModal.vue'
+import { VButton, VModal } from '../UI'
+import { formatTime } from '@/utils/formatTime'
+import ButtonCart from '../ButtonCart.vue'
 import type { ShopWithProduct } from './Header.vue'
 
 defineProps<{
   shops: ShopWithProduct[]
+  productId: number
 }>()
 
 const isOpenModal = ref(false)
@@ -21,13 +24,29 @@ const isOpenModal = ref(false)
     </div>
     <v-modal
       v-model="isOpenModal"
-      class="p-4"
+      class="p-4 min-w-[500px]"
     >
       <div
         v-for="shop in shops"
         :key="shop.id"
+        class="shop__choose"
       >
-        {{ shop.shops.address }}
+        <div class="mb-2 text-lg text-text cursor-pointer">
+          {{ shop.shops.address }}
+        </div>
+        <div class="mb-2">
+          Ежедневно c
+          {{ formatTime(shop.shops.timeStart, shop.shops.timeEnd, 'до') }}
+        </div>
+        <div class="flex justify-between items-center">
+          <ButtonCart
+            :product-id
+            :quantity="shop.quantity"
+          />
+          <div class="text-end text-main"
+            >доступно: {{ shop.quantity }} шт.</div
+          >
+        </div>
       </div>
     </v-modal>
   </div>
@@ -40,4 +59,9 @@ const isOpenModal = ref(false)
   transition: .1s
   &:hover
     color: var(--main-semi-light)
+
+.shop__choose
+  padding: 16px 0
+  &:not(:last-child)
+    border-bottom: 1px solid var(--gray)
 </style>

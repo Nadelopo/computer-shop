@@ -92,17 +92,31 @@ const checkAddressValid = async (
   return true
 }
 
-const updateProductQuantity = () => {
-  const items: Pick<ProductRead, 'id' | 'quantity'>[] = []
+let shopId: number | null = null
+const updateProductQuantity = async () => {
+  // const items: { productId: number; shopId: number; quantity: number }[] = []
+  console.log(products.value)
+  const promises = []
   for (const product of products.value) {
     const count = cartItems.value.find((e) => e.productId === product.id)?.count
-    if (count === undefined) continue
-    items.push({
-      id: product.id,
+    if (count === undefined || !shopId) continue
+    const item: { productId: number; shopId: number; quantity: number } = {
+      productId: product.id,
+      shopId,
       quantity: product.quantity - count
-    })
+    }
+    promises.push(
+      supabase.from('product_quantity_in_stores').update(item).select()
+    )
   }
-  return updateManyById('products', items)
+  // const result = await Promise.all(promises)
+  // console.log(result)
+
+  // return promises
+
+  // console.log(items, values.receiptDetails.shopAddress, shopId)
+
+  // return updateManyById('products', items)
 }
 const addOrderedProducts = async (orderId: number) => {
   const orderedProducts: Omit<OrderedProductCreate, 'orderId'>[] =
@@ -177,6 +191,7 @@ const onSubmit = handleSubmit(async () => {
     return
   }
   await addOrderedProducts(data.id)
+
   setCartItems()
   toast.success(`Заказ под номером ${data.id} оформлен`)
   router.push({ name: 'Home' })
@@ -184,6 +199,12 @@ const onSubmit = handleSubmit(async () => {
 </script>
 
 <template>
+  <button
+    type="button"
+    @click="updateProductQuantity"
+  >
+    click
+  </button>
   <form
     v-if="loadingPrice === 'success' && loadingUserData === 'success'"
     class="container"
@@ -237,6 +258,7 @@ const onSubmit = handleSubmit(async () => {
         <method-obtain
           :obtain-type="values.obtainType"
           :receipt-details="values.receiptDetails"
+          @choose="shopId = $event"
         />
       </div>
     </div>

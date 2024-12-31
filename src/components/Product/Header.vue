@@ -16,7 +16,10 @@ import type { Loading } from '@/types'
 import type { ProductQuantityInStoreRead } from '@/types/tables/ProductQuantityInStores'
 import type { ShopRead } from '@/types/tables/shops.types'
 
-export type ShopWithProduct = ProductQuantityInStoreRead & { shops: ShopRead }
+export type ShopWithProduct = Pick<
+  ProductQuantityInStoreRead,
+  'quantity' | 'id'
+> & { shops: Pick<ShopRead, 'address' | 'timeEnd' | 'timeStart'> }
 
 const props = defineProps<{
   product: ProductWithSpecifications
@@ -31,7 +34,7 @@ const shops = ref<ShopWithProduct[]>([])
 const getShops = async () =>
   getAll('product_quantity_in_stores', {
     match: { productId: props.product.id },
-    select: '*, shops(*)'
+    select: 'id, quantity, shops(address, timeEnd, timeStart)'
   })
 
 onBeforeMount(async () => {
@@ -111,9 +114,11 @@ const copyProductCode = (id: number) => {
 
       <div class="flex max-w-[400px] justify-between mb-4 h-12">
         <rating-stars :model-value="product.rating" />
-        <div v-if="loading === 'success'">
-          <product-in-shops :shops />
-        </div>
+        <product-in-shops
+          v-if="loading === 'success' && shops.length"
+          :shops
+          :product-id="product.id"
+        />
       </div>
       <div>
         <button-cart

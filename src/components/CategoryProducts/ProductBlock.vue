@@ -49,13 +49,11 @@ const isSmall = useMediaQuery('(width < 520px)')
             :key="specification.category_specifications.id"
             class="flex gap-x-1"
           >
-            <template v-if="specification.category_specifications.visible">
-              <div>{{ specification.category_specifications.title }}:</div>
-              <div class="text-end">
-                {{ getSpecificationValue(specification) }}
-                {{ specification.category_specifications.units }}
-              </div>
-            </template>
+            <div>{{ specification.category_specifications.title }}:</div>
+            <div class="text-end">
+              {{ getSpecificationValue(specification) }}
+              {{ specification.category_specifications.units }}
+            </div>
           </div>
         </div>
       </div>
