@@ -10,7 +10,6 @@ import {
   createMany,
   createOne,
   getOneById,
-  updateManyById,
   updateOneById
 } from '@/db/queries/tables'
 import { useCustomRouter } from '@/utils/customRouter'
@@ -27,7 +26,6 @@ import {
 import { useFeaturePrice } from '@/components/Checkout/useFeaturePrice'
 import { useFeatureInitialUserDataInstallation } from '@/components/Checkout/useFeatureInitialUserDataInstallation'
 import type { Loading } from '@/types'
-import type { ProductRead } from '@/types/tables/products.types'
 import type { OrderCreate } from '@/types/tables/orders.types'
 import type { UserUpdate } from '@/types/tables/users.types'
 import type { OrderedProductCreate } from '@/types/tables/orderedProducts.types'
@@ -93,9 +91,8 @@ const checkAddressValid = async (
 }
 
 let shopId: number | null = null
+
 const updateProductQuantity = async () => {
-  // const items: { productId: number; shopId: number; quantity: number }[] = []
-  console.log(products.value)
   const promises = []
   for (const product of products.value) {
     const count = cartItems.value.find((e) => e.productId === product.id)?.count
@@ -109,15 +106,8 @@ const updateProductQuantity = async () => {
       supabase.from('product_quantity_in_stores').update(item).select()
     )
   }
-  // const result = await Promise.all(promises)
-  // console.log(result)
-
-  // return promises
-
-  // console.log(items, values.receiptDetails.shopAddress, shopId)
-
-  // return updateManyById('products', items)
 }
+
 const addOrderedProducts = async (orderId: number) => {
   const orderedProducts: Omit<OrderedProductCreate, 'orderId'>[] =
     cartItems.value.map((e) => {
@@ -258,7 +248,7 @@ const onSubmit = handleSubmit(async () => {
         <method-obtain
           :obtain-type="values.obtainType"
           :receipt-details="values.receiptDetails"
-          @choose="shopId = $event"
+          @choose="(shopId as unknown as number) = $event"
         />
       </div>
     </div>

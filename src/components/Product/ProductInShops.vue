@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { VButton, VModal } from '../UI'
+import { VModal } from '../UI'
 import { formatTime } from '@/utils/formatTime'
 import ButtonCart from '../ButtonCart.vue'
 import type { ShopWithProduct } from './Header.vue'
@@ -43,9 +43,9 @@ const isOpenModal = ref(false)
             :product-id
             :quantity="shop.quantity"
           />
-          <div class="text-end text-main"
-            >доступно: {{ shop.quantity }} шт.</div
-          >
+          <div class="text-end text-main">
+            доступно: {{ shop.quantity }} шт.
+          </div>
         </div>
       </div>
     </v-modal>
