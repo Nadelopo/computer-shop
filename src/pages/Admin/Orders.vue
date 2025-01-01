@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useToast } from 'vue-toastification'
-import { deleteOneById, getAll, getOneById } from '@/db/queries/tables'
+import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
 import { useOrders } from '@/utils/useOrders'
 import { formatPrice } from '@/utils/formatPrice'
@@ -33,18 +33,23 @@ const totalOrders = ref(0)
 const loading = ref<Loading>('loading')
 const loadOrders = async () => {
   loading.value = 'loading'
+
   const user = await isUserAuthenticated()
   if (!user) return
-  const { data, error, count } = await getAll('orders', {
-    select: 'id, created_at, name, price, status, paymentStatus',
-    match: { userId: user.id },
-    range: [currentPage.value * limit, currentPage.value * limit + limit - 1],
-    order: ['created_at', { ascending: false }]
-  })
+
+  const { data, error, count } = await supabase
+    .from('orders')
+    .select('id, created_at, name, price, status, paymentStatus', {
+      count: 'estimated'
+    })
+    .eq('userId', user.id)
+    .range(currentPage.value * limit, currentPage.value * limit + limit - 1)
+    .order('created_at', { ascending: false })
   if (error) {
     loading.value = 'error'
     return
   }
+
   totalOrders.value = count ?? 0
   orders.value = data
   loading.value = 'success'
@@ -57,9 +62,11 @@ const loadingRemove = ref<Loading>('success')
 const removeOrder = async (id: number) => {
   loadingRemove.value = 'loading'
   currentRemoveOrderId.value = id
-  const { data, error } = await deleteOneById('orders', id)
+
+  const { error } = await supabase.from('orders').delete().eq('id', id)
   if (error) return
-  orders.value = orders.value.filter((e) => e.id !== data.id)
+
+  orders.value = orders.value.filter((e) => e.id !== id)
 }
 
 const searchOrderId = ref<number | null>(null)
@@ -69,15 +76,17 @@ const searchOrder = async () => {
     loadOrders()
     return
   }
-  const { data, error } = await getOneById(
-    'orders',
-    searchOrderId.value,
-    'id, created_at, name, price, status, paymentStatus'
-  )
+
+  const { data, error } = await supabase
+    .from('orders')
+    .select('id, created_at, name, price, status, paymentStatus')
+    .eq('id', searchOrderId.value)
+    .single()
   if (error) {
     useToast().warning('Заказ не найден')
     return
   }
+
   orders.value = [data]
   totalOrders.value = 0
 }

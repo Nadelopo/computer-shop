@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { createOne, getAll, updateOneById } from '@/db/queries/tables'
+import { supabase } from '@/db/supabase'
 import type {
   CategoryCreate,
   CategoryRead,
@@ -16,7 +16,7 @@ export const useCategoriesStore = defineStore('categories', () => {
   const categories = ref<CategoryRead[]>([])
 
   async function setCategories(): Promise<void> {
-    const { data } = await getAll('categories')
+    const { data } = await supabase.from('categories').select().order('id')
     if (data) {
       categories.value = data
     }
@@ -25,42 +25,57 @@ export const useCategoriesStore = defineStore('categories', () => {
   async function createCategory(
     params: CategoryCreate
   ): Promise<DataError<CategoryRead>> {
-    const { data, error } = await createOne('categories', params)
-    if (error) return { data, error }
-    categories.value.push(data)
-    return { data, error }
+    const response = await supabase
+      .from('categories')
+      .insert(params)
+      .select()
+      .single()
+
+    if (response.data) {
+      categories.value.push(response.data)
+    }
+
+    return response
   }
 
   async function updateCategory(
     category: Omit<CategoryUpdate, 'id'> & { id: number }
   ): Promise<DataError<CategoryRead>> {
-    const { data, error } = await updateOneById(
-      'categories',
-      category.id,
-      category
-    )
-    if (error) return { data, error }
+    const response = await supabase
+      .from('categories')
+      .update(category)
+      .eq('id', category.id)
+      .select()
+      .single()
+
     categories.value = categories.value.map((e) =>
       e.id === category.id ? { ...e, ...category } : e
     )
 
-    return { data, error }
+    return response
   }
 
   async function createCategorySpecifications(
     form: CategorySpecificationCreate
   ): Promise<DataError<CategorySpecificationRead>> {
-    const { data, error } = await createOne('category_specifications', form)
-    return { data, error } as DataError<CategorySpecificationRead>
+    const response = supabase
+      .from('category_specifications')
+      .insert(form)
+      .select()
+      .single()
+
+    return response
   }
 
   async function getCategorySpecifications(
     categoryId: number
   ): Promise<DataError<CategorySpecificationRead[]>> {
-    const { data, error } = await getAll('category_specifications', {
-      match: { categoryId }
-    })
-    return { data, error } as DataError<CategorySpecificationRead[]>
+    const response = await supabase
+      .from('category_specifications')
+      .select()
+      .match({ categoryId })
+
+    return response
   }
 
   setCategories()

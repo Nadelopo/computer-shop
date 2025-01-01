@@ -2,13 +2,13 @@
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useMediaQuery } from '@vueuse/core'
+import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
 import {
   useCartStore,
   type ProductStorage,
   type ProductCart
 } from '@/stores/cartStore'
-import { updateOneById } from '@/db/queries/tables'
 import { formatPrice } from '@/utils/formatPrice'
 import { useLocalStorage } from '@/utils/localStorage'
 import { VButtons, VSelect } from '../UI'
@@ -28,13 +28,15 @@ const { cartItems } = storeToRefs(useCartStore())
 
 const cartItemsStorage = useLocalStorage<ProductStorage[]>('cart')
 const loadingServicePrice = ref<Loading>('success')
+
 const setServicePrice = async (warranty: number, product: ProductCart) => {
   loadingServicePrice.value = 'loading'
   const user = await isUserAuthenticated()
   if (user && product.cartItemId) {
-    const { error } = await updateOneById('cart', product.cartItemId, {
-      additionalWarranty: warranty
-    })
+    const { error } = await supabase
+      .from('cart')
+      .update({ additionalWarranty: warranty })
+      .eq('id', product.cartItemId)
     if (error) {
       loadingServicePrice.value = 'error'
       return

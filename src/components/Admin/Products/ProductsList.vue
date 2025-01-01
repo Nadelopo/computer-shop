@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { supabase } from '@/db/supabase'
 import { removeFromStorage, type StorageError } from '@/db/queries/storage'
-import { deleteOneById } from '@/db/queries/tables'
 import { getSpecificationValue } from '@/utils/getSpecificationValue'
 import { formatPrice } from '@/utils/formatPrice'
 import { VLoader, VConfirm, VTable, VInputText } from '@/components/UI'
@@ -28,12 +28,13 @@ const currentRemoveProductId = ref(0)
 const remove = async (id: number, img: string[]) => {
   loadingRemove.value = 'loading'
   currentRemoveProductId.value = id
-  const { data, error } = await deleteOneById('products', id)
+
+  const { error } = await supabase.from('products').delete().eq('id', id)
   if (error) return
 
   emit(
     'update:products',
-    props.products.filter((e) => e.id !== data.id)
+    props.products.filter((e) => e.id !== id)
   )
   const deleteImages: Promise<{ error: null | StorageError }>[] = []
   img.forEach((url) => {

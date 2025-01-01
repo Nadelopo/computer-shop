@@ -1,5 +1,5 @@
 import { ref, watch } from 'vue'
-import { getOneById } from '@/db/queries/tables'
+import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
 import type { Loading } from '@/types'
 import type { OrderData } from './useFeatureForm'
@@ -19,16 +19,18 @@ export const useFeatureInitialUserDataInstallation = (
         loadingUserData.value = 'success'
         return
       }
-      const { data, error } = await getOneById(
-        'users',
-        cur.id,
-        'address, apartment, floor, entrance, city'
-      )
+
+      const { data, error } = await supabase
+        .from('users')
+        .select('address, apartment, floor, entrance, city')
+        .eq('id', cur.id)
+        .single()
       if (error) {
         loadingUserData.value = 'error'
         watcher()
         return
       }
+
       setValues({
         ...values,
         email: cur.email,

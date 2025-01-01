@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { getAll } from '@/db/queries/tables'
+import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
 import ReviewBlock from '@/components/ReviewBlock.vue'
 import AppLink from '@/components/AppLink.vue'
@@ -15,19 +15,22 @@ const loading = ref<Loading>('loading')
 onBeforeMount(async () => {
   const user = await isUserAuthenticated()
   if (!user) return
-  const { data, error } = await getAll('reviews', {
-    match: { userId: user.id },
-    order: ['created_at', { ascending: false }],
-    select: '*, users(name), products(categories(id, enTitle))'
-  })
+
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*, users(name), products(categories(id, enTitle))')
+    .eq('userId', user.id)
+    .order('created_at', { ascending: false })
   if (error) {
     loading.value = 'error'
     return
   }
+
   if (!data.length) {
     loading.value = 'empty'
     return
   }
+
   reviews.value = data
   loading.value = 'success'
 })

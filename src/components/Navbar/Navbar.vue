@@ -2,7 +2,6 @@
 import { ref, toRef, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
-import { getAll } from '@/db/queries/tables'
 import { useCustomRouter } from '@/utils/customRouter'
 import { debounce } from '@/utils/debounce'
 import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
@@ -56,16 +55,12 @@ const debouncedSearch = debounce(async () => {
 
   const or = getOrFilterForSearch(searchValue, 'title')
   const [{ data: categoriesData }, { data: productsData }] = await Promise.all([
-    getAll('categories', {
-      select: 'id, title, enTitle',
-      limit: 2,
-      or: [or]
-    }),
-    getAll('products', {
-      select: 'id, title, categories(id, enTitle)',
-      limit: 6,
-      or: [or]
-    })
+    supabase.from('categories').select('id, title, enTitle').limit(2).or(or),
+    supabase
+      .from('products')
+      .select('id, title, categories(id, enTitle)')
+      .limit(6)
+      .or(or)
   ])
 
   if (!categoriesData || !productsData) return

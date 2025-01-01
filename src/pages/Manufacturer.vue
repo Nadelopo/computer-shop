@@ -2,7 +2,6 @@
 import { computed, onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
-import { getAll } from '@/db/queries/tables'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { useCustomRoute } from '@/utils/customRouter'
 import CategoriesList from '@/components/Manufacturer/CategoriesList.vue'
@@ -25,12 +24,13 @@ const bestProducts = ref<ProductCardData[]>([])
 onBeforeMount(async () => {
   const data = await Promise.all([
     supabase.from('distinct_categories').select().match({ manufacturerId }),
-    getAll('products', {
-      match: { manufacturerId },
-      select:
-        'id, img, discount, price, priceWithoutDiscount, title, rating, quantity, categories(id, enTitle)',
-      gt: ['discount', 0]
-    })
+    supabase
+      .from('products')
+      .select(
+        'id, img, discount, price, priceWithoutDiscount, title, rating, quantity, categories(id, enTitle)'
+      )
+      .gt('discount', 0)
+      .match({ manufacturerId })
   ])
   if (data[0].error || data[1].error) {
     loading.value = 'error'

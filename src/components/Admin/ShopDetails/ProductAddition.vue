@@ -2,7 +2,6 @@
 import { computed, nextTick, ref, watch, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
-import { getAll, updateManyById } from '@/db/queries/tables'
 import { getOrFilterForSearch } from '@/utils/getOrFilterForSearch'
 import { useCustomRoute } from '@/utils/customRouter'
 import { useLocalStorage } from '@/utils/localStorage'
@@ -46,15 +45,20 @@ const loadignProducts = ref<Loading>('success')
 
 const loadProducts = async () => {
   loadignProducts.value = 'loading'
-  const { data, error } = await getAll('products', {
-    select: 'id, title',
-    in: { categoryId: selectedCategories.value },
-    or: isOnlyMatchingValues.value
-      ? undefined
-      : [getOrFilterForSearch(searchValue.value, 'title')],
-    order: ['categoryId']
-  })
+
+  const query = supabase
+    .from('products')
+    .select('id, title')
+    .in('category_id', selectedCategories.value)
+    .order('categoryId')
+
+  if (isOnlyMatchingValues.value) {
+    query.or(getOrFilterForSearch(searchValue.value, 'title'))
+  }
+
+  const { data, error } = await query
   if (error) return
+
   products.value = data.map((e) => ({ title: e.title, value: e.id }))
   loadignProducts.value = data.length ? 'success' : 'empty'
 }
@@ -102,29 +106,40 @@ const setProductsInStore = () => {
 const loadingCrete = ref<Loading>('success')
 const setQuantityProductsInShops = async () => {
   if (!productsInShop.value.length) return
+
   loadingCrete.value = 'loading'
-  const { data: productsData } = await getAll('product_quantity_in_stores', {
-    in: { shopId: productsInShop.value.map((e) => e.shopId) }
-  })
-  const forUpdate: { id: number; quantity: number }[] = []
+
+  const { data: productsData } = await supabase
+    .from('product_quantity_in_stores')
+    .select()
+    .in(
+      'shopId',
+      productsInShop.value.map((e) => e.shopId)
+    )
+
+  const forUpdate: PromiseLike<any>[] = []
   const forCreate: ProductQuantityInStoreCreate[] = []
+
   for (const product of productsInShop.value) {
     const foundProduct = productsData?.find(
       (e) => e.productId === product.productId
     )
     if (foundProduct) {
-      forUpdate.push({
-        id: foundProduct.id,
-        quantity: foundProduct.quantity + product.quantity
-      })
+      forUpdate.push(
+        supabase.from('product_quantity_in_stores').update({
+          id: foundProduct.id,
+          quantity: foundProduct.quantity + product.quantity
+        })
+      )
     } else {
       // eslint-disable-next-line
       const { title, ...v } = product
       forCreate.push(v)
     }
   }
+
   await Promise.all([
-    updateManyById('product_quantity_in_stores', forUpdate),
+    forUpdate,
     supabase.from('product_quantity_in_stores').insert(forCreate)
   ])
 

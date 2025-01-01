@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import { createMany, getAll } from '@/db/queries/tables'
+import { supabase } from '@/db/supabase'
 import AdminSpecificationsForm from '@/components/Admin/Specifications/SpecificationsForm.vue'
 import SpecificationsList from '@/components/Admin/Specifications/SpecificationsList.vue'
 import type {
@@ -34,9 +34,10 @@ const create = async (
   resetForm()
   loading.value = 'success'
 
-  const { data: products, error: errorProducts } = await getAll('products', {
-    match: { categoryId: data.categoryId }
-  })
+  const { data: products, error: errorProducts } = await supabase
+    .from('products')
+    .select('id')
+    .eq('categoryId', data.categoryId)
   if (errorProducts) {
     loading.value = 'error'
     return
@@ -53,10 +54,9 @@ const create = async (
       })
     }
 
-    const { error: errorSpecifications } = await createMany(
-      'specifications',
-      initialSpecificationsValue
-    )
+    const { error: errorSpecifications } = await supabase
+      .from('specifications')
+      .insert(initialSpecificationsValue)
     if (errorSpecifications) {
       loading.value = 'error'
     }

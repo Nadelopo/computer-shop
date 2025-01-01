@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
+import { supabase } from '@/db/supabase'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { VTable, VConfirm } from '@/components/UI'
 import { removeFromStorage } from '@/db/queries/storage'
-import { deleteOneById } from '@/db/queries/tables'
 import ActionIcon from '@/components/ActionIcon.vue'
 import { EditSvg, TrashSvg } from '@/assets/icons'
 import type { Loading } from '@/types'
@@ -16,12 +16,12 @@ const currentRemoveCategoryId = ref(0)
 const remove = async (id: number, img: string) => {
   currentRemoveCategoryId.value = id
   loadingRemove.value = 'loading'
-  const { data, error } = await deleteOneById('categories', id)
+  const { error } = await supabase.from('categories').delete().eq('id', id)
   if (error) {
     loadingRemove.value = 'error'
     return
   }
-  categories.value = categories.value.filter((e) => e.id !== data.id)
+  categories.value = categories.value.filter((e) => e.id !== id)
   const { data: imageData } = await removeFromStorage('categories', img)
   if (!imageData?.length) {
     loadingRemove.value = 'error'

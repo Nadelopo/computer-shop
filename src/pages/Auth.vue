@@ -4,7 +4,6 @@ import { useToast } from 'vue-toastification'
 import { useField, useForm } from 'vee-validate'
 import { string } from 'yup'
 import { supabase } from '@/db/supabase'
-import { createOne } from '@/db/queries/tables'
 import { useCustomRouter } from '@/utils/customRouter'
 import { VButton } from '@/components/UI'
 
@@ -61,16 +60,20 @@ const signUp = async () => {
     email: email.value,
     password: password.value
   })
+
   if (error) {
     console.error(error)
     toast.warning('Пользователь уже зарегестрирован')
   }
+
   if (!user) return
-  const { error: errorCreate } = await createOne('users', {
+
+  const { error: errorCreate } = await supabase.from('users').insert({
     name: name.value,
     email: email.value,
     id: user.id
   })
+
   if (!errorCreate) {
     router.push({ name: 'Home' })
   }

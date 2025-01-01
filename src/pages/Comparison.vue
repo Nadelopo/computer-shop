@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch, computed, onBeforeMount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
-import { getAll } from '@/db/queries/tables'
 import { useLocalStorage } from '@/utils/localStorage'
 import ComparisonList from '@/components/Comparison/ComparisonList.vue'
 import ActionsWithList from '@/components/Comparison/ActionsWithList.vue'
@@ -41,12 +41,13 @@ const loadData = async () => {
     return
   }
 
-  const { data, error } = await getAll('products', {
-    select:
-      '*, categories(id, title), manufacturers(id, title), specifications(*)',
-    in: { id: ids },
-    order: ['categorySpecificationsId', { foreignTable: 'specifications' }]
-  })
+  const { data, error } = await supabase
+    .from('products')
+    .select(
+      '*, categories(id, title), manufacturers(id, title), specifications(*)'
+    )
+    .in('id', ids)
+    .order('categorySpecificationsId', { referencedTable: 'specifications' })
 
   if (error) {
     loading.value = 'error'
@@ -79,10 +80,13 @@ const loadData = async () => {
   }
 
   const { data: categoriesSpecifications, error: errorSpecifications } =
-    await getAll('category_specifications', {
-      in: { categoryId: categories.value.map((c) => c.id) },
-      select: 'condition, title, units, id, categories(id, enTitle)'
-    })
+    await supabase
+      .from('category_specifications')
+      .select('condition, title, units, id, categories(id, enTitle)')
+      .in(
+        'category_id',
+        categories.value.map((c) => c.id)
+      )
   if (errorSpecifications) {
     loading.value = 'error'
     return

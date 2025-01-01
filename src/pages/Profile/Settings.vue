@@ -4,8 +4,8 @@ import { useForm } from 'vee-validate'
 import { string } from 'yup'
 import { useToast } from 'vue-toastification'
 import type { User } from '@supabase/supabase-js'
+import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
-import { getOneById, updateOneById } from '@/db/queries/tables'
 import { VLoader, VButton } from '@/components/UI'
 import FormField from '@/components/FormField.vue'
 import type { Loading } from '@/types'
@@ -45,11 +45,11 @@ onBeforeMount(async () => {
   user = await isUserAuthenticated()
   if (!user) return
 
-  const { data, error } = await getOneById(
-    'users',
-    user.id,
-    'address,apartment, floor, entrance, phone, name'
-  )
+  const { data, error } = await supabase
+    .from('users')
+    .select('address,apartment, floor, entrance, phone, name')
+    .eq('id', user.id)
+    .single()
   if (error) {
     loading.value = 'error'
     return
@@ -71,21 +71,28 @@ onBeforeMount(async () => {
 const loadingSubmit = ref<Loading>('success')
 const submit = handleSubmit(async (values) => {
   loadingSubmit.value = 'loading'
+
   if (!user) return
+
   const phone = Number(values.phone?.replace(/[()\- ]/g, ''))
   const { name, address, apartment, entrance, floor } = values
-  const { error } = await updateOneById('users', user.id, {
-    name,
-    phone,
-    address: address || null,
-    apartment: apartment || null,
-    entrance: entrance || null,
-    floor: floor || null
-  })
+
+  const { error } = await supabase
+    .from('users')
+    .update({
+      name,
+      phone,
+      address: address || null,
+      apartment: apartment || null,
+      entrance: entrance || null,
+      floor: floor || null
+    })
+    .eq('id', user.id)
   if (error) {
     loadingSubmit.value = 'error'
     return
   }
+
   loadingSubmit.value = 'success'
   useToast().success('Данные успешно обновлены')
 })

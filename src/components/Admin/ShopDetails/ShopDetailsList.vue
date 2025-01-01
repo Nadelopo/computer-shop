@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
-import { deleteOneById, getAll, updateManyById } from '@/db/queries/tables'
+import { supabase } from '@/db/supabase'
 import { useCustomRoute } from '@/utils/customRouter'
 import { getOrFilterForSearch } from '@/utils/getOrFilterForSearch'
 import { VButton, VConfirm, VInputText, VLoader, VTable } from '@/components/UI'
@@ -24,20 +24,25 @@ const search = ref('')
 const loading = ref<Loading>('loading')
 const loadProductsInShops = async () => {
   loading.value = 'loading'
-  const { data, error } = await getAll('product_quantity_in_stores', {
-    match: { shopId },
-    select: '*, products!inner(title)',
-    or: [getOrFilterForSearch(search.value, 'title'), 'products']
-  })
+
+  const { data, error } = await supabase
+    .from('product_quantity_in_stores')
+    .select('*, products(title)')
+    .eq('shopId', shopId)
+    .or(getOrFilterForSearch(search.value, 'products.title'), {
+      referencedTable: 'products'
+    })
   if (error) {
     loading.value = 'error'
     return
   }
+
   if (data.length === 0) {
     useToast().warning('Товары не найдены')
     loading.value = 'empty'
     return
   }
+
   productsInShops.value = data.map((e) => {
     return {
       ...e,
@@ -53,8 +58,12 @@ defineExpose({ loadProductsInShops })
 const currentRemoveShopId = ref(0)
 const loadingRemove = ref<Loading>('loading')
 const remove = async (id: number) => {
-  const { error } = await deleteOneById('product_quantity_in_stores', id)
+  const { error } = await supabase
+    .from('product_quantity_in_stores')
+    .delete()
+    .eq('id', id)
   if (error) return
+
   productsInShops.value = productsInShops.value.filter((e) => e.id !== id)
 }
 
@@ -68,16 +77,20 @@ const edit = (currentId: number) => {
 }
 
 const save = async () => {
-  const changedValues = productsInShops.value.filter((e) =>
-    currentEditIds.value.includes(e.id)
-  )
-  await updateManyById(
-    'product_quantity_in_stores',
-    changedValues.map((e) => ({
+  const changedValues: ProductQuantityInStoreRead[] = productsInShops.value
+    .filter((e) => currentEditIds.value.includes(e.id))
+    .map((e) => ({
       id: e.id,
-      quantity: e.quantity
+      created_at: e.created_at,
+      productId: e.productId,
+      quantity: e.quantity,
+      shopId: e.shopId
     }))
-  )
+
+  await supabase.from('product_quantity_in_stores').upsert(changedValues, {
+    onConflict: 'id'
+  })
+
   currentEditIds.value = []
   productsInShops.value = productsInShops.value.map((e) => {
     return { ...e, oldQuantity: e.quantity }

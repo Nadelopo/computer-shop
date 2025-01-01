@@ -1,40 +1,42 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { getOneById, updateManyById, updateOneById } from '@/db/queries/tables'
+import { supabase } from '@/db/supabase'
 import { useCustomRoute, useCustomRouter } from '@/utils/customRouter'
 import ProductsForm from '@/components/Admin/Products/ProductsForm.vue'
 import { VButton, VLoader } from '@/components/UI'
 import type { Loading } from '@/types'
-import type { SpecificationUpdate } from '@/types/tables/specifications.types'
+import type { SpecificationCreate } from '@/types/tables/specifications.types'
 import type {
   ProductCreate,
   ProductUpdate
 } from '@/types/tables/products.types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 import type { SpecificationUpdateForm } from '@/components/Admin/Products/types'
-import type { UpdateMany } from '@/db/queries/types'
+// import type { UpdateMany } from '@/db/queries/types'
 
-type SpecificationUpdateMany = SpecificationUpdate &
-  Required<Pick<SpecificationUpdate, 'id'>>
+type SpecificationUpdateMany = SpecificationCreate &
+  Required<Pick<SpecificationCreate, 'id'>>
 
 const route = useCustomRoute('EditProducts')
 const productId = Number(route.params.id)
 const product = ref<ProductCreate | null>(null)
 const specifications = ref<SpecificationUpdateForm[]>([])
 const loading = ref<Loading>('loading')
+
 onBeforeMount(async () => {
-  const { data, error } = await getOneById(
-    'products',
-    productId,
-    '*, manufacturers(id, title), categories(id, enTitle), specifications(*, category_specifications(id, title, visible, units, type, step, min, max, variantsValues))',
-    {
-      order: ['categorySpecificationsId', { foreignTable: 'specifications' }]
-    }
-  )
+  const { data, error } = await supabase
+    .from('products')
+    .select(
+      '*, manufacturers(id, title), categories(id, enTitle), specifications(*, category_specifications(id, title, visible, units, type, step, min, max, variantsValues))'
+    )
+    .eq('id', productId)
+    .order('categorySpecificationsId', { referencedTable: 'specifications' })
+    .single()
   if (error) {
     loading.value = 'error'
     return
   }
+
   const { specifications: specificationsValue, ...productValue } = data
   product.value = productValue
   specifications.value = specificationsValue.map((s) => {
@@ -83,13 +85,16 @@ const back = async () => {
 }
 
 async function updateProductSpecifications(
-  updatedSpecifications: UpdateMany<SpecificationUpdate>[]
+  updatedSpecifications: SpecificationCreate[]
 ) {
-  const newSpecifications = await updateManyById(
-    'specifications',
-    updatedSpecifications
-  )
-  return newSpecifications.sort(
+  const { data: newSpecifications } = await supabase
+    .from('specifications')
+    .upsert(updatedSpecifications, {
+      onConflict: 'id'
+    })
+    .select()
+
+  return newSpecifications?.sort(
     (a, b) => a.categorySpecificationsId - b.categorySpecificationsId
   )
 }
@@ -97,11 +102,14 @@ async function updateProductSpecifications(
 const save = async (fileActions: InputFileActions<string[]> | undefined) => {
   const productValue = product.value
   if (!productValue) return
+
   loading.value = 'loading'
+
   const { url, error: errorImage } = (await fileActions?.onSave()) || {}
   if (errorImage) {
     loading.value = 'error'
   }
+
   if (url) {
     productValue.img = url
   }
@@ -112,6 +120,7 @@ const save = async (fileActions: InputFileActions<string[]> | undefined) => {
           (productValue.priceWithoutDiscount * productValue.discount) / 100
       : productValue.priceWithoutDiscount
   )
+
   const productUpdate: ProductUpdate = {
     title: productValue.title,
     description: productValue.description,
@@ -124,20 +133,22 @@ const save = async (fileActions: InputFileActions<string[]> | undefined) => {
     quantity: productValue.quantity,
     sell: productValue.sell
   }
-  const newSpecifications: SpecificationUpdateMany[] = specifications.value.map(
-    ({ id, valueNumber, valueString }) => {
-      return {
-        id,
-        valueNumber,
-        valueString
-      }
-    }
-  )
+  const newSpecifications: SpecificationUpdateMany[] = specifications.value
+    .filter((e) => e.productId !== undefined)
+    .map(
+      (e): SpecificationUpdateMany => ({
+        id: e.id,
+        valueNumber: e.valueNumber,
+        valueString: e.valueString,
+        categorySpecificationsId: e.categorySpecificationsId,
+        productId: e.productId as number
+      })
+    )
 
   product.value = null
   const response = await Promise.all([
     updateProductSpecifications(newSpecifications),
-    updateOneById('products', productId, productUpdate)
+    supabase.from('products').update(productUpdate).eq('id', productId)
   ])
 
   const error = response.some((e) => e === null)

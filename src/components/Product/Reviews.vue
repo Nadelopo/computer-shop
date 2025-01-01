@@ -4,9 +4,9 @@ import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
 import { useMediaQuery } from '@vueuse/core'
+import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
 import { useCustomRouter } from '@/utils/customRouter'
-import { getAll, updateOneById } from '@/db/queries/tables'
 import ReviewBlock from '@/components/ReviewBlock.vue'
 import FormCreateReview from './FormCreateReview.vue'
 import { VLoader, VPagination } from '@/components/UI'
@@ -89,7 +89,10 @@ const evaluationReview = async (
     review.id === e.id ? { ...e, ...newValues } : e
   )
 
-  const { error } = await updateOneById('reviews', review.id, newValues)
+  const { error } = await supabase
+    .from('reviews')
+    .update(newValues)
+    .eq('id', review.id)
   if (error) {
     toast.error('Не удалось обновить рейтинг')
     reviews.value = reviews.value.map((e) => (review.id === e.id ? review : e))
@@ -109,15 +112,15 @@ const loading = ref<Loading | 'init'>('init')
 const loadReviews = async () => {
   if (loading.value === 'loading') return
   loading.value = 'loading'
-  const { data, count } = await getAll('reviews', {
-    match: { productId: props.productId },
-    select: '*, users(name)',
-    order: ['created_at', { ascending: false }],
-    range: [
+  const { data, count } = await supabase
+    .from('reviews')
+    .select('*, users(name)', { count: 'estimated' })
+    .eq('productId', props.productId)
+    .order('created_at', { ascending: false })
+    .range(
       currentPage.value * reviewsLimit,
       currentPage.value * reviewsLimit + reviewsLimit - 1
-    ]
-  })
+    )
   if (data && count !== null) {
     reviews.value = data
     reviewsCount.value = count
@@ -129,14 +132,14 @@ const loadReviews = async () => {
 const commId = route.query.comm_id
 onMounted(async () => {
   if (commId) {
+    const { data, count } = await supabase
+      .from('reviews')
+      .select('id', { count: 'estimated' })
+      .eq('productId', props.productId)
+
     const reviewReferenceId = Number(commId)
-    const { data, count } = await getAll('reviews', {
-      select: 'id',
-      match: {
-        productId: props.productId
-      }
-    })
     const reviewIndex = data?.findIndex((e) => e.id === reviewReferenceId)
+
     if (reviewIndex !== undefined && count !== null) {
       const pageWithComment = Math.ceil((count - reviewIndex) / reviewsLimit)
       currentPage.value = pageWithComment - 1

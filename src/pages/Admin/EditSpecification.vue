@@ -3,7 +3,6 @@ import { onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { supabase } from '@/db/supabase'
-import { getOneById, updateOneById } from '@/db/queries/tables'
 import { useCustomRoute, useCustomRouter } from '@/utils/customRouter'
 import SpecificationsForm from '@/components/Admin/Specifications/SpecificationsForm.vue'
 import { VButton, VLoader } from '@/components/UI'
@@ -22,14 +21,16 @@ const router = useCustomRouter()
 const loading = ref<Loading>('loading')
 let formInitType: CategorySpecificationRead['type'] = 'string'
 onBeforeMount(async () => {
-  const { data, error } = await getOneById(
-    'category_specifications',
-    Number(route.params.id)
-  )
+  const { data, error } = await supabase
+    .from('category_specifications')
+    .select()
+    .eq('id', route.params.id)
+    .single()
   if (error) {
     loading.value = 'error'
     return
   }
+
   form.value = data
   formInitType = data.type
   loading.value = 'success'
@@ -37,11 +38,13 @@ onBeforeMount(async () => {
 
 const save = async (values: CategorySpecificationForm) => {
   if (!values?.id || !values.categoryId) return
+
   loading.value = 'loading'
-  const { error } = await updateOneById('category_specifications', values.id, {
-    ...values,
-    categoryId: values.categoryId
-  })
+
+  const { error } = await supabase
+    .from('category_specifications')
+    .update({ ...values, categoryId: values.categoryId })
+    .eq('id', values.id)
 
   if (error) return
   if (formInitType !== values.type) {

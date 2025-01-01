@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { getAll } from '@/db/queries/tables'
+import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
 import { formatPrice } from '@/utils/formatPrice'
 import { useOrders } from '@/utils/useOrders'
@@ -21,23 +21,29 @@ const currentPage = ref(0)
 const totalOrders = ref(0)
 const loadingOrders = async () => {
   loading.value = 'loading'
+
   const user = await isUserAuthenticated()
   if (!user) return
-  const { data, error, count } = await getAll('orders', {
-    select:
-      '*, ordered_products(*, products(id, title, img, categories(id, enTitle)))',
-    match: { userId: user.id },
-    range: [currentPage.value * limit, currentPage.value * limit + limit - 1],
-    order: ['created_at', { ascending: false }]
-  })
+
+  const { data, error, count } = await supabase
+    .from('orders')
+    .select(
+      '*, ordered_products(*, products(id, title, img, categories(id, enTitle)))'
+    )
+    .eq('userId', user.id)
+    .range(currentPage.value * limit, currentPage.value * limit + limit - 1)
+    .order('created_at', { ascending: false })
+
   if (error) {
     loading.value = 'error'
     return
   }
+
   if (!data.length) {
     loading.value = 'empty'
     return
   }
+
   totalOrders.value = count ?? 0
   orders.value = data
   showProducts.value = Array(data.length).fill(false)
