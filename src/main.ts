@@ -1,6 +1,5 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import { createYmaps } from 'vue-yandex-maps'
 import VWave from 'v-wave'
 import Toast from 'vue-toastification'
 import FloatingVue from 'floating-vue'
@@ -22,7 +21,6 @@ const options: PluginOptions = {
 
 app.use(createPinia())
 app.use(router)
-app.use(createYmaps({ apikey: import.meta.env.VITE_MAPS_KEY }))
 app.use(VWave, {
   initialOpacity: 0.3
 })
