@@ -6,13 +6,15 @@ import {
   useAttrs,
   type InputHTMLAttributes
 } from 'vue'
-import { vMaska, type MaskaDetail } from 'maska'
+import { vMaska } from 'maska/vue'
+import { type MaskaDetail } from 'maska'
 import { debounce as Debounce } from '@/utils/debounce'
 import { CrossSvg, SearchSvg } from '@/assets/icons'
 
 export interface VInputTextProps<T = string>
   extends /* @vue-ignore */ InputHTMLAttributes {
   modelValue: T | null
+  modelModifiers?: {}
   type?: 'text' | 'number' | 'tel'
   autofocus?: boolean
   id?: string
@@ -125,7 +127,7 @@ const showClearButton = computed(() => {
   >
     <input
       v-if="type === 'tel'"
-      v-maska="maskaDetails"
+      v-maska="{ onMaska: (detail) => (maskaDetails = detail) }"
       data-maska="7 (###) ### ##-##"
       v-bind="bindOptions"
       @input="chooseOnInputFunc"

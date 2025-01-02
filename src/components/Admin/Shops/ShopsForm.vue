@@ -2,7 +2,8 @@
 import { ref, reactive, watchEffect } from 'vue'
 import { useForm } from 'vee-validate'
 import { string } from 'yup'
-import { vMaska, type MaskInputOptions, type MaskaDetail } from 'maska'
+import { vMaska } from 'maska/vue'
+import { type MaskInputOptions, type MaskaDetail } from 'maska'
 import { useGeoSuggest, type LocationResult } from '@/utils/useGeoSuggest'
 import { VInputText, VButton } from '@/components/UI'
 import InputAddress from '@/components/InputAddress.vue'
@@ -50,7 +51,8 @@ const maskaOptions: MaskInputOptions = reactive({
   tokens: {
     '2': { pattern: /[0-2]/ },
     '5': { pattern: /[0-5]/ }
-  }
+  },
+  onMaska: (detail) => (maskaDetail.value = detail)
 })
 
 const maskaDetail = ref<MaskaDetail>({
@@ -108,7 +110,7 @@ watchEffect(async () => {
     >
       <v-input-text
         :id="id"
-        v-maska:[maskaOptions]="maskaDetail"
+        v-maska="maskaOptions"
         name="time"
         placeholder="00:00 - 00:00"
         :required="false"
