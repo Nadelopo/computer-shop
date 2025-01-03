@@ -37,6 +37,8 @@ const getShops = async () =>
     .from('product_quantity_in_stores')
     .select('id, quantity, shops(address, timeEnd, timeStart)')
     .match({ productId: props.product.id })
+    .gt('quantity', 0)
+    .order('id')
 
 onBeforeMount(async () => {
   const item = manufacturers.value.find(
