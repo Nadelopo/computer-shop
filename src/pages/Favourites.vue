@@ -3,6 +3,7 @@ import { onBeforeMount, ref } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import { getAll } from '@/db/queries/tables'
 import { useLocalStorage } from '@/utils/localStorage'
+import { getProductQuantity } from '@/utils/getProductQuantity'
 import { VButton } from '@/components/UI'
 import ProductCard from '@/components/ProductCard'
 import ProductCardSkeleton from '@/components/ProductCard/ProductCardSkeleton.vue'
@@ -20,14 +21,17 @@ const setFavourites = async () => {
   loading.value = 'loading'
   await setUserListsValue()
   const { data, error } = await getAll('products', {
-    select: '*, categories(id, enTitle)',
+    select: '*, categories(id, enTitle), product_quantity_in_stores(quantity)',
     in: { id: userLists.favourites }
   })
   if (error) {
     loading.value = 'error'
     return
   }
-  favourites.value = data
+  favourites.value = data.map((p) => ({
+    ...p,
+    quantity: getProductQuantity(p.product_quantity_in_stores)
+  }))
   loading.value = favourites.value.length ? 'success' : 'empty'
 }
 

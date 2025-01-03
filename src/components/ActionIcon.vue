@@ -45,6 +45,7 @@ const is = computed(() => (props.tag === 'button' ? 'button' : AppLink))
 </script>
 
 <template>
+  <!-- @vue-ignore -->
   <component
     :is="is"
     v-bind="props.tag === 'a' ? { to } : {}"

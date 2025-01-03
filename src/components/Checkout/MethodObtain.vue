@@ -17,6 +17,10 @@ const props = defineProps<{
   receiptDetails: ReceiptDetails
 }>()
 
+const emit = defineEmits<{
+  choose: [number]
+}>()
+
 const locationResults = ref<LocationResult['results'] | null>(null)
 
 watch(
@@ -76,6 +80,12 @@ const { value: shopAddress, errorMessage } = useField<string>(
 
 const { value: address } = useField<string>('receiptDetails.address')
 const { value: deliveryDate } = useField<Date>('receiptDetails.deliveryDate')
+
+const choseShop = (shop: ShopRead) => {
+  shopAddress.value = shop.address
+  emit('choose', shop.id)
+  toggleModal()
+}
 </script>
 
 <template>
@@ -157,7 +167,7 @@ const { value: deliveryDate } = useField<Date>('receiptDetails.deliveryDate')
                   </div>
                   <v-button
                     class="mt-2"
-                    @click=";(shopAddress = shop.address), toggleModal()"
+                    @click="choseShop(shop)"
                   >
                     Выбрать
                   </v-button>

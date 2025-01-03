@@ -40,7 +40,6 @@ export type ProductCreate = {
   popularity?: number
   price: number
   priceWithoutDiscount: number
-  quantity: number
   rating?: number
   sell?: boolean
   warranty: number
