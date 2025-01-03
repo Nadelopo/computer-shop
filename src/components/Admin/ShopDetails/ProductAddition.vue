@@ -49,7 +49,7 @@ const loadProducts = async () => {
   const query = supabase
     .from('products')
     .select('id, title')
-    .in('category_id', selectedCategories.value)
+    .in('categoryId', selectedCategories.value)
     .order('categoryId')
 
   if (isOnlyMatchingValues.value) {
@@ -79,6 +79,7 @@ const highlightSearchTerm = async () => {
 const selectedProducts = ref<number[]>([])
 const storage = useLocalStorage<boolean>('admin.shop.matchingValues', {})
 const isOnlyMatchingValues = ref(storage.get() ?? false)
+
 watchEffect(() => {
   storage.set(isOnlyMatchingValues.value)
 })
@@ -169,7 +170,10 @@ const setQuantityProductsInShops = async () => {
         @clear=";(searchValue = ''), loadProducts()"
         @input="highlightSearchTerm"
       />
-      <v-popup float="start">
+      <v-popup
+        float="start"
+        :is-close-on-click="false"
+      >
         <template #active>
           <button
             type="button"
@@ -199,7 +203,7 @@ const setQuantityProductsInShops = async () => {
             v-if="
               isOnlyMatchingValues &&
               searchValue &&
-              startIndex &&
+              startIndex !== undefined &&
               startIndex !== -1
             "
           >

@@ -88,7 +88,7 @@ const loadData = async () => {
       .from('category_specifications')
       .select('condition, title, units, id, categories(id, enTitle)')
       .in(
-        'category_id',
+        'categoryId',
         categories.value.map((c) => c.id)
       )
   if (errorSpecifications) {

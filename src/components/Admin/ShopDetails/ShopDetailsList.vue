@@ -27,9 +27,9 @@ const loadProductsInShops = async () => {
 
   const { data, error } = await supabase
     .from('product_quantity_in_stores')
-    .select('*, products(title)')
+    .select('*, products!inner(title)')
     .eq('shopId', shopId)
-    .or(getOrFilterForSearch(search.value, 'products.title'), {
+    .or(getOrFilterForSearch(search.value, 'title'), {
       referencedTable: 'products'
     })
   if (error) {
