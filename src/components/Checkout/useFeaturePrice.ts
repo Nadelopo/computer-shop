@@ -1,6 +1,6 @@
 import { onBeforeMount, ref } from 'vue'
+import { supabase } from '@/db/supabase'
 import { useCartStore } from '@/stores/cartStore'
-import { getAll } from '@/db/queries/tables'
 import { getProductQuantity } from '@/utils/getProductQuantity'
 import { useCustomRouter } from '@/utils/customRouter'
 import type { Loading } from '@/types'
@@ -21,15 +21,18 @@ export const useFeaturePrice = () => {
 
   onBeforeMount(async () => {
     await store.setCartItems()
+
     if (!store.cartItems.length) {
       router.replace({ name: 'Home' })
     }
-    const { data, error } = await getAll('products', {
-      in: {
-        id: store.cartItems.map((e) => e.productId)
-      },
-      select: 'id, price,  title, img, product_quantity_in_stores(quantity)'
-    })
+
+    const { data, error } = await supabase
+      .from('products')
+      .select('id, price,  title, img, product_quantity_in_stores(quantity)')
+      .in(
+        'id',
+        store.cartItems.map((e) => e.productId)
+      )
     if (error) {
       loadingPrice.value = 'error'
       return

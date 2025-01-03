@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { getAll } from '@/db/queries/tables'
+import { supabase } from '@/db/supabase'
 import { useCustomRoute } from '@/utils/customRouter'
 import { VCarousel, VCarouselSlide } from '../UI'
 import AppLink from '../AppLink.vue'
@@ -18,18 +18,14 @@ const props = defineProps<{
 const similarProducts = ref<ProductRead[]>([])
 
 const loadSimilarProducts = async () => {
-  const { data } = await getAll('products', {
-    match: { categoryId },
-    between: [
-      {
-        column: 'price',
-        begin: props.productPrice - 5000,
-        end: props.productPrice + 5000
-      }
-    ],
-    limit: 5,
-    neq: ['id', props.productId]
-  })
+  const { data } = await supabase
+    .from('products')
+    .select()
+    .eq('categoryId', categoryId)
+    .neq('id', props.productId)
+    .gte('price', props.productPrice - 5000)
+    .lte('price', props.productPrice + 5000)
+    .limit(5)
   if (data) {
     similarProducts.value = data
   }

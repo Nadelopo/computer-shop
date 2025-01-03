@@ -7,12 +7,6 @@ import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
 import { useCartStore } from '@/stores/cartStore'
 import { getWordByQuantity } from '@/components/Cart/useChooseWord'
-import {
-  createMany,
-  createOne,
-  getOneById,
-  updateOneById
-} from '@/db/queries/tables'
 import { useCustomRouter } from '@/utils/customRouter'
 import { formatPrice } from '@/utils/formatPrice'
 import { VButton, VButtons, VLoader } from '@/components/UI'
@@ -45,16 +39,20 @@ const { user } = storeToRefs(useUserStore())
 
 const updateUserData = async (phone: number) => {
   if (!user.value) return
-  const { data, error: getUserError } = await getOneById(
-    'users',
-    user.value.id,
-    'address'
-  )
+
+  const { data, error: getUserError } = await supabase
+    .from('users')
+    .select('address')
+    .eq('id', user.value.id)
+    .single()
+
   if (getUserError) return
+
   const {
     obtainType,
     receiptDetails: { address, city, apartment, floor, entrance }
   } = values
+
   let updateData: UserUpdate = {}
   if (!data.address && obtainType === 'delivery') {
     updateData = {
@@ -65,11 +63,14 @@ const updateUserData = async (phone: number) => {
       entrance: entrance || null
     }
   }
+
   if (!user.value.phone) {
     updateData.phone = phone
   }
+
   if (Object.keys(updateData).length === 0) return
-  updateOneById('users', user.value.id, updateData)
+
+  await supabase.from('users').update(updateData).eq('id', user.value.id)
 }
 
 const loadingCreateOrder = ref<Loading>('success')
@@ -274,9 +275,11 @@ const addOrderedProducts = async (orderId: number) => {
   const orderedProducts: Omit<OrderedProductCreate, 'orderId'>[] =
     cartItems.value.map((e) => {
       const product = products.value.find((p) => p.id === e.productId)
+
       const additionalWarranty =
         cartItems.value.find((p) => p.productId === e.productId)
           ?.additionalWarranty ?? 0
+
       return {
         productId: e.productId,
         count: e.count,
@@ -285,20 +288,23 @@ const addOrderedProducts = async (orderId: number) => {
         servicePrice: getMarkup(additionalWarranty, product?.price ?? 0)
       }
     })
-  const { error: errorOrderedProducts } = await createMany(
-    'ordered_products',
-    orderedProducts.map((e) => ({ ...e, orderId }))
-  )
+
+  const { error: errorOrderedProducts } = await supabase
+    .from('ordered_products')
+    .insert(orderedProducts.map((e) => ({ ...e, orderId })))
+
   if (errorOrderedProducts) {
     loadingCreateOrder.value = 'error'
     toast.error('Произошла ошибка')
     return
   }
+
   if (user.value) {
     await supabase.from('cart').delete().match({ userId: user.value.id })
   } else {
     useLocalStorage('cart').set([])
   }
+
   await updateProductQuantity()
 }
 
@@ -336,15 +342,23 @@ const onSubmit = handleSubmit(async () => {
     paymentStatus: 'pending',
     price: price.value
   }
-  const { data, error } = await createOne('orders', order)
+
+  const { data, error } = await supabase
+    .from('orders')
+    .insert(order)
+    .select()
+    .single()
+
   if (error) {
     loadingCreateOrder.value = 'error'
     toast.error('Произошла ошибка')
     return
   }
+
   await addOrderedProducts(data.id)
 
   setCartItems()
+
   toast.success(`Заказ под номером ${data.id} оформлен`)
   router.push({ name: 'Home' })
 })

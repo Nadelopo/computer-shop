@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue'
 import { useToast } from 'vue-toastification'
-import { getOneById, updateOneById } from '@/db/queries/tables'
+import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
 import { useCustomRoute } from '@/utils/customRouter'
 import { useOrders } from '@/utils/useOrders'
@@ -20,15 +20,19 @@ const order = ref<OrderReadWithDetails>()
 onBeforeMount(async () => {
   const user = await isUserAuthenticated()
   if (!user) return
-  const { data, error } = await getOneById(
-    'orders',
-    orderId,
-    '*, ordered_products(*, products(id, title, img, categories(id, enTitle)))'
-  )
+
+  const { data, error } = await supabase
+    .from('orders')
+    .select(
+      '*, ordered_products(*, products(id, title, img, categories(id, enTitle)))'
+    )
+    .eq('id', orderId)
+    .single()
   if (error) {
     loading.value = 'loading'
     return
   }
+
   order.value = data
   loading.value = 'success'
 })
@@ -52,10 +56,13 @@ const paymentStatusOptions = computed(() => {
 })
 
 const updateOrder = async () => {
-  const { error } = await updateOneById('orders', orderId, {
-    status: order.value?.status,
-    paymentStatus: order.value?.paymentStatus
-  })
+  const { error } = await supabase
+    .from('orders')
+    .update({
+      status: order.value?.status,
+      paymentStatus: order.value?.paymentStatus
+    })
+    .eq('id', orderId)
   if (error) {
     useToast().error('Произошла ошибка')
     return

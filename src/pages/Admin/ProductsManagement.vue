@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, watch, watchEffect } from 'vue'
 import type { PostgrestError } from '@supabase/supabase-js'
+import { supabase } from '@/db/supabase'
 import { useCustomRoute } from '@/utils/customRouter'
 import { getProductQuantity } from '@/utils/getProductQuantity'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import { createMany, createOne, getAll, getOneById } from '@/db/queries/tables'
 import ProductsList from '@/components/Admin/Products/ProductsList.vue'
 import { VPagination } from '@/components/UI'
 import ProductsForm from '@/components/Admin/Products/ProductsForm.vue'
@@ -25,6 +25,7 @@ const search = ref('')
 const loadingProducts = ref<Loading>('loading')
 const products = ref<ProductWithSpecifications[]>([])
 const productCount = ref(0)
+
 const setProducts = async () => {
   const categoryId = Number(route.params.id)
   if (!categoryId) return
@@ -33,11 +34,11 @@ const setProducts = async () => {
   const select =
     '*, categories(id, enTitle), manufacturers(id, title), specifications(*,  category_specifications(id, title, units, visible, type)), product_quantity_in_stores(quantity)'
   if (search.value[0] === '#') {
-    const result = await getOneById(
-      'products',
-      Number(search.value.slice(1)),
-      select
-    )
+    const result = await supabase
+      .from('products')
+      .select(select)
+      .eq('id', Number(search.value.slice(1)))
+      .single()
     if (result.data) {
       products.value = [
         {
@@ -46,7 +47,9 @@ const setProducts = async () => {
         }
       ]
     }
+
     productCount.value = 0
+
     if (result.error?.code === 'PGRST116') {
       loadingProducts.value = 'empty'
       return
@@ -54,19 +57,13 @@ const setProducts = async () => {
     error = result.error
   } else {
     const limitValue = limit.value
-    const result = await getAll('products', {
-      match: { categoryId },
-      select,
-      range: [
-        page.value * limitValue,
-        page.value * limitValue + limitValue - 1
-      ],
-      search: ['title', search.value],
-      order: [
-        ['id'],
-        ['categorySpecificationsId', { foreignTable: 'specifications' }]
-      ]
-    })
+    const result = await supabase
+      .from('products')
+      .select(select, { count: 'estimated' })
+      .match({ categoryId })
+      .range(page.value * limitValue, page.value * limitValue + limitValue - 1)
+      .order('id')
+      .order('categorySpecificationsId', { referencedTable: 'specifications' })
     if (result.data) {
       products.value = result.data.map((p) => ({
         ...p,
@@ -164,21 +161,29 @@ const loadingCreateProduct = ref<Loading>('success')
 const product = ref<ProductCreate>({ ...emptyProductFields })
 const create = async (fileActions: InputFileActions<string[]> | undefined) => {
   loadingCreateProduct.value = 'loading'
+
   const { url, error: errorImage } = (await fileActions?.onSave()) || {}
   if (errorImage) {
     loadingCreateProduct.value = 'error'
     return
   }
+
   if (url) {
     product.value.img = url
   }
+
   product.value.price = Math.round(
     product.value.discount
       ? product.value.priceWithoutDiscount -
           (product.value.priceWithoutDiscount * product.value.discount) / 100
       : product.value.priceWithoutDiscount
   )
-  const { data, error } = await createOne('products', product.value)
+
+  const { data, error } = await supabase
+    .from('products')
+    .insert(product.value)
+    .select('id')
+    .single()
   if (error) {
     loadingCreateProduct.value = 'error'
     return
@@ -195,10 +200,11 @@ const create = async (fileActions: InputFileActions<string[]> | undefined) => {
       }
     }
   )
-  const { error: errorSpecifications } = await createMany(
-    'specifications',
-    specifications
-  )
+
+  const { error: errorSpecifications } = await supabase
+    .from('specifications')
+    .insert(specifications)
+
   if (errorSpecifications) {
     loadingCreateProduct.value = 'error'
     return

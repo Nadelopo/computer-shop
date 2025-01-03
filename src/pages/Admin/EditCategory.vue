@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onBeforeMount } from 'vue'
 import { storeToRefs } from 'pinia'
+import { supabase } from '@/db/supabase'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import { getOneById } from '@/db/queries/tables'
 import { useCustomRouter, useCustomRoute } from '@/utils/customRouter'
 import { VButton, VLoader } from '@/components/UI'
 import CategoriesForm from '@/components/Admin/Categories/CategoriesForm.vue'
@@ -39,11 +39,17 @@ onBeforeMount(async () => {
     loading.value = 'success'
     return
   }
-  const { data, error } = await getOneById('categories', categoryId)
+
+  const { data, error } = await supabase
+    .from('categories')
+    .select()
+    .eq('id', categoryId)
+    .single()
   if (error) {
     loading.value = 'error'
     return
   }
+
   form.value = data
   loading.value = 'success'
 })

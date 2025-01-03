@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
+import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
-import { getAll } from '@/db/queries/tables'
 import { useLocalStorage } from '@/utils/localStorage'
 import { getProductQuantity } from '@/utils/getProductQuantity'
 import { VButton } from '@/components/UI'
@@ -20,10 +20,12 @@ const loading = ref<Loading>('success')
 const setFavourites = async () => {
   loading.value = 'loading'
   await setUserListsValue()
-  const { data, error } = await getAll('products', {
-    select: '*, categories(id, enTitle), product_quantity_in_stores(quantity)',
-    in: { id: userLists.favourites }
-  })
+
+  const { data, error } = await supabase
+    .from('products')
+    .select('*, categories(id, enTitle), product_quantity_in_stores(quantity)')
+    .in('id', userLists.favourites)
+
   if (error) {
     loading.value = 'error'
     return
@@ -32,6 +34,7 @@ const setFavourites = async () => {
     ...p,
     quantity: getProductQuantity(p.product_quantity_in_stores)
   }))
+
   loading.value = favourites.value.length ? 'success' : 'empty'
 }
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { getOneById, updateOneById } from '@/db/queries/tables'
+import { supabase } from '@/db/supabase'
 import { useCustomRoute, useCustomRouter } from '@/utils/customRouter'
 import ShopsForm from '@/components/Admin/Shops/ShopsForm.vue'
 import { VLoader } from '@/components/UI'
@@ -11,12 +11,18 @@ const route = useCustomRoute('EditShop')
 const shopId = Number(route.params.id)
 const form = ref<ShopForm>()
 const loadingGet = ref<Loading>('loading')
+
 onBeforeMount(async () => {
-  const { data, error } = await getOneById('shops', shopId)
+  const { data, error } = await supabase
+    .from('shops')
+    .select()
+    .eq('id', shopId)
+    .single()
   if (error) {
     loadingGet.value = 'error'
     return
   }
+
   form.value = {
     address: data.address,
     phone: String(data.phone),
@@ -27,12 +33,13 @@ onBeforeMount(async () => {
 
 const loadingSave = ref<Loading>('success')
 const router = useCustomRouter()
+
 const save = async (values: ShopForm) => {
   loadingSave.value = 'loading'
   const phone = Number(values.phone.replace(/[()\- ]/g, ''))
   const [start, end] = values.time.split(' - ')
 
-  await updateOneById('shops', shopId, {
+  await supabase.from('shops').update({
     address: values.address,
     phone,
     timeStart: `${start}:00`,

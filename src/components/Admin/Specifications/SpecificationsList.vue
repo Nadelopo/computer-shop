@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { deleteOneById, getAll } from '@/db/queries/tables'
+import { supabase } from '@/db/supabase'
 import { VTabs, VTable, VLoader, VConfirm } from '@/components/UI'
 import ActionIcon from '@/components/ActionIcon.vue'
 import { EditSvg, TrashSvg } from '@/assets/icons'
@@ -30,17 +30,16 @@ const categorySpecifications = computed(() => {
 })
 
 const loadingGetCategories = ref<Loading>('loading')
+
 onBeforeMount(async () => {
-  const { data: categoriesData, error: categoriesError } = await getAll(
-    'categories',
-    {
-      select: 'enTitle, id, title'
-    }
-  )
+  const { data: categoriesData, error: categoriesError } = await supabase
+    .from('categories')
+    .select('enTitle, id, title')
   if (categoriesError) {
     loadingGetCategories.value = 'error'
     return
   }
+
   categories.value = categoriesData
   currentCategoryId.value = currentCategoryId.value ?? categoriesData[0].id
   loadingGetCategories.value = 'success'
@@ -51,11 +50,16 @@ const loadingRemoveData = ref<Loading>('success')
 const remove = async (id: number) => {
   currentRemoveSpecificationId.value = id
   loadingRemoveData.value = 'loading'
-  const { error } = await deleteOneById('category_specifications', id)
+
+  const { error } = await supabase
+    .from('category_specifications')
+    .delete()
+    .eq('id', id)
   if (error) {
     loadingRemoveData.value = 'error'
     return
   }
+
   specifications.value = specifications.value.filter((e) => e.id !== id)
   loadingRemoveData.value = 'success'
 }
@@ -67,21 +71,25 @@ watch(
     const findedSpecifications = specifications.value.find(
       (e) => e.categoryId === currentCategoryId.value
     )
+
     loadingGetSpecifications.value = 'loading'
+
     if (!currentCategoryId.value || findedSpecifications) {
       loadingGetSpecifications.value = 'success'
       return
     }
-    const { data, error } = await getAll('category_specifications', {
-      match: {
-        categoryId: currentCategoryId.value
-      }
-    })
+
+    const { data, error } = await supabase
+      .from('category_specifications')
+      .select()
+      .eq('categoryId', currentCategoryId.value)
     if (error) return
+
     if (!data.length) {
       loadingGetSpecifications.value = 'empty'
       return
     }
+
     specifications.value.push(...data)
     loadingGetSpecifications.value = 'success'
   },

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue'
-import { getAll } from '@/db/queries/tables'
+import { supabase } from '@/db/supabase'
 import { getCurrentTime } from '@/utils/getCurrentTime'
 import { ArrowSvg } from '@/assets/icons'
 import type { Loading } from '@/types'
@@ -20,14 +20,12 @@ onBeforeMount(async () => {
   const twoMothsAgo = new Date(currentDate.setDate(monthAgo.getDate() - 30))
 
   const results = await Promise.all([
-    getAll('orders', {
-      gte: ['created_at', formatDate(monthAgo)]
-    }),
-    getAll('orders', {
-      onlyCount: true,
-      gte: ['created_at', formatDate(twoMothsAgo)],
-      lte: ['created_at', formatDate(monthAgo)]
-    })
+    supabase.from('orders').select().gte('created_at', formatDate(monthAgo)),
+    supabase
+      .from('orders')
+      .select()
+      .gte('created_at', formatDate(twoMothsAgo))
+      .lte('created_at', formatDate(monthAgo))
   ])
   currentMothCount.value = results[0].count ?? 0
   previousMothCount.value = results[1].count ?? 0

@@ -242,6 +242,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'products'
             referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'public_ordered_products_orderId_fkey'
+            columns: ['orderId']
+            isOneToOne: false
+            referencedRelation: 'orders'
+            referencedColumns: ['id']
           }
         ]
       }

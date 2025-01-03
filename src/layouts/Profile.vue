@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
+import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
-import { getAll } from '@/db/queries/tables'
 import AppLink from '@/components/AppLink.vue'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 import type { Loading } from '@/types'
@@ -9,15 +9,17 @@ import type { Loading } from '@/types'
 const { isUserAuthenticated } = useUserStore()
 const reviews = ref<ReviewWithDetails[]>([])
 const loading = ref<Loading>('loading')
+
 onBeforeMount(async () => {
   const user = await isUserAuthenticated()
   if (!user) return
-  const { data } = await getAll('reviews', {
-    match: { userId: user.id },
-    select: '*, users(name), products(categories(id, enTitle))',
-    order: ['created_at', { ascending: false }],
-    limit: 4
-  })
+
+  const { data } = await supabase
+    .from('reviews')
+    .select('*, users(name), products(categories(id, enTitle))')
+    .eq('userId', user.id)
+    .order('created_at', { ascending: false })
+    .limit(4)
   if (data?.length === 0) {
     loading.value = 'empty'
     return

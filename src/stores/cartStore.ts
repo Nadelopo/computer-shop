@@ -1,15 +1,9 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { PostgrestError, User } from '@supabase/supabase-js'
+import { supabase } from '@/db/supabase'
 import { getProductQuantity } from '@/utils/getProductQuantity'
 import { useUserStore } from './userStore'
-import {
-  createOne,
-  deleteOneById,
-  getAll,
-  getOneById,
-  updateOneById
-} from '@/db/queries/tables'
 import { useLocalStorage } from '@/utils/localStorage'
 import type { ProductRead } from '@/types/tables/products.types'
 import type { DataError } from '@/types'
@@ -63,11 +57,11 @@ export const useCartStore = defineStore('cart', () => {
     const [user, { data: product, error: errorGetProduct }] = await Promise.all(
       [
         isUserAuthenticated(),
-        getOneById(
-          'products',
-          productId,
-          '*, product_quantity_in_stores(quantity)'
-        )
+        supabase
+          .from('products')
+          .select('*, product_quantity_in_stores(quantity)')
+          .eq('id', productId)
+          .single()
       ]
     )
     if (!product) {
@@ -81,26 +75,21 @@ export const useCartStore = defineStore('cart', () => {
     }
     let error: PostgrestError | null = null
     if (user) {
-      const { data: productsCart, error: errorProducts } = await getAll(
-        'cart',
-        {
-          match: {
-            userId: user.id,
-            productId
-          }
-        }
-      )
+      const { data: productsCart, error: errorProducts } = await supabase
+        .from('cart')
+        .select()
+        .match({ userId: user.id, productId })
       if (errorProducts) {
         error = errorProducts
         return { error }
       }
 
       if (productsCart.length) {
-        const { data, error: errorUpdate } = await updateOneById(
-          'cart',
-          productsCart[0].id,
-          { count: productsCart[0].count + 1 }
-        )
+        const { data, error: errorUpdate } = await supabase
+          .from('cart')
+          .update({ count: productsCart[0].count + 1 })
+          .eq('id', productsCart[0].id)
+
         cartItems.value = cartItems.value.map((e) =>
           data && e.productId === productId ? data : e
         )
@@ -109,13 +98,18 @@ export const useCartStore = defineStore('cart', () => {
           return { error }
         }
       } else {
-        const { data, error: errorCreate } = await createOne('cart', {
-          userId: user.id,
-          productId,
-          count: 1,
-          additionalWarranty: 0,
-          isPriceChanged: false
-        })
+        const { data, error: errorCreate } = await supabase
+          .from('cart')
+          .insert({
+            userId: user.id,
+            productId,
+            count: 1,
+            additionalWarranty: 0,
+            isPriceChanged: false
+          })
+          .select()
+          .single()
+
         if (errorCreate) {
           error = errorCreate
           return { error }
@@ -149,9 +143,10 @@ export const useCartStore = defineStore('cart', () => {
   ): Promise<DataError<ProductStorage[]>> {
     let dataValue: ProductStorage[] = []
     if (user) {
-      const { data, error } = await getAll('cart', {
-        match: { userId: user.id }
-      })
+      const { data, error } = await supabase
+        .from('cart')
+        .select()
+        .eq('userId', user.id)
       if (error) {
         return { data: null, error }
       }
@@ -170,18 +165,16 @@ export const useCartStore = defineStore('cart', () => {
   ): Promise<{ error: PostgrestError | null }> {
     const user = await isUserAuthenticated()
     if (user) {
-      const { data: productCart, error } = await getAll('cart', {
-        match: {
-          userId: user.id,
-          productId
-        }
-      })
+      const { data: productCart, error } = await supabase
+        .from('cart')
+        .select()
+        .match({ userId: user.id, productId })
       if (error) return { error }
 
-      const { error: errorDelete } = await deleteOneById(
-        'cart',
-        productCart[0].id
-      )
+      const { error: errorDelete } = await supabase
+        .from('cart')
+        .delete()
+        .eq('id', productCart[0].id)
       if (errorDelete) return { error: errorDelete }
     }
 
@@ -199,28 +192,37 @@ export const useCartStore = defineStore('cart', () => {
     cartItemId?: number
   ): Promise<{ error: PostgrestError | null }> {
     const user = await isUserAuthenticated()
-    const { data: product, error: errorProduct } = await getOneById(
-      'products',
-      productId,
-      '*, product_quantity_in_stores(quantity)'
-    )
+
+    const { data: product, error: errorProduct } = await supabase
+      .from('products')
+      .select('*, product_quantity_in_stores(quantity)')
+      .eq('id', productId)
+      .single()
+
     if (errorProduct) return { error: errorProduct }
+
     const productQuantity = getProductQuantity(
       product.product_quantity_in_stores
     )
+
     let count = itemCount
     if (productQuantity < count) {
       count = productQuantity
     }
+
     if (user) {
       if (cartItemId) {
         if (count === 0) {
-          const { error } = await deleteOneById('cart', cartItemId)
+          const { error } = await supabase
+            .from('cart')
+            .delete()
+            .eq('id', cartItemId)
           if (error) return { error }
         } else {
-          const { error } = await updateOneById('cart', cartItemId, {
-            count
-          })
+          const { error } = await supabase
+            .from('cart')
+            .update({ count })
+            .eq('id', cartItemId)
           if (error) return { error }
         }
       }
@@ -228,6 +230,7 @@ export const useCartStore = defineStore('cart', () => {
       const data = cartItemsStorage.get() ?? []
       cartItems.value = data
     }
+
     if (count === 0) {
       cartItemsWithDetails.value = cartItemsWithDetails.value.filter(
         (p) => p.id !== productId
@@ -241,23 +244,31 @@ export const useCartStore = defineStore('cart', () => {
         p.productId === productId ? { ...p, count } : p
       )
     }
+
     cartItemsStorage.set(cartItems.value)
     return { error: null }
   }
 
   async function setCartItems(): Promise<DataError<ProductStorage[]>> {
     const user = await isUserAuthenticated()
+
     let data: ProductStorage[] = []
     const { data: items, error } = await getCartItems(user)
+
     if (error) {
       return { data: null, error }
     }
     data = items
-    const { data: products, error: errorProducts } = await getAll('products', {
-      select: 'id, product_quantity_in_stores(quantity)',
-      in: { id: items.map((e) => e.productId) }
-    })
+
+    const { data: products, error: errorProducts } = await supabase
+      .from('products')
+      .select('id, product_quantity_in_stores(quantity)')
+      .in(
+        'id',
+        items.map((e) => e.productId)
+      )
     if (errorProducts) return { data: null, error: errorProducts }
+
     const promises = []
     for (const cartProduct of items) {
       const product = products.find((e) => e.id === cartProduct.productId)
@@ -273,6 +284,7 @@ export const useCartStore = defineStore('cart', () => {
         promises.push(setItemCount(product.id, productQuantity, cartProduct.id))
       }
     }
+
     if (promises.length) {
       await Promise.all(promises)
       const { data: updatedItems, error: errorCartItems } =
@@ -295,11 +307,12 @@ export const useCartStore = defineStore('cart', () => {
   }> {
     const idList: number[] = items.map((e) => e.productId)
 
-    const { data, error } = await getAll('products', {
-      select:
-        'categoryId, discount, id, img, title, price, priceWithoutDiscount,  warranty, categories(enTitle),product_quantity_in_stores(quantity)',
-      in: { id: idList }
-    })
+    const { data, error } = await supabase
+      .from('products')
+      .select(
+        'categoryId, discount, id, img, title, price, priceWithoutDiscount,  warranty, categories(enTitle),product_quantity_in_stores(quantity)'
+      )
+      .in('id', idList)
     if (error) {
       return { error }
     }

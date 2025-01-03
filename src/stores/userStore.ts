@@ -3,7 +3,6 @@ import { defineStore } from 'pinia'
 import { useToast } from 'vue-toastification'
 import type { PostgrestError, User } from '@supabase/supabase-js'
 import { supabase } from '@/db/supabase'
-import { getOneById, updateOneById } from '@/db/queries/tables'
 import { useLocalStorage } from '@/utils/localStorage'
 import type { UserRead } from '@/types/tables/users.types'
 
@@ -36,11 +35,11 @@ export const useUserStore = defineStore('user', () => {
 
   async function setUserData(id: string | undefined): Promise<void> {
     if (id) {
-      const { data } = await getOneById(
-        'users',
-        id,
-        'id, created_at, email, name, phone, role'
-      )
+      const { data } = await supabase
+        .from('users')
+        .select()
+        .eq('id', id)
+        .single()
       user.value = data
     } else {
       user.value = null
@@ -59,11 +58,11 @@ export const useUserStore = defineStore('user', () => {
   async function setUserListsValue(): Promise<PostgrestError | null> {
     const isUser = await isUserAuthenticated()
     if (isUser) {
-      const { data, error } = await getOneById(
-        'users',
-        isUser.id,
-        'favourites,  comparison'
-      )
+      const { data, error } = await supabase
+        .from('users')
+        .select('favourites, comparison')
+        .eq('id', isUser.id)
+        .single()
       if (error) {
         return error
       }
@@ -90,11 +89,11 @@ export const useUserStore = defineStore('user', () => {
     }
     let items: number[]
     if (isUser) {
-      const { data, error } = await getOneById(
-        'users',
-        isUser.id,
-        'favourites,  comparison'
-      )
+      const { data, error } = await supabase
+        .from('users')
+        .select('favourites, comparison')
+        .eq('id', isUser.id)
+        .single()
       if (error) return error
       items = data[listTitle]
     } else {
@@ -105,9 +104,10 @@ export const useUserStore = defineStore('user', () => {
       ? items.filter((e) => e !== productId)
       : [...items, productId]
     if (isUser) {
-      const { error } = await updateOneById('users', isUser.id, {
-        [listTitle]: updatedValue
-      })
+      const { error } = await supabase
+        .from('users')
+        .update({ [listTitle]: updatedValue })
+        .eq('id', isUser.id)
       if (error) return error
     }
     userLists[listTitle] = updatedValue
@@ -125,13 +125,17 @@ export const useUserStore = defineStore('user', () => {
   ): Promise<{ error: PostgrestError | null }> {
     const isUser = await isUserAuthenticated()
     const updatedItems = userLists[listTitle].filter((e) => e !== productId)
+
     if (isUser) {
-      const { error } = await updateOneById('users', isUser.id, {
-        [listTitle]: updatedItems
-      })
+      const { error } = await supabase
+        .from('users')
+        .update({ [listTitle]: updatedItems })
+        .eq('id', isUser.id)
       if (error) return { error }
     }
+
     userLists[listTitle] = updatedItems
+
     if (listTitle === 'comparison') {
       comparisonStorage.set(updatedItems)
     } else {
@@ -142,17 +146,21 @@ export const useUserStore = defineStore('user', () => {
 
   async function clearUserLists(listTitle: ListTitle, products: number[]) {
     if (user.value) {
-      const { error } = await updateOneById('users', user.value.id, {
-        [listTitle]: products
-      })
+      const { error } = await supabase
+        .from('users')
+        .update({ [listTitle]: products })
+        .eq('id', user.value.id)
       if (error) return { error }
     }
+
     userLists[listTitle] = products
+
     if (listTitle === 'favourites') {
       favouritesStorage.set(products)
     } else {
       comparisonStorage.set(products)
     }
+
     return { error: null }
   }
 

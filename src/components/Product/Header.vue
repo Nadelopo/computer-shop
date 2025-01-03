@@ -3,8 +3,8 @@ import { computed, onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
 import { useMediaQuery } from '@vueuse/core'
+import { supabase } from '@/db/supabase'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
-import { getAll } from '@/db/queries/tables'
 import { formatPrice } from '@/utils/formatPrice'
 import ProductInShops from './ProductInShops.vue'
 import ButtonCart from '@/components/ButtonCart.vue'
@@ -31,11 +31,12 @@ const manufacturer = ref<ManufacturerRead>()
 
 const loading = ref<Loading>('loading')
 const shops = ref<ShopWithProduct[]>([])
+
 const getShops = async () =>
-  getAll('product_quantity_in_stores', {
-    match: { productId: props.product.id },
-    select: 'id, quantity, shops(address, timeEnd, timeStart)'
-  })
+  supabase
+    .from('product_quantity_in_stores')
+    .select('id, quantity, shops(address, timeEnd, timeStart)')
+    .match({ productId: props.product.id })
 
 onBeforeMount(async () => {
   const item = manufacturers.value.find(

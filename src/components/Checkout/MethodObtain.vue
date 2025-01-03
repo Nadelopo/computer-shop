@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useField } from 'vee-validate'
+import { supabase } from '@/db/supabase'
 import { VButton, VModal, VLoader, VButtons } from '../UI'
-import { getAll } from '@/db/queries/tables'
 import { useGeoSuggest, type LocationResult } from '@/utils/useGeoSuggest'
 import { formatTime } from '@/utils/formatTime'
 import InputAddress from '@/components/InputAddress.vue'
@@ -36,9 +36,11 @@ watch(
 
 const shops = ref<ShopRead[]>([])
 const loadingShops = ref<Loading>('loading')
+
 const loadShops = async () => {
-  const { data, error } = await getAll('shops')
+  const { data, error } = await supabase.from('shops').select()
   if (error) return
+
   shops.value = data
   loadingShops.value = 'success'
 }

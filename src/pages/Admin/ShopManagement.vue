@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
-import { createOne } from '@/db/queries/tables'
+import { supabase } from '@/db/supabase'
 import ShopsForm from '@/components/Admin/Shops/ShopsForm.vue'
 import ShopsList from '@/components/Admin/Shops/ShopsList.vue'
 import type { ShopForm } from '@/components/Admin/Shops/types'
@@ -12,14 +12,20 @@ const loadingSubmit = ref<Loading>('success')
 const shops = ref<ShopRead[]>([])
 const onSubmit = async (values: ShopForm, resetForm: () => void) => {
   loadingSubmit.value = 'loading'
+
   const phone = Number(values.phone.replace(/[()\- ]/g, ''))
   const [start, end] = values.time.split(' - ')
-  const { data, error } = await createOne('shops', {
-    address: values.address,
-    phone,
-    timeStart: `${start}:00`,
-    timeEnd: `${end}:00`
-  })
+
+  const { data, error } = await supabase
+    .from('shops')
+    .insert({
+      address: values.address,
+      phone,
+      timeStart: `${start}:00`,
+      timeEnd: `${end}:00`
+    })
+    .select()
+    .single()
   if (error) {
     if (error.code === '23505') {
       useToast().error('Магазиг уже существует')
@@ -27,6 +33,7 @@ const onSubmit = async (values: ShopForm, resetForm: () => void) => {
     }
     return
   }
+
   shops.value.push(data)
   resetForm()
   loadingSubmit.value = 'success'

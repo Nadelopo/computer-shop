@@ -1,7 +1,7 @@
 import { type RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
 import { useToast } from 'vue-toastification'
+import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
-import { getOneById } from '@/db/queries/tables'
 import { adminRoutes } from './admin'
 import { mainRoutes } from './main'
 import MainVue from '@/layouts/Main.vue'
@@ -42,23 +42,34 @@ const router = createRouter({
 router.beforeEach(async (to, from) => {
   const requireAuth = to.matched.some((record) => record.meta.auth)
   if (!requireAuth) return true
+
   const userStore = useUserStore()
   const isAuth = await userStore.isUserAuthenticated()
+
   if (!isAuth) {
     useToast().warning('Требуется авторизация')
     if (!from.name) return { name: 'Home' }
     return false
   }
+
   const requireAdmin = to.matched.some((record) => record.meta.admin)
   if (!requireAdmin) return true
+
   let role: number | undefined
+
   if (userStore.user) {
     role = userStore.user.role
   } else {
-    const { data, error } = await getOneById('users', isAuth.id, 'role')
+    const { data, error } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', isAuth.id)
+      .single()
     if (error) return { name: 'Home' }
+
     role = data.role
   }
+
   if (role !== Role.ADMIN) return { name: 'Home' }
   return true
 })

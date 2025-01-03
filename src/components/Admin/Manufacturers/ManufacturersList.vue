@@ -2,9 +2,9 @@
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
+import { supabase } from '@/db/supabase'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { VConfirm, VTable } from '@/components/UI'
-import { deleteOneById } from '@/db/queries/tables'
 import { removeFromStorage } from '@/db/queries/storage'
 import ActionIcon from '@/components/ActionIcon.vue'
 import { EditSvg, TrashSvg } from '@/assets/icons'
@@ -19,13 +19,13 @@ const remove = async (id: number, img: string) => {
   currentRemoveManufacturerId.value = id
   loadingRemove.value = 'loading'
 
-  const { data, error } = await deleteOneById('manufacturers', id)
+  const { error } = await supabase.from('manufacturers').delete().eq('id', id)
   if (error) {
     loadingRemove.value = 'error'
     toast.error('ошибка при удалении')
     return
   }
-  manufacturers.value = manufacturers.value.filter((e) => e.id !== data.id)
+  manufacturers.value = manufacturers.value.filter((e) => e.id !== id)
 
   const { data: imageData } = await removeFromStorage('manufacturers', img)
 

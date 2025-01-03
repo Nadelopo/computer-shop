@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { useToast } from 'vue-toastification'
-import { deleteOneById, getAll } from '@/db/queries/tables'
+import { supabase } from '@/db/supabase'
 import { VConfirm, VLoader, VTable } from '@/components/UI'
 import { formatPhoneNumber } from '@/utils/formatPhone'
 import { formatTime } from '@/utils/formatTime'
@@ -12,12 +12,14 @@ import type { ShopRead } from '@/types/tables/shops.types'
 
 const shops = defineModel<ShopRead[]>({ required: true })
 const loadingShops = ref<Loading>('loading')
+
 onBeforeMount(async () => {
-  const { data, error } = await getAll('shops')
+  const { data, error } = await supabase.from('shops').select()
   if (error) {
     loadingShops.value = 'error'
     return
   }
+
   shops.value = data
   loadingShops.value = 'success'
 })
@@ -28,12 +30,14 @@ const currentRemoveShopId = ref(0)
 const remove = async (id: number) => {
   currentRemoveShopId.value = id
   loadingRemove.value = 'loading'
-  const { error } = await deleteOneById('shops', id)
+
+  const { error } = await supabase.from('shops').delete().eq('id', id)
   if (error) {
     loadingRemove.value = 'error'
     toast.error('ошибка при удалении')
     return
   }
+
   shops.value = shops.value.filter((e) => e.id !== id)
   loadingRemove.value = 'success'
 }

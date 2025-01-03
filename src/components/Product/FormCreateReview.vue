@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
+import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
-import { createOne, getAll, updateOneById } from '@/db/queries/tables'
 import { VButton } from '../UI'
 import RatingStars from '../RatingStars.vue'
 import type { UpdateProductRating } from '@/pages/Product.vue'
@@ -53,39 +53,39 @@ const createReview = async () => {
   if (form.value.rating === 0) {
     toast.warning('Укажите оценку')
   } else {
-    const { data: createdReview, error } = await createOne(
-      'reviews',
-      {
+    const { data: createdReview, error } = await supabase
+      .from('reviews')
+      .insert({
         userId: user.value.id,
         productId: props.productId,
         dignities: form.value.dignities || null,
         disadvantages: form.value.disadvantages || null,
         comment: form.value.comment || null,
         rating: form.value.rating
-      },
-      '*, users(name)'
-    )
+      })
+      .single()
     if (error) return
 
     emit('createReview', createdReview)
     form.value = { ...purifiedForm }
     showReviewForm.value = false
 
-    const { data: reviewsRating } = await getAll('reviews', {
-      match: { productId: props.productId },
-      select: 'rating'
-    })
+    const { data: reviewsRating } = await supabase
+      .from('reviews')
+      .select('rating')
+      .eq('productId', props.productId)
     if (!reviewsRating) return
 
     const newProductRating =
       reviewsRating.reduce((a, b) => a + b.rating, 0) / reviewsRating.length
-    const { data: productUpdated, error: errorProduct } = await updateOneById(
-      'products',
-      props.productId,
-      { rating: newProductRating, countReviews: reviewsRating.length }
-    )
+
+    const { error: errorProduct } = await supabase
+      .from('products')
+      .update({ rating: newProductRating, countReviews: reviewsRating.length })
+      .eq('id', props.productId)
+      .single()
     if (errorProduct) return
-    emit('updateProductRating', { rating: productUpdated.rating })
+    emit('updateProductRating', { rating: newProductRating })
   }
 }
 </script>

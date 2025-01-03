@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, watch } from 'vue'
-import { getOneById, updateOneById } from '@/db/queries/tables'
+import { supabase } from '@/db/supabase'
 import { useCustomRoute } from '@/utils/customRouter'
 import { useLocalStorage } from '@/utils/localStorage'
 import { getProductQuantity } from '@/utils/getProductQuantity'
@@ -22,20 +22,23 @@ const loading = ref<Loading>('loading')
 
 const loadData = async () => {
   window.scroll(0, 0)
-  const productId = Number(route.params.productId)
   loading.value = 'loading'
-  const { data, error } = await getOneById(
-    'products',
-    productId,
-    '*, categories(id, enTitle), manufacturers(id, title), specifications(*, category_specifications!inner(id, title, units, visible, type)), product_quantity_in_stores(quantity)',
-    {
-      order: ['categorySpecificationsId', { foreignTable: 'specifications' }]
-    }
-  )
+
+  const productId = Number(route.params.productId)
+
+  const { data, error } = await supabase
+    .from('products')
+    .select(
+      '*, categories(id, enTitle), manufacturers(id, title), specifications(*, category_specifications!inner(id, title, units, visible, type)), product_quantity_in_stores(quantity)'
+    )
+    .eq('id', productId)
+    .order('categorySpecificationsId', { referencedTable: 'specifications' })
+    .single()
   if (error) {
     loading.value = 'error'
     return
   }
+
   data.specifications = data.specifications.map((e) => {
     const { title } = e.category_specifications
     e.category_specifications.title =
@@ -50,9 +53,11 @@ const loadData = async () => {
   }
 
   loading.value = 'success'
-  updateOneById('products', product.value.id, {
-    popularity: product.value.popularity + 1
-  })
+
+  await supabase
+    .from('products')
+    .update({ popularity: product.value.popularity + 1 })
+    .eq('id', product.value.id)
 }
 
 watch(() => route.params.productId, loadData, {
