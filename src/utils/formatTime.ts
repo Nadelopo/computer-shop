@@ -1,3 +1,7 @@
-export const formatTime = (start: string, end: string): string => {
-  return `${start.slice(0, 5)} - ${end.slice(0, 5)}`
+export const formatTime = (
+  start: string,
+  end: string,
+  separator: string = '-'
+): string => {
+  return `${start.slice(0, 5)} ${separator} ${end.slice(0, 5)}`
 }

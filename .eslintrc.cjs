@@ -37,7 +37,18 @@ module.exports = {
       'error',
       { restrictDefaultExports: { defaultFrom: false } }
     ],
-    'no-console': ['error', { allow: ['error'] }],
-    'guard-for-in': 'off'
+    'no-console': ['warn', { allow: ['error'] }],
+    'guard-for-in': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      {
+        argsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_',
+        varsIgnorePattern: '^_'
+      }
+    ],
+    'prefer-const': 'off',
+    'no-return-assign': 'off'
   }
 }

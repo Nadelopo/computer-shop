@@ -2,6 +2,7 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { PostgrestError, User } from '@supabase/supabase-js'
 import { supabase } from '@/db/supabase'
+import { getProductQuantity } from '@/utils/getProductQuantity'
 import { useUserStore } from './userStore'
 import { useLocalStorage } from '@/utils/localStorage'
 import type { ProductRead } from '@/types/tables/products.types'
@@ -24,6 +25,7 @@ export type ProductCart = QueryProduct & {
   additionalWarranty: number
   servicePrice: number
   isPriceChanged: boolean
+  quantity: number
   categories: {
     enTitle: string
   }
@@ -55,13 +57,20 @@ export const useCartStore = defineStore('cart', () => {
     const [user, { data: product, error: errorGetProduct }] = await Promise.all(
       [
         isUserAuthenticated(),
-        supabase.from('products').select().eq('id', productId).single()
+        supabase
+          .from('products')
+          .select('*, product_quantity_in_stores(quantity)')
+          .eq('id', productId)
+          .single()
       ]
     )
     if (!product) {
       return { error: errorGetProduct }
     }
-    if (product.quantity < 1) {
+    const productQuantity = getProductQuantity(
+      product.product_quantity_in_stores
+    )
+    if (productQuantity < 1) {
       return { error: 'OutOfStock' }
     }
     let error: PostgrestError | null = null
@@ -186,15 +195,19 @@ export const useCartStore = defineStore('cart', () => {
 
     const { data: product, error: errorProduct } = await supabase
       .from('products')
-      .select()
+      .select('*, product_quantity_in_stores(quantity)')
       .eq('id', productId)
       .single()
 
     if (errorProduct) return { error: errorProduct }
 
+    const productQuantity = getProductQuantity(
+      product.product_quantity_in_stores
+    )
+
     let count = itemCount
-    if (product.quantity < count) {
-      count = product.quantity
+    if (productQuantity < count) {
+      count = productQuantity
     }
 
     if (user) {
@@ -249,7 +262,7 @@ export const useCartStore = defineStore('cart', () => {
 
     const { data: products, error: errorProducts } = await supabase
       .from('products')
-      .select('id, quantity')
+      .select('id, product_quantity_in_stores(quantity)')
       .in(
         'id',
         items.map((e) => e.productId)
@@ -260,14 +273,15 @@ export const useCartStore = defineStore('cart', () => {
     for (const cartProduct of items) {
       const product = products.find((e) => e.id === cartProduct.productId)
       if (!product) continue
-      if (product.quantity === 0) {
+      const productQuantity = getProductQuantity(
+        product.product_quantity_in_stores
+      )
+      if (productQuantity === 0) {
         promises.push(deleteItem(product.id))
         continue
       }
-      if (product.quantity < cartProduct.count) {
-        promises.push(
-          setItemCount(product.id, product.quantity, cartProduct.id)
-        )
+      if (productQuantity < cartProduct.count) {
+        promises.push(setItemCount(product.id, productQuantity, cartProduct.id))
       }
     }
 
@@ -296,7 +310,7 @@ export const useCartStore = defineStore('cart', () => {
     const { data, error } = await supabase
       .from('products')
       .select(
-        'categoryId, discount, id, img, title, price, priceWithoutDiscount, quantity, warranty, categories(enTitle)'
+        'categoryId, discount, id, img, title, price, priceWithoutDiscount,  warranty, categories(enTitle),product_quantity_in_stores(quantity)'
       )
       .in('id', idList)
     if (error) {
@@ -313,7 +327,8 @@ export const useCartStore = defineStore('cart', () => {
           cartItemId: item.id,
           additionalWarranty: item.additionalWarranty,
           servicePrice: 0,
-          isPriceChanged: item.isPriceChanged
+          isPriceChanged: item.isPriceChanged,
+          quantity: getProductQuantity(product.product_quantity_in_stores)
         })
       }
     }

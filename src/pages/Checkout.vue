@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
 import { storeToRefs } from 'pinia'
+import type { PostgrestError } from '@supabase/supabase-js'
 import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
 import { useCartStore } from '@/stores/cartStore'
@@ -20,10 +21,10 @@ import {
 import { useFeaturePrice } from '@/components/Checkout/useFeaturePrice'
 import { useFeatureInitialUserDataInstallation } from '@/components/Checkout/useFeatureInitialUserDataInstallation'
 import type { Loading } from '@/types'
-import type { ProductRead } from '@/types/tables/products.types'
 import type { OrderCreate } from '@/types/tables/orders.types'
 import type { UserUpdate } from '@/types/tables/users.types'
 import type { OrderedProductCreate } from '@/types/tables/orderedProducts.types'
+import type { ProductQuantityInStoreCreate } from '@/types/tables/ProductQuantityInStores'
 
 const { values, handleSubmit, setFieldValue, setValues } = useFeatureForm()
 const { loadingUserData } = useFeatureInitialUserDataInstallation(
@@ -35,6 +36,7 @@ const { price, loadingPrice, products } = useFeaturePrice()
 const { countCartItems, cartItems } = storeToRefs(useCartStore())
 
 const { user } = storeToRefs(useUserStore())
+
 const updateUserData = async (phone: number) => {
   if (!user.value) return
 
@@ -92,21 +94,181 @@ const checkAddressValid = async (
   return true
 }
 
-const updateProductQuantity = async () => {
-  const items: Pick<ProductRead, 'id' | 'quantity'>[] = []
-  for (const product of products.value) {
-    const count = cartItems.value.find((e) => e.productId === product.id)?.count
-    if (count === undefined) continue
-    items.push({
-      id: product.id,
-      quantity: product.quantity - count
-    })
+let shopId = ref<number | null>(null)
+
+const setProducts = async (
+  _products: (ProductQuantityInStoreCreate & {
+    count: number
+    type: 'insert' | 'update'
+  })[]
+) => {
+  const groupedProducts = {
+    insert: _products.filter((p) => p.type === 'insert'),
+    update: _products.filter((p) => p.type === 'update')
+  }
+  let error: PostgrestError | null = null
+
+  if (groupedProducts.update.length) {
+    const updatedProducts = groupedProducts.update.map((p) => ({
+      productId: p.productId,
+      quantity: p.quantity + p.count,
+      shopId: p.shopId,
+      created_at: p.created_at,
+      id: p.id
+    }))
+    error = (
+      await supabase
+        .from('product_quantity_in_stores')
+        .upsert(updatedProducts, { onConflict: 'id' })
+        .select()
+    ).error
   }
 
-  // CHECK проверить работоспособность
-  await Promise.all([
-    items.map((e) => supabase.from('products').update(e).eq('id', e.id))
-  ])
+  if (groupedProducts.insert.length) {
+    const insertedProducts = groupedProducts.insert.map((p) => ({
+      productId: p.productId,
+      quantity: p.quantity,
+      shopId: p.shopId
+    }))
+    error = (
+      await supabase.from('product_quantity_in_stores').insert(insertedProducts)
+    ).error
+  }
+
+  console.error(error)
+}
+
+const updateProductQuantityForSelfCall = async () => {
+  if (!shopId.value) return
+  const { data, error } = await supabase
+    .from('product_quantity_in_stores')
+    .select()
+    .eq('shopId', shopId.value)
+    .in(
+      'productId',
+      cartItems.value.map((e) => e.productId)
+    )
+  if (error) return
+
+  if (data.length !== cartItems.value.length) {
+    const productNotInShop = cartItems.value.filter(
+      (e) => !data.find((p) => p.productId === e.productId)
+    )
+
+    const { data: productsInShop } = await supabase
+      .from('product_quantity_in_stores')
+      .select()
+      .in(
+        'productId',
+        productNotInShop.map((e) => e.productId)
+      )
+    if (!productsInShop) return
+
+    const productsForSet = productNotInShop.reduce<
+      (ProductQuantityInStoreCreate & {
+        count: number
+        type: 'insert' | 'update'
+      })[]
+    >((acc, p) => {
+      const productInStores = productsInShop.find(
+        (e) => e.productId === p.productId && e.quantity >= p.count
+      )
+
+      if (productNotInShop) {
+        acc.push({
+          productId: p.productId,
+          shopId: shopId.value!,
+          quantity: p.count,
+          count: p.count,
+          type: 'insert'
+        })
+      } else if (productInStores) {
+        acc.push({
+          ...productInStores,
+          count: p.count,
+          type: 'update'
+        })
+      }
+      return acc
+    }, [])
+
+    const productForRemove = productNotInShop.reduce<
+      ProductQuantityInStoreCreate[]
+    >((acc, p) => {
+      const productInStores = productsInShop.find(
+        (e) => e.productId === p.productId && e.quantity >= p.count
+      )
+
+      if (productInStores) {
+        acc.push({
+          ...productInStores,
+          quantity: productInStores.quantity - p.count
+        })
+      }
+      return acc
+    }, [])
+
+    const { error: productRemoveError } = await supabase
+      .from('product_quantity_in_stores')
+      .upsert(productForRemove, { onConflict: 'id' })
+
+    if (productRemoveError) return
+
+    await setProducts(productsForSet)
+  }
+}
+
+const updateProductQuantityForDelivery = async () => {
+  const { data, error } = await supabase
+    .from('product_quantity_in_stores')
+    .select()
+    .in(
+      'productId',
+      cartItems.value.map((e) => e.productId)
+    )
+
+  if (error) return
+
+  data.sort((a, b) => b.quantity - a.quantity)
+
+  const updates: ProductQuantityInStoreCreate[] = []
+
+  cartItems.value.forEach((item) => {
+    let remainingQuantity = item.count
+
+    for (const store of data.filter((s) => s.productId === item.productId)) {
+      if (remainingQuantity <= 0) break
+
+      const quantityToDeduct = Math.min(store.quantity, remainingQuantity)
+      updates.push({
+        ...store,
+        quantity: store.quantity - quantityToDeduct
+      })
+      remainingQuantity -= quantityToDeduct
+    }
+
+    if (remainingQuantity > 0) {
+      console.error(
+        `Недостаточно товара с productId=${item.productId} для выполнения заказа. Осталось: ${remainingQuantity}`
+      )
+    }
+  })
+
+  const { error: updateError } = await supabase
+    .from('product_quantity_in_stores')
+    .upsert(updates)
+
+  if (updateError) {
+    console.error('Ошибка при обновлении количества товаров:', updateError)
+  }
+}
+
+const updateProductQuantity = async () => {
+  if (values.obtainType === 'selfcall') {
+    updateProductQuantityForSelfCall()
+  } else {
+    updateProductQuantityForDelivery()
+  }
 }
 
 const addOrderedProducts = async (orderId: number) => {
@@ -194,6 +356,7 @@ const onSubmit = handleSubmit(async () => {
   }
 
   await addOrderedProducts(data.id)
+
   setCartItems()
 
   toast.success(`Заказ под номером ${data.id} оформлен`)
@@ -255,6 +418,7 @@ const onSubmit = handleSubmit(async () => {
         <method-obtain
           :obtain-type="values.obtainType"
           :receipt-details="values.receiptDetails"
+          @choose="shopId = $event"
         />
       </div>
     </div>

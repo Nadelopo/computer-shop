@@ -12,6 +12,7 @@ module.exports = {
     extend: {
       colors: {
         text: 'var(--main-semi-light)',
+        main: 'var(--main)',
         danger: 'var(--danger)',
         'danger-light': 'var(--danger-semi-light)'
       }

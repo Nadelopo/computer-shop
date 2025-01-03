@@ -3,6 +3,7 @@ import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
 import { useLocalStorage } from '@/utils/localStorage'
+import { getProductQuantity } from '@/utils/getProductQuantity'
 import { VButton } from '@/components/UI'
 import ProductCard from '@/components/ProductCard'
 import ProductCardSkeleton from '@/components/ProductCard/ProductCardSkeleton.vue'
@@ -22,14 +23,18 @@ const setFavourites = async () => {
 
   const { data, error } = await supabase
     .from('products')
-    .select('*, categories(id, enTitle)')
+    .select('*, categories(id, enTitle), product_quantity_in_stores(quantity)')
     .in('id', userLists.favourites)
+
   if (error) {
     loading.value = 'error'
     return
   }
+  favourites.value = data.map((p) => ({
+    ...p,
+    quantity: getProductQuantity(p.product_quantity_in_stores)
+  }))
 
-  favourites.value = data
   loading.value = favourites.value.length ? 'success' : 'empty'
 }
 

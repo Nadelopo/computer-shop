@@ -3,6 +3,7 @@ import { ref, watch, watchEffect } from 'vue'
 import type { PostgrestError } from '@supabase/supabase-js'
 import { supabase } from '@/db/supabase'
 import { useCustomRoute } from '@/utils/customRouter'
+import { getProductQuantity } from '@/utils/getProductQuantity'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import ProductsList from '@/components/Admin/Products/ProductsList.vue'
 import { VPagination } from '@/components/UI'
@@ -31,7 +32,7 @@ const setProducts = async () => {
   loadingProducts.value = 'loading'
   let error: PostgrestError | null = null
   const select =
-    '*, categories(id, enTitle), manufacturers(id, title), specifications(*,  category_specifications(id, title, units, visible, type))'
+    '*, categories(id, enTitle), manufacturers(id, title), specifications(*,  category_specifications(id, title, units, visible, type)), product_quantity_in_stores(quantity)'
   if (search.value[0] === '#') {
     const result = await supabase
       .from('products')
@@ -39,7 +40,12 @@ const setProducts = async () => {
       .eq('id', Number(search.value.slice(1)))
       .single()
     if (result.data) {
-      products.value = [result.data]
+      products.value = [
+        {
+          ...result.data,
+          quantity: getProductQuantity(result.data.product_quantity_in_stores)
+        }
+      ]
     }
 
     productCount.value = 0
@@ -59,7 +65,10 @@ const setProducts = async () => {
       .order('id')
       .order('categorySpecificationsId', { referencedTable: 'specifications' })
     if (result.data) {
-      products.value = result.data
+      products.value = result.data.map((p) => ({
+        ...p,
+        quantity: getProductQuantity(p.product_quantity_in_stores)
+      }))
     }
     error = result.error
     productCount.value = result.count ?? 0
@@ -108,7 +117,6 @@ const emptyProductFields: ProductCreate = {
   manufacturerId: 0,
   img: [],
   priceWithoutDiscount: 0,
-  quantity: 100,
   warranty: 0,
   discount: 0
 }

@@ -1,6 +1,7 @@
 import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/db/supabase'
 import { useCartStore } from '@/stores/cartStore'
+import { getProductQuantity } from '@/utils/getProductQuantity'
 import { useCustomRouter } from '@/utils/customRouter'
 import type { Loading } from '@/types'
 import type { ProductRead } from '@/types/tables/products.types'
@@ -13,7 +14,9 @@ export const useFeaturePrice = () => {
   const router = useCustomRouter()
 
   const products = ref<
-    Pick<ProductRead, 'id' | 'price' | 'title' | 'img' | 'quantity'>[]
+    (Pick<ProductRead, 'id' | 'price' | 'title' | 'img'> & {
+      quantity: number
+    })[]
   >([])
 
   onBeforeMount(async () => {
@@ -25,7 +28,7 @@ export const useFeaturePrice = () => {
 
     const { data, error } = await supabase
       .from('products')
-      .select('id, price, quantity, title, img')
+      .select('id, price,  title, img, product_quantity_in_stores(quantity)')
       .in(
         'id',
         store.cartItems.map((e) => e.productId)
@@ -34,7 +37,13 @@ export const useFeaturePrice = () => {
       loadingPrice.value = 'error'
       return
     }
-    products.value = data
+    products.value = data.map((p) => {
+      const { product_quantity_in_stores: _, ...f } = p
+      return {
+        ...f,
+        quantity: getProductQuantity(p.product_quantity_in_stores)
+      }
+    })
     price.value += data.reduce((a, b) => {
       const item = store.cartItems.find((e) => e.productId === b.id)
       if (!item) return a

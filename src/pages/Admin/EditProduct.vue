@@ -130,7 +130,6 @@ const save = async (fileActions: InputFileActions<string[]> | undefined) => {
     price,
     priceWithoutDiscount: productValue.priceWithoutDiscount,
     discount: productValue.discount,
-    quantity: productValue.quantity,
     sell: productValue.sell
   }
   const newSpecifications: SpecificationUpdateMany[] = specifications.value

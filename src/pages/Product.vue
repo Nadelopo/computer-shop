@@ -3,6 +3,7 @@ import { onBeforeMount, ref, watch } from 'vue'
 import { supabase } from '@/db/supabase'
 import { useCustomRoute } from '@/utils/customRouter'
 import { useLocalStorage } from '@/utils/localStorage'
+import { getProductQuantity } from '@/utils/getProductQuantity'
 import Header from '@/components/Product/Header.vue'
 import ProductSpecifications from '@/components/Product/ProductSpecifications.vue'
 import SimilarProducts from '@/components/Product/SimilarProducts.vue'
@@ -28,7 +29,7 @@ const loadData = async () => {
   const { data, error } = await supabase
     .from('products')
     .select(
-      '*, categories(id, enTitle), manufacturers(id, title), specifications(*, category_specifications(id, title, units, visible, type))'
+      '*, categories(id, enTitle), manufacturers(id, title), specifications(*, category_specifications!inner(id, title, units, visible, type)), product_quantity_in_stores(quantity)'
     )
     .eq('id', productId)
     .order('categorySpecificationsId', { referencedTable: 'specifications' })
@@ -45,7 +46,12 @@ const loadData = async () => {
     return e
   })
 
-  product.value = data
+  const { product_quantity_in_stores: _, ...need } = data
+  product.value = {
+    ...need,
+    quantity: getProductQuantity(data.product_quantity_in_stores)
+  }
+
   loading.value = 'success'
 
   await supabase

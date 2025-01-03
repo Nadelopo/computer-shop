@@ -83,7 +83,6 @@ onUnmounted(() => {
   background: white
   border-radius: 8px
   min-height: 50px
-  min-width: 300px
   outline: none
 
 .fade-enter-active,

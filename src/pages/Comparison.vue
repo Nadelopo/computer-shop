@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
 import { useLocalStorage } from '@/utils/localStorage'
+import { getProductQuantity } from '@/utils/getProductQuantity'
 import ComparisonList from '@/components/Comparison/ComparisonList.vue'
 import ActionsWithList from '@/components/Comparison/ActionsWithList.vue'
 import { VTabs, VLoader } from '@/components/UI'
@@ -44,7 +45,7 @@ const loadData = async () => {
   const { data, error } = await supabase
     .from('products')
     .select(
-      '*, categories(id, title), manufacturers(id, title), specifications(*)'
+      '*, categories(id, title), manufacturers(id, title), specifications(*), product_quantity_in_stores(quantity)'
     )
     .in('id', ids)
     .order('categorySpecificationsId', { referencedTable: 'specifications' })
@@ -53,7 +54,10 @@ const loadData = async () => {
     loading.value = 'error'
     return
   }
-  products.value = data
+  products.value = data.map((p) => ({
+    ...p,
+    quantity: getProductQuantity(p.product_quantity_in_stores)
+  }))
   categories.value = []
 
   for (const product of data.sort((a, b) => b.categoryId - a.categoryId)) {
