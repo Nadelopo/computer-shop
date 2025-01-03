@@ -48,6 +48,7 @@ module.exports = {
         varsIgnorePattern: '^_'
       }
     ],
-    'prefer-const': 'off'
+    'prefer-const': 'off',
+    'no-return-assign': 'off'
   }
 }
