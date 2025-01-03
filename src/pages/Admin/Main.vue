@@ -20,10 +20,13 @@ onBeforeMount(async () => {
   const twoMothsAgo = new Date(currentDate.setDate(monthAgo.getDate() - 30))
 
   const results = await Promise.all([
-    supabase.from('orders').select().gte('created_at', formatDate(monthAgo)),
     supabase
       .from('orders')
-      .select()
+      .select(undefined, { count: 'estimated' })
+      .gte('created_at', formatDate(monthAgo)),
+    supabase
+      .from('orders')
+      .select(undefined, { count: 'estimated' })
       .gte('created_at', formatDate(twoMothsAgo))
       .lte('created_at', formatDate(monthAgo))
   ])
@@ -43,7 +46,7 @@ const text = computed(() => {
     return 'В прошлом месяце не было продаж'
   }
   if (differentPreviousCount.value === 0) {
-    return 'В этом месяце не бло продаж'
+    return 'В этом месяце не было продаж'
   }
   return `${differentPreviousCount.value} %`
 })
