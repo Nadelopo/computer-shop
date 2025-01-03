@@ -138,6 +138,7 @@ const setProducts = async (
   console.error(error)
 }
 
+// FIX переделать 2 запроса product_quantity_in_stores на один
 const updateProductQuantityForSelfCall = async () => {
   if (!shopId.value) return
   const { data, error } = await supabase
@@ -216,6 +217,37 @@ const updateProductQuantityForSelfCall = async () => {
 
     await setProducts(productsForSet)
   }
+
+  const { data: productsInStore } = await supabase
+    .from('product_quantity_in_stores')
+    .select()
+    .eq('shopId', shopId.value)
+    .in(
+      'productId',
+      cartItems.value.map((e) => e.productId)
+    )
+  if (!productsInStore) return
+
+  const productsForRemove = cartItems.value.reduce<
+    ProductQuantityInStoreCreate[]
+  >((acc, p) => {
+    const product = productsInStore.find((e) => e.productId === p.productId)
+    if (product) {
+      acc.push({
+        ...product,
+        quantity: product.quantity - p.count
+      })
+    }
+    return acc
+  }, [])
+
+  const { error: productRemoveError } = await supabase
+    .from('product_quantity_in_stores')
+    .upsert(productsForRemove, { onConflict: 'id' })
+
+  if (productRemoveError) {
+    console.error(productRemoveError)
+  }
 }
 
 const updateProductQuantityForDelivery = async () => {
@@ -265,9 +297,9 @@ const updateProductQuantityForDelivery = async () => {
 
 const updateProductQuantity = async () => {
   if (values.obtainType === 'selfcall') {
-    updateProductQuantityForSelfCall()
+    await updateProductQuantityForSelfCall()
   } else {
-    updateProductQuantityForDelivery()
+    await updateProductQuantityForDelivery()
   }
 }
 
