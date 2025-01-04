@@ -11,6 +11,8 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@babel/parser": "^7.26.3",
+    "@babel/traverse": "^7.26.4",
     "@supabase/supabase-js": "2.47.10",
     "@vueuse/core": "^10.2.1",
     "@vueuse/integrations": "^10.11.0",
@@ -22,12 +24,14 @@
     "vee-validate": "^4.12.6",
     "vue": "^3.4.21",
     "vue-content-loader": "^2.0.1",
-    "vue-router": "^4.1.5",
+    "vue-router": "^4.5.0",
     "vue-toastification": "2.0.0-rc.5",
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@babel/types": "^7.26.3",
     "@rushstack/eslint-patch": "^1.10.2",
+    "@types/node": "^22.10.5",
     "@vitejs/plugin-vue": "5.0.4",
     "@vue/eslint-config-airbnb": "^8.0.0",
     "@vue/eslint-config-prettier": "^9.0.0",
