@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
-import { useCustomRoute, useCustomRouter } from '@/utils/customRouter'
+import {
+  useCustomRoute,
+  useCustomRouter
+} from '@/shared/composables/customRouter'
 import { VButton, VLoader } from '@/components/UI'
 import ManufacturersForm from '@/components/Admin/Manufacturers/ManufacturersForm.vue'
 import type { ManufacturerCreate } from '@/types/tables/manufacturers.types'

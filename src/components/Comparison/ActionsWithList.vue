@@ -2,7 +2,7 @@
 import { nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
-import { useCustomRouter } from '@/utils/customRouter'
+import { useCustomRouter } from '@/shared/composables/customRouter'
 import { VButton, VCheckbox } from '../UI'
 import { TrashSvg, ShareSvg } from '@/assets/icons'
 import type { Category, ComparisonProduct } from './types'

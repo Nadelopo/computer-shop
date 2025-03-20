@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/db/supabase'
-import { getProductQuantity } from '@/utils/getProductQuantity'
+import { getProductQuantity } from '@/shared/utils/getProductQuantity'
 import ProductListCarousel from './ProductListCarousel.vue'
 import type { ProductCardData } from '../ProductCard/types'
 import type { Loading } from '@/types'

@@ -3,8 +3,8 @@ import { ref, watch } from 'vue'
 import { useToast } from 'vue-toastification'
 import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
-import { useOrders } from '@/utils/useOrders'
-import { formatPrice } from '@/utils/formatPrice'
+import { useOrders } from '@/shared/utils/useOrders'
+import { formatPrice } from '@/shared/utils/formatPrice'
 import {
   VTable,
   VPagination,

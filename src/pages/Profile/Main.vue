@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
-import { formatPhoneNumber } from '@/utils/formatPhone'
+import { formatPhoneNumber } from '@/shared/utils/formatPhone'
 import ReviewBlock from '@/components/ReviewBlock.vue'
 import AppLink from '@/components/AppLink.vue'
 import { VLoader } from '@/components/UI'

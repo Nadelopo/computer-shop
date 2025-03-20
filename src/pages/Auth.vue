@@ -4,7 +4,7 @@ import { useToast } from 'vue-toastification'
 import { useField, useForm } from 'vee-validate'
 import { string } from 'yup'
 import { supabase } from '@/db/supabase'
-import { useCustomRouter } from '@/utils/customRouter'
+import { useCustomRouter } from '@/shared/composables/customRouter'
 import { VButton } from '@/components/UI'
 
 const router = useCustomRouter()

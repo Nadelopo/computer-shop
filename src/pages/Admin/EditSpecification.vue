@@ -3,7 +3,10 @@ import { onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { supabase } from '@/db/supabase'
-import { useCustomRoute, useCustomRouter } from '@/utils/customRouter'
+import {
+  useCustomRoute,
+  useCustomRouter
+} from '@/shared/composables/customRouter'
 import SpecificationsForm from '@/components/Admin/Specifications/SpecificationsForm.vue'
 import { VButton, VLoader } from '@/components/UI'
 import type {

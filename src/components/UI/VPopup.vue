@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
+import { onClickOutsideClose } from '@/shared/composables/onClickOutsideClose'
 
 type Props = {
   type?: 'click' | 'hover'

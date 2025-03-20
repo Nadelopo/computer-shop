@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/db/supabase'
-import { useCustomRoute, useCustomRouter } from '@/utils/customRouter'
+import {
+  useCustomRoute,
+  useCustomRouter
+} from '@/shared/composables/customRouter'
 import ShopsForm from '@/components/Admin/Shops/ShopsForm.vue'
 import { VLoader } from '@/components/UI'
 import type { ShopForm } from '@/components/Admin/Shops/types'

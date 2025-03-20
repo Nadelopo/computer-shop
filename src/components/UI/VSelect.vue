@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T extends string | number | boolean">
 import { computed, onUnmounted, ref, watch, watchEffect } from 'vue'
-import { onClickOutsideClose } from '@/utils/onClickOutsideClose'
+import { onClickOutsideClose } from '@/shared/composables/onClickOutsideClose'
 import { ArrowSvg } from '@/assets/icons'
 
 type Props = {

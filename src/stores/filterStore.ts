@@ -2,7 +2,7 @@ import { reactive, ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { supabase } from '@/db/supabase'
-import { getOrFilterForSearch } from '@/utils/getOrFilterForSearch'
+import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
 import {
   useFeatureNumberStaticFilter,
   useFeatureStringStaticFilter
@@ -10,7 +10,7 @@ import {
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
-import type { CustomRouter } from '@/utils/customRouter'
+import type { CustomRouter } from '@/shared/composables/customRouter'
 
 type SpecificationsValues = Pick<
   CategorySpecificationRead,

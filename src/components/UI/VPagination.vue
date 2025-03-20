@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { arrayRange } from '@/utils/arrayRange'
+import { arrayRange } from '@/shared/utils/arrayRange'
 import { ArrowSvg } from '@/assets/icons'
 import VPopup from './VPopup.vue'
 

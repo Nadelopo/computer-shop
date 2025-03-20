@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, toRef } from 'vue'
 import { useElementSize, useMediaQuery, useResizeObserver } from '@vueuse/core'
-import { formatPrice } from '@/utils/formatPrice'
+import { formatPrice } from '@/shared/utils/formatPrice'
 import { useFeatureFilteredProducts } from './useFeatureFilteredProducts'
 import IconButtonFavouritesComparison from '../IconButtonFavouritesComparison.vue'
 import ButtonCart from '../ButtonCart.vue'

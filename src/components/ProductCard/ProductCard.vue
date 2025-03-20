@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { formatPrice } from '@/utils/formatPrice'
+import { formatPrice } from '@/shared/utils/formatPrice'
 import RatingStars from '../RatingStars.vue'
 import IconButtonFavouritesComparison from '../IconButtonFavouritesComparison.vue'
 import ButtonCart from '@/components/ButtonCart.vue'

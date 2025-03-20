@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, type ButtonHTMLAttributes } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useCustomRouter } from '@/utils/customRouter'
+import { useCustomRouter } from '@/shared/composables/customRouter'
 import { useCartStore } from '@/stores/cartStore'
 import { VButton } from '@/components/UI'
 import { CartInButtonSvg, InCartSvg, AbsentForCartSvg } from '@/assets/icons'

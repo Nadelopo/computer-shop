@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useMediaQuery } from '@vueuse/core'
-import { formatPrice } from '@/utils/formatPrice'
-import { getSpecificationValue } from '@/utils/getSpecificationValue'
+import { formatPrice } from '@/shared/utils/formatPrice'
+import { getSpecificationValue } from '@/shared/utils/getSpecificationValue'
 import ButtonCart from '../ButtonCart.vue'
 import RatingStars from '../RatingStars.vue'
 import IconBtnFavouritesComparison from '../IconButtonFavouritesComparison.vue'

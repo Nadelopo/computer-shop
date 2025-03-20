@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { supabase } from '@/db/supabase'
-import { formatPrice } from '@/utils/formatPrice'
+import { formatPrice } from '@/shared/utils/formatPrice'
 import { VButton } from '../UI'
 import type { ProductCart } from '@/stores/cartStore'
 

@@ -8,7 +8,7 @@ import {
 } from 'vue'
 import { vMaska } from 'maska/vue'
 import { type MaskaDetail } from 'maska'
-import { debounce as Debounce } from '@/utils/debounce'
+import { debounce as Debounce } from '@/shared/utils/debounce'
 import { CrossSvg, SearchSvg } from '@/assets/icons'
 
 export interface VInputTextProps<T = string>

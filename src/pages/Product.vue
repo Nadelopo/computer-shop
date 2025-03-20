@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, watch } from 'vue'
 import { supabase } from '@/db/supabase'
-import { useCustomRoute } from '@/utils/customRouter'
-import { useLocalStorage } from '@/utils/localStorage'
-import { getProductQuantity } from '@/utils/getProductQuantity'
+import { useCustomRoute } from '@/shared/composables/customRouter'
+import { useLocalStorage } from '@/shared/composables/localStorage'
+import { getProductQuantity } from '@/shared/utils/getProductQuantity'
 import Header from '@/components/Product/Header.vue'
 import ProductSpecifications from '@/components/Product/ProductSpecifications.vue'
 import SimilarProducts from '@/components/Product/SimilarProducts.vue'

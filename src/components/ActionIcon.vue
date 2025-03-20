@@ -7,7 +7,7 @@ import { computed, type FunctionalComponent, type SVGAttributes } from 'vue'
 import AppLink from './AppLink.vue'
 import { VLoader } from './UI'
 import type { RouteName } from '@/router/types'
-import type { RouterTo } from '@/utils/customRouter'
+import type { RouterTo } from '@/shared/composables/customRouter'
 
 type Props = {
   variant?: 'primary' | 'danger' | 'default'

@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/db/supabase'
-import { useCustomRoute, useCustomRouter } from '@/utils/customRouter'
+import {
+  useCustomRoute,
+  useCustomRouter
+} from '@/shared/composables/customRouter'
 import ProductsForm from '@/components/Admin/Products/ProductsForm.vue'
 import { VButton, VLoader } from '@/components/UI'
 import type { Loading } from '@/types'

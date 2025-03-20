@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { VModal } from '../UI'
-import { formatTime } from '@/utils/formatTime'
+import { formatTime } from '@/shared/utils/formatTime'
 import ButtonCart from '../ButtonCart.vue'
 import type { ShopWithProduct } from './Header.vue'
 

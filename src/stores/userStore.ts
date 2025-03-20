@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { useToast } from 'vue-toastification'
 import type { PostgrestError, User } from '@supabase/supabase-js'
 import { supabase } from '@/db/supabase'
-import { useLocalStorage } from '@/utils/localStorage'
+import { useLocalStorage } from '@/shared/composables/localStorage'
 import type { UserRead } from '@/types/tables/users.types'
 
 type ListTitle = 'favourites' | 'comparison'

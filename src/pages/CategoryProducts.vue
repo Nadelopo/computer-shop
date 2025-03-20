@@ -5,7 +5,10 @@ import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import { useFilterStore } from '@/stores/filterStore'
-import { useCustomRouter, useCustomRoute } from '@/utils/customRouter'
+import {
+  useCustomRouter,
+  useCustomRoute
+} from '@/shared/composables/customRouter'
 import { VPagination, VButton } from '@/components/UI'
 import ProductBlock from '@/components/CategoryProducts/ProductBlock.vue'
 import Search from '@/components/CategoryProducts/Search.vue'

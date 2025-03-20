@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { useCustomRouter } from '@/utils/customRouter'
+import { useCustomRouter } from '@/shared/composables/customRouter'
 import { useUserStore } from '@/stores/userStore'
 import { VButton } from '@/components/UI'
 import { FavouriteSvg, ComparisonSvg } from '@/assets/icons'

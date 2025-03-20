@@ -1,6 +1,6 @@
 import { reactive, watch, type Ref } from 'vue'
 import { useMediaQuery } from '@vueuse/core'
-import { debounce } from './debounce'
+import { debounce } from '../utils/debounce'
 
 type Breakpoint<T> = {
   media: Ref<boolean>

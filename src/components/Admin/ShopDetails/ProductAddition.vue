@@ -2,9 +2,9 @@
 import { computed, nextTick, ref, watch, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
-import { getOrFilterForSearch } from '@/utils/getOrFilterForSearch'
-import { useCustomRoute } from '@/utils/customRouter'
-import { useLocalStorage } from '@/utils/localStorage'
+import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
+import { useCustomRoute } from '@/shared/composables/customRouter'
+import { useLocalStorage } from '@/shared/composables/localStorage'
 import { useCategoriesStore } from '@/stores/categoriesStore'
 import {
   VButton,

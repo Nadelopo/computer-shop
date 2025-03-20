@@ -3,8 +3,11 @@ import { ref, watch } from 'vue'
 import { useField } from 'vee-validate'
 import { supabase } from '@/db/supabase'
 import { VButton, VModal, VLoader, VButtons } from '../UI'
-import { useGeoSuggest, type LocationResult } from '@/utils/useGeoSuggest'
-import { formatTime } from '@/utils/formatTime'
+import {
+  useGeoSuggest,
+  type LocationResult
+} from '@/shared/utils/useGeoSuggest'
+import { formatTime } from '@/shared/utils/formatTime'
 import InputAddress from '@/components/InputAddress.vue'
 import FormField from '../FormField.vue'
 import { CrossSvg, HomeSvg } from '@/assets/icons'

@@ -2,7 +2,7 @@
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useFilterStore } from '@/stores/filterStore'
-import { useCustomRouter } from '@/utils/customRouter'
+import { useCustomRouter } from '@/shared/composables/customRouter'
 import { VInputText } from '@/components/UI'
 
 const route = useRoute()

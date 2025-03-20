@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useCustomRoute } from '@/utils/customRouter'
+import { useCustomRoute } from '@/shared/composables/customRouter'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import {
   VInputText,

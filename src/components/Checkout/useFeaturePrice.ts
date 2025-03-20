@@ -1,8 +1,8 @@
 import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/db/supabase'
 import { useCartStore } from '@/stores/cartStore'
-import { getProductQuantity } from '@/utils/getProductQuantity'
-import { useCustomRouter } from '@/utils/customRouter'
+import { getProductQuantity } from '@/shared/utils/getProductQuantity'
+import { useCustomRouter } from '@/shared/composables/customRouter'
 import type { Loading } from '@/types'
 import type { ProductRead } from '@/types/tables/products.types'
 

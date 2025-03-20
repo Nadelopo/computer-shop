@@ -9,8 +9,8 @@ import {
   type ProductStorage,
   type ProductCart
 } from '@/stores/cartStore'
-import { formatPrice } from '@/utils/formatPrice'
-import { useLocalStorage } from '@/utils/localStorage'
+import { formatPrice } from '@/shared/utils/formatPrice'
+import { useLocalStorage } from '@/shared/composables/localStorage'
 import { VButtons, VSelect } from '../UI'
 import ItemActions from './ItemActions.vue'
 import AppLink from '../AppLink.vue'

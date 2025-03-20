@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue'
 import { supabase } from '@/db/supabase'
-import { getCurrentTime } from '@/utils/getCurrentTime'
+import { getCurrentTime } from '@/shared/utils/getCurrentTime'
 import { ArrowSvg } from '@/assets/icons'
 import type { Loading } from '@/types'
 

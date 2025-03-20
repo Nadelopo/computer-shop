@@ -2,7 +2,7 @@
 import { ref, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/stores/categoriesStore'
-import { useLocalStorage } from '@/utils/localStorage'
+import { useLocalStorage } from '@/shared/composables/localStorage'
 import { VAccordion } from '@/components/UI'
 import AppLink from '../AppLink.vue'
 import { ArrowSvg, HomeSvg } from '@/assets/icons'
