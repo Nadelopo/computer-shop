@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useToast } from 'vue-toastification'
 import { useField, useForm } from 'vee-validate'
 import { string } from 'yup'
-import { supabase } from '@/db/supabase'
 import { useCustomRouter } from '@/shared/composables/customRouter'
 import { VButton } from '@/components/UI'
+import { signIn, signUp } from '../services/authService'
 
 const router = useCustomRouter()
 
@@ -33,55 +32,12 @@ const { value: name, errorMessage: errorName } = useField<string>(
   })
 )
 
-const toast = useToast()
-
-const signIn = async () => {
-  const {
-    data: { user },
-    error
-  } = await supabase.auth.signInWithPassword({
-    email: email.value,
-    password: password.value
-  })
-  if (error) {
-    console.error(error)
-    toast.warning('Неверная почта или пароль')
-  }
-  if (user) {
-    router.push({ name: 'Home' })
-  }
-}
-
-const signUp = async () => {
-  const {
-    data: { user },
-    error
-  } = await supabase.auth.signUp({
-    email: email.value,
-    password: password.value
-  })
-
-  if (error) {
-    console.error(error)
-    toast.warning('Пользователь уже зарегестрирован')
-  }
-
-  if (!user) return
-
-  const { error: errorCreate } = await supabase.from('users').insert({
-    name: name.value,
-    email: email.value,
-    id: user.id
-  })
-
-  if (!errorCreate) {
-    router.push({ name: 'Home' })
-  }
-}
-
 const submit = handleSubmit(() => {
-  if (isSignIn.value) signIn()
-  else signUp()
+  if (isSignIn.value) {
+    signIn(email.value, password.value)
+  } else {
+    signUp(email.value, password.value, name.value)
+  }
 })
 </script>
 

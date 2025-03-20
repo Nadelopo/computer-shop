@@ -2,7 +2,6 @@
 import { ref, toRef, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
-import { useCustomRouter } from '@/shared/composables/customRouter'
 import { debounce } from '@/shared/utils/debounce'
 import { onClickOutsideClose } from '@/shared/composables/onClickOutsideClose'
 import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
@@ -22,6 +21,7 @@ import {
 } from '@/assets/icons'
 import { Role } from '@/types/tables/users.types'
 import type { CategoryRead } from '@/types/tables/categories.types'
+import { signOut } from '@/modules/auth'
 
 export type Suggestion = {
   id: number
@@ -33,14 +33,6 @@ export type Suggestion = {
 
 const { user, userLists } = storeToRefs(useUserStore())
 const { countCartItems } = storeToRefs(useCartStore())
-
-const router = useCustomRouter()
-
-const logout = async () => {
-  const { error } = await supabase.auth.signOut()
-  if (error) console.error(error)
-  router.push({ name: 'Home' })
-}
 
 const inputRef = ref<{ ref: { ref: HTMLInputElement } }>()
 const isSuggestionsOpen = onClickOutsideClose(
@@ -146,7 +138,7 @@ const setSearch = (title: string) => {
                 v-if="user"
                 type="button"
                 class="popup__el"
-                @click="logout"
+                @click="signOut"
               >
                 выйти
               </button>

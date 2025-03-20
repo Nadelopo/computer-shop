@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
 import AppLink from './AppLink.vue'
 import type { RouteName } from '@/router/types'
+import { signOut } from '@/modules/auth'
 
 defineProps<{
   links: {
@@ -20,11 +20,6 @@ const isOpen = defineModel<boolean>({ required: true })
 const sidebarRef = ref()
 const closeSidebar = () => {
   isOpen.value = false
-}
-
-const logout = async () => {
-  const { error } = await supabase.auth.signOut()
-  if (error) console.error(error)
 }
 
 onMounted(() => {
@@ -73,7 +68,7 @@ onUnmounted(() => {
       <div class="list">
         <app-link
           :to="{ name: user ? 'Home' : 'Auth' }"
-          @click="logout"
+          @click="signOut"
         >
           {{ user ? 'Выйти' : 'Войти' }}
         </app-link>

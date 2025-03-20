@@ -5,7 +5,7 @@ import { useUserStore } from '@/stores/userStore'
 import { adminRoutes } from './admin'
 import { mainRoutes } from './main'
 import MainLayout from '@/app/layouts/main/MainLayout.vue'
-import Auth from '@/pages/Auth.vue'
+import AuthPage from '@/modules/auth/pages/AuthPage.vue'
 import { Role } from '@/types/tables/users.types'
 
 export type AppRouteRecord = Omit<RouteRecordRaw, 'name' | 'children'> & {
@@ -23,7 +23,7 @@ export const routes = [
   {
     path: '/auth',
     name: 'Auth',
-    component: Auth
+    component: AuthPage
   },
   {
     path: '/:pathMatch(.*)*',
