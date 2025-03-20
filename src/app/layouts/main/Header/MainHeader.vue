@@ -8,10 +8,10 @@ import { onClickOutsideClose } from '@/shared/composables/onClickOutsideClose'
 import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
 import { useCartStore } from '@/stores/cartStore'
 import { useUserStore } from '@/stores/userStore'
-import AppLink from '../AppLink.vue'
-import ActionIcon from '../ActionIcon.vue'
-import Suggestions from './Suggestions.vue'
-import Search from './Search.vue'
+import AppLink from '@/components/AppLink.vue'
+import ActionIcon from '@/components/ActionIcon.vue'
+import HeaderSuggestions from './HeaderSuggestions.vue'
+import HeaderSearch from './HeaderSearch.vue'
 import { VPopup, VModal, VButton } from '@/components/UI'
 import {
   AvatarSvg,
@@ -114,7 +114,7 @@ const setSearch = (title: string) => {
             />
           </app-link>
         </div>
-        <Search
+        <HeaderSearch
           ref="inputRef"
           v-model="search"
           :suggestions
@@ -218,7 +218,7 @@ const setSearch = (title: string) => {
           class="py-2 xs:px-8 px-2"
         >
           <div class="flex gap-2 items-center">
-            <Search
+            <HeaderSearch
               v-model="search"
               :suggestions
               class="w-full"
@@ -227,7 +227,7 @@ const setSearch = (title: string) => {
             />
             <v-button @click="openModal = false">отмена</v-button>
           </div>
-          <Suggestions
+          <HeaderSuggestions
             :is-suggestions-open
             :suggestions
             mobile
@@ -236,7 +236,7 @@ const setSearch = (title: string) => {
         </v-modal>
       </div>
     </div>
-    <Suggestions
+    <HeaderSuggestions
       v-if="!openModal"
       :is-suggestions-open
       :suggestions

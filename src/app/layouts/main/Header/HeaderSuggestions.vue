@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onUnmounted, ref, watch } from 'vue'
 import { getRouteTo } from './getRouteTo'
-import type { Suggestion } from './Navbar.vue'
+import type { Suggestion } from './MainHeader.vue'
 
 const props = defineProps<{
   isSuggestionsOpen: boolean

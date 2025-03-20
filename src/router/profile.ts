@@ -3,33 +3,33 @@ import type { AppRouteRecord } from './index'
 export const profileRoutes = [
   {
     path: '/profile',
-    component: () => import('@/layouts/Profile.vue'),
+    component: () => import('@/app/layouts/profile/ProfileLayout.vue'),
     meta: { auth: true },
     children: [
       {
         path: '',
         name: 'ProfileMain',
-        component: () => import('@/pages/Profile/Main.vue')
+        component: () => import('@/pages/Profile/ProfileMainPage.vue')
       },
       {
         path: 'reviews',
         name: 'ProfileReviews',
-        component: () => import('@/pages/Profile/Reviews.vue')
+        component: () => import('@/pages/Profile/ProfileReviewsPage.vue')
       },
       {
         path: 'orders',
         name: 'ProfileOrders',
-        component: () => import('@/pages/Profile/Orders.vue')
+        component: () => import('@/pages/Profile/ProfileOrdersPage.vue')
       },
       {
         path: 'delivery',
         name: 'ProfileDelivery',
-        component: () => import('@/pages/Profile/Delivery.vue')
+        component: () => import('@/pages/Profile/ProfileDeliveryPage.vue')
       },
       {
         path: 'settings',
         name: 'ProfileSettings',
-        component: () => import('@/pages/Profile/Settings.vue')
+        component: () => import('@/pages/Profile/ProfileSettingsPage.vue')
       }
     ]
   }

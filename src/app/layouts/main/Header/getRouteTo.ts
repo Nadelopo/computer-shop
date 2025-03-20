@@ -1,5 +1,5 @@
 import type { RouteName } from '@/router/types'
-import type { Suggestion } from './Navbar.vue'
+import type { Suggestion } from './MainHeader.vue'
 
 export const getRouteTo = (suggestion: Suggestion) => {
   let to: {

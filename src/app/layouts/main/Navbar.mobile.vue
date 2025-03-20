@@ -10,7 +10,7 @@ import {
   ComparisonSvg,
   AvatarSvg
 } from '@/assets/icons'
-import AppLink from './AppLink.vue'
+import AppLink from '@/components/AppLink.vue'
 import type { RouteName } from '@/router/types'
 
 const { countCartItems } = storeToRefs(useCartStore())

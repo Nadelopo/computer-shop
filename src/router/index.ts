@@ -4,7 +4,7 @@ import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/stores/userStore'
 import { adminRoutes } from './admin'
 import { mainRoutes } from './main'
-import MainVue from '@/layouts/Main.vue'
+import MainLayout from '@/app/layouts/main/MainLayout.vue'
 import Auth from '@/pages/Auth.vue'
 import { Role } from '@/types/tables/users.types'
 
@@ -17,7 +17,7 @@ export const routes = [
   ...adminRoutes,
   {
     path: '/',
-    component: MainVue,
+    component: MainLayout,
     children: mainRoutes
   },
   {

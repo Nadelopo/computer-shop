@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import { useCustomRouter } from '@/shared/composables/customRouter'
 import { getRouteTo } from './getRouteTo'
 import { VInputText } from '@/components/UI'
-import type { Suggestion } from './Navbar.vue'
+import type { Suggestion } from './MainHeader.vue'
 
 const props = defineProps<{
   suggestions: Suggestion[]
