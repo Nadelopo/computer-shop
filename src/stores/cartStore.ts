@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import type { PostgrestError, User } from '@supabase/supabase-js'
 import { supabase } from '@/db/supabase'
 import { getProductQuantity } from '@/shared/utils/getProductQuantity'
-import { useUserStore } from './userStore'
+import { useUserStore } from '../modules/user/model/userStore'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 import type { ProductRead } from '@/types/tables/products.types'
 import type { DataError } from '@/types'
@@ -42,7 +42,7 @@ export type ProductStorage = {
 }
 
 export const useCartStore = defineStore('cart', () => {
-  const { isUserAuthenticated } = useUserStore()
+  const { getSessionUser } = useUserStore()
   const cartItems = ref<ProductStorage[]>([])
   const cartItemsWithDetails = ref<ProductCart[]>([])
   const cartItemsStorage = useLocalStorage<ProductStorage[]>('cart', {
@@ -56,7 +56,7 @@ export const useCartStore = defineStore('cart', () => {
   ): Promise<{ error: PostgrestError | null | 'OutOfStock' }> {
     const [user, { data: product, error: errorGetProduct }] = await Promise.all(
       [
-        isUserAuthenticated(),
+        getSessionUser(),
         supabase
           .from('products')
           .select('*, product_quantity_in_stores(quantity)')
@@ -163,7 +163,7 @@ export const useCartStore = defineStore('cart', () => {
   async function deleteItem(
     productId: number
   ): Promise<{ error: PostgrestError | null }> {
-    const user = await isUserAuthenticated()
+    const user = await getSessionUser()
     if (user) {
       const { data: productCart, error } = await supabase
         .from('cart')
@@ -191,7 +191,7 @@ export const useCartStore = defineStore('cart', () => {
     itemCount: number,
     cartItemId?: number
   ): Promise<{ error: PostgrestError | null }> {
-    const user = await isUserAuthenticated()
+    const user = await getSessionUser()
 
     const { data: product, error: errorProduct } = await supabase
       .from('products')
@@ -250,7 +250,7 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   async function setCartItems(): Promise<DataError<ProductStorage[]>> {
-    const user = await isUserAuthenticated()
+    const user = await getSessionUser()
 
     let data: ProductStorage[] = []
     const { data: items, error } = await getCartItems(user)

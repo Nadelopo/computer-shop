@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { formatPrice } from '@/shared/utils/formatPrice'
 import RatingStars from '../RatingStars.vue'
-import IconButtonFavouritesComparison from '../IconButtonFavouritesComparison.vue'
+import { IconButtonFavouritesComparison } from '@/modules/user'
 import ButtonCart from '@/components/ButtonCart.vue'
 import AppLink from '../AppLink.vue'
 import { CrossSvg } from '@/assets/icons'

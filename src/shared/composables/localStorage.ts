@@ -1,5 +1,5 @@
 import { onBeforeMount, onUnmounted } from 'vue'
-import { useUserStore } from '@/stores/userStore'
+import { useUserStore } from '@/modules/user'
 
 type Key =
   | 'cart'
@@ -23,8 +23,8 @@ export const useLocalStorage = <T>(key: Key, options?: Options<T>) => {
   onBeforeMount(async () => {
     if (options?.onChange) {
       if (options.auth) {
-        const { isUserAuthenticated } = useUserStore()
-        const isUser = await isUserAuthenticated()
+        const { getSessionUser } = useUserStore()
+        const isUser = await getSessionUser()
         if (!isUser) return
       }
       window.addEventListener('storage', onStorage)

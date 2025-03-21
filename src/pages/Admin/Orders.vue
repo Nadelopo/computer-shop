@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import { useToast } from 'vue-toastification'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/stores/userStore'
+import { useUserStore } from '@/modules/user'
 import { useOrders } from '@/shared/utils/useOrders'
 import { formatPrice } from '@/shared/utils/formatPrice'
 import {
@@ -26,7 +26,7 @@ const orders = ref<Order[]>([])
 
 const { getStatus, getPaymentStatus } = useOrders()
 
-const { isUserAuthenticated } = useUserStore()
+const { getSessionUser } = useUserStore()
 const limit = 6
 const currentPage = ref(0)
 const totalOrders = ref(0)
@@ -34,7 +34,7 @@ const loading = ref<Loading>('loading')
 const loadOrders = async () => {
   loading.value = 'loading'
 
-  const user = await isUserAuthenticated()
+  const user = await getSessionUser()
   if (!user) return
 
   const { data, error, count } = await supabase

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useFavoritesStore, useComparisonStore } from '@/modules/user'
 import { useCustomRouter } from '@/shared/composables/customRouter'
-import { useUserStore } from '@/stores/userStore'
 import { VButton } from '@/components/UI'
 import { FavouriteSvg, ComparisonSvg } from '@/assets/icons'
 
@@ -10,15 +11,26 @@ const props = defineProps<{
   listTitle: 'favourites' | 'comparison'
 }>()
 
-const { userLists, changeUserListsValueOnToggle } = useUserStore()
+const { favorites } = storeToRefs(useFavoritesStore())
+const { toggleFavorite } = useFavoritesStore()
 
-const state = computed(() =>
-  userLists[props.listTitle].includes(props.productId)
-)
+const { comparison } = storeToRefs(useComparisonStore())
+const { toggleComparison } = useComparisonStore()
+
+const state = computed(() => {
+  if (props.listTitle === 'favourites') {
+    return favorites.value.includes(props.productId)
+  }
+  return comparison.value.includes(props.productId)
+})
 const loading = ref(false)
 const add = async () => {
   loading.value = true
-  await changeUserListsValueOnToggle(props.listTitle, props.productId)
+  if (props.listTitle === 'favourites') {
+    await toggleFavorite(props.productId)
+  } else {
+    await toggleComparison(props.productId)
+  }
   loading.value = false
 }
 const ListIcon = props.listTitle === 'favourites' ? FavouriteSvg : ComparisonSvg

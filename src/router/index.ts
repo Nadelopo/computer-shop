@@ -1,12 +1,11 @@
 import { type RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/stores/userStore'
+import { useUserStore, Role } from '@/modules/user'
 import { adminRoutes } from './admin'
 import { mainRoutes } from './main'
 import MainLayout from '@/app/layouts/main/MainLayout.vue'
 import AuthPage from '@/modules/auth/pages/AuthPage.vue'
-import { Role } from '@/types/tables/users.types'
 
 export type AppRouteRecord = Omit<RouteRecordRaw, 'name' | 'children'> & {
   name?: string
@@ -44,7 +43,7 @@ router.beforeEach(async (to, from) => {
   if (!requireAuth) return true
 
   const userStore = useUserStore()
-  const isAuth = await userStore.isUserAuthenticated()
+  const isAuth = await userStore.getSessionUser()
 
   if (!isAuth) {
     useToast().warning('Требуется авторизация')

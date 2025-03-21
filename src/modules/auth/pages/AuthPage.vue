@@ -2,11 +2,9 @@
 import { ref } from 'vue'
 import { useField, useForm } from 'vee-validate'
 import { string } from 'yup'
+import { signIn, signUp } from '../services/authService'
 import { useCustomRouter } from '@/shared/composables/customRouter'
 import { VButton } from '@/components/UI'
-import { signIn, signUp } from '../services/authService'
-
-const router = useCustomRouter()
 
 const isSignIn = ref(true)
 
@@ -32,11 +30,13 @@ const { value: name, errorMessage: errorName } = useField<string>(
   })
 )
 
+const router = useCustomRouter()
+
 const submit = handleSubmit(() => {
   if (isSignIn.value) {
-    signIn(email.value, password.value)
+    signIn(email.value, password.value, router)
   } else {
-    signUp(email.value, password.value, name.value)
+    signUp(email.value, password.value, name.value, router)
   }
 })
 </script>

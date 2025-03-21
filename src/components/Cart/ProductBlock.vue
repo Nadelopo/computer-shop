@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useMediaQuery } from '@vueuse/core'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/stores/userStore'
+import { useUserStore } from '@/modules/user'
 import {
   useCartStore,
   type ProductStorage,
@@ -22,7 +22,7 @@ defineProps<{
 
 const additionalWarranty = defineModel<number>({ required: true })
 
-const { isUserAuthenticated } = useUserStore()
+const { getSessionUser } = useUserStore()
 const { getMarkup } = useCartStore()
 const { cartItems } = storeToRefs(useCartStore())
 
@@ -31,7 +31,7 @@ const loadingServicePrice = ref<Loading>('success')
 
 const setServicePrice = async (warranty: number, product: ProductCart) => {
   loadingServicePrice.value = 'loading'
-  const user = await isUserAuthenticated()
+  const user = await getSessionUser()
   if (user && product.cartItemId) {
     const { error } = await supabase
       .from('cart')

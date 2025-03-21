@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, type FunctionalComponent, type SVGAttributes } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useFavoritesStore, useComparisonStore } from '@/modules/user'
 import { useCartStore } from '@/stores/cartStore'
-import { useUserStore } from '@/stores/userStore'
 import {
   HomeSvg,
   FavouriteSvg,
@@ -14,7 +14,8 @@ import AppLink from '@/components/AppLink.vue'
 import type { RouteName } from '@/router/types'
 
 const { countCartItems } = storeToRefs(useCartStore())
-const { userLists } = useUserStore()
+const { favorites } = storeToRefs(useFavoritesStore())
+const { comparison } = storeToRefs(useComparisonStore())
 
 type Links = {
   name: string
@@ -33,7 +34,7 @@ const links = computed((): Links[] => [
     name: 'Избранное',
     page: 'Favourites',
     svg: FavouriteSvg,
-    count: userLists.favourites.length
+    count: favorites.value.length
   },
   {
     name: 'Корзина',
@@ -45,7 +46,7 @@ const links = computed((): Links[] => [
     name: 'Сравнение',
     page: 'Comparison',
     svg: ComparisonSvg,
-    count: userLists.comparison.length
+    count: comparison.value.length
   },
   {
     name: 'Профиль',

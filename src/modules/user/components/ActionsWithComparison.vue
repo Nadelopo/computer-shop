@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { nextTick } from 'vue'
 import { useRoute } from 'vue-router'
-import { useUserStore } from '@/stores/userStore'
+import { useComparisonStore } from '@/modules/user'
 import { useCustomRouter } from '@/shared/composables/customRouter'
-import { VButton, VCheckbox } from '../UI'
+import { VButton, VCheckbox } from '@/components/UI'
 import { TrashSvg, ShareSvg } from '@/assets/icons'
-import type { Category, ComparisonProduct } from './types'
+import type { Category, ComparisonProduct } from '../model/comparison.types'
 import type { Loading } from '@/types'
 
-const { clearUserLists } = useUserStore()
+const { updateComparison } = useComparisonStore()
 
 const showDifferences = defineModel<boolean>({ required: true })
 const products = defineModel<ComparisonProduct[]>('products', {
@@ -24,12 +24,16 @@ const emit = defineEmits<{
 }>()
 
 const router = useCustomRouter()
+
 const clearList = async () => {
+  if (!currentCategoryId.value) return
+
   const remainProducts = products.value.filter(
     (e) => e.categoryId !== currentCategoryId.value
   )
   const remainProductIds = remainProducts.map((e) => e.id)
-  const { error } = await clearUserLists('comparison', remainProductIds)
+
+  const { error } = await updateComparison(remainProductIds)
   if (error) {
     emit('updateLoading', 'error')
   }

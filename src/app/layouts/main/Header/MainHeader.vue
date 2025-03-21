@@ -2,11 +2,17 @@
 import { ref, toRef, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
+import {
+  useUserStore,
+  useComparisonStore,
+  useFavoritesStore,
+  Role
+} from '@/modules/user'
+import { signOut } from '@/modules/auth'
 import { debounce } from '@/shared/utils/debounce'
 import { onClickOutsideClose } from '@/shared/composables/onClickOutsideClose'
 import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
 import { useCartStore } from '@/stores/cartStore'
-import { useUserStore } from '@/stores/userStore'
 import AppLink from '@/components/AppLink.vue'
 import ActionIcon from '@/components/ActionIcon.vue'
 import HeaderSuggestions from './HeaderSuggestions.vue'
@@ -19,9 +25,7 @@ import {
   ComparisonSvg,
   SearchSvg
 } from '@/assets/icons'
-import { Role } from '@/types/tables/users.types'
 import type { CategoryRead } from '@/types/tables/categories.types'
-import { signOut } from '@/modules/auth'
 
 export type Suggestion = {
   id: number
@@ -31,8 +35,10 @@ export type Suggestion = {
   categories?: Pick<CategoryRead, 'id' | 'enTitle'>
 }
 
-const { user, userLists } = storeToRefs(useUserStore())
+const { user } = storeToRefs(useUserStore())
 const { countCartItems } = storeToRefs(useCartStore())
+const { comparison } = storeToRefs(useComparisonStore())
+const { favorites } = storeToRefs(useFavoritesStore())
 
 const inputRef = ref<{ ref: { ref: HTMLInputElement } }>()
 const isSuggestionsOpen = onClickOutsideClose(
@@ -164,10 +170,10 @@ const setSearch = (title: string) => {
             :to="{ name: 'Favourites' }"
           >
             <span
-              v-if="userLists.favourites.length"
+              v-if="favorites.length"
               class="count"
             >
-              {{ userLists.favourites.length }}
+              {{ favorites.length }}
             </span>
           </action-icon>
           <action-icon
@@ -177,10 +183,10 @@ const setSearch = (title: string) => {
             variant="default"
           >
             <span
-              v-if="userLists.comparison.length"
+              v-if="comparison.length"
               class="count"
             >
-              {{ userLists.comparison.length }}
+              {{ comparison.length }}
             </span>
           </action-icon>
           <action-icon

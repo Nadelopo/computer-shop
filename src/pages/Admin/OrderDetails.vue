@@ -2,7 +2,7 @@
 import { computed, onBeforeMount, ref } from 'vue'
 import { useToast } from 'vue-toastification'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/stores/userStore'
+import { useUserStore } from '@/modules/user'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import { useOrders } from '@/shared/utils/useOrders'
 import { VSelect, VButton, VTable, VLoader } from '@/components/UI'
@@ -14,11 +14,11 @@ import type { OrderReadWithDetails } from '@/types/tables/orders.types'
 const route = useCustomRoute('AdminOrderDetails')
 const orderId = Number(route.params.id)
 
-const { isUserAuthenticated } = useUserStore()
+const { getSessionUser } = useUserStore()
 const loading = ref<Loading>('loading')
 const order = ref<OrderReadWithDetails>()
 onBeforeMount(async () => {
-  const user = await isUserAuthenticated()
+  const user = await getSessionUser()
   if (!user) return
 
   const { data, error } = await supabase

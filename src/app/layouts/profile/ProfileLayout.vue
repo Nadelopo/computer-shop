@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/stores/userStore'
+import { useUserStore } from '@/modules/user'
 import AppLink from '@/components/AppLink.vue'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 import type { Loading } from '@/types'
 
-const { isUserAuthenticated } = useUserStore()
+const { getSessionUser } = useUserStore()
 const reviews = ref<ReviewWithDetails[]>([])
 const loading = ref<Loading>('loading')
 
 onBeforeMount(async () => {
-  const user = await isUserAuthenticated()
+  const user = await getSessionUser()
   if (!user) return
 
   const { data } = await supabase

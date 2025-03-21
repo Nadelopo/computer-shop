@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/stores/userStore'
+import { useUserStore } from '@/modules/user/model/userStore'
 import { formatPrice } from '@/shared/utils/formatPrice'
 import { useOrders } from '@/shared/utils/useOrders'
 import { getWordByQuantity } from '@/components/Cart/useChooseWord'
@@ -11,7 +11,7 @@ import { ArrowSvg } from '@/assets/icons'
 import type { OrderReadWithDetails } from '@/types/tables/orders.types'
 import type { Loading } from '@/types'
 
-const { isUserAuthenticated } = useUserStore()
+const { getSessionUser } = useUserStore()
 
 const orders = ref<OrderReadWithDetails[]>([])
 const loading = ref<Loading>('loading')
@@ -22,7 +22,7 @@ const totalOrders = ref(0)
 const loadingOrders = async () => {
   loading.value = 'loading'
 
-  const user = await isUserAuthenticated()
+  const user = await getSessionUser()
   if (!user) return
 
   const { data, error, count } = await supabase

@@ -4,7 +4,7 @@ import { formatPrice } from '@/shared/utils/formatPrice'
 import { getSpecificationValue } from '@/shared/utils/getSpecificationValue'
 import ButtonCart from '../ButtonCart.vue'
 import RatingStars from '../RatingStars.vue'
-import IconBtnFavouritesComparison from '../IconButtonFavouritesComparison.vue'
+import { IconBtnFavouritesComparison } from '@/modules/user'
 import AppLink from '../AppLink.vue'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 

@@ -1,5 +1,5 @@
+import { userRoutes } from '@/modules/user'
 import Home from '@/pages/Home.vue'
-import { profileRoutes } from './profile'
 import type { AppRouteRecord } from './index'
 
 export const mainRoutes = [
@@ -29,20 +29,9 @@ export const mainRoutes = [
     component: () => import('@/pages/Product.vue')
   },
   {
-    path: '/favourites',
-    name: 'Favourites',
-    meta: { auth: true },
-    component: () => import('@/pages/Favourites.vue')
-  },
-  {
-    path: '/comparison',
-    name: 'Comparison',
-    component: () => import('@/pages/Comparison.vue')
-  },
-  {
     path: '/manufacturer/:title/:id',
     name: 'Manufacturer',
     component: () => import('@/pages/Manufacturer.vue')
   },
-  ...profileRoutes
+  ...userRoutes
 ] as const satisfies readonly AppRouteRecord[]

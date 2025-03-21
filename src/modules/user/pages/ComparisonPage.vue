@@ -1,21 +1,24 @@
 <script setup lang="ts">
 import { ref, watch, computed, onBeforeMount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/stores/userStore'
+import { useComparisonStore } from '../model/comparisonStore'
+import ActionsWithComparison from '../components/ActionsWithComparison.vue'
+import ComparisonList from '../components/ComparisonList.vue'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 import { getProductQuantity } from '@/shared/utils/getProductQuantity'
-import ComparisonList from '@/components/Comparison/ComparisonList.vue'
-import ActionsWithList from '@/components/Comparison/ActionsWithList.vue'
 import { VTabs, VLoader } from '@/components/UI'
 import type {
   Category,
   CategorySpecifications,
   ComparisonProduct
-} from '@/components/Comparison/types'
+} from '@/modules/user/model/comparison.types'
 import type { Loading } from '@/types'
 
-const { userLists, setUserListsValue, deleteItemFromUserList } = useUserStore()
+const { comparison } = storeToRefs(useComparisonStore())
+const { setComparisonValue, removeComparison } = useComparisonStore()
+
 const categories = ref<Category[]>([])
 const currentCategoryId = ref<number | null>(null)
 
@@ -34,10 +37,13 @@ const router = useRouter()
 const loadData = async () => {
   if (loading.value === 'loading') return
   loading.value = 'loading'
-  await setUserListsValue()
+
+  await setComparisonValue()
+
   const queryIds = route.query.ids ? String(route.query.ids) : null
-  const ids = queryIds?.split(' ').map(Number) ?? userLists.comparison
-  if (ids.length === 0 || (!ids && userLists.comparison.length === 0)) {
+
+  const ids = queryIds?.split(' ').map(Number) ?? comparison.value
+  if (ids.length === 0 || (!ids && comparison.value.length === 0)) {
     loading.value = 'empty'
     return
   }
@@ -124,7 +130,7 @@ watch(
 )
 
 const deleteItem = async (item: ComparisonProduct) => {
-  const { error } = await deleteItemFromUserList('comparison', item.id)
+  const { error } = await removeComparison(item.id)
   if (error) return
   products.value = products.value.filter((e) => e.id !== item.id)
   categories.value = categories.value
@@ -153,7 +159,7 @@ const deleteItem = async (item: ComparisonProduct) => {
         "
         query-param-name="category_id"
       />
-      <actions-with-list
+      <actions-with-comparison
         v-model="showDifferences"
         v-model:products="products"
         v-model:current-category-id="currentCategoryId"

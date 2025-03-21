@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/stores/userStore'
+import { useUserStore } from '@/modules/user'
 import type { Loading } from '@/types'
 import type { OrderData } from './useFeatureForm'
 
@@ -14,7 +14,7 @@ export const useFeatureInitialUserDataInstallation = (
     () => store.user,
     async (cur) => {
       if (!cur) {
-        const isUser = await store.isUserAuthenticated()
+        const isUser = await store.getSessionUser()
         if (!isUser) watcher()
         loadingUserData.value = 'success'
         return

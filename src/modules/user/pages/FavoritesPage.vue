@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/stores/userStore'
+import { useFavoritesStore } from '@/modules/user/model/favoritesStore'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 import { getProductQuantity } from '@/shared/utils/getProductQuantity'
 import { VButton } from '@/components/UI'
@@ -11,20 +12,21 @@ import { TrashSvg } from '@/assets/icons'
 import type { ProductCardData } from '@/components/ProductCard/types'
 import type { Loading } from '@/types'
 
-const { userLists, setUserListsValue, deleteItemFromUserList } = useUserStore()
-const { clearUserLists } = useUserStore()
+const { favorites } = storeToRefs(useFavoritesStore())
+const { setFavoritesValue, removeFavorite, clearFavorites } =
+  useFavoritesStore()
 
 const favourites = ref<ProductCardData[]>([])
 const loading = ref<Loading>('success')
 
 const setFavourites = async () => {
   loading.value = 'loading'
-  await setUserListsValue()
+  await setFavoritesValue()
 
   const { data, error } = await supabase
     .from('products')
     .select('*, categories(id, enTitle), product_quantity_in_stores(quantity)')
-    .in('id', userLists.favourites)
+    .in('id', favorites.value)
 
   if (error) {
     loading.value = 'error'
@@ -43,16 +45,15 @@ useLocalStorage('favourites', { onChange: setFavourites })
 
 const clear = async () => {
   loading.value = 'loading'
-  const { error } = await clearUserLists('favourites', [])
+  const { error } = await clearFavorites()
   if (error) {
     loading.value = 'error'
   }
-  favourites.value = []
   loading.value = 'empty'
 }
 
 const deleteItem = async (id: number) => {
-  const { error } = await deleteItemFromUserList('favourites', id)
+  const { error } = await removeFavorite(id)
   if (error) {
     loading.value = 'error'
     return

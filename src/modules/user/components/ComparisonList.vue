@@ -2,13 +2,16 @@
 import { computed, ref, toRef } from 'vue'
 import { useElementSize, useMediaQuery, useResizeObserver } from '@vueuse/core'
 import { formatPrice } from '@/shared/utils/formatPrice'
-import { useFeatureFilteredProducts } from './useFeatureFilteredProducts'
-import IconButtonFavouritesComparison from '../IconButtonFavouritesComparison.vue'
-import ButtonCart from '../ButtonCart.vue'
-import ActionIcon from '../ActionIcon.vue'
-import AppLink from '../AppLink.vue'
+import { useFeatureFilteredProducts } from '../composables/useFeatureFilteredComparisonProducts'
+import IconButtonFavouritesComparison from './IconButtonFavouritesComparison.vue'
+import ButtonCart from '@/components/ButtonCart.vue'
+import ActionIcon from '@/components/ActionIcon.vue'
+import AppLink from '@/components/AppLink.vue'
+import type {
+  ComparisonProduct,
+  CategorySpecifications
+} from '../model/comparison.types'
 import { ArrowSvg, CrossSvg } from '@/assets/icons'
-import type { ComparisonProduct, CategorySpecifications } from './types'
 
 const props = defineProps<{
   currentCategoryId: number | null

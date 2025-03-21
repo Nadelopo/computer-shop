@@ -1,16 +1,19 @@
+import type { Router } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { supabase } from '@/db/supabase'
-import { useCustomRouter } from '@/shared/composables/customRouter'
 
 const toast = useToast()
-const router = useCustomRouter()
 
 export const signOut = async () => {
   const { error } = await supabase.auth.signOut()
   if (error) console.error(error)
 }
 
-export const signIn = async (email: string, password: string) => {
+export const signIn = async (
+  email: string,
+  password: string,
+  router: Router
+) => {
   const {
     data: { user },
     error
@@ -27,7 +30,12 @@ export const signIn = async (email: string, password: string) => {
   }
 }
 
-export const signUp = async (email: string, password: string, name: string) => {
+export const signUp = async (
+  email: string,
+  password: string,
+  name: string,
+  router: Router
+) => {
   const {
     data: { user },
     error

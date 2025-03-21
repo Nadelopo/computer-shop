@@ -5,12 +5,12 @@ import { string } from 'yup'
 import { useToast } from 'vue-toastification'
 import type { User } from '@supabase/supabase-js'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/stores/userStore'
+import { useUserStore } from '@/modules/user/model/userStore'
 import { VLoader, VButton } from '@/components/UI'
 import FormField from '@/components/FormField.vue'
 import type { Loading } from '@/types'
 
-const { isUserAuthenticated } = useUserStore()
+const { getSessionUser } = useUserStore()
 
 type Form = {
   // email: string
@@ -42,7 +42,7 @@ const { handleSubmit, setValues } = useForm<Form>({
 const loading = ref<Loading>('loading')
 let user: User | null = null
 onBeforeMount(async () => {
-  user = await isUserAuthenticated()
+  user = await getSessionUser()
   if (!user) return
 
   const { data, error } = await supabase
