@@ -15,13 +15,7 @@ const props = withDefaults(defineProps<Props>(), {
   required: true
 })
 
-defineEmits<{
-  'update:modelValue': [T]
-}>()
-
-const modelValue = defineModel<
-  [T | null | undefined] extends readonly (infer e)[] ? e : never
->({
+const modelValue = defineModel<T>({
   required: true
 })
 
@@ -141,10 +135,7 @@ const required = computed(() => {
 </script>
 
 <template>
-  <div
-    class="root__select"
-    v-bind="$attrs"
-  >
+  <div class="root__select" v-bind="$attrs">
     <button
       ref="btn"
       class="select"
@@ -155,17 +146,11 @@ const required = computed(() => {
     >
       <div class="head">
         <span>{{ selected ?? 'Select' }}</span>
-        <arrow-svg
-          class="svg"
-          :class="{ active }"
-        />
+        <arrow-svg class="svg" :class="{ active }" />
       </div>
     </button>
     <transition name="list">
-      <div
-        v-show="active"
-        class="list"
-      >
+      <div v-show="active" class="list">
         <div class="scroll">
           <button
             v-for="(option, i) in options"
