@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, type FunctionalComponent, type SVGAttributes } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useFavoritesStore, useComparisonStore } from '@/modules/user'
+import { useFavoritesStore, useComparisonStore } from '@/modules/users'
 import { useCartStore } from '@/stores/cartStore'
 import {
   HomeSvg,
@@ -58,16 +58,9 @@ const links = computed((): Links[] => [
 
 <template>
   <div class="nav__mobile">
-    <app-link
-      v-for="link in links"
-      :key="link.name"
-      :to="{ name: link.page }"
-    >
+    <app-link v-for="link in links" :key="link.name" :to="{ name: link.page }">
       <Component :is="link.svg" />
-      <span
-        v-if="link.count"
-        class="count"
-      >
+      <span v-if="link.count" class="count">
         {{ link.count }}
       </span>
       <div>

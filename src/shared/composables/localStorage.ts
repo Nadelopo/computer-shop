@@ -1,5 +1,5 @@
 import { onBeforeMount, onUnmounted } from 'vue'
-import { useUserStore } from '@/modules/user'
+import { useUserStore } from '@/modules/users'
 
 type Key =
   | 'cart'

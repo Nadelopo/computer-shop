@@ -4,7 +4,7 @@ import { useToast } from 'vue-toastification'
 import { storeToRefs } from 'pinia'
 import type { PostgrestError } from '@supabase/supabase-js'
 import { supabase } from '@/db/supabase'
-import { useUserStore, type UserUpdate } from '@/modules/user'
+import { useUserStore, type UserUpdate } from '@/modules/users'
 import { useCartStore } from '@/stores/cartStore'
 import { getWordByQuantity } from '@/components/Cart/useChooseWord'
 import { useCustomRouter } from '@/shared/composables/customRouter'
@@ -409,16 +409,10 @@ const onSubmit = handleSubmit(async () => {
       </div>
       <div class="content grid grid-cols-1 gap-6 xs:grid-cols-2">
         <div>
-          <form-field
-            label="Имя*"
-            name="name"
-          />
+          <form-field label="Имя*" name="name" />
         </div>
         <div>
-          <form-field
-            label="Почта*"
-            name="email"
-          />
+          <form-field label="Почта*" name="email" />
         </div>
         <div>
           <form-field
@@ -463,27 +457,18 @@ const onSubmit = handleSubmit(async () => {
       </div>
     </div>
     <div>
-      <div
-        class="content"
-        style="border-left: unset"
-      >
+      <div class="content" style="border-left: unset">
         <div> {{ countCartItems }} {{ getWordByQuantity(countCartItems) }}</div>
         <div class="text-3xl font-medium mb-2">
           Итого: <span class="font-bold">{{ formatPrice(price) }}</span>
         </div>
-        <v-button
-          type="submit"
-          :loading="loadingCreateOrder === 'loading'"
-        >
+        <v-button type="submit" :loading="loadingCreateOrder === 'loading'">
           Оформить заказ
         </v-button>
       </div>
     </div>
   </form>
-  <div
-    v-else
-    class="flex justify-center items-center h-[50vh]"
-  >
+  <div v-else class="flex justify-center items-center h-[50vh]">
     <v-loader />
   </div>
 </template>

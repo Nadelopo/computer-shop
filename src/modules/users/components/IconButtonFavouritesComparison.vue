@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useFavoritesStore, useComparisonStore } from '@/modules/user'
+import { useFavoritesStore, useComparisonStore } from '@/modules/users'
 import ActionIcon from '@/components/ActionIcon.vue'
 import { FavouriteSvg, ComparisonSvg } from '@/assets/icons'
 
@@ -38,10 +38,5 @@ const onIcon = async () => {
 </script>
 
 <template>
-  <action-icon
-    :svg="ListIcon"
-    :is-active
-    :loading
-    @click.prevent="onIcon"
-  />
+  <action-icon :svg="ListIcon" :is-active :loading @click.prevent="onIcon" />
 </template>

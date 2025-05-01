@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/modules/user'
+import { useUserStore } from '@/modules/users'
 import AppLink from '@/components/AppLink.vue'
 import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 import type { Loading } from '@/types'
@@ -45,10 +45,7 @@ onBeforeMount(async () => {
         </app-link>
       </div>
       <div>
-        <router-view
-          :reviews
-          :loading
-        />
+        <router-view :reviews :loading />
       </div>
     </div>
   </div>

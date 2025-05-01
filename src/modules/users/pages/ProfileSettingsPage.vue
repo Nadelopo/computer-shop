@@ -5,7 +5,7 @@ import { string } from 'yup'
 import { useToast } from 'vue-toastification'
 import type { User } from '@supabase/supabase-js'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/modules/user/model/userStore'
+import { useUserStore } from '@/modules/users/model/userStore'
 import { VLoader, VButton } from '@/components/UI'
 import FormField from '@/components/FormField.vue'
 import type { Loading } from '@/types'
@@ -101,59 +101,25 @@ const submit = handleSubmit(async (values) => {
 <template>
   <div v-if="loading === 'success'">
     <h1 class="text-4xl font-bold mb-10">Настройки профиля</h1>
-    <form
-      class="max-w-lg list__form"
-      @submit.prevent="submit"
-    >
-      <form-field
-        name="name"
-        label="Имя*"
-      />
+    <form class="max-w-lg list__form" @submit.prevent="submit">
+      <form-field name="name" label="Имя*" />
       <!-- <form-field
         name="email"
         label="Почта*"
       /> -->
-      <form-field
-        name="phone"
-        label="Телефон*"
-        type="tel"
-      />
-      <form-field
-        name="address"
-        label="Адрес"
-      />
-      <form-field
-        name="apartment"
-        label="Квартира"
-        type="number"
-        min="0"
-      />
-      <form-field
-        name="floor"
-        label="Этаж"
-        type="number"
-        min="0"
-      />
-      <form-field
-        name="entrance"
-        label="Подъезд"
-        type="number"
-        min="0"
-      />
+      <form-field name="phone" label="Телефон*" type="tel" />
+      <form-field name="address" label="Адрес" />
+      <form-field name="apartment" label="Квартира" type="number" min="0" />
+      <form-field name="floor" label="Этаж" type="number" min="0" />
+      <form-field name="entrance" label="Подъезд" type="number" min="0" />
       <div>
-        <v-button
-          type="submit"
-          :loading="loadingSubmit === 'loading'"
-        >
+        <v-button type="submit" :loading="loadingSubmit === 'loading'">
           сохранить
         </v-button>
       </div>
     </form>
   </div>
-  <div
-    v-else
-    class="h-[50vh] flex place-items-center"
-  >
+  <div v-else class="h-[50vh] flex place-items-center">
     <v-loader />
   </div>
 </template>

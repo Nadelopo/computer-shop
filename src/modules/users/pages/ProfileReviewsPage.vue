@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/modules/user/model/userStore'
+import { useUserStore } from '@/modules/users/model/userStore'
 import ReviewBlock from '@/components/ReviewBlock.vue'
 import AppLink from '@/components/AppLink.vue'
 import { VLoader } from '@/components/UI'
@@ -42,10 +42,7 @@ onBeforeMount(async () => {
     <div v-if="loading === 'loading'">
       <v-loader />
     </div>
-    <div
-      v-else-if="loading === 'success'"
-      class="flex flex-col gap-8"
-    >
+    <div v-else-if="loading === 'success'" class="flex flex-col gap-8">
       <app-link
         v-for="review in reviews"
         :key="review.id"
@@ -61,10 +58,7 @@ onBeforeMount(async () => {
           }
         }"
       >
-        <review-block
-          :review="review"
-          color="#fff"
-        />
+        <review-block :review="review" color="#fff" />
       </app-link>
     </div>
     <div v-else-if="loading === 'empty'">Вы не оставили ни одного отзыва</div>

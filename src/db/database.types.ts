@@ -37,7 +37,7 @@ import type {
   UserCreate,
   UserReadWithDetails,
   UserUpdate
-} from '@/modules/user'
+} from '@/modules/users'
 import type {
   ShopCreate,
   ShopRead,

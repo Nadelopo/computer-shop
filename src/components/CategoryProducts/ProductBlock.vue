@@ -4,7 +4,7 @@ import { formatPrice } from '@/shared/utils/formatPrice'
 import { getSpecificationValue } from '@/shared/utils/getSpecificationValue'
 import ButtonCart from '../ButtonCart.vue'
 import RatingStars from '../RatingStars.vue'
-import { IconBtnFavouritesComparison } from '@/modules/user'
+import { IconBtnFavouritesComparison } from '@/modules/users'
 import AppLink from '../AppLink.vue'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 
@@ -28,10 +28,7 @@ const isSmall = useMediaQuery('(width < 520px)')
   >
     <div class="card__wrapper">
       <div class="img__wrapper">
-        <img
-          :src="item.img[0]"
-          alt=""
-        />
+        <img :src="item.img[0]" alt="" />
       </div>
       <div>
         <div class="card__link">
@@ -77,10 +74,7 @@ const isSmall = useMediaQuery('(width < 520px)')
           >
             {{ formatPrice(item.priceWithoutDiscount) }}
           </div>
-          <div
-            v-if="item.discount"
-            class="text-end lg:mb-2 price coloured"
-          >
+          <div v-if="item.discount" class="text-end lg:mb-2 price coloured">
             {{ formatPrice(item.price) }}
           </div>
         </div>

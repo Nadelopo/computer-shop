@@ -7,7 +7,7 @@ import {
   useComparisonStore,
   useFavoritesStore,
   Role
-} from '@/modules/user'
+} from '@/modules/users'
 import { signOut } from '@/modules/auth'
 import { debounce } from '@/shared/utils/debounce'
 import { onClickOutsideClose } from '@/shared/composables/onClickOutsideClose'
@@ -105,11 +105,7 @@ const setSearch = (title: string) => {
       <div class="root">
         <div class="logo">
           <app-link :to="{ name: 'Home' }">
-            <img
-              src="/img/logoChangeWhiteSizeFnew.png"
-              width="95"
-              alt=""
-            />
+            <img src="/img/logoChangeWhiteSizeFnew.png" width="95" alt="" />
           </app-link>
         </div>
         <HeaderSearch
@@ -127,10 +123,7 @@ const setSearch = (title: string) => {
         <div class="nav__rigth">
           <v-popup>
             <template #active>
-              <action-icon
-                :svg="AvatarSvg"
-                variant="default"
-              />
+              <action-icon :svg="AvatarSvg" variant="default" />
             </template>
             <template #content>
               <app-link
@@ -148,17 +141,10 @@ const setSearch = (title: string) => {
               >
                 выйти
               </button>
-              <app-link
-                v-else
-                :to="{ name: 'Auth' }"
-                class="popup__el"
-              >
+              <app-link v-else :to="{ name: 'Auth' }" class="popup__el">
                 войти
               </app-link>
-              <app-link
-                :to="{ name: 'ProfileMain' }"
-                class="popup__el"
-              >
+              <app-link :to="{ name: 'ProfileMain' }" class="popup__el">
                 профиль
               </app-link>
             </template>
@@ -169,10 +155,7 @@ const setSearch = (title: string) => {
             tag="a"
             :to="{ name: 'Favourites' }"
           >
-            <span
-              v-if="favorites.length"
-              class="count"
-            >
+            <span v-if="favorites.length" class="count">
               {{ favorites.length }}
             </span>
           </action-icon>
@@ -182,10 +165,7 @@ const setSearch = (title: string) => {
             :svg="ComparisonSvg"
             variant="default"
           >
-            <span
-              v-if="comparison.length"
-              class="count"
-            >
+            <span v-if="comparison.length" class="count">
               {{ comparison.length }}
             </span>
           </action-icon>
@@ -195,10 +175,7 @@ const setSearch = (title: string) => {
             :svg="CartSvg"
             variant="default"
           >
-            <span
-              v-if="countCartItems"
-              class="count"
-            >
+            <span v-if="countCartItems" class="count">
               {{ countCartItems }}
             </span>
           </action-icon>
@@ -210,11 +187,7 @@ const setSearch = (title: string) => {
             @click="openModal = true"
           />
         </div>
-        <v-modal
-          v-model="openModal"
-          full-screen
-          class="py-2 xs:px-8 px-2"
-        >
+        <v-modal v-model="openModal" full-screen class="py-2 xs:px-8 px-2">
           <div class="flex gap-2 items-center">
             <HeaderSearch
               v-model="search"

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useFavoritesStore, useComparisonStore } from '@/modules/user'
+import { useFavoritesStore, useComparisonStore } from '@/modules/users'
 import { useCustomRouter } from '@/shared/composables/customRouter'
 import { VButton } from '@/components/UI'
 import { FavouriteSvg, ComparisonSvg } from '@/assets/icons'

@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { User } from '@supabase/supabase-js'
 import { supabase } from '@/db/supabase'
-import type { UserRead } from '@/modules/user'
+import type { UserRead } from '@/modules/users'
 
 export const useUserStore = defineStore('user', () => {
   const user = ref<UserRead | null>(null)

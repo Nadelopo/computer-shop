@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
 import { useMediaQuery } from '@vueuse/core'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/modules/user'
+import { useUserStore } from '@/modules/users'
 import { useCustomRouter } from '@/shared/composables/customRouter'
 import ReviewBlock from '@/components/ReviewBlock.vue'
 import FormCreateReview from './FormCreateReview.vue'
@@ -174,15 +174,9 @@ const isPageSmall = useMediaQuery('(width < 400px)')
         @update-product-rating="emit('updateProductRating', $event)"
         @create-review="reviews.unshift($event)"
       />
-      <div
-        v-if="reviews.length"
-        class="reviews"
-      >
+      <div v-if="reviews.length" class="reviews">
         <template v-if="loading === 'success'">
-          <template
-            v-for="review in reviews"
-            :key="review.id"
-          >
+          <template v-for="review in reviews" :key="review.id">
             <review-block
               :id="`comment_${review.id}`"
               :review="review"

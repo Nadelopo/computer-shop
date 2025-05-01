@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/modules/user/model/userStore'
+import { useUserStore } from '@/modules/users/model/userStore'
 import { formatPrice } from '@/shared/utils/formatPrice'
 import { useOrders } from '@/shared/utils/useOrders'
 import { getWordByQuantity } from '@/components/Cart/useChooseWord'
@@ -60,15 +60,8 @@ const { getStatus } = useOrders()
 
 <template>
   <div>
-    <div
-      v-if="loading === 'success'"
-      class="bg-white rounded p-3 mb-4"
-    >
-      <div
-        v-for="(order, i) in orders"
-        :key="order.id"
-        class="order"
-      >
+    <div v-if="loading === 'success'" class="bg-white rounded p-3 mb-4">
+      <div v-for="(order, i) in orders" :key="order.id" class="order">
         <div>
           <arrow-svg
             :transform="showProducts[i] ? '' : 'rotate(180)'"
@@ -98,10 +91,7 @@ const { getStatus } = useOrders()
               Заказ получен
               {{ new Date(order.deliveryDate || '').toLocaleDateString() }}
             </div>
-            <div
-              class="order__status"
-              :class="[order.status]"
-            >
+            <div class="order__status" :class="[order.status]">
               {{ getStatus(order.status) }}
             </div>
           </div>
@@ -155,10 +145,7 @@ const { getStatus } = useOrders()
     <div v-else-if="loading === 'loading'">
       <v-loader />
     </div>
-    <div
-      v-else-if="loading === 'empty'"
-      class="text-3xl font-bold"
-    >
+    <div v-else-if="loading === 'empty'" class="text-3xl font-bold">
       Заказов пока нет
     </div>
     <v-pagination

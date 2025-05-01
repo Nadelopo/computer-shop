@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { useUserStore } from '@/modules/user/model/userStore'
+import { useUserStore } from '@/modules/users/model/userStore'
 import { formatPhoneNumber } from '@/shared/utils/formatPhone'
 import ReviewBlock from '@/components/ReviewBlock.vue'
 import AppLink from '@/components/AppLink.vue'
@@ -18,10 +18,7 @@ const { user } = storeToRefs(useUserStore())
 
 <template>
   <div>
-    <div
-      v-if="user"
-      class="user__info"
-    >
+    <div v-if="user" class="user__info">
       <div class="row">
         <div>Имя</div>
         <div>{{ user.name }}</div>
@@ -38,17 +35,11 @@ const { user } = storeToRefs(useUserStore())
     <div class="reviews__grid">
       <div>
         <div class="text-3xl font-bold">Отзывы</div>
-        <app-link
-          :to="{ name: 'ProfileReviews' }"
-          class="text-xl color-text"
-        >
+        <app-link :to="{ name: 'ProfileReviews' }" class="text-xl color-text">
           Посмотреть все
         </app-link>
       </div>
-      <div
-        v-if="loading === 'success'"
-        class="last__reviews"
-      >
+      <div v-if="loading === 'success'" class="last__reviews">
         <app-link
           v-for="review in reviews.slice(0, 4)"
           :key="review.id"
@@ -64,10 +55,7 @@ const { user } = storeToRefs(useUserStore())
             }
           }"
         >
-          <review-block
-            :review="review"
-            color="#fff"
-          />
+          <review-block :review="review" color="#fff" />
         </app-link>
       </div>
       <v-loader v-else-if="loading === 'loading'" />

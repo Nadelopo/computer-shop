@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { supabase } from './db/supabase'
-import { useUserStore } from './modules/user/model/userStore'
-import { useComparisonStore } from './modules/user/model/comparisonStore'
-import { useFavoritesStore } from './modules/user/model/favoritesStore'
+import {
+  useUserStore,
+  useComparisonStore,
+  useFavoritesStore
+} from './modules/users'
 import { useCartStore } from './stores/cartStore'
 import { useCustomRouter } from './shared/composables/customRouter'
 

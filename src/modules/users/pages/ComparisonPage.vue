@@ -13,7 +13,7 @@ import type {
   Category,
   CategorySpecifications,
   ComparisonProduct
-} from '@/modules/user/model/comparison.types'
+} from '@/modules/users/model/comparison.types'
 import type { Loading } from '@/types'
 
 const { comparison } = storeToRefs(useComparisonStore())
@@ -178,10 +178,7 @@ const deleteItem = async (item: ComparisonProduct) => {
     <div v-else-if="loading === 'loading'">
       <v-loader />
     </div>
-    <div
-      v-else
-      class="font-bold text-2xl text-center"
-    >
+    <div v-else class="font-bold text-2xl text-center">
       Нет товаров для сравнения
     </div>
   </div>

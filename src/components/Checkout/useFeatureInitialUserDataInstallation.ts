@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/modules/user'
+import { useUserStore } from '@/modules/users'
 import type { Loading } from '@/types'
 import type { OrderData } from './useFeatureForm'
 

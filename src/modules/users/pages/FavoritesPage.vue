@@ -2,7 +2,7 @@
 import { onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
-import { useFavoritesStore } from '@/modules/user/model/favoritesStore'
+import { useFavoritesStore } from '@/modules/users/model/favoritesStore'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 import { getProductQuantity } from '@/shared/utils/getProductQuantity'
 import { VButton } from '@/components/UI'
@@ -70,11 +70,7 @@ const deleteItem = async (id: number) => {
     <div class="favourites">
       <div class="sidebar">
         <div class="text-3xl font-bold mb-8">Избранное</div>
-        <v-button
-          v-if="loading === 'success'"
-          class="noactive"
-          @click="clear"
-        >
+        <v-button v-if="loading === 'success'" class="noactive" @click="clear">
           <trash-svg />
           очистить список
         </v-button>
@@ -93,10 +89,7 @@ const deleteItem = async (id: number) => {
           />
         </template>
         <template v-else-if="loading === 'loading'">
-          <product-card-skeleton
-            v-for="i in 8"
-            :key="i"
-          />
+          <product-card-skeleton v-for="i in 8" :key="i" />
         </template>
       </div>
     </div>

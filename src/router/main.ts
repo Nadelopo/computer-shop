@@ -1,4 +1,4 @@
-import { userRoutes } from '@/modules/user'
+import { userRoutes } from '@/modules/users'
 import Home from '@/pages/Home.vue'
 import type { AppRouteRecord } from './index'
 

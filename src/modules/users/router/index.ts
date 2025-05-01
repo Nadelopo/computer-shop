@@ -5,12 +5,12 @@ export const userRoutes = [
     path: '/favourites',
     name: 'Favourites',
     meta: { auth: true },
-    component: () => import('@/modules/user/pages/FavoritesPage.vue')
+    component: () => import('@/modules/users/pages/FavoritesPage.vue')
   },
   {
     path: '/comparison',
     name: 'Comparison',
-    component: () => import('@/modules/user/pages/ComparisonPage.vue')
+    component: () => import('@/modules/users/pages/ComparisonPage.vue')
   },
   {
     path: '/profile',
@@ -20,27 +20,27 @@ export const userRoutes = [
       {
         path: '',
         name: 'ProfileMain',
-        component: () => import('@/modules/user/pages/ProfileMainPage.vue')
+        component: () => import('@/modules/users/pages/ProfileMainPage.vue')
       },
       {
         path: 'reviews',
         name: 'ProfileReviews',
-        component: () => import('@/modules/user/pages/ProfileReviewsPage.vue')
+        component: () => import('@/modules/users/pages/ProfileReviewsPage.vue')
       },
       {
         path: 'orders',
         name: 'ProfileOrders',
-        component: () => import('@/modules/user/pages/ProfileOrdersPage.vue')
+        component: () => import('@/modules/users/pages/ProfileOrdersPage.vue')
       },
       {
         path: 'delivery',
         name: 'ProfileDelivery',
-        component: () => import('@/modules/user/pages/ProfileDeliveryPage.vue')
+        component: () => import('@/modules/users/pages/ProfileDeliveryPage.vue')
       },
       {
         path: 'settings',
         name: 'ProfileSettings',
-        component: () => import('@/modules/user/pages/ProfileSettingsPage.vue')
+        component: () => import('@/modules/users/pages/ProfileSettingsPage.vue')
       }
     ]
   }

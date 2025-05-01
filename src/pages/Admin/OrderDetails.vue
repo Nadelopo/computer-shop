@@ -2,7 +2,7 @@
 import { computed, onBeforeMount, ref } from 'vue'
 import { useToast } from 'vue-toastification'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/modules/user'
+import { useUserStore } from '@/modules/users'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import { useOrders } from '@/shared/utils/useOrders'
 import { VSelect, VButton, VTable, VLoader } from '@/components/UI'
@@ -74,10 +74,7 @@ const updateOrder = async () => {
 <template>
   <div v-if="loading === 'success' && order">
     <div class="flex gap-4">
-      <v-table
-        line
-        :striped="false"
-      >
+      <v-table line :striped="false">
         <template #header>
           <div> {{ `Номер заказа ${order.id}` }}</div>
           <div class="text-base flex flex-col gap-4">
@@ -87,10 +84,7 @@ const updateOrder = async () => {
             </div>
             <div class="flex items-center">
               <span class="w-[114px]">Статус заказа:</span>
-              <v-select
-                v-model="order.status"
-                :options="statusOptions"
-              />
+              <v-select v-model="order.status" :options="statusOptions" />
             </div>
             <div class="flex items-center">
               <span class="w-[114px] inline-block">Статус оплаты:</span>
@@ -109,10 +103,7 @@ const updateOrder = async () => {
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="product in order.ordered_products"
-            :key="product.id"
-          >
+          <tr v-for="product in order.ordered_products" :key="product.id">
             <td>
               <div class="flex gap-4 items-center">
                 <img

@@ -9,7 +9,7 @@ import { formatPrice } from '@/shared/utils/formatPrice'
 import ProductInShops from './ProductInShops.vue'
 import ButtonCart from '@/components/ButtonCart.vue'
 import RatingStars from '../RatingStars.vue'
-import ButtonFavouritesComparison from '../../modules/user/components/ButtonFavouritesComparison.vue'
+import ButtonFavouritesComparison from '../../modules/users/components/ButtonFavouritesComparison.vue'
 import type { ManufacturerRead } from '@/types/tables/manufacturers.types'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
@@ -84,19 +84,12 @@ const copyProductCode = (id: number) => {
       <div class="product__title">
         <div class="text-3xl font-medium">
           <div> {{ product.title }}</div>
-          <span
-            class="product__code"
-            @click="copyProductCode(product.id)"
-          >
+          <span class="product__code" @click="copyProductCode(product.id)">
             Код товара: #{{ product.id }}
           </span>
         </div>
         <div class="ml-auto hidden sm:block">
-          <img
-            class="max-h-14"
-            :src="manufacturer?.img"
-            alt="..."
-          />
+          <img class="max-h-14" :src="manufacturer?.img" alt="..." />
         </div>
       </div>
 

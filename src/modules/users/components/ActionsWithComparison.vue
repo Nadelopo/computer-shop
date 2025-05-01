@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick } from 'vue'
 import { useRoute } from 'vue-router'
-import { useComparisonStore } from '@/modules/user'
+import { useComparisonStore } from '@/modules/users'
 import { useCustomRouter } from '@/shared/composables/customRouter'
 import { VButton, VCheckbox } from '@/components/UI'
 import { TrashSvg, ShareSvg } from '@/assets/icons'
@@ -71,29 +71,17 @@ const share = () => {
 <template>
   <div class="compare__actions">
     <div class="clear">
-      <v-button
-        variant="noactive"
-        @click="clearList"
-      >
+      <v-button variant="noactive" @click="clearList">
         <trash-svg />
         очистить список
       </v-button>
     </div>
     <div>
-      <v-checkbox
-        v-model="showDifferences"
-        title="Показывать только отличия"
-      />
+      <v-checkbox v-model="showDifferences" title="Показывать только отличия" />
     </div>
     <div class="share">
-      <v-button
-        variant="noactive"
-        @click="share"
-      >
-        <share-svg
-          fill="#fff"
-          class="mr-2"
-        />
+      <v-button variant="noactive" @click="share">
+        <share-svg fill="#fff" class="mr-2" />
         поделиться списком
       </v-button>
     </div>

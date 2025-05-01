@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useUserStore } from '@/modules/user'
+import { useUserStore } from '@/modules/users'
 import AppLink from './AppLink.vue'
 import type { RouteName } from '@/router/types'
 import { signOut } from '@/modules/auth'
@@ -33,43 +33,23 @@ onUnmounted(() => {
 
 <template>
   <!-- eslint-disable-next-line -->
-  <div
-    class="wrapper"
-    @click="closeSidebar"
-  >
-    <div
-      ref="sidebarRef"
-      class="sidebar"
-      @click.stop
-    >
+  <div class="wrapper" @click="closeSidebar">
+    <div ref="sidebarRef" class="sidebar" @click.stop>
       <div class="grid grid-cols-2 items-center">
         <div>
-          <app-link
-            :to="{ name: 'Home' }"
-            @click="closeSidebar"
-          >
-            <img
-              src="/img/logoChangeWhiteSizeFnew.png"
-              width="95"
-              alt=""
-            />
+          <app-link :to="{ name: 'Home' }" @click="closeSidebar">
+            <img src="/img/logoChangeWhiteSizeFnew.png" width="95" alt="" />
           </app-link>
         </div>
         <div class="text-end">
-          <button
-            type="button"
-            @click="closeSidebar"
-          >
+          <button type="button" @click="closeSidebar">
             <div class="dot dot-f"></div>
             <div class="dot dot-l"></div>
           </button>
         </div>
       </div>
       <div class="list">
-        <app-link
-          :to="{ name: user ? 'Home' : 'Auth' }"
-          @click="signOut"
-        >
+        <app-link :to="{ name: user ? 'Home' : 'Auth' }" @click="signOut">
           {{ user ? 'Выйти' : 'Войти' }}
         </app-link>
         <app-link

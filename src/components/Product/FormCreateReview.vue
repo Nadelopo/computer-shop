@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/modules/user'
+import { useUserStore } from '@/modules/users'
 import { VButton } from '../UI'
 import RatingStars from '../RatingStars.vue'
 import type { UpdateProductRating } from '@/pages/Product.vue'
@@ -101,47 +101,19 @@ const createReview = async () => {
       @submit.prevent="createReview"
     >
       <div class="mb-4">
-        <label
-          for="dignities"
-          class="title"
-        >
-          Достоинства
-        </label>
-        <textarea
-          id="dignities"
-          v-model.trim="form.dignities"
-        />
+        <label for="dignities" class="title"> Достоинства </label>
+        <textarea id="dignities" v-model.trim="form.dignities" />
       </div>
       <div class="mb-4">
-        <label
-          for="disadvantages"
-          class="title"
-        >
-          Недостатки
-        </label>
-        <textarea
-          id="disadvantages"
-          v-model.trim="form.disadvantages"
-        />
+        <label for="disadvantages" class="title"> Недостатки </label>
+        <textarea id="disadvantages" v-model.trim="form.disadvantages" />
       </div>
       <div class="mb-4">
-        <label
-          for="comment"
-          class="title"
-        >
-          Комментарий
-        </label>
-        <textarea
-          id="comment"
-          v-model.trim="form.comment"
-        />
+        <label for="comment" class="title"> Комментарий </label>
+        <textarea id="comment" v-model.trim="form.comment" />
       </div>
       <div>
-        <rating-stars
-          v-model="form.rating"
-          :static="false"
-          class="mb-4 mt-8"
-        />
+        <rating-stars v-model="form.rating" :static="false" class="mb-4 mt-8" />
         <v-button type="submit">ставить отзыв</v-button>
       </div>
     </form>

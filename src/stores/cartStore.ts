@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import type { PostgrestError, User } from '@supabase/supabase-js'
 import { supabase } from '@/db/supabase'
 import { getProductQuantity } from '@/shared/utils/getProductQuantity'
-import { useUserStore } from '../modules/user/model/userStore'
+import { useUserStore } from '../modules/users/model/userStore'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 import type { ProductRead } from '@/types/tables/products.types'
 import type { DataError } from '@/types'
@@ -287,8 +287,9 @@ export const useCartStore = defineStore('cart', () => {
 
     if (promises.length) {
       await Promise.all(promises)
-      const { data: updatedItems, error: errorCartItems } =
-        await getCartItems(user)
+      const { data: updatedItems, error: errorCartItems } = await getCartItems(
+        user
+      )
       if (errorCartItems) {
         return { data: null, error: errorCartItems }
       }

@@ -1,7 +1,7 @@
 import { type RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { supabase } from '@/db/supabase'
-import { useUserStore, Role } from '@/modules/user'
+import { useUserStore, Role } from '@/modules/users'
 import { adminRoutes } from './admin'
 import { mainRoutes } from './main'
 import MainLayout from '@/app/layouts/main/MainLayout.vue'

@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useMediaQuery } from '@vueuse/core'
 import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/modules/user'
+import { useUserStore } from '@/modules/users'
 import {
   useCartStore,
   type ProductStorage,
@@ -98,14 +98,8 @@ const isMobile = useMediaQuery('(width < 640px)')
       </app-link>
     </div>
     <div class="price">{{ formatPrice(product.price) }}</div>
-    <item-actions
-      :product-count="product.count"
-      :product="product"
-    />
-    <div
-      v-if="product.warranty <= 48"
-      class="warranty"
-    >
+    <item-actions :product-count="product.count" :product="product" />
+    <div v-if="product.warranty <= 48" class="warranty">
       Дополнительная гарантия
       <v-select
         v-if="isMobile"
