@@ -2,7 +2,7 @@
 import { ref, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCustomRoute } from '@/shared/composables/customRouter'
-import { useManufacturersStore } from '@/stores/manufacturersStore'
+import { useManufacturersStore } from '@/modules/manufacturers'
 import {
   VInputText,
   VTextarea,

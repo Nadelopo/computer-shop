@@ -4,22 +4,20 @@ import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
 import { useMediaQuery } from '@vueuse/core'
 import { supabase } from '@/db/supabase'
-import { useManufacturersStore } from '@/stores/manufacturersStore'
+import { useManufacturersStore, type ManufacturerRead } from '@/modules/manufacturers'
 import { formatPrice } from '@/shared/utils/formatPrice'
 import ProductInShops from './ProductInShops.vue'
 import ButtonCart from '@/components/ButtonCart.vue'
 import RatingStars from '../RatingStars.vue'
-import ButtonFavouritesComparison from '../../modules/users/components/ButtonFavouritesComparison.vue'
-import type { ManufacturerRead } from '@/types/tables/manufacturers.types'
+import ButtonFavouritesComparison from '@/modules/users/components/ButtonFavouritesComparison.vue'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
 import type { ProductQuantityInStoreRead } from '@/types/tables/ProductQuantityInStores'
 import type { ShopRead } from '@/types/tables/shops.types'
 
-export type ShopWithProduct = Pick<
-  ProductQuantityInStoreRead,
-  'quantity' | 'id'
-> & { shops: Pick<ShopRead, 'address' | 'timeEnd' | 'timeStart'> }
+export type ShopWithProduct = Pick<ProductQuantityInStoreRead, 'quantity' | 'id'> & {
+  shops: Pick<ShopRead, 'address' | 'timeEnd' | 'timeStart'>
+}
 
 const props = defineProps<{
   product: ProductWithSpecifications
@@ -41,9 +39,7 @@ const getShops = async () =>
     .order('id')
 
 onBeforeMount(async () => {
-  const item = manufacturers.value.find(
-    (m) => m.id === props.product.manufacturers.id
-  )
+  const item = manufacturers.value.find((m) => m.id === props.product.manufacturers.id)
   if (item) {
     manufacturer.value = item
     const { data } = await getShops()

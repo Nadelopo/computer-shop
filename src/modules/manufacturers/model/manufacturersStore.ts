@@ -5,7 +5,7 @@ import type {
   ManufacturerCreate,
   ManufacturerRead,
   ManufacturerUpdate
-} from '@/types/tables/manufacturers.types'
+} from '@/modules/manufacturers'
 import type { DataError } from '@/types'
 
 export const useManufacturersStore = defineStore('manufacturers', () => {
@@ -14,11 +14,7 @@ export const useManufacturersStore = defineStore('manufacturers', () => {
   async function createManufacturer(
     params: ManufacturerCreate
   ): Promise<DataError<ManufacturerRead>> {
-    const response = await supabase
-      .from('manufacturers')
-      .insert(params)
-      .select()
-      .single()
+    const response = await supabase.from('manufacturers').insert(params).select().single()
 
     if (response.data) {
       manufacturers.value.push(response.data)
@@ -32,14 +28,8 @@ export const useManufacturersStore = defineStore('manufacturers', () => {
     if (data) manufacturers.value = data
   }
 
-  async function getManufacturer(
-    id: number
-  ): Promise<DataError<ManufacturerRead>> {
-    const response = await supabase
-      .from('manufacturers')
-      .select()
-      .eq('id', id)
-      .single()
+  async function getManufacturer(id: number): Promise<DataError<ManufacturerRead>> {
+    const response = await supabase.from('manufacturers').select().eq('id', id).single()
     return response
   }
 

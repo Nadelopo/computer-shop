@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useManufacturersStore } from '@/stores/manufacturersStore'
-import ManufacturersList from '@/components/Admin/Manufacturers/ManufacturersList.vue'
-import ManufacturersForm from '@/components/Admin/Manufacturers/ManufacturersForm.vue'
-import type { ManufacturerCreate } from '@/types/tables/manufacturers.types'
+import {
+  useManufacturersStore,
+  AdminManufacturersList,
+  AdminManufacturersForm,
+  type ManufacturerCreate
+} from '@/modules/manufacturers'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 import type { Loading } from '@/types'
 
@@ -33,11 +35,11 @@ const create = async (
 
 <template>
   <div>
-    <ManufacturersForm
+    <AdminManufacturersForm
       :loading="loading === 'loading'"
       type="create"
       @submit="create"
     />
-    <ManufacturersList />
+    <AdminManufacturersList />
   </div>
 </template>

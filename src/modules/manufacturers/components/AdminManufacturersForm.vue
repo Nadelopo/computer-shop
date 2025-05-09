@@ -5,7 +5,7 @@ import { string } from 'yup'
 import { VButton, VInputFile, VTextarea } from '@/components/UI'
 import FormField from '@/components/FormField.vue'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
-import type { ManufacturerCreate } from '@/types/tables/manufacturers.types'
+import type { ManufacturerCreate } from '@/modules/manufacturers'
 
 const props = defineProps<{
   loading?: boolean
@@ -79,9 +79,7 @@ const submit = handleSubmit(() => {
         :file-url="values.img"
         folder="manufacturers"
         :required="false"
-        @update="
-          setFieldValue('img', ($event.target as HTMLInputElement).value)
-        "
+        @update="setFieldValue('img', ($event.target as HTMLInputElement).value)"
         @delete="setFieldValue('img', props.formData?.img ?? '')"
       />
     </FormField>

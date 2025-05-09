@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { useManufacturersStore } from '@/stores/manufacturersStore'
 import {
-  useCustomRoute,
-  useCustomRouter
-} from '@/shared/composables/customRouter'
+  useManufacturersStore,
+  AdminManufacturersForm,
+  type ManufacturerCreate
+} from '@/modules/manufacturers'
+import { useCustomRoute, useCustomRouter } from '@/shared/composables/customRouter'
 import { VButton, VLoader } from '@/components/UI'
-import ManufacturersForm from '@/components/Admin/Manufacturers/ManufacturersForm.vue'
-import type { ManufacturerCreate } from '@/types/tables/manufacturers.types'
 import type { Loading } from '@/types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 
@@ -60,7 +59,7 @@ const save = async (
 <template>
   <div class="container">
     <template v-if="loadingGet === 'success' && form">
-      <ManufacturersForm
+      <AdminManufacturersForm
         :form-data="form"
         :loading="loadingSave === 'loading'"
         type="update"

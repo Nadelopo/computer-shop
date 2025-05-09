@@ -1,8 +1,4 @@
-import type {
-  CartCreate,
-  CartRead,
-  CartUpdate
-} from '@/types/tables/cart.types'
+import type { CartCreate, CartRead, CartUpdate } from '@/types/tables/cart.types'
 import type {
   CategoryCreate,
   CategoryRead,
@@ -17,37 +13,21 @@ import type {
   ManufacturerCreate,
   ManufacturerRead,
   ManufacturerUpdate
-} from '@/types/tables/manufacturers.types'
+} from '@/modules/manufacturers'
 import type {
   ProductCreate,
   ProductRead,
   ProductUpdate
 } from '@/types/tables/products.types'
-import type {
-  ReviewCreate,
-  ReviewRead,
-  ReviewUpdate
-} from '@/types/tables/reviews.types'
+import type { ReviewCreate, ReviewRead, ReviewUpdate } from '@/types/tables/reviews.types'
 import type {
   SpecificationCreate,
   SpecificationRead,
   SpecificationUpdate
 } from '@/types/tables/specifications.types'
-import type {
-  UserCreate,
-  UserReadWithDetails,
-  UserUpdate
-} from '@/modules/users'
-import type {
-  ShopCreate,
-  ShopRead,
-  ShopUpdate
-} from '../types/tables/shops.types'
-import type {
-  OrderCreate,
-  OrderRead,
-  OrderUpdate
-} from '../types/tables/orders.types'
+import type { UserCreate, UserReadWithDetails, UserUpdate } from '@/modules/users'
+import type { ShopCreate, ShopRead, ShopUpdate } from '../types/tables/shops.types'
+import type { OrderCreate, OrderRead, OrderUpdate } from '../types/tables/orders.types'
 import type {
   OrderedProductCreate,
   OrderedProductRead,
@@ -328,11 +308,9 @@ export type Database = {
 
 export type Table = keyof Database['public']['Tables']
 
-export type CreateData<T extends Table> =
-  Database['public']['Tables'][T]['Insert']
+export type CreateData<T extends Table> = Database['public']['Tables'][T]['Insert']
 
-export type UpdateData<T extends Table> =
-  Database['public']['Tables'][T]['Update']
+export type UpdateData<T extends Table> = Database['public']['Tables'][T]['Update']
 
 export type View<T extends keyof Database['public']['Views']> =
   Database['public']['Views'][T]['Row']

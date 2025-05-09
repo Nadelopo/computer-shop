@@ -1,0 +1,8 @@
+export { default as HomeManufacturers } from './components/HomeManufacturers.vue'
+export { default as AdminManufacturersForm } from './components/AdminManufacturersForm.vue'
+export { default as AdminManufacturersList } from './components/AdminManufacturersList.vue'
+export { default as BestProductsList } from './components/BestProductsList.vue'
+export { manufacturersRoutes } from './router'
+export { manufacturersAdminRoutes } from './router'
+export { useManufacturersStore } from './model/manufacturersStore'
+export * from './model/manufacturers.types'
