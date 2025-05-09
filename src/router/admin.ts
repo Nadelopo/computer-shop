@@ -1,3 +1,4 @@
+import { categoriesRoutes } from '@/modules/categories/router'
 import type { AppRouteRecord } from './index'
 
 export const adminRoutes = [
@@ -11,18 +12,7 @@ export const adminRoutes = [
         name: 'AdminMain',
         component: () => import('@/pages/Admin/Main.vue')
       },
-      {
-        path: 'categories',
-        name: 'AdminCategories',
-        component: () =>
-          import('@/modules/categories/pages/AdminCategoryManagement.vue')
-      },
-      {
-        path: 'categories/edit/:category/:id',
-        name: 'CategoryEdit',
-        component: () =>
-          import('@/modules/categories/pages/AdminCategoryEdit.vue')
-      },
+      ...categoriesRoutes,
       {
         path: 'products/:category/:id',
         name: 'AdminProducts',
