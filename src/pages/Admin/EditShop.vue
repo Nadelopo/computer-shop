@@ -58,14 +58,14 @@ const save = async (values: ShopForm) => {
 <template>
   <div class="pt-12">
     <div class="container">
-      <shops-form
+      <ShopsForm
         v-if="form"
         :form-data="form"
         type="update"
         :loading-submit="loadingSave === 'loading'"
         @submit="save"
       />
-      <v-loader v-else />
+      <VLoader v-else />
     </div>
   </div>
 </template>

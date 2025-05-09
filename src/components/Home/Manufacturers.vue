@@ -26,7 +26,7 @@ const carouselBreakpoints: CarouselBreakpoints = {
       Бренды
     </div>
     <div class="manufacturers">
-      <v-carousel
+      <VCarousel
         :slides-per-view="8"
         :space-between="20"
         :breakpoints="carouselBreakpoints"
@@ -34,11 +34,11 @@ const carouselBreakpoints: CarouselBreakpoints = {
         draggable
       >
         <template v-if="manufacturers.length">
-          <v-carousel-slide
+          <VCarouselSlide
             v-for="(manufacturer, i) in manufacturers"
             :key="i"
           >
-            <app-link
+            <AppLink
               :to="{
                 name: 'Manufacturer',
                 params: {
@@ -52,17 +52,17 @@ const carouselBreakpoints: CarouselBreakpoints = {
                 :src="manufacturer.img"
                 alt=""
               />
-            </app-link>
-          </v-carousel-slide>
+            </AppLink>
+          </VCarouselSlide>
         </template>
         <template v-else>
-          <v-carousel-slide
+          <VCarouselSlide
             v-for="i in 8"
             :key="i"
             class="manufacturer__card"
           />
         </template>
-      </v-carousel>
+      </VCarousel>
     </div>
   </div>
 </template>

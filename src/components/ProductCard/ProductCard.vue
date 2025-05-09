@@ -28,7 +28,7 @@ const titleActive = ref(true)
 </script>
 
 <template>
-  <app-link
+  <AppLink
     :to="{
       name: 'Product',
       params: {
@@ -41,7 +41,7 @@ const titleActive = ref(true)
   >
     <div class="flex">
       <button type="button" class="cross">
-        <cross-svg
+        <CrossSvg
           v-if="props.onDelete"
           transform="rotate(45)"
           @mouseenter="titleActive = false"
@@ -56,14 +56,14 @@ const titleActive = ref(true)
     <div class="title" :class="{ title__active: titleActive }">
       {{ item.title }}
     </div>
-    <rating-stars :model-value="item.rating" />
+    <RatingStars :model-value="item.rating" />
     <div class="flex gap-x-2">
-      <icon-button-favourites-comparison
+      <IconButtonFavouritesComparison
         v-if="props.favourites"
         list-title="favourites"
         :product-id="props.item.id"
       />
-      <icon-button-favourites-comparison
+      <IconButtonFavouritesComparison
         v-if="props.comparison"
         list-title="comparison"
         :product-id="props.item.id"
@@ -80,11 +80,11 @@ const titleActive = ref(true)
           }}
         </div>
         <div>
-          <button-cart :product-id="item.id" :quantity="item.quantity" />
+          <ButtonCart :product-id="item.id" :quantity="item.quantity" />
         </div>
       </div>
     </div>
-  </app-link>
+  </AppLink>
 </template>
 
 <style scoped lang="sass">

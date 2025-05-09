@@ -148,7 +148,7 @@ const deleteItem = async (item: ComparisonProduct) => {
 <template>
   <div class="container">
     <template v-if="loading === 'success'">
-      <v-tabs
+      <VTabs
         v-model="currentCategoryId"
         :options="
           categories.map((e) => ({
@@ -159,7 +159,7 @@ const deleteItem = async (item: ComparisonProduct) => {
         "
         query-param-name="category_id"
       />
-      <actions-with-comparison
+      <ActionsWithComparison
         v-model="showDifferences"
         v-model:products="products"
         v-model:current-category-id="currentCategoryId"
@@ -167,7 +167,7 @@ const deleteItem = async (item: ComparisonProduct) => {
         @update-loading="loading = $event"
       />
 
-      <comparison-list
+      <ComparisonList
         :current-category-id="currentCategoryId"
         :current-category-specifications="currentCategorySpecifications"
         :products="products"
@@ -176,7 +176,7 @@ const deleteItem = async (item: ComparisonProduct) => {
       />
     </template>
     <div v-else-if="loading === 'loading'">
-      <v-loader />
+      <VLoader />
     </div>
     <div v-else class="font-bold text-2xl text-center">
       Нет товаров для сравнения

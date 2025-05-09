@@ -96,12 +96,12 @@ const choseShop = (shop: ShopRead) => {
 <template>
   <div v-if="obtainType === 'delivery'">
     <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
-      <form-field
+      <FormField
         v-slot="{ fieldName, id }"
         name="receiptDetails.address"
         label="Адрес*"
       >
-        <input-address
+        <InputAddress
           :id="id"
           v-model="address"
           :name="fieldName"
@@ -109,21 +109,21 @@ const choseShop = (shop: ShopRead) => {
           :required="false"
           @click-on-suggestion="address = $event"
         />
-      </form-field>
-      <form-field
+      </FormField>
+      <FormField
         name="receiptDetails.apartment"
         label="Квартира*"
         type="number"
         min="0"
         max="5000"
       />
-      <form-field
+      <FormField
         name="receiptDetails.floor"
         label="Этаж"
         min="0"
         type="number"
       />
-      <form-field
+      <FormField
         name="receiptDetails.entrance"
         label="Подъезд"
         min="0"
@@ -133,7 +133,7 @@ const choseShop = (shop: ShopRead) => {
     <div class="mt-4">
       <div class="text-xl mb-2">Дата доставки</div>
       <div>
-        <v-buttons
+        <VButtons
           v-model="deliveryDate"
           :options="dates"
           width="150px"
@@ -145,7 +145,7 @@ const choseShop = (shop: ShopRead) => {
     <div class="choose__option">
       <div>
         <div class="flex justify-center mb-2">
-          <home-svg
+          <HomeSvg
             fill="black"
             width="50"
           />
@@ -158,7 +158,7 @@ const choseShop = (shop: ShopRead) => {
           :class="[{ 'text-danger-light': errorMessage }, 'cursor-pointer']"
           @click="toggleModal"
         />
-        <v-modal v-model="isModalOpen">
+        <VModal v-model="isModalOpen">
           <div class="modal__content">
             <div class="flex">
               <ul class="ml-2 mr-6 w-full">
@@ -170,12 +170,12 @@ const choseShop = (shop: ShopRead) => {
                   <div>
                     {{ formatTime(shop.timeStart, shop.timeEnd) }}
                   </div>
-                  <v-button
+                  <VButton
                     class="mt-2"
                     @click="choseShop(shop)"
                   >
                     Выбрать
-                  </v-button>
+                  </VButton>
                 </li>
               </ul>
               <div class="ml-auto block md:hidden">
@@ -202,10 +202,10 @@ const choseShop = (shop: ShopRead) => {
               v-if="!loadingMap || loadingShops === 'loading'"
               class="flex justify-center items-center"
             >
-              <v-loader />
+              <VLoader />
             </div>
           </div>
-        </v-modal>
+        </VModal>
       </div>
     </div>
   </div>

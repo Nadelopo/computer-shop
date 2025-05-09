@@ -169,7 +169,7 @@ const isPageSmall = useMediaQuery('(width < 400px)')
   <div class="wrapper grid">
     <div>Отзывы</div>
     <div>
-      <form-create-review
+      <FormCreateReview
         :product-id="productId"
         @update-product-rating="emit('updateProductRating', $event)"
         @create-review="reviews.unshift($event)"
@@ -177,7 +177,7 @@ const isPageSmall = useMediaQuery('(width < 400px)')
       <div v-if="reviews.length" class="reviews">
         <template v-if="loading === 'success'">
           <template v-for="review in reviews" :key="review.id">
-            <review-block
+            <ReviewBlock
               :id="`comment_${review.id}`"
               :review="review"
               :class="{ active: commId === String(review.id) }"
@@ -187,9 +187,9 @@ const isPageSmall = useMediaQuery('(width < 400px)')
             />
           </template>
         </template>
-        <v-loader v-else />
+        <VLoader v-else />
       </div>
-      <v-pagination
+      <VPagination
         v-model="currentPage"
         :item-count="reviewsCount"
         :page-size="reviewsLimit"

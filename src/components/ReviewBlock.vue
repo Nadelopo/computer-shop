@@ -51,12 +51,12 @@ const evalatuationClasses = computed(() => {
 <template>
   <div class="review__root">
     <div class="head">
-      <avatar-svg
+      <AvatarSvg
         width="40"
         fill="#cdcdcd"
       />
       <div>{{ review.users.name }}</div>
-      <rating-stars
+      <RatingStars
         class="rating"
         :model-value="review.rating"
       />
@@ -87,7 +87,7 @@ const evalatuationClasses = computed(() => {
     </div>
     <div class="flex mt-4">
       <div class="flex">
-        <action-icon
+        <ActionIcon
           v-if="!static"
           :svg="ArrowSvg"
           :svg-attrs="{ width: 16 }"
@@ -101,7 +101,7 @@ const evalatuationClasses = computed(() => {
         >
           {{ review.evaluation }}
         </span>
-        <action-icon
+        <ActionIcon
           v-if="!static"
           :svg="ArrowSvg"
           :svg-attrs="{ transform: 'rotate(180)', width: 16 }"

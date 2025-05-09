@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useCategoriesStore } from '@/stores/categoriesStore'
+import { useCategoriesStore } from '@/modules/categories'
 import { supabase } from '@/db/supabase'
 import {
   useCustomRoute,
@@ -80,20 +80,20 @@ const save = async (values: CategorySpecificationForm) => {
       v-if="loading === 'success' && categories.length"
       class="py-10"
     >
-      <specifications-form
+      <SpecificationsForm
         v-if="form"
         :form-data="form"
         type="update"
         @submit="save"
       />
-      <v-button
+      <VButton
         class="mt-4"
         @click="router.push({ name: 'AdminSpecifications' })"
       >
         назад
-      </v-button>
+      </VButton>
     </div>
-    <v-loader
+    <VLoader
       v-else
       class="h-[75vh]"
     />

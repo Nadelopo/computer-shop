@@ -71,19 +71,19 @@ const share = () => {
 <template>
   <div class="compare__actions">
     <div class="clear">
-      <v-button variant="noactive" @click="clearList">
-        <trash-svg />
+      <VButton variant="noactive" @click="clearList">
+        <TrashSvg />
         очистить список
-      </v-button>
+      </VButton>
     </div>
     <div>
-      <v-checkbox v-model="showDifferences" title="Показывать только отличия" />
+      <VCheckbox v-model="showDifferences" title="Показывать только отличия" />
     </div>
     <div class="share">
-      <v-button variant="noactive" @click="share">
-        <share-svg fill="#fff" class="mr-2" />
+      <VButton variant="noactive" @click="share">
+        <ShareSvg fill="#fff" class="mr-2" />
         поделиться списком
-      </v-button>
+      </VButton>
     </div>
   </div>
 </template>

@@ -46,23 +46,23 @@ const router = useCustomRouter()
 </script>
 
 <template>
-  <v-button
+  <VButton
     v-if="!state"
     class="product__button"
     :loading="loading"
     @click="add"
   >
-    <list-icon />
+    <ListIcon />
     {{ notInListTitle }}
-  </v-button>
-  <v-button
+  </VButton>
+  <VButton
     v-else
     class="product__button"
     @click="router.push({ name: routerTitle })"
   >
-    <list-icon fill="#60efe1" />
+    <ListIcon fill="#60efe1" />
     {{ inListTitle }}
-  </v-button>
+  </VButton>
 </template>
 
 <style scoped lang="sass">

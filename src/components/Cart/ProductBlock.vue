@@ -65,7 +65,7 @@ const isMobile = useMediaQuery('(width < 640px)')
 <template>
   <div class="product__wrapper">
     <div class="img">
-      <app-link
+      <AppLink
         :to="{
           name: 'Product',
           params: {
@@ -80,10 +80,10 @@ const isMobile = useMediaQuery('(width < 640px)')
           alt="..."
           class="max-h-24 max-w-[100px] cursor-pointer"
         />
-      </app-link>
+      </AppLink>
     </div>
     <div class="title">
-      <app-link
+      <AppLink
         class="text-base sm:text-xl text-black font-medium duration-200 cursor-pointer hover:text-text"
         :to="{
           name: 'Product',
@@ -95,20 +95,20 @@ const isMobile = useMediaQuery('(width < 640px)')
         }"
       >
         {{ product.title }}
-      </app-link>
+      </AppLink>
     </div>
     <div class="price">{{ formatPrice(product.price) }}</div>
-    <item-actions :product-count="product.count" :product="product" />
+    <ItemActions :product-count="product.count" :product="product" />
     <div v-if="product.warranty <= 48" class="warranty">
       Дополнительная гарантия
-      <v-select
+      <VSelect
         v-if="isMobile"
         v-model="additionalWarranty"
         :options="warrantyOptions"
         class="mt-2"
         @update:model-value="setServicePrice($event, product)"
       />
-      <v-buttons
+      <VButtons
         v-else
         v-model="additionalWarranty"
         :options="warrantyOptions"

@@ -4,7 +4,7 @@ import AdminSidebar from '@/components/Admin/AdminSidebar.vue'
 
 <template>
   <div class="roottt">
-    <admin-sidebar />
+    <AdminSidebar />
     <div class="p-4">
       <router-view />
     </div>

@@ -8,10 +8,10 @@ const shopDetailsListActions = ref<{ loadProductsInShops: () => void }>()
 
 <template>
   <div class="flex flex-col gap-4">
-    <product-addition
+    <ProductAddition
       @load-products="shopDetailsListActions?.loadProductsInShops"
     />
-    <shop-details-list ref="shopDetailsListActions" />
+    <ShopDetailsList ref="shopDetailsListActions" />
   </div>
 </template>
 

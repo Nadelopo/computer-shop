@@ -5,7 +5,7 @@ import { supabase } from '@/db/supabase'
 import { useManufacturersStore } from '@/stores/manufacturersStore'
 import { getProductQuantity } from '@/shared/utils/getProductQuantity'
 import { useCustomRoute } from '@/shared/composables/customRouter'
-import CategoriesList from '@/components/Manufacturer/CategoriesList.vue'
+import ManufacturerCategoriesList from '@/modules/categories/components/ManufacturerCategoriesList.vue'
 import BestProductsList from '@/components/Manufacturer/BestProductsList.vue'
 import { VLoader } from '@/components/UI'
 import type { View } from '@/db/database.types'
@@ -65,14 +65,14 @@ onBeforeMount(async () => {
       v-else
       class="h-40 flex"
     >
-      <v-loader />
+      <VLoader />
     </div>
-    <categories-list
+    <ManufacturerCategoriesList
       :categories="categories"
       :loading="loading"
       class="mb-8"
     />
-    <best-products-list
+    <BestProductsList
       :products="bestProducts"
       :loading="loading"
     />

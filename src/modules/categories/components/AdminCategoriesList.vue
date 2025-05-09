@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
-import { useCategoriesStore } from '@/stores/categoriesStore'
+import { useCategoriesStore } from '@/modules/categories/model/categoriesStore'
 import { VTable, VConfirm } from '@/components/UI'
 import { removeFromStorage } from '@/db/queries/storage'
 import ActionIcon from '@/components/ActionIcon.vue'
@@ -32,7 +32,7 @@ const remove = async (id: number, img: string) => {
 </script>
 
 <template>
-  <v-table
+  <VTable
     class="mt-6"
     line
   >
@@ -61,10 +61,10 @@ const remove = async (id: number, img: string) => {
         </td>
         <td>
           <div class="flex">
-            <action-icon
+            <ActionIcon
               tag="a"
               :to="{
-                name: 'EditCategory',
+                name: 'CategoryEdit',
                 params: {
                   category: category.title,
                   id: category.id
@@ -73,12 +73,12 @@ const remove = async (id: number, img: string) => {
               :svg="EditSvg"
               paint-type="stroke"
             />
-            <v-confirm
+            <VConfirm
               v-slot="{ openModal }"
               :message="`Вы точно хотите удалить категорю - ${category.title}`"
               @ok="remove(category.id, category.img)"
             >
-              <action-icon
+              <ActionIcon
                 :svg="TrashSvg"
                 variant="danger"
                 :loading="
@@ -87,10 +87,10 @@ const remove = async (id: number, img: string) => {
                 "
                 @click="openModal"
               />
-            </v-confirm>
+            </VConfirm>
           </div>
         </td>
       </tr>
     </tbody>
-  </v-table>
+  </VTable>
 </template>

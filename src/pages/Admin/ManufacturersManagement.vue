@@ -33,11 +33,11 @@ const create = async (
 
 <template>
   <div>
-    <manufacturers-form
+    <ManufacturersForm
       :loading="loading === 'loading'"
       type="create"
       @submit="create"
     />
-    <manufacturers-list />
+    <ManufacturersList />
   </div>
 </template>

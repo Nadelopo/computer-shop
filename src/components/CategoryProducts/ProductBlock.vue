@@ -16,7 +16,7 @@ const isSmall = useMediaQuery('(width < 520px)')
 </script>
 
 <template>
-  <app-link
+  <AppLink
     :to="{
       name: 'Product',
       params: {
@@ -35,7 +35,7 @@ const isSmall = useMediaQuery('(width < 520px)')
           <div class="card__head">
             <div class="card__head__title">{{ item.title }}</div>
             <div>
-              <rating-stars
+              <RatingStars
                 :model-value="item.rating"
                 :size="isSmall ? 'small' : 'normal'"
               />
@@ -56,11 +56,11 @@ const isSmall = useMediaQuery('(width < 520px)')
       </div>
       <div class="actions">
         <div class="flex gap-4 justify-center md:mb-auto">
-          <icon-btn-favourites-comparison
+          <IconBtnFavouritesComparison
             list-title="comparison"
             :product-id="item.id"
           />
-          <icon-btn-favourites-comparison
+          <IconBtnFavouritesComparison
             list-title="favourites"
             :product-id="item.id"
           />
@@ -79,7 +79,7 @@ const isSmall = useMediaQuery('(width < 520px)')
           </div>
         </div>
         <div>
-          <button-cart
+          <ButtonCart
             :size="isSmall ? 'small' : 'normal'"
             :product-id="item.id"
             :quantity="item.quantity"
@@ -88,7 +88,7 @@ const isSmall = useMediaQuery('(width < 520px)')
         </div>
       </div>
     </div>
-  </app-link>
+  </AppLink>
 </template>
 
 <style scoped lang="sass">

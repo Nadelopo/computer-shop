@@ -98,8 +98,8 @@ onBeforeMount(() => {
           {{ product.description }}
         </div>
       </div>
-      <product-specifications :product="product" />
-      <similar-products
+      <ProductSpecifications :product="product" />
+      <SimilarProducts
         :product-price="product.price"
         :product-id="product.id"
       />
@@ -108,7 +108,7 @@ onBeforeMount(() => {
         @update-product-rating="updateProductRating"
       />
     </div>
-    <v-loader
+    <VLoader
       v-else
       class="h-[50vh]"
     />

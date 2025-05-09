@@ -35,12 +35,12 @@ const { user } = storeToRefs(useUserStore())
     <div class="reviews__grid">
       <div>
         <div class="text-3xl font-bold">Отзывы</div>
-        <app-link :to="{ name: 'ProfileReviews' }" class="text-xl color-text">
+        <AppLink :to="{ name: 'ProfileReviews' }" class="text-xl color-text">
           Посмотреть все
-        </app-link>
+        </AppLink>
       </div>
       <div v-if="loading === 'success'" class="last__reviews">
-        <app-link
+        <AppLink
           v-for="review in reviews.slice(0, 4)"
           :key="review.id"
           :to="{
@@ -55,10 +55,10 @@ const { user } = storeToRefs(useUserStore())
             }
           }"
         >
-          <review-block :review="review" color="#fff" />
-        </app-link>
+          <ReviewBlock :review="review" color="#fff" />
+        </AppLink>
       </div>
-      <v-loader v-else-if="loading === 'loading'" />
+      <VLoader v-else-if="loading === 'loading'" />
       <div v-else-if="loading === 'empty'">Вы не оставили ни одного отзыва</div>
     </div>
   </div>

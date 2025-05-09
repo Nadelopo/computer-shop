@@ -3,7 +3,7 @@ import { ref, unref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useForm } from 'vee-validate'
 import { number, string } from 'yup'
-import { useCategoriesStore } from '@/stores/categoriesStore'
+import { useCategoriesStore } from '@/modules/categories/model/categoriesStore'
 import { VButtons, VInputText, VButton, VSelect, VTags } from '@/components/UI'
 import FormField from '@/components/FormField.vue'
 import type { CategorySpecificationForm } from './types'
@@ -104,18 +104,15 @@ const submit = handleSubmit(() => {
 </script>
 
 <template>
-  <form
-    class="flex flex-col gap-y-2"
-    @submit.prevent="submit"
-  >
-    <form-field
+  <form class="flex flex-col gap-y-2" @submit.prevent="submit">
+    <FormField
       v-slot="{ value, setValue, isError }"
       type="number"
       name="categoryId"
       label="Категория"
       hide-errors
     >
-      <v-select
+      <VSelect
         class="my-2"
         :options="categories.map((e) => ({ value: e.id, title: e.title }))"
         :required="false"
@@ -123,26 +120,16 @@ const submit = handleSubmit(() => {
         :model-value="value"
         @update:model-value="setValue($event)"
       />
-    </form-field>
-    <form-field
-      name="title"
-      label="Наименование"
-    />
-    <form-field
-      name="enTitle"
-      label="Наименование на английском"
-    />
+    </FormField>
+    <FormField name="title" label="Наименование" />
+    <FormField name="enTitle" label="Наименование на английском" />
     <div>
       <label for="units">Единицы измерения</label>
-      <v-input-text
-        id="units"
-        v-model.trim="form.units"
-        :required="false"
-      />
+      <VInputText id="units" v-model.trim="form.units" :required="false" />
     </div>
     <div>
       <div>тип поля </div>
-      <v-buttons
+      <VButtons
         v-model="form.type"
         :options="[
           { value: 'number', title: 'числовой' },
@@ -155,7 +142,7 @@ const submit = handleSubmit(() => {
     <template v-if="form.type === 'number'">
       <div class="my-3">
         <label for="step">шаг изменения числа для поля ввода</label>
-        <v-input-text
+        <VInputText
           id="step"
           v-model="form.step"
           type="number"
@@ -165,26 +152,18 @@ const submit = handleSubmit(() => {
       </div>
       <div class="my-3">
         <label for="min">Минимальное значение для поля ввода</label>
-        <v-input-text
-          v-model="form.min"
-          type="number"
-          :min="0"
-        />
+        <VInputText v-model="form.min" type="number" :min="0" />
       </div>
       <div class="my-3">
         <label for="max">Максимальное значение для поля ввода</label>
-        <v-input-text
-          v-model="form.max"
-          type="number"
-          :min="0"
-        />
+        <VInputText v-model="form.max" type="number" :min="0" />
       </div>
       <div class="my-3">
         <div>
           условия для лучшего значения
           <span class="text-xs"> (больще значит лучше или наоборот) </span>
         </div>
-        <v-buttons
+        <VButtons
           v-model="form.condition"
           :options="[
             { value: 'greater', title: 'больше' },
@@ -196,11 +175,11 @@ const submit = handleSubmit(() => {
     </template>
     <div v-else-if="form.variantsValues">
       <div>вартианты значений</div>
-      <v-tags v-model.trim="form.variantsValues" />
+      <VTags v-model.trim="form.variantsValues" />
     </div>
     <div>
       <div>отображать на карточке товара </div>
-      <v-buttons
+      <VButtons
         v-model="form.visible"
         class="mt-2"
         :options="[
@@ -211,7 +190,7 @@ const submit = handleSubmit(() => {
     </div>
     <div v-if="props.type === 'create'">
       <div>задать значение по умолчанию для товаров</div>
-      <v-buttons
+      <VButtons
         v-model="setInitialValue"
         :options="[
           { value: true, title: 'да' },
@@ -221,12 +200,9 @@ const submit = handleSubmit(() => {
       />
     </div>
     <div class="mt-2">
-      <v-button
-        type="submit"
-        :loading="loading"
-      >
+      <VButton type="submit" :loading="loading">
         {{ type === 'create' ? 'создать характеристику' : 'сохранить' }}
-      </v-button>
+      </VButton>
     </div>
   </form>
 </template>

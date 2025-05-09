@@ -28,7 +28,7 @@ const breakpoints: CarouselBreakpoints = {
       {{ title }}
     </div>
     <div>
-      <v-carousel
+      <VCarousel
         :slides-per-view="4"
         :breakpoints="breakpoints"
         :show-dots="loading === 'success'"
@@ -37,22 +37,22 @@ const breakpoints: CarouselBreakpoints = {
         class="pt-6 pb-10"
       >
         <template v-if="loading === 'success'">
-          <v-carousel-slide
+          <VCarouselSlide
             v-for="product in products"
             :key="product.id"
           >
-            <product-card :item="product" />
-          </v-carousel-slide>
+            <ProductCard :item="product" />
+          </VCarouselSlide>
         </template>
         <template v-else>
-          <v-carousel-slide
+          <VCarouselSlide
             v-for="i in 4"
             :key="i"
           >
-            <product-card-skeleton />
-          </v-carousel-slide>
+            <ProductCardSkeleton />
+          </VCarouselSlide>
         </template>
-      </v-carousel>
+      </VCarousel>
     </div>
   </div>
 </template>

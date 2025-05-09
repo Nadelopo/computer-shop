@@ -59,7 +59,7 @@ if (props.loading !== undefined) {
 
 <template>
   <div>
-    <v-button
+    <VButton
       v-for="(option, i) in options"
       :key="i"
       type="button"
@@ -76,7 +76,7 @@ if (props.loading !== undefined) {
       <template v-else>
         {{ option.title }}
       </template>
-    </v-button>
+    </VButton>
   </div>
 </template>
 

@@ -54,7 +54,7 @@ const is = computed(() => (props.tag === 'button' ? 'button' : AppLink))
     class="action-icon"
     :class="[variant, paintType, isActive && 'active']"
   >
-    <v-loader
+    <VLoader
       v-if="loading"
       :style="widthWithHeight"
       :color="variantLoader"

@@ -28,23 +28,23 @@ const getProps = (
       @click="visibility = !visibility"
     >
       <div> {{ title }} </div>
-      <arrow-svg
+      <ArrowSvg
         :transform="visibility ? '' : 'rotate(180)'"
         class="duration-200"
       />
     </div>
-    <v-accordion
+    <VAccordion
       :visibility="visibility"
       class="filter__content"
     >
       <div>
-        <v-checkbox
+        <VCheckbox
           v-for="(value, i) in variantsValues"
           :key="i"
           v-model="values"
           v-bind="getProps(value)"
         />
       </div>
-    </v-accordion>
+    </VAccordion>
   </div>
 </template>

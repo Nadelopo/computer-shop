@@ -59,13 +59,13 @@ const markNotice = () => {
         </div>
       </div>
       <div class="flex justify-end gap-4 mt-4">
-        <v-button @click="markNotice">ок</v-button>
-        <v-button
+        <VButton @click="markNotice">ок</VButton>
+        <VButton
           variant="danger"
           @click="emit('close')"
         >
           закрыть
-        </v-button>
+        </VButton>
       </div>
     </div>
   </div>

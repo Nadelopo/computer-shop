@@ -58,7 +58,7 @@ const links = computed((): Links[] => [
 
 <template>
   <div class="nav__mobile">
-    <app-link v-for="link in links" :key="link.name" :to="{ name: link.page }">
+    <AppLink v-for="link in links" :key="link.name" :to="{ name: link.page }">
       <Component :is="link.svg" />
       <span v-if="link.count" class="count">
         {{ link.count }}
@@ -66,7 +66,7 @@ const links = computed((): Links[] => [
       <div>
         {{ link.name }}
       </div>
-    </app-link>
+    </AppLink>
   </div>
 </template>
 

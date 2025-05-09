@@ -63,7 +63,7 @@ const clickOnTab = (value: number | string) => {
 
 <template>
   <div class="tabs">
-    <app-link
+    <AppLink
       v-for="option in options"
       :key="option.value"
       ref="tabsRefs"
@@ -79,7 +79,7 @@ const clickOnTab = (value: number | string) => {
       <div class="link">
         {{ option.title }} <span class="ml-2">{{ option.count }}</span>
       </div>
-    </app-link>
+    </AppLink>
   </div>
 </template>
 

@@ -70,17 +70,17 @@ const deleteItem = async (id: number) => {
     <div class="favourites">
       <div class="sidebar">
         <div class="text-3xl font-bold mb-8">Избранное</div>
-        <v-button v-if="loading === 'success'" class="noactive" @click="clear">
-          <trash-svg />
+        <VButton v-if="loading === 'success'" class="noactive" @click="clear">
+          <TrashSvg />
           очистить список
-        </v-button>
+        </VButton>
         <div v-else-if="loading === 'empty'">
           В списке желаемых покупок нет товаров
         </div>
       </div>
       <div class="cards">
         <template v-if="loading === 'success'">
-          <product-card
+          <ProductCard
             v-for="item in favourites"
             :key="item.id"
             :item="item"
@@ -89,7 +89,7 @@ const deleteItem = async (id: number) => {
           />
         </template>
         <template v-else-if="loading === 'loading'">
-          <product-card-skeleton v-for="i in 8" :key="i" />
+          <ProductCardSkeleton v-for="i in 8" :key="i" />
         </template>
       </div>
     </div>

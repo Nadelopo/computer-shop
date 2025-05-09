@@ -109,25 +109,25 @@ const copyProductCode = (id: number) => {
       </div>
 
       <div class="flex max-w-[400px] justify-between mb-4 h-12">
-        <rating-stars :model-value="product.rating" />
-        <product-in-shops
+        <RatingStars :model-value="product.rating" />
+        <ProductInShops
           v-if="loading === 'success' && shops.length"
           :shops
           :product-id="product.id"
         />
       </div>
       <div>
-        <button-cart
+        <ButtonCart
           :width="buttonCartWidth"
           :quantity="product.quantity"
           :product-id="product.id"
         />
         <div class="list__btns">
-          <button-favourites-comparison
+          <ButtonFavouritesComparison
             list-title="favourites"
             :product-id="product.id"
           />
-          <button-favourites-comparison
+          <ButtonFavouritesComparison
             list-title="comparison"
             :product-id="product.id"
           />

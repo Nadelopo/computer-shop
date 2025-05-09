@@ -54,13 +54,13 @@ const remove = async (id: number, img: string[]) => {
     v-if="loading !== 'loading'"
     class="py-4"
   >
-    <v-input-text
+    <VInputText
       v-model="search"
       :debounce="1000"
       placeholder="введите название товара или id"
     />
   </div>
-  <v-table
+  <VTable
     v-if="loading === 'success'"
     placement="center"
     line
@@ -112,7 +112,7 @@ const remove = async (id: number, img: string[]) => {
         </td>
         <td>
           <div class="flex">
-            <action-icon
+            <ActionIcon
               tag="a"
               :to="{
                 name: 'EditProducts',
@@ -125,12 +125,12 @@ const remove = async (id: number, img: string[]) => {
               :svg="EditSvg"
               paint-type="stroke"
             />
-            <v-confirm
+            <VConfirm
               v-slot="{ openModal }"
               :message="`Вы точно хотите удалить продукт - ${product.title}`"
               @ok="remove(product.id, product.img)"
             >
-              <action-icon
+              <ActionIcon
                 :svg="TrashSvg"
                 variant="danger"
                 :loading="
@@ -139,12 +139,12 @@ const remove = async (id: number, img: string[]) => {
                 "
                 @click="openModal"
               />
-            </v-confirm>
+            </VConfirm>
           </div>
         </td>
       </tr>
     </tbody>
-  </v-table>
+  </VTable>
   <div
     v-else-if="loading === 'empty'"
     class="text-2xl text-center font-normal mt-16"
@@ -155,6 +155,6 @@ const remove = async (id: number, img: string[]) => {
     v-else-if="loading === 'loading'"
     class="h-[20vh] flex items-center"
   >
-    <v-loader />
+    <VLoader />
   </div>
 </template>

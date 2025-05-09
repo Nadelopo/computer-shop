@@ -14,12 +14,14 @@ export const adminRoutes = [
       {
         path: 'categories',
         name: 'AdminCategories',
-        component: () => import('@/pages/Admin/CategoriesManagement.vue')
+        component: () =>
+          import('@/modules/categories/pages/AdminCategoryManagement.vue')
       },
       {
         path: 'categories/edit/:category/:id',
-        name: 'EditCategory',
-        component: () => import('@/pages/Admin/EditCategory.vue')
+        name: 'CategoryEdit',
+        component: () =>
+          import('@/modules/categories/pages/AdminCategoryEdit.vue')
       },
       {
         path: 'products/:category/:id',

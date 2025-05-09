@@ -164,7 +164,7 @@ onUnmounted(() => {
       :class="[classes, type]"
       @submit.prevent="apply"
     >
-      <input-filter
+      <InputFilter
         v-model:min-value="productsPrice.min"
         v-model:max-value="productsPrice.max"
         v-model:visibility="productsPrice.visibility"
@@ -177,7 +177,7 @@ onUnmounted(() => {
         v-for="(value, i) in specificationsValues"
         :key="value.id"
       >
-        <input-filter
+        <InputFilter
           v-if="value.type === 'number'"
           v-model:min-value="value.minValue"
           v-model:max-value="value.maxValue"
@@ -187,7 +187,7 @@ onUnmounted(() => {
           :step="value.step"
           :title="value.title"
         />
-        <checkbox-filter
+        <CheckboxFilter
           v-else
           v-model="visibilityFilters[i]"
           v-model:values="value.values"
@@ -195,13 +195,13 @@ onUnmounted(() => {
           :title="value.title"
         />
       </template>
-      <checkbox-filter
+      <CheckboxFilter
         v-model="manufacturer.visibility"
         v-model:values="manufacturer.values"
         :variants-values="manufacturer.variantsValues"
         title="Производитель"
       />
-      <input-filter
+      <InputFilter
         v-model:min-value="warranty.min"
         v-model:max-value="warranty.max"
         v-model:visibility="warranty.visibility"
@@ -210,24 +210,24 @@ onUnmounted(() => {
         title="Гарантия"
       />
       <div class="py-2 px-4">
-        <v-button
+        <VButton
           class="mb-4"
           width="100%"
           type="submit"
           @click="emit('apply')"
         >
           применить
-        </v-button>
-        <v-button
+        </VButton>
+        <VButton
           width="100%"
           @click="cancel"
         >
           сбросить
-        </v-button>
+        </VButton>
       </div>
     </form>
     <div v-else-if="loadingProperties === 'loading'">
-      <filter-list-skeleton />
+      <FilterListSkeleton />
     </div>
     <div v-else-if="loadingProperties === 'error'">ошибка</div>
   </div>

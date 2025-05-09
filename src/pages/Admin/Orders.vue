@@ -101,7 +101,7 @@ const clear = () => {
 
 <template>
   <div>
-    <v-input-text
+    <VInputText
       v-model="searchOrderId"
       placeholder="номер заказа"
       class="mb-2"
@@ -109,7 +109,7 @@ const clear = () => {
       @search="searchOrder"
       @clear="clear"
     />
-    <v-table v-if="loading === 'success'">
+    <VTable v-if="loading === 'success'">
       <template #header> Заказы</template>
       <thead>
         <tr>
@@ -140,19 +140,19 @@ const clear = () => {
           </td>
           <td>
             <div class="flex">
-              <action-icon
+              <ActionIcon
                 tag="a"
                 :to="{ name: 'AdminOrderDetails', params: { id: order.id } }"
                 :svg="EditSvg"
                 paint-type="stroke"
                 tooltip="Детали заказа"
               />
-              <v-confirm
+              <VConfirm
                 v-slot="{ openModal }"
                 :message="`Вы точно хотите удалить заказ - ${order.id}`"
                 @ok="removeOrder(order.id)"
               >
-                <action-icon
+                <ActionIcon
                   :svg="TrashSvg"
                   variant="danger"
                   :loading="
@@ -161,16 +161,16 @@ const clear = () => {
                   "
                   @click="openModal"
                 />
-              </v-confirm>
+              </VConfirm>
             </div>
           </td>
         </tr>
       </tbody>
-    </v-table>
+    </VTable>
     <div v-else-if="loading === 'loading'">
-      <v-loader />
+      <VLoader />
     </div>
-    <v-pagination
+    <VPagination
       v-model="currentPage"
       :item-count="totalOrders"
       :page-size="limit"

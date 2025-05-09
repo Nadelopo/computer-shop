@@ -63,7 +63,7 @@ const { getStatus } = useOrders()
     <div v-if="loading === 'success'" class="bg-white rounded p-3 mb-4">
       <div v-for="(order, i) in orders" :key="order.id" class="order">
         <div>
-          <arrow-svg
+          <ArrowSvg
             :transform="showProducts[i] ? '' : 'rotate(180)'"
             class="duration-200 mt-2 cursor-pointer"
             @click="showProducts[i] = !showProducts[i]"
@@ -96,14 +96,14 @@ const { getStatus } = useOrders()
             </div>
           </div>
 
-          <v-accordion :visibility="showProducts[i]">
+          <VAccordion :visibility="showProducts[i]">
             <div
               v-for="product in order.ordered_products"
               :key="product.id"
               class="product"
             >
               <div class="flex gap-4">
-                <app-link
+                <AppLink
                   :to="{
                     name: 'Product',
                     params: {
@@ -118,9 +118,9 @@ const { getStatus } = useOrders()
                     alt=""
                     class="max-w-[80px] max-h-[80px]"
                   />
-                </app-link>
+                </AppLink>
                 <div>
-                  <app-link
+                  <AppLink
                     :to="{
                       name: 'Product',
                       params: {
@@ -132,23 +132,23 @@ const { getStatus } = useOrders()
                     class="hover:text-text duration-150"
                   >
                     {{ product.products.title }}
-                  </app-link>
+                  </AppLink>
                 </div>
               </div>
               <div>{{ product.count }} шт</div>
               <div>{{ formatPrice(product.price) }}</div>
             </div>
-          </v-accordion>
+          </VAccordion>
         </div>
       </div>
     </div>
     <div v-else-if="loading === 'loading'">
-      <v-loader />
+      <VLoader />
     </div>
     <div v-else-if="loading === 'empty'" class="text-3xl font-bold">
       Заказов пока нет
     </div>
-    <v-pagination
+    <VPagination
       v-model="currentPage"
       :item-count="totalOrders"
       :page-size="limit"

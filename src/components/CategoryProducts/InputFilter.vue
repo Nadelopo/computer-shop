@@ -60,12 +60,12 @@ const isActive = computed(
       <div class="title">
         {{ title }}
       </div>
-      <arrow-svg
+      <ArrowSvg
         :transform="visibility ? '' : 'rotate(180)'"
         class="duration-200"
       />
     </div>
-    <v-accordion
+    <VAccordion
       :visibility="visibility"
       class="filter__content"
     >
@@ -100,7 +100,7 @@ const isActive = computed(
           />
         </div>
       </div>
-    </v-accordion>
+    </VAccordion>
   </div>
 </template>
 

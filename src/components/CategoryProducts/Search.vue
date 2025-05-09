@@ -19,7 +19,7 @@ const applySearchQuery = () => {
 
 <template>
   <div>
-    <v-input-text
+    <VInputText
       v-model="search"
       placeholder="поиск..."
       @keyup.enter="applySearchQuery"

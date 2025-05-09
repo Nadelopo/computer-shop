@@ -74,7 +74,7 @@ const updateOrder = async () => {
 <template>
   <div v-if="loading === 'success' && order">
     <div class="flex gap-4">
-      <v-table line :striped="false">
+      <VTable line :striped="false">
         <template #header>
           <div> {{ `Номер заказа ${order.id}` }}</div>
           <div class="text-base flex flex-col gap-4">
@@ -84,11 +84,11 @@ const updateOrder = async () => {
             </div>
             <div class="flex items-center">
               <span class="w-[114px]">Статус заказа:</span>
-              <v-select v-model="order.status" :options="statusOptions" />
+              <VSelect v-model="order.status" :options="statusOptions" />
             </div>
             <div class="flex items-center">
               <span class="w-[114px] inline-block">Статус оплаты:</span>
-              <v-select
+              <VSelect
                 v-model="order.paymentStatus"
                 :options="paymentStatusOptions"
               />
@@ -118,7 +118,7 @@ const updateOrder = async () => {
             <td>{{ order.price }} </td>
           </tr>
         </tbody>
-      </v-table>
+      </VTable>
       <div>
         <div class="rounded bg-white min-w-[500px] p-4">
           <div class="mb-2">Итог заказа</div>
@@ -130,16 +130,16 @@ const updateOrder = async () => {
       </div>
     </div>
     <div class="flex gap-4 mt-4">
-      <v-button @click="updateOrder">сохранить</v-button>
-      <app-link :to="{ name: 'AdminOrders' }">
-        <v-button>назад</v-button>
-      </app-link>
+      <VButton @click="updateOrder">сохранить</VButton>
+      <AppLink :to="{ name: 'AdminOrders' }">
+        <VButton>назад</VButton>
+      </AppLink>
     </div>
   </div>
   <div
     v-else-if="loading === 'loading'"
     class="flex justify-center items-center h-[50vh]"
   >
-    <v-loader />
+    <VLoader />
   </div>
 </template>

@@ -146,7 +146,7 @@ const required = computed(() => {
     >
       <div class="head">
         <span>{{ selected ?? 'Select' }}</span>
-        <arrow-svg class="svg" :class="{ active }" />
+        <ArrowSvg class="svg" :class="{ active }" />
       </div>
     </button>
     <transition name="list">

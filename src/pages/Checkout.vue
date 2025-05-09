@@ -409,13 +409,13 @@ const onSubmit = handleSubmit(async () => {
       </div>
       <div class="content grid grid-cols-1 gap-6 xs:grid-cols-2">
         <div>
-          <form-field label="Имя*" name="name" />
+          <FormField label="Имя*" name="name" />
         </div>
         <div>
-          <form-field label="Почта*" name="email" />
+          <FormField label="Почта*" name="email" />
         </div>
         <div>
-          <form-field
+          <FormField
             label="Телефон*"
             type="tel"
             :show-spin-buttons="false"
@@ -431,7 +431,7 @@ const onSubmit = handleSubmit(async () => {
       </div>
       <div class="content">
         <div>
-          <v-buttons
+          <VButtons
             :options="[
               { title: 'Самовызов', value: 'selfcall' },
               { title: 'Доставка', value: 'delivery' }
@@ -440,7 +440,7 @@ const onSubmit = handleSubmit(async () => {
             @update:model-value="setFieldValue('obtainType', $event)"
           />
         </div>
-        <method-obtain
+        <MethodObtain
           :obtain-type="values.obtainType"
           :receipt-details="values.receiptDetails"
           @choose="shopId = $event"
@@ -453,7 +453,7 @@ const onSubmit = handleSubmit(async () => {
         <div>Выберите способ оплаты</div>
       </div>
       <div class="content">
-        <v-button type="button">при получении</v-button>
+        <VButton type="button">при получении</VButton>
       </div>
     </div>
     <div>
@@ -462,14 +462,14 @@ const onSubmit = handleSubmit(async () => {
         <div class="text-3xl font-medium mb-2">
           Итого: <span class="font-bold">{{ formatPrice(price) }}</span>
         </div>
-        <v-button type="submit" :loading="loadingCreateOrder === 'loading'">
+        <VButton type="submit" :loading="loadingCreateOrder === 'loading'">
           Оформить заказ
-        </v-button>
+        </VButton>
       </div>
     </div>
   </form>
   <div v-else class="flex justify-center items-center h-[50vh]">
-    <v-loader />
+    <VLoader />
   </div>
 </template>
 

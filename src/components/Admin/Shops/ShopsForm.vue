@@ -90,12 +90,12 @@ watchEffect(async () => {
     class="flex flex-col gap-y-2"
     @submit.prevent="onSubmit"
   >
-    <form-field
+    <FormField
       v-slot="{ isError, value, setValue, fieldName, id }"
       name="address"
       label="Адрес"
     >
-      <input-address
+      <InputAddress
         :id="id"
         :name="fieldName"
         :location-results="locationResults"
@@ -105,13 +105,13 @@ watchEffect(async () => {
         @update:model-value="setValue($event.trim())"
         @click-on-suggestion="setValue($event)"
       />
-    </form-field>
-    <form-field
+    </FormField>
+    <FormField
       v-slot="{ value, setValue, isError, id }"
       name="time"
       label="Часы работы"
     >
-      <v-input-text
+      <VInputText
         :id="id"
         v-maska="maskaOptions"
         name="time"
@@ -121,14 +121,14 @@ watchEffect(async () => {
         :model-value="value"
         @update:model-value="setValue($event)"
       />
-    </form-field>
+    </FormField>
 
-    <form-field
+    <FormField
       v-slot="{ value, setValue, fieldName, id }"
       name="phone"
       label="Телефон"
     >
-      <v-input-text
+      <VInputText
         :id="id"
         :name="fieldName"
         :model-value="value"
@@ -137,14 +137,14 @@ watchEffect(async () => {
         :required="false"
         @update:model-value="setValue($event)"
       />
-    </form-field>
+    </FormField>
     <div>
-      <v-button
+      <VButton
         type="submit"
         :loading="loadingSubmit"
       >
         {{ type === 'create' ? 'создать' : 'сохранить' }}
-      </v-button>
+      </VButton>
     </div>
   </form>
 </template>

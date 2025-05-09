@@ -42,7 +42,7 @@ watch(() => props.productId, loadSimilarProducts)
     class="wrapper grid"
   >
     <div>Похожие товары</div>
-    <v-carousel
+    <VCarousel
       draggable
       show-arrows="hover"
       :slides-per-view="4"
@@ -58,11 +58,11 @@ watch(() => props.productId, loadSimilarProducts)
         }
       }"
     >
-      <v-carousel-slide
+      <VCarouselSlide
         v-for="similarProduct in similarProducts"
         :key="similarProduct.id"
       >
-        <app-link
+        <AppLink
           :to="{
             name: 'Product',
             params: {
@@ -78,9 +78,9 @@ watch(() => props.productId, loadSimilarProducts)
             alt=""
           />
           <span> {{ similarProduct.title }}</span>
-        </app-link>
-      </v-carousel-slide>
-    </v-carousel>
+        </AppLink>
+      </VCarouselSlide>
+    </VCarousel>
   </div>
 </template>
 

@@ -43,7 +43,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <product-list-carousel
+  <ProductListCarousel
     v-if="loading !== 'error' && loading !== 'empty'"
     title="Недавно просмотренные товары"
     :loading="loading"

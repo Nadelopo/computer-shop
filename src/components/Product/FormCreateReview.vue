@@ -91,9 +91,9 @@ const createReview = async () => {
 </script>
 
 <template>
-  <v-button @click="toggleForm">
+  <VButton @click="toggleForm">
     {{ showReviewForm ? 'закрыть' : 'написать отзыв' }}
-  </v-button>
+  </VButton>
   <Transition name="review__form">
     <form
       v-if="showReviewForm"
@@ -113,8 +113,8 @@ const createReview = async () => {
         <textarea id="comment" v-model.trim="form.comment" />
       </div>
       <div>
-        <rating-stars v-model="form.rating" :static="false" class="mb-4 mt-8" />
-        <v-button type="submit">ставить отзыв</v-button>
+        <RatingStars v-model="form.rating" :static="false" class="mb-4 mt-8" />
+        <VButton type="submit">ставить отзыв</VButton>
       </div>
     </form>
   </Transition>

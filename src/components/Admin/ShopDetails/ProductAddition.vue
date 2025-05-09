@@ -5,7 +5,7 @@ import { supabase } from '@/db/supabase'
 import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import { useLocalStorage } from '@/shared/composables/localStorage'
-import { useCategoriesStore } from '@/stores/categoriesStore'
+import { useCategoriesStore } from '@/modules/categories/model/categoriesStore'
 import {
   VButton,
   VButtons,
@@ -152,17 +152,17 @@ const setQuantityProductsInShops = async () => {
 
 <template>
   <div>
-    <v-button @click="add">{{ open ? 'Закрыть' : 'Добавить товар' }}</v-button>
+    <VButton @click="add">{{ open ? 'Закрыть' : 'Добавить товар' }}</VButton>
   </div>
   <template v-if="open">
-    <v-buttons
+    <VButtons
       v-model="selectedCategories"
       :options="categoriesOptions"
       :loading="loadignProducts === 'loading'"
       width="170px"
     />
     <div class="flex gap-4">
-      <v-input-text
+      <VInputText
         v-model="searchValue"
         class="mb-4 w-full"
         @keyup.enter="search"
@@ -170,29 +170,23 @@ const setQuantityProductsInShops = async () => {
         @clear=";(searchValue = ''), loadProducts()"
         @input="highlightSearchTerm"
       />
-      <v-popup
-        float="start"
-        :is-close-on-click="false"
-      >
+      <VPopup float="start" :is-close-on-click="false">
         <template #active>
-          <button
-            type="button"
-            class="dots"
-          >
+          <button type="button" class="dots">
             <div class="dot" />
             <div class="dot" />
             <div class="dot" />
           </button>
         </template>
         <template #content>
-          <v-checkbox
+          <VCheckbox
             v-model="isOnlyMatchingValues"
             title="Только посдветка совподающих значений"
           />
         </template>
-      </v-popup>
+      </VPopup>
     </div>
-    <v-buttons
+    <VButtons
       v-if="products.length"
       v-model="selectedProducts"
       :options="products"
@@ -220,20 +214,17 @@ const setQuantityProductsInShops = async () => {
           </template>
         </div>
       </template>
-    </v-buttons>
+    </VButtons>
     <div @click="setProductsInStore">
-      <v-button>Выбрать</v-button>
+      <VButton>Выбрать</VButton>
     </div>
-    <div
-      v-if="productsInShop.length"
-      class="flex flex-col gap-2"
-    >
+    <div v-if="productsInShop.length" class="flex flex-col gap-2">
       <div
         v-for="product in productsInShop"
         :key="product.productId"
         class="flex gap-2 items-end"
       >
-        <v-input-text
+        <VInputText
           v-model="product.quantity"
           min="0"
           type="number"
@@ -243,12 +234,12 @@ const setQuantityProductsInShops = async () => {
       </div>
     </div>
     <div>
-      <v-button
+      <VButton
         :loading="loadingCrete === 'loading'"
         @click="setQuantityProductsInShops"
       >
         Создать
-      </v-button>
+      </VButton>
     </div>
   </template>
 </template>

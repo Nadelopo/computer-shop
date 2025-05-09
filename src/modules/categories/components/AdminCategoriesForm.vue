@@ -5,7 +5,7 @@ import { string } from 'yup'
 import { VInputFile, VButton } from '@/components/UI'
 import FormField from '@/components/FormField.vue'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
-import type { CategoryCreate } from '@/types/tables/categories.types'
+import type { CategoryCreate } from '@/modules/categories/model/categories.types'
 
 const props = defineProps<{
   type: 'create' | 'update'
@@ -52,16 +52,9 @@ const submit = handleSubmit(() => {
 </script>
 
 <template>
-  <form
-    class="list__form"
-    @submit.prevent="submit"
-  >
-    <form-field
-      v-slot="{ setValue, id }"
-      name="img"
-      label="Изображение"
-    >
-      <v-input-file
+  <form class="list__form" @submit.prevent="submit">
+    <FormField v-slot="{ setValue, id }" name="img" label="Изображение">
+      <VInputFile
         :id="id"
         ref="inputFileRef"
         :file-url="values.img"
@@ -70,22 +63,13 @@ const submit = handleSubmit(() => {
         @update="setValue(($event.target as HTMLInputElement).value)"
         @delete="setValue(props.formData?.img ?? '')"
       />
-    </form-field>
-    <form-field
-      name="enTitle"
-      label="Наименование на английском"
-    />
-    <form-field
-      name="title"
-      label="Наименование на русском"
-    />
+    </FormField>
+    <FormField name="enTitle" label="Наименование на английском" />
+    <FormField name="title" label="Наименование на русском" />
     <div>
-      <v-button
-        type="submit"
-        :loading="loading"
-      >
+      <VButton type="submit" :loading="loading">
         {{ type === 'create' ? 'создать категорию' : 'сохранить' }}
-      </v-button>
+      </VButton>
     </div>
   </form>
 </template>

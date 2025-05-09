@@ -28,7 +28,7 @@ const carouselBreakpoints: CarouselBreakpoints = {
     >
       Лучшие предложения
     </div>
-    <v-carousel
+    <VCarousel
       :slides-per-view="4"
       :space-between="20"
       :breakpoints="carouselBreakpoints"
@@ -37,21 +37,21 @@ const carouselBreakpoints: CarouselBreakpoints = {
       class="py-6"
     >
       <template v-if="loading === 'success'">
-        <v-carousel-slide
+        <VCarouselSlide
           v-for="product in products"
           :key="product.id"
         >
-          <product-card :item="product" />
-        </v-carousel-slide>
+          <ProductCard :item="product" />
+        </VCarouselSlide>
       </template>
       <template v-else>
-        <v-carousel-slide
+        <VCarouselSlide
           v-for="i in 12"
           :key="i"
         >
-          <product-card-skeleton />
-        </v-carousel-slide>
+          <ProductCardSkeleton />
+        </VCarouselSlide>
       </template>
-    </v-carousel>
+    </VCarousel>
   </div>
 </template>

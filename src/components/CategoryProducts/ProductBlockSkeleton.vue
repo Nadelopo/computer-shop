@@ -4,7 +4,7 @@ import { ContentLoader } from 'vue-content-loader'
 
 <template>
   <!-- prettier-ignore -->
-  <content-loader
+  <ContentLoader
     :speed="1"
     class="skeleton"
     viewBox="0 0 1128 259"
@@ -20,7 +20,7 @@ import { ContentLoader } from 'vue-content-loader'
     <rect x="260" y="190" rx="8" ry="8" width="190" height="14" />
     <rect x="1030" y="50" rx="8" ry="8" width="80" height="18" />
     <rect x="1010" y="160" rx="8" ry="8" width="120" height="36" />
-  </content-loader>
+  </ContentLoader>
 </template>
 
 <style scoped lang="sass">

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useCategoriesStore } from '@/stores/categoriesStore'
+import { useCategoriesStore } from '@/modules/categories/model/categoriesStore'
 import { supabase } from '@/db/supabase'
 import AdminSpecificationsForm from '@/components/Admin/Specifications/SpecificationsForm.vue'
 import SpecificationsList from '@/components/Admin/Specifications/SpecificationsList.vue'
@@ -65,11 +65,11 @@ const create = async (
 </script>
 
 <template>
-  <admin-specifications-form
+  <AdminSpecificationsForm
     type="create"
     :loading="loading === 'loading'"
     use-set-initial-value
     @submit="create"
   />
-  <specifications-list v-model="specifications" />
+  <SpecificationsList v-model="specifications" />
 </template>

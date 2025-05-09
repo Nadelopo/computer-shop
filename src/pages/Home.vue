@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Categories from '@/components/Home/Categories.vue'
+import HomeCategoriesList from '@/modules/categories/components/HomeCategoriesList.vue'
 import Manufacturers from '@/components/Home/Manufacturers.vue'
 import PopularProducts from '@/components/Home/PopularProducts.vue'
 import RecentlyProducts from '@/components/Home/RecentlyProducts.vue'
@@ -7,9 +7,9 @@ import RecentlyProducts from '@/components/Home/RecentlyProducts.vue'
 
 <template>
   <div class="container flex flex-col gap-14">
-    <Categories />
+    <HomeCategoriesList />
     <Manufacturers />
-    <popular-products />
-    <recently-products />
+    <PopularProducts />
+    <RecentlyProducts />
   </div>
 </template>

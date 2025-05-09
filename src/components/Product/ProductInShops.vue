@@ -22,7 +22,7 @@ const isOpenModal = ref(false)
     >
       {{ shops.length }} магазинах
     </div>
-    <v-modal
+    <VModal
       v-model="isOpenModal"
       class="p-4 min-w-[500px]"
     >
@@ -48,7 +48,7 @@ const isOpenModal = ref(false)
           </div>
         </div>
       </div>
-    </v-modal>
+    </VModal>
   </div>
 </template>
 

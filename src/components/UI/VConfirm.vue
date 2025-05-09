@@ -43,7 +43,7 @@ const openModal = () => {
 </script>
 
 <template>
-  <v-button
+  <VButton
     v-if="!$slots.default"
     :variant="type"
     :width="width"
@@ -52,26 +52,26 @@ const openModal = () => {
     @click="openModal"
   >
     {{ label }}
-  </v-button>
+  </VButton>
   <slot
     v-else
     :open-modal
   />
-  <v-modal v-model="showModal">
+  <VModal v-model="showModal">
     <div class="confirm">
       <div class="label">{{ title }}</div>
       <div class="message">{{ message }}</div>
       <div class="buttons">
-        <v-button
+        <VButton
           variant="noactive"
           @click="onCancel"
         >
           отменить
-        </v-button>
-        <v-button @click="onOk">подтвердить</v-button>
+        </VButton>
+        <VButton @click="onOk">подтвердить</VButton>
       </div>
     </div>
-  </v-modal>
+  </VModal>
 </template>
 
 <style scoped lang="sass">

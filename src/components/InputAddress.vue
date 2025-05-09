@@ -101,7 +101,7 @@ const id = props.id ?? `${props.name}-input`
       @keyup.arrow-down="onInputKey('down')"
       @keyup.arrow-up="onInputKey('up')"
     >
-      <v-input-text
+      <VInputText
         :id="id"
         v-model="model"
         :debounce="500"

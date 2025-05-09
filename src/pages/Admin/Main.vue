@@ -66,7 +66,7 @@ const text = computed(() => {
             class="comparison"
             :class="[differentPreviousCount < 0 && 'negative']"
           >
-            <arrow-svg />
+            <ArrowSvg />
             <div>{{ text }} </div>
           </div>
         </div>

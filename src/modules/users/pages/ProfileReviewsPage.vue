@@ -40,10 +40,10 @@ onBeforeMount(async () => {
   <div>
     <div class="text-3xl font-bold mb-8">Отзывы</div>
     <div v-if="loading === 'loading'">
-      <v-loader />
+      <VLoader />
     </div>
     <div v-else-if="loading === 'success'" class="flex flex-col gap-8">
-      <app-link
+      <AppLink
         v-for="review in reviews"
         :key="review.id"
         :to="{
@@ -58,8 +58,8 @@ onBeforeMount(async () => {
           }
         }"
       >
-        <review-block :review="review" color="#fff" />
-      </app-link>
+        <ReviewBlock :review="review" color="#fff" />
+      </AppLink>
     </div>
     <div v-else-if="loading === 'empty'">Вы не оставили ни одного отзыва</div>
   </div>

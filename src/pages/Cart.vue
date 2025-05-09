@@ -67,9 +67,9 @@ onUnmounted(() => {
       <div> В корзине нет товаров </div>
       <div> Посмотрите предложения на главной странице </div>
       <div class="flex justify-center mt-2 text-base font-normal">
-        <v-button>
-          <app-link :to="{ name: 'Home' }"> Вернуться к покупкам </app-link>
-        </v-button>
+        <VButton>
+          <AppLink :to="{ name: 'Home' }"> Вернуться к покупкам </AppLink>
+        </VButton>
       </div>
     </div>
     <div
@@ -77,7 +77,7 @@ onUnmounted(() => {
       class="cart"
     >
       <div>
-        <product-block
+        <ProductBlock
           v-for="product in cartItemsWithDetails"
           :key="product.id"
           v-model="product.additionalWarranty"
@@ -96,26 +96,26 @@ onUnmounted(() => {
               {{ formatPrice(sumPrice) }}
             </div>
           </div>
-          <app-link :to="{ name: 'Checkout' }">
-            <v-button width="100%"> Перейти к оформлению </v-button>
-          </app-link>
+          <AppLink :to="{ name: 'Checkout' }">
+            <VButton width="100%"> Перейти к оформлению </VButton>
+          </AppLink>
         </div>
       </div>
-      <v-modal
+      <VModal
         v-model="showModal"
         class="p-4"
       >
-        <products-with-changed-price
+        <ProductsWithChangedPrice
           :products="changedProducts"
           @close="showModal = false"
         />
-      </v-modal>
+      </VModal>
     </div>
     <div
       v-else-if="loading === 'loading'"
       class="h-screen flex items-center"
     >
-      <v-loader />
+      <VLoader />
     </div>
     <div v-else-if="loading === 'error'"> ошибка </div>
   </div>

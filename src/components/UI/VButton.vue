@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<Props>(), {
     ]"
   >
     <template v-if="loading">
-      <v-loader :color="variant === 'danger' && '#f96464'" />
+      <VLoader :color="variant === 'danger' && '#f96464'" />
     </template>
     <template v-else>
       <slot />

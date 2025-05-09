@@ -65,7 +65,7 @@ const slots = useSlots()
       :field-name="name"
     />
     <template v-else>
-      <v-input-text
+      <VInputText
         v-bind="props"
         :id="id"
         v-model="value"

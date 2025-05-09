@@ -121,12 +121,12 @@ const submit = handleSubmit(() => {
         </div>
       </div>
       <div class="mb-6 mt-4">
-        <v-button
+        <VButton
           type="submit"
           class="btnn"
         >
           {{ isSignIn ? 'Войти' : 'Зарегистрироваться' }}
-        </v-button>
+        </VButton>
       </div>
       <hr class="mb-4" />
       <div

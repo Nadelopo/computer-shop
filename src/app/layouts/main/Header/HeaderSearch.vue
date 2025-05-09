@@ -88,7 +88,7 @@ defineExpose({ ref: inputRef })
 </script>
 
 <template>
-  <v-input-text
+  <VInputText
     ref="inputRef"
     v-model="search"
     placeholder="Поиск по товарам"

@@ -44,7 +44,7 @@ const remove = async (id: number) => {
 </script>
 
 <template>
-  <v-table
+  <VTable
     class="mt-6"
     line
   >
@@ -53,7 +53,7 @@ const remove = async (id: number) => {
       v-if="loadingShops === 'loading'"
       class="p-4"
     >
-      <v-loader />
+      <VLoader />
     </div>
     <template v-else>
       <thead>
@@ -74,7 +74,7 @@ const remove = async (id: number) => {
           <td> {{ formatTime(shop.timeStart, shop.timeEnd) }} </td>
           <td>
             <div class="flex">
-              <action-icon
+              <ActionIcon
                 tag="a"
                 :to="{
                   name: 'EditShop',
@@ -85,19 +85,19 @@ const remove = async (id: number) => {
                 :svg="EditSvg"
                 paint-type="stroke"
               />
-              <action-icon
+              <ActionIcon
                 tag="a"
                 :to="{ name: 'AdminShopDetails', params: { id: shop.id } }"
                 :svg="DetailsSvg"
                 paint-type="stroke"
                 tooltip="Детали"
               />
-              <v-confirm
+              <VConfirm
                 v-slot="{ openModal }"
                 :message="'Вы точно хотите удалить?'"
                 @ok="remove(shop.id)"
               >
-                <action-icon
+                <ActionIcon
                   :svg="TrashSvg"
                   variant="danger"
                   :loading="
@@ -106,11 +106,11 @@ const remove = async (id: number) => {
                   "
                   @click="openModal"
                 />
-              </v-confirm>
+              </VConfirm>
             </div>
           </td>
         </tr>
       </tbody>
     </template>
-  </v-table>
+  </VTable>
 </template>

@@ -1,5 +1,5 @@
 import type { DbEnum } from '@/db/database.types'
-import type { CategoryRead } from './categories.types'
+import type { CategoryRead } from '../../modules/categories/model/categories.types'
 import type { OrderedProductRead } from './orderedProducts.types'
 import type { ProductRead } from './products.types'
 

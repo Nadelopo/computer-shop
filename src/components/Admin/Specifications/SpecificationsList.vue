@@ -102,7 +102,7 @@ watch(
 <template>
   <div class="mt-8">
     <div v-if="loadingGetCategories === 'success'">
-      <v-tabs
+      <VTabs
         v-model="currentCategoryId"
         :options="
           categories.map((e) => ({
@@ -112,7 +112,7 @@ watch(
         "
         query-param-name="specificationId"
       />
-      <v-table
+      <VTable
         placement="center"
         line
       >
@@ -121,7 +121,7 @@ watch(
           v-if="loadingGetSpecifications === 'loading'"
           class="py-4"
         >
-          <v-loader />
+          <VLoader />
         </div>
         <div
           v-else-if="loadingGetSpecifications === 'empty'"
@@ -186,7 +186,7 @@ watch(
               </td>
               <td>
                 <div class="flex">
-                  <action-icon
+                  <ActionIcon
                     tag="a"
                     :to="{
                       name: 'EditSpecification',
@@ -198,14 +198,14 @@ watch(
                     :svg="EditSvg"
                     paint-type="stroke"
                   />
-                  <v-confirm
+                  <VConfirm
                     v-slot="{ openModal }"
                     :message="`Вы точно хотите удалитть характеристику - ${
                       specification.title
                     }`"
                     @ok="remove(specification.id)"
                   >
-                    <action-icon
+                    <ActionIcon
                       :svg="TrashSvg"
                       variant="danger"
                       :loading="
@@ -214,15 +214,15 @@ watch(
                       "
                       @click="openModal"
                     />
-                  </v-confirm>
+                  </VConfirm>
                 </div>
               </td>
             </tr>
           </tbody>
         </template>
-      </v-table>
+      </VTable>
     </div>
-    <v-loader v-else-if="loadingGetCategories === 'loading'" />
+    <VLoader v-else-if="loadingGetCategories === 'loading'" />
     <div v-else-if="loadingGetCategories === 'error'"> Произошла ошибка </div>
   </div>
 </template>

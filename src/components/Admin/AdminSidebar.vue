@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useCategoriesStore } from '@/stores/categoriesStore'
+import { useCategoriesStore } from '@/modules/categories/model/categoriesStore'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 import { VAccordion } from '@/components/UI'
 import AppLink from '../AppLink.vue'
@@ -19,88 +19,50 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div
-    class="sidebar"
-    :class="{ collapsed: isCollapsed }"
-  >
-    <div
-      class="fixed p-4"
-      style="width: inherit"
-    >
+  <div class="sidebar" :class="{ collapsed: isCollapsed }">
+    <div class="fixed p-4" style="width: inherit">
       <div class="mb-6 flex justify-between items-center h-[56px]">
         <!-- <h1> -->
-        <app-link
-          :to="{ name: 'AdminMain' }"
-          class="main"
-        >
-          <home-svg
-            width="40"
-            fill="#fff"
-          />
-        </app-link>
+        <AppLink :to="{ name: 'AdminMain' }" class="main">
+          <HomeSvg width="40" fill="#fff" />
+        </AppLink>
         <!-- </h1> -->
-        <app-link :to="{ name: 'Home' }">
-          <img
-            class="logo"
-            src="/img/logoChangeWhiteSizeFnew.png"
-            alt=""
-          />
-        </app-link>
+        <AppLink :to="{ name: 'Home' }">
+          <img class="logo" src="/img/logoChangeWhiteSizeFnew.png" alt="" />
+        </AppLink>
       </div>
       <div class="list">
-        <div
-          class="head"
-          @click="isVisible = !isVisible"
-        >
-          <div
-            class="icon"
-            title="Продукты категорий"
-          >
-            <img
-              src="/icons/list.svg"
-              alt=""
-              class="invert"
-            />
+        <div class="head" @click="isVisible = !isVisible">
+          <div class="icon" title="Продукты категорий">
+            <img src="/icons/list.svg" alt="" class="invert" />
           </div>
           <span> Продукты категорий </span>
         </div>
 
-        <v-accordion
-          :visibility="isVisible"
-          :transition="0.3"
-        >
+        <VAccordion :visibility="isVisible" :transition="0.3">
           <div
             v-for="category in categories"
             :key="category.title"
             ref="listRef"
             class="li"
           >
-            <app-link
+            <AppLink
               :to="{
                 name: 'AdminProducts',
                 params: { category: category.enTitle, id: category.id }
               }"
             >
-              <div
-                class="icon"
-                :title="category.title"
-              >
-                <img
-                  :src="`/icons/${category.enTitle}.svg`"
-                  alt=""
-                />
+              <div class="icon" :title="category.title">
+                <img :src="`/icons/${category.enTitle}.svg`" alt="" />
               </div>
               <span>
                 {{ category.title }}
               </span>
-            </app-link>
+            </AppLink>
           </div>
-        </v-accordion>
-        <div
-          class="head"
-          title="Категории"
-        >
-          <app-link
+        </VAccordion>
+        <div class="head" title="Категории">
+          <AppLink
             :to="{
               name: 'AdminCategories'
             }"
@@ -114,32 +76,22 @@ watchEffect(() => {
               />
             </div>
             <span> Категории </span>
-          </app-link>
+          </AppLink>
         </div>
-        <div
-          class="head"
-          title="Характеристики категорий"
-        >
-          <app-link
+        <div class="head" title="Характеристики категорий">
+          <AppLink
             :to="{
               name: 'AdminSpecifications'
             }"
           >
             <div class="icon">
-              <img
-                src="/icons/list.svg"
-                alt=""
-                class="invert"
-              />
+              <img src="/icons/list.svg" alt="" class="invert" />
             </div>
             <span> Характеристики категорий </span>
-          </app-link>
+          </AppLink>
         </div>
-        <div
-          class="head"
-          title="Производители"
-        >
-          <app-link
+        <div class="head" title="Производители">
+          <AppLink
             :to="{
               name: 'AdminManufacturers'
             }"
@@ -153,13 +105,10 @@ watchEffect(() => {
               />
             </div>
             <span> Производители </span>
-          </app-link>
+          </AppLink>
         </div>
-        <div
-          class="head"
-          title="Магазины"
-        >
-          <app-link
+        <div class="head" title="Магазины">
+          <AppLink
             :to="{
               name: 'AdminShops'
             }"
@@ -173,13 +122,10 @@ watchEffect(() => {
               />
             </div>
             <span> Магазины </span>
-          </app-link>
+          </AppLink>
         </div>
-        <div
-          class="head"
-          title="Заказы"
-        >
-          <app-link
+        <div class="head" title="Заказы">
+          <AppLink
             :to="{
               name: 'AdminOrders'
             }"
@@ -193,15 +139,11 @@ watchEffect(() => {
               />
             </div>
             <span> Заказы </span>
-          </app-link>
+          </AppLink>
         </div>
       </div>
-      <button
-        class="toggle"
-        type="button"
-        @click="isCollapsed = !isCollapsed"
-      >
-        <arrow-svg fill="#fff" />
+      <button class="toggle" type="button" @click="isCollapsed = !isCollapsed">
+        <ArrowSvg fill="#fff" />
       </button>
     </div>
   </div>

@@ -25,7 +25,7 @@ import {
   ComparisonSvg,
   SearchSvg
 } from '@/assets/icons'
-import type { CategoryRead } from '@/types/tables/categories.types'
+import type { CategoryRead } from '@/modules/categories/model/categories.types'
 
 export type Suggestion = {
   id: number
@@ -104,9 +104,9 @@ const setSearch = (title: string) => {
     <div class="container">
       <div class="root">
         <div class="logo">
-          <app-link :to="{ name: 'Home' }">
+          <AppLink :to="{ name: 'Home' }">
             <img src="/img/logoChangeWhiteSizeFnew.png" width="95" alt="" />
-          </app-link>
+          </AppLink>
         </div>
         <HeaderSearch
           ref="inputRef"
@@ -121,18 +121,18 @@ const setSearch = (title: string) => {
           @clear="suggestions = []"
         />
         <div class="nav__rigth">
-          <v-popup>
+          <VPopup>
             <template #active>
-              <action-icon :svg="AvatarSvg" variant="default" />
+              <ActionIcon :svg="AvatarSvg" variant="default" />
             </template>
             <template #content>
-              <app-link
+              <AppLink
                 v-if="user?.role === Role.ADMIN"
                 :to="{ name: 'AdminMain' }"
                 class="popup__el"
               >
                 admin
-              </app-link>
+              </AppLink>
               <button
                 v-if="user"
                 type="button"
@@ -141,15 +141,15 @@ const setSearch = (title: string) => {
               >
                 выйти
               </button>
-              <app-link v-else :to="{ name: 'Auth' }" class="popup__el">
+              <AppLink v-else :to="{ name: 'Auth' }" class="popup__el">
                 войти
-              </app-link>
-              <app-link :to="{ name: 'ProfileMain' }" class="popup__el">
+              </AppLink>
+              <AppLink :to="{ name: 'ProfileMain' }" class="popup__el">
                 профиль
-              </app-link>
+              </AppLink>
             </template>
-          </v-popup>
-          <action-icon
+          </VPopup>
+          <ActionIcon
             :svg="FavouriteSvg"
             variant="default"
             tag="a"
@@ -158,8 +158,8 @@ const setSearch = (title: string) => {
             <span v-if="favorites.length" class="count">
               {{ favorites.length }}
             </span>
-          </action-icon>
-          <action-icon
+          </ActionIcon>
+          <ActionIcon
             tag="a"
             :to="{ name: 'Comparison' }"
             :svg="ComparisonSvg"
@@ -168,8 +168,8 @@ const setSearch = (title: string) => {
             <span v-if="comparison.length" class="count">
               {{ comparison.length }}
             </span>
-          </action-icon>
-          <action-icon
+          </ActionIcon>
+          <ActionIcon
             tag="a"
             :to="{ name: 'Cart' }"
             :svg="CartSvg"
@@ -178,16 +178,16 @@ const setSearch = (title: string) => {
             <span v-if="countCartItems" class="count">
               {{ countCartItems }}
             </span>
-          </action-icon>
+          </ActionIcon>
         </div>
         <div class="flex justify-end lg:hidden">
-          <action-icon
+          <ActionIcon
             :svg="SearchSvg"
             variant="default"
             @click="openModal = true"
           />
         </div>
-        <v-modal v-model="openModal" full-screen class="py-2 xs:px-8 px-2">
+        <VModal v-model="openModal" full-screen class="py-2 xs:px-8 px-2">
           <div class="flex gap-2 items-center">
             <HeaderSearch
               v-model="search"
@@ -196,7 +196,7 @@ const setSearch = (title: string) => {
               @navigate-to-product=";(suggestions = []), (openModal = false)"
               @clear="suggestions = []"
             />
-            <v-button @click="openModal = false">отмена</v-button>
+            <VButton @click="openModal = false">отмена</VButton>
           </div>
           <HeaderSuggestions
             :is-suggestions-open
@@ -204,7 +204,7 @@ const setSearch = (title: string) => {
             mobile
             @click-on-suggestion="clear"
           />
-        </v-modal>
+        </VModal>
       </div>
     </div>
     <HeaderSuggestions

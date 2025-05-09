@@ -41,9 +41,9 @@ const onSubmit = async (values: ShopForm, resetForm: () => void) => {
 </script>
 
 <template>
-  <shops-form
+  <ShopsForm
     :loading-submit="loadingSubmit === 'loading'"
     @submit="onSubmit"
   />
-  <shops-list v-model="shops" />
+  <ShopsList v-model="shops" />
 </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { useCategoriesStore } from '@/stores/categoriesStore'
-import AppLink from '../AppLink.vue'
+import { useCategoriesStore } from '@/modules/categories/model/categoriesStore'
+import AppLink from '@/components/AppLink.vue'
 
 const { categories } = storeToRefs(useCategoriesStore())
 </script>
@@ -9,11 +9,8 @@ const { categories } = storeToRefs(useCategoriesStore())
 <template>
   <div class="grid">
     <template v-if="categories.length">
-      <div
-        v-for="category in categories"
-        :key="category.id"
-      >
-        <app-link
+      <div v-for="category in categories" :key="category.id">
+        <AppLink
           class="link__wrap"
           :to="{
             name: 'CategoryProducts',
@@ -21,23 +18,15 @@ const { categories } = storeToRefs(useCategoriesStore())
           }"
         >
           <div class="wrap">
-            <img
-              :src="category.img"
-              alt=""
-              class="mx-auto mb-auto"
-            />
+            <img :src="category.img" alt="" class="mx-auto mb-auto" />
 
             <div class="text-center text">{{ category.title }}</div>
           </div>
-        </app-link>
+        </AppLink>
       </div>
     </template>
     <template v-else>
-      <div
-        v-for="i in 8"
-        :key="i"
-        class="link__wrap"
-      />
+      <div v-for="i in 8" :key="i" class="link__wrap" />
     </template>
   </div>
 </template>

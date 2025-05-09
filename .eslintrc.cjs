@@ -49,6 +49,14 @@ module.exports = {
       }
     ],
     'prefer-const': 'off',
-    'no-return-assign': 'off'
+    'no-return-assign': 'off',
+    'vue/component-name-in-template-casing': [
+      'error',
+      'PascalCase',
+      {
+        registeredComponentsOnly: true,
+        ignores: []
+      }
+    ]
   }
 }

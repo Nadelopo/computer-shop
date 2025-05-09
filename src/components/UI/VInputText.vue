@@ -144,7 +144,7 @@ const showClearButton = computed(() => {
       @mousedown.prevent="emit('clear')"
       @focus.stop
     >
-      <cross-svg transform="rotate(45)" />
+      <CrossSvg transform="rotate(45)" />
     </button>
     <button
       v-if="onSearch"
@@ -152,7 +152,7 @@ const showClearButton = computed(() => {
       class="search"
       @click="emit('search')"
     >
-      <search-svg />
+      <SearchSvg />
     </button>
   </div>
 </template>

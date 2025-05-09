@@ -37,9 +37,9 @@ onUnmounted(() => {
     <div ref="sidebarRef" class="sidebar" @click.stop>
       <div class="grid grid-cols-2 items-center">
         <div>
-          <app-link :to="{ name: 'Home' }" @click="closeSidebar">
+          <AppLink :to="{ name: 'Home' }" @click="closeSidebar">
             <img src="/img/logoChangeWhiteSizeFnew.png" width="95" alt="" />
-          </app-link>
+          </AppLink>
         </div>
         <div class="text-end">
           <button type="button" @click="closeSidebar">
@@ -49,17 +49,17 @@ onUnmounted(() => {
         </div>
       </div>
       <div class="list">
-        <app-link :to="{ name: user ? 'Home' : 'Auth' }" @click="signOut">
+        <AppLink :to="{ name: user ? 'Home' : 'Auth' }" @click="signOut">
           {{ user ? 'Выйти' : 'Войти' }}
-        </app-link>
-        <app-link
+        </AppLink>
+        <AppLink
           v-for="link in links"
           :key="link.text"
           :to="{ name: link.page }"
           @click="closeSidebar"
         >
           {{ link.text }}
-        </app-link>
+        </AppLink>
       </div>
     </div>
   </div>

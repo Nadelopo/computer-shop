@@ -62,7 +62,7 @@ const router = useCustomRouter()
 </script>
 
 <template>
-  <v-button
+  <VButton
     :width="width"
     :loading="loading"
     :size="size"
@@ -80,5 +80,5 @@ const router = useCustomRouter()
     <template v-if="size === 'normal'">
       {{ buttonText }}
     </template>
-  </v-button>
+  </VButton>
 </template>

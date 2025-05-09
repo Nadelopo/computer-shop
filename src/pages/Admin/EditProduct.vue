@@ -169,20 +169,20 @@ const save = async (fileActions: InputFileActions<string[]> | undefined) => {
       v-if="product && loading === 'success'"
       class="container"
     >
-      <products-form
+      <ProductsForm
         v-model="product"
         v-model:specifications="specifications"
         type="update"
         :loading-data="loading"
         @submit="save"
       />
-      <v-button @click="back"> назад </v-button>
+      <VButton @click="back"> назад </VButton>
     </div>
     <div
       v-else
       class="h-screen flex items-center"
     >
-      <v-loader />
+      <VLoader />
     </div>
   </div>
 </template>

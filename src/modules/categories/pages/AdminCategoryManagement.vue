@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useCategoriesStore } from '@/stores/categoriesStore'
-import CategoriesList from '@/components/Admin/Categories/CategoriesList.vue'
-import CategoriesForm from '@/components/Admin/Categories/CategoriesForm.vue'
-import type { CategoryCreate } from '@/types/tables/categories.types'
-import type { Loading } from '@/types'
+import { useCategoriesStore } from '../model/categoriesStore'
+import AdminCategoriesList from '../components/AdminCategoriesList.vue'
+import AdminCategoriesForm from '../components/AdminCategoriesForm.vue'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
+import type { CategoryCreate } from '../model/categories.types'
+import type { Loading } from '@/types'
 
 const { createCategory } = useCategoriesStore()
 
@@ -34,10 +34,10 @@ const create = async (
 </script>
 
 <template>
-  <categories-form
+  <AdminCategoriesForm
     type="create"
     :loading="loadingCreate === 'loading'"
     @submit="create"
   />
-  <categories-list />
+  <AdminCategoriesList />
 </template>

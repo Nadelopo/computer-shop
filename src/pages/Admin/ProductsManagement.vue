@@ -4,7 +4,7 @@ import type { PostgrestError } from '@supabase/supabase-js'
 import { supabase } from '@/db/supabase'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import { getProductQuantity } from '@/shared/utils/getProductQuantity'
-import { useCategoriesStore } from '@/stores/categoriesStore'
+import { useCategoriesStore } from '@/modules/categories/model/categoriesStore'
 import ProductsList from '@/components/Admin/Products/ProductsList.vue'
 import { VPagination } from '@/components/UI'
 import ProductsForm from '@/components/Admin/Products/ProductsForm.vue'
@@ -226,7 +226,7 @@ const create = async (fileActions: InputFileActions<string[]> | undefined) => {
 
 <template>
   <div>
-    <products-form
+    <ProductsForm
       v-model="product"
       v-model:specifications="productSpecifications"
       type="create"
@@ -234,13 +234,13 @@ const create = async (fileActions: InputFileActions<string[]> | undefined) => {
       :loading-submit="loadingCreateProduct"
       @submit="create"
     />
-    <products-list
+    <ProductsList
       v-model:products="products"
       v-model:search="search"
       :specifications="categorySpecifications"
       :loading="loadingProducts"
     />
-    <v-pagination
+    <VPagination
       v-model="page"
       :page-size="limit"
       :item-count="productCount"

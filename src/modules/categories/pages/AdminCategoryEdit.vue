@@ -2,17 +2,17 @@
 import { ref, onBeforeMount } from 'vue'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
-import { useCategoriesStore } from '@/stores/categoriesStore'
+import { useCategoriesStore } from '@/modules/categories/model/categoriesStore'
 import {
   useCustomRouter,
   useCustomRoute
 } from '@/shared/composables/customRouter'
 import { VButton, VLoader } from '@/components/UI'
-import CategoriesForm from '@/components/Admin/Categories/CategoriesForm.vue'
+import CategoriesForm from '@/modules/categories/components/AdminCategoriesForm.vue'
 import type {
   CategoryCreate,
   CategoryUpdate
-} from '@/types/tables/categories.types'
+} from '@/modules/categories/model/categories.types'
 import type { Loading } from '@/types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 
@@ -29,7 +29,7 @@ const categoryHasId = (
 const { categories } = storeToRefs(useCategoriesStore())
 const { updateCategory } = useCategoriesStore()
 
-const route = useCustomRoute('EditCategory')
+const route = useCustomRoute('CategoryEdit')
 const categoryId = Number(route.params.id)
 
 const loading = ref<Loading>('loading')
@@ -86,7 +86,7 @@ const back = async () => {
 
 <template>
   <div class="container">
-    <categories-form
+    <CategoriesForm
       v-if="loading === 'success' && form"
       :form-data="form"
       type="update"
@@ -98,13 +98,13 @@ const back = async () => {
       v-else
       class="min-h-screen flex justify-center items-center"
     >
-      <v-loader />
+      <VLoader />
     </div>
-    <v-button
+    <VButton
       class="mt-6"
       @click="back"
     >
       назад
-    </v-button>
+    </VButton>
   </div>
 </template>

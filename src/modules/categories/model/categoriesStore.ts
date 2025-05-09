@@ -5,7 +5,7 @@ import type {
   CategoryCreate,
   CategoryRead,
   CategoryUpdate
-} from '@/types/tables/categories.types'
+} from './categories.types'
 import type {
   CategorySpecificationCreate,
   CategorySpecificationRead

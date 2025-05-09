@@ -35,14 +35,14 @@ onBeforeMount(async () => {
   <div class="container">
     <div class="grid">
       <div class="sidebar">
-        <app-link :to="{ name: 'ProfileMain' }"> Мой профиль </app-link>
-        <app-link :to="{ name: 'ProfileOrders' }"> Заказы </app-link>
-        <app-link :to="{ name: 'ProfileReviews' }"> Отзывы</app-link>
-        <app-link :to="{ name: 'ProfileDelivery' }"> Доставка </app-link>
-        <app-link :to="{ name: 'ProfileMain' }"> Гарантийный отдел </app-link>
-        <app-link :to="{ name: 'ProfileSettings' }">
+        <AppLink :to="{ name: 'ProfileMain' }"> Мой профиль </AppLink>
+        <AppLink :to="{ name: 'ProfileOrders' }"> Заказы </AppLink>
+        <AppLink :to="{ name: 'ProfileReviews' }"> Отзывы</AppLink>
+        <AppLink :to="{ name: 'ProfileDelivery' }"> Доставка </AppLink>
+        <AppLink :to="{ name: 'ProfileMain' }"> Гарантийный отдел </AppLink>
+        <AppLink :to="{ name: 'ProfileSettings' }">
           Настройки профиля
-        </app-link>
+        </AppLink>
       </div>
       <div>
         <router-view :reviews :loading />

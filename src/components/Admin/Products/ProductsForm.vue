@@ -55,14 +55,14 @@ const onSubmit = () => {
   >
     <div>
       <label for="title">Наименование</label>
-      <v-input-text
+      <VInputText
         id="title"
         v-model="product.title"
       />
     </div>
     <div>
       <label for="description">Описание</label>
-      <v-textarea
+      <VTextarea
         id="description"
         v-model="product.description"
         auto-grow
@@ -70,7 +70,7 @@ const onSubmit = () => {
     </div>
     <div>
       <label for="img">Изображение</label>
-      <v-input-file
+      <VInputFile
         id="img"
         ref="inputFileRef"
         folder="products"
@@ -82,7 +82,7 @@ const onSubmit = () => {
       :key="specification.id"
     >
       <label :for="specification.title">{{ specification.title }}</label>
-      <v-input-text
+      <VInputText
         v-if="specification.type === 'number'"
         :id="specification.title"
         v-model="specification.valueNumber"
@@ -91,7 +91,7 @@ const onSubmit = () => {
         :min="specification.min"
         :step="specification.step"
       />
-      <v-select
+      <VSelect
         v-else-if="specification.type === 'string'"
         v-model="specification.valueString[0]"
         :options="
@@ -102,7 +102,7 @@ const onSubmit = () => {
         "
         class="mt-2"
       />
-      <v-buttons
+      <VButtons
         v-else
         v-model="specification.valueString"
         class="mt-2"
@@ -115,7 +115,7 @@ const onSubmit = () => {
     <div>
       <label for="manufacturer">производитель</label>
       <div>
-        <v-select
+        <VSelect
           id="manufacturer"
           v-model="product.manufacturerId"
           :options="manufacturers.map((e) => ({ value: e.id, title: e.title }))"
@@ -125,7 +125,7 @@ const onSubmit = () => {
     </div>
     <div>
       <label for="warranty">гарантия</label>
-      <v-input-text
+      <VInputText
         id="warranty"
         v-model="product.warranty"
         type="number"
@@ -133,7 +133,7 @@ const onSubmit = () => {
     </div>
     <div v-if="type === 'update' && product.sell !== undefined">
       <div>продажи</div>
-      <v-buttons
+      <VButtons
         v-model="product.sell"
         class="mt-2"
         :options="[
@@ -144,7 +144,7 @@ const onSubmit = () => {
     </div>
     <div>
       <label for="price">цена</label>
-      <v-input-text
+      <VInputText
         id="price"
         v-model="product.priceWithoutDiscount"
         type="number"
@@ -152,7 +152,7 @@ const onSubmit = () => {
     </div>
     <div v-if="product.discount !== undefined">
       <label for="discount">скидка %</label>
-      <v-input-text
+      <VInputText
         id="discount"
         v-model="product.discount"
         type="number"
@@ -160,19 +160,19 @@ const onSubmit = () => {
     </div>
 
     <div>
-      <v-button
+      <VButton
         type="submit"
         :loading="loadingSubmit === 'loading'"
       >
         {{ type === 'create' ? 'создать' : 'сохранить' }}
-      </v-button>
+      </VButton>
     </div>
   </form>
   <div
     v-else-if="loadingData === 'loading'"
     class="h-[50vh] flex items-center"
   >
-    <v-loader />
+    <VLoader />
   </div>
   <div
     v-else-if="loadingData === 'empty'"

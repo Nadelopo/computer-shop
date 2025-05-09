@@ -143,7 +143,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
             @dragenter.prevent
           >
             <div class="flex w-full">
-              <app-link
+              <AppLink
                 v-if="currentCategoryId"
                 :to="{
                   name: 'Product',
@@ -159,9 +159,9 @@ const isSmall = useMediaQuery('(max-width: 420px)')
                   :src="String(product.img[0])"
                   alt=""
                 />
-              </app-link>
+              </AppLink>
               <span class="ml-auto pr-4">
-                <action-icon
+                <ActionIcon
                   :svg="CrossSvg"
                   :svg-attrs="{ transform: 'rotate(45)' }"
                   variant="danger"
@@ -169,14 +169,14 @@ const isSmall = useMediaQuery('(max-width: 420px)')
                   class="block"
                   @click="deleteItem(product)"
                 />
-                <icon-button-favourites-comparison
+                <IconButtonFavouritesComparison
                   list-title="favourites"
                   :product-id="product.id"
                 />
               </span>
             </div>
             <div class="flex gap-x-2 mt-4">
-              <button-cart
+              <ButtonCart
                 :product-id="product.id"
                 :quantity="product.quantity"
                 :width="isSmall ? 'auto' : undefined"
@@ -241,7 +241,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
           class="control__btn prev"
           @click="updateItemsList('prev')"
         >
-          <arrow-svg transform="rotate(-90)" />
+          <ArrowSvg transform="rotate(-90)" />
         </button>
         <button
           v-show="showNextBtn"
@@ -249,7 +249,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
           class="control__btn next"
           @click="updateItemsList('next')"
         >
-          <arrow-svg transform="rotate(90)" />
+          <ArrowSvg transform="rotate(90)" />
         </button>
       </template>
     </div>

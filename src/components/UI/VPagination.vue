@@ -93,7 +93,7 @@ const setPage = (page: number) => {
       class="prev"
       @click="setPrev"
     >
-      <arrow-svg transform="rotate(-90)" />
+      <ArrowSvg transform="rotate(-90)" />
     </button>
     <template
       v-for="(value, i) in items"
@@ -109,7 +109,7 @@ const setPage = (page: number) => {
         {{ value }}
       </button>
       <template v-else>
-        <v-popup
+        <VPopup
           min-width="40px"
           type="hover"
           float="center"
@@ -133,7 +133,7 @@ const setPage = (page: number) => {
               {{ j }}
             </button>
           </template>
-        </v-popup>
+        </VPopup>
       </template>
     </template>
     <button
@@ -143,7 +143,7 @@ const setPage = (page: number) => {
       class="next"
       @click="setNext"
     >
-      <arrow-svg transform="rotate(90)" />
+      <ArrowSvg transform="rotate(90)" />
     </button>
   </div>
 </template>

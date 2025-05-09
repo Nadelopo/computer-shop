@@ -110,23 +110,23 @@ const sortOptions = [
     class="sort"
   >
     <div class="font-medium hidden xl:block">соритровка по:</div>
-    <v-button
+    <VButton
       v-for="(item, i) in sortData"
       :key="i"
       width="auto"
       @click="sort(item.type)"
     >
       <span class="mr-3">{{ item.text }}</span>
-      <arrow-svg
+      <ArrowSvg
         :class="{
           down: sortAscents[item.type] === false,
           active: sortColumn === item.type
         }"
       />
-    </v-button>
+    </VButton>
   </div>
   <div v-else>
-    <v-select
+    <VSelect
       v-model="currentSort"
       :options="sortOptions"
       width="max"

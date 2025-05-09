@@ -102,25 +102,25 @@ const submit = handleSubmit(async (values) => {
   <div v-if="loading === 'success'">
     <h1 class="text-4xl font-bold mb-10">Настройки профиля</h1>
     <form class="max-w-lg list__form" @submit.prevent="submit">
-      <form-field name="name" label="Имя*" />
+      <FormField name="name" label="Имя*" />
       <!-- <form-field
         name="email"
         label="Почта*"
       /> -->
-      <form-field name="phone" label="Телефон*" type="tel" />
-      <form-field name="address" label="Адрес" />
-      <form-field name="apartment" label="Квартира" type="number" min="0" />
-      <form-field name="floor" label="Этаж" type="number" min="0" />
-      <form-field name="entrance" label="Подъезд" type="number" min="0" />
+      <FormField name="phone" label="Телефон*" type="tel" />
+      <FormField name="address" label="Адрес" />
+      <FormField name="apartment" label="Квартира" type="number" min="0" />
+      <FormField name="floor" label="Этаж" type="number" min="0" />
+      <FormField name="entrance" label="Подъезд" type="number" min="0" />
       <div>
-        <v-button type="submit" :loading="loadingSubmit === 'loading'">
+        <VButton type="submit" :loading="loadingSubmit === 'loading'">
           сохранить
-        </v-button>
+        </VButton>
       </div>
     </form>
   </div>
   <div v-else class="h-[50vh] flex place-items-center">
-    <v-loader />
+    <VLoader />
   </div>
 </template>
 

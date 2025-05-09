@@ -8,5 +8,5 @@ import NavbarMobile from '@/app/layouts/main/Navbar.mobile.vue'
   <main>
     <router-view />
   </main>
-  <navbar-mobile />
+  <NavbarMobile />
 </template>

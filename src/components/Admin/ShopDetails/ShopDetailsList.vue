@@ -100,14 +100,14 @@ const save = async () => {
 </script>
 
 <template>
-  <v-input-text
+  <VInputText
     v-model="search"
     placeholder="#id или название товара"
     @keyup.enter="loadProductsInShops"
     @search="loadProductsInShops"
     @clear=";(search = ''), loadProductsInShops()"
   />
-  <v-table>
+  <VTable>
     <template #header> Товары в магазине </template>
     <template v-if="loading === 'success'">
       <thead>
@@ -125,7 +125,7 @@ const save = async () => {
           <td>{{ productInShop.products.title }}</td>
           <td width="30%">
             <div v-if="currentEditIds.includes(productInShop.id)">
-              <v-input-text
+              <VInputText
                 v-model="productInShop.quantity"
                 type="number"
                 min="0"
@@ -138,17 +138,17 @@ const save = async () => {
           </td>
           <td>
             <div class="flex">
-              <action-icon
+              <ActionIcon
                 :svg="EditSvg"
                 paint-type="stroke"
                 @click="edit(productInShop.id)"
               />
-              <v-confirm
+              <VConfirm
                 v-slot="{ openModal }"
                 :message="'Вы точно хотите удалить?'"
                 @ok="remove(productInShop.id)"
               >
-                <action-icon
+                <ActionIcon
                   :svg="TrashSvg"
                   variant="danger"
                   :loading="
@@ -157,7 +157,7 @@ const save = async () => {
                   "
                   @click="openModal"
                 />
-              </v-confirm>
+              </VConfirm>
             </div>
           </td>
         </tr>
@@ -167,7 +167,7 @@ const save = async () => {
       v-else-if="loading === 'loading'"
       class="p-4"
     >
-      <v-loader />
+      <VLoader />
     </div>
     <div
       v-else-if="loading === 'empty'"
@@ -175,14 +175,14 @@ const save = async () => {
     >
       Товары отсутствуют
     </div>
-  </v-table>
+  </VTable>
   <div>
-    <v-button
+    <VButton
       v-if="currentEditIds.length"
       @click="save"
     >
       Сохранить
-    </v-button>
+    </VButton>
   </div>
 </template>
 

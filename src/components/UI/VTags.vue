@@ -46,7 +46,7 @@ const createTag = () => {
 
 <template>
   <div class="my-4">
-    <v-button
+    <VButton
       v-for="(tag, i) in model"
       :key="i"
       type="button"
@@ -65,8 +65,8 @@ const createTag = () => {
       >
         <CrossSvg transform="rotate(45)" />
       </button>
-    </v-button>
-    <v-button
+    </VButton>
+    <VButton
       variant="noactive"
       type="button"
       width="48px"
@@ -94,7 +94,7 @@ const createTag = () => {
         v-else
         class="cross"
       />
-    </v-button>
+    </VButton>
   </div>
 </template>
 

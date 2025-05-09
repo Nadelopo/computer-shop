@@ -51,29 +51,29 @@ const submit = handleSubmit(() => {
     class="flex flex-col gap-y-2"
     @submit.prevent="submit"
   >
-    <form-field
+    <FormField
       name="title"
       label="Наименование"
     />
-    <form-field
+    <FormField
       v-slot="{ id }"
       name="description"
       label="Описание"
     >
-      <v-textarea
+      <VTextarea
         :id="id"
         auto-grow
         :required="false"
         :model-value="values.description"
         @update:model-value="setFieldValue('description', $event)"
       />
-    </form-field>
-    <form-field
+    </FormField>
+    <FormField
       v-slot="{ id }"
       name="img"
       label="Изображение"
     >
-      <v-input-file
+      <VInputFile
         :id="id"
         ref="inputFileRef"
         :file-url="values.img"
@@ -84,14 +84,14 @@ const submit = handleSubmit(() => {
         "
         @delete="setFieldValue('img', props.formData?.img ?? '')"
       />
-    </form-field>
+    </FormField>
     <div>
-      <v-button
+      <VButton
         type="submit"
         :loading="loading"
       >
         {{ type === 'create' ? 'добавить' : 'обновить' }}
-      </v-button>
+      </VButton>
     </div>
   </form>
 </template>

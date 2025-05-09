@@ -60,14 +60,14 @@ const save = async (
 <template>
   <div class="container">
     <template v-if="loadingGet === 'success' && form">
-      <manufacturers-form
+      <ManufacturersForm
         :form-data="form"
         :loading="loadingSave === 'loading'"
         type="update"
         class="pt-10"
         @submit="save"
       />
-      <v-button
+      <VButton
         class="mt-4"
         @click="
           router.push({
@@ -77,13 +77,13 @@ const save = async (
         "
       >
         назад
-      </v-button>
+      </VButton>
     </template>
     <div
       v-else
       class="h-screen flex justify-center item-center"
     >
-      <v-loader />
+      <VLoader />
     </div>
   </div>
 </template>

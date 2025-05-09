@@ -3,7 +3,7 @@ import { nextTick, onUnmounted, ref, watch } from 'vue'
 import { useMediaQuery } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
-import { useCategoriesStore } from '@/stores/categoriesStore'
+import { useCategoriesStore } from '@/modules/categories/model/categoriesStore'
 import { useFilterStore } from '@/stores/filterStore'
 import {
   useCustomRouter,
@@ -221,12 +221,12 @@ const isSmallScreen = useMediaQuery('(max-width: 1024px)')
         <div class="flex justify-between items-center gap-10 mt-5">
           <Sort class="w-full" />
           <div class="lg:hidden block">
-            <v-button @click="isFiltersMobileOpen = true"> фильтры </v-button>
+            <VButton @click="isFiltersMobileOpen = true"> фильтры </VButton>
           </div>
         </div>
         <template v-if="loading === 'success'">
           <div class="product__list">
-            <product-block
+            <ProductBlock
               v-for="product in products"
               :key="product.id"
               :item="product"
@@ -242,7 +242,7 @@ const isSmallScreen = useMediaQuery('(max-width: 1024px)')
             v-for="_ in limit"
             :key="_"
           >
-            <product-block-skeleton />
+            <ProductBlockSkeleton />
           </template>
         </div>
         <template v-else>
@@ -250,7 +250,7 @@ const isSmallScreen = useMediaQuery('(max-width: 1024px)')
             К сожалению, по вашему запросу ничего не найдено.
           </div>
         </template>
-        <v-pagination
+        <VPagination
           v-model="currentPage"
           :item-count="productCount"
           :page-size="limit"

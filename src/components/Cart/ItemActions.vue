@@ -54,7 +54,7 @@ const onChange = async (e: Event) => {
         </div>
       </button>
       <div class="w-7">
-        <v-input-text
+        <VInputText
           class="text-center"
           text-placement="center"
           type="number"
@@ -85,7 +85,7 @@ const onChange = async (e: Event) => {
       class="disabled:opacity-50"
       @click="action('delete')"
     >
-      <trash-svg fill="var(--gray)" />
+      <TrashSvg fill="var(--gray)" />
     </button>
   </div>
 </template>
