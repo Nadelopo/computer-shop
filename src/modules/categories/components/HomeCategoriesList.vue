@@ -9,7 +9,10 @@ const { categories } = storeToRefs(useCategoriesStore())
 <template>
   <div class="grid">
     <template v-if="categories.length">
-      <div v-for="category in categories" :key="category.id">
+      <div
+        v-for="category in categories"
+        :key="category.id"
+      >
         <AppLink
           class="link__wrap"
           :to="{
@@ -18,7 +21,11 @@ const { categories } = storeToRefs(useCategoriesStore())
           }"
         >
           <div class="wrap">
-            <img :src="category.img" alt="" class="mx-auto mb-auto" />
+            <img
+              :src="category.img"
+              alt=""
+              class="mx-auto mb-auto"
+            />
 
             <div class="text-center text">{{ category.title }}</div>
           </div>
@@ -26,7 +33,11 @@ const { categories } = storeToRefs(useCategoriesStore())
       </div>
     </template>
     <template v-else>
-      <div v-for="i in 8" :key="i" class="link__wrap" />
+      <div
+        v-for="i in 8"
+        :key="i"
+        class="link__wrap"
+      />
     </template>
   </div>
 </template>

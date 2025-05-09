@@ -71,7 +71,7 @@ const remove = async (id: number) => {
         >
           <td>{{ shop.address }}</td>
           <td>{{ formatPhoneNumber(shop.phone) }}</td>
-          <td> {{ formatTime(shop.timeStart, shop.timeEnd) }} </td>
+          <td>{{ formatTime(shop.timeStart, shop.timeEnd) }}</td>
           <td>
             <div class="flex">
               <ActionIcon

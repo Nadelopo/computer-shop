@@ -101,7 +101,7 @@ const remove = async (id: number, img: string[]) => {
         </td>
         <td>{{ formatPrice(product.price) }}</td>
         <td>{{ product.discount }} %</td>
-        <td>{{ product.manufacturers.title }} </td>
+        <td>{{ product.manufacturers.title }}</td>
         <td>{{ product.warranty }} мес</td>
         <td>
           <img

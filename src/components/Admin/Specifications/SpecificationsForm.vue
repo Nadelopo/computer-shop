@@ -104,7 +104,10 @@ const submit = handleSubmit(() => {
 </script>
 
 <template>
-  <form class="flex flex-col gap-y-2" @submit.prevent="submit">
+  <form
+    class="flex flex-col gap-y-2"
+    @submit.prevent="submit"
+  >
     <FormField
       v-slot="{ value, setValue, isError }"
       type="number"
@@ -121,14 +124,24 @@ const submit = handleSubmit(() => {
         @update:model-value="setValue($event)"
       />
     </FormField>
-    <FormField name="title" label="Наименование" />
-    <FormField name="enTitle" label="Наименование на английском" />
+    <FormField
+      name="title"
+      label="Наименование"
+    />
+    <FormField
+      name="enTitle"
+      label="Наименование на английском"
+    />
     <div>
       <label for="units">Единицы измерения</label>
-      <VInputText id="units" v-model.trim="form.units" :required="false" />
+      <VInputText
+        id="units"
+        v-model.trim="form.units"
+        :required="false"
+      />
     </div>
     <div>
-      <div>тип поля </div>
+      <div>тип поля</div>
       <VButtons
         v-model="form.type"
         :options="[
@@ -152,11 +165,19 @@ const submit = handleSubmit(() => {
       </div>
       <div class="my-3">
         <label for="min">Минимальное значение для поля ввода</label>
-        <VInputText v-model="form.min" type="number" :min="0" />
+        <VInputText
+          v-model="form.min"
+          type="number"
+          :min="0"
+        />
       </div>
       <div class="my-3">
         <label for="max">Максимальное значение для поля ввода</label>
-        <VInputText v-model="form.max" type="number" :min="0" />
+        <VInputText
+          v-model="form.max"
+          type="number"
+          :min="0"
+        />
       </div>
       <div class="my-3">
         <div>
@@ -178,7 +199,7 @@ const submit = handleSubmit(() => {
       <VTags v-model.trim="form.variantsValues" />
     </div>
     <div>
-      <div>отображать на карточке товара </div>
+      <div>отображать на карточке товара</div>
       <VButtons
         v-model="form.visible"
         class="mt-2"
@@ -200,7 +221,10 @@ const submit = handleSubmit(() => {
       />
     </div>
     <div class="mt-2">
-      <VButton type="submit" :loading="loading">
+      <VButton
+        type="submit"
+        :loading="loading"
+      >
         {{ type === 'create' ? 'создать характеристику' : 'сохранить' }}
       </VButton>
     </div>

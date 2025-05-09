@@ -74,9 +74,12 @@ const updateOrder = async () => {
 <template>
   <div v-if="loading === 'success' && order">
     <div class="flex gap-4">
-      <VTable line :striped="false">
+      <VTable
+        line
+        :striped="false"
+      >
         <template #header>
-          <div> {{ `Номер заказа ${order.id}` }}</div>
+          <div>{{ `Номер заказа ${order.id}` }}</div>
           <div class="text-base flex flex-col gap-4">
             <div>
               Дата заказа:
@@ -84,7 +87,10 @@ const updateOrder = async () => {
             </div>
             <div class="flex items-center">
               <span class="w-[114px]">Статус заказа:</span>
-              <VSelect v-model="order.status" :options="statusOptions" />
+              <VSelect
+                v-model="order.status"
+                :options="statusOptions"
+              />
             </div>
             <div class="flex items-center">
               <span class="w-[114px] inline-block">Статус оплаты:</span>
@@ -97,13 +103,16 @@ const updateOrder = async () => {
         </template>
         <thead>
           <tr>
-            <th>Продукт </th>
+            <th>Продукт</th>
             <th>Количество</th>
             <th>Стоимость</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="product in order.ordered_products" :key="product.id">
+          <tr
+            v-for="product in order.ordered_products"
+            :key="product.id"
+          >
             <td>
               <div class="flex gap-4 items-center">
                 <img
@@ -111,11 +120,11 @@ const updateOrder = async () => {
                   class="rounded h-20"
                   alt=""
                 />
-                <div>{{ product.products.title }} </div>
+                <div>{{ product.products.title }}</div>
               </div>
             </td>
-            <td>{{ product.count }} </td>
-            <td>{{ order.price }} </td>
+            <td>{{ product.count }}</td>
+            <td>{{ order.price }}</td>
           </tr>
         </tbody>
       </VTable>

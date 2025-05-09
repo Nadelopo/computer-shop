@@ -60,14 +60,14 @@ const text = computed(() => {
           v-if="loading === 'success'"
           class="orders"
         >
-          <div> Заказы за месяц </div>
+          <div>Заказы за месяц</div>
           <div>{{ currentMothCount }}</div>
           <div
             class="comparison"
             :class="[differentPreviousCount < 0 && 'negative']"
           >
             <ArrowSvg />
-            <div>{{ text }} </div>
+            <div>{{ text }}</div>
           </div>
         </div>
       </div>

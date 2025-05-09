@@ -137,9 +137,7 @@ watch(
               <th>Тип<span class="text-sm">(число/строка)</span></th>
               <th>Отображение на карточке товара</th>
               <th>Единицы измерения</th>
-              <th>
-                Минимальное значение<span class="text-sm"> (число)</span>
-              </th>
+              <th>Минимальное значение<span class="text-sm"> (число)</span></th>
               <th>
                 Максимальное значение<span class="text-sm"> (число)</span>
               </th>
@@ -147,7 +145,7 @@ watch(
               <th>
                 Условие лучшего значения<span class="text-sm"> (число) </span>
               </th>
-              <th> Варианты значений<span class="text-sm"> (строка)</span> </th>
+              <th>Варианты значений<span class="text-sm"> (строка)</span></th>
               <th>действия</th>
             </tr>
           </thead>
@@ -223,7 +221,7 @@ watch(
       </VTable>
     </div>
     <VLoader v-else-if="loadingGetCategories === 'loading'" />
-    <div v-else-if="loadingGetCategories === 'error'"> Произошла ошибка </div>
+    <div v-else-if="loadingGetCategories === 'error'">Произошла ошибка</div>
   </div>
 </template>
 

@@ -27,7 +27,7 @@ const getProps = (
       :class="{ active: values.length }"
       @click="visibility = !visibility"
     >
-      <div> {{ title }} </div>
+      <div>{{ title }}</div>
       <ArrowSvg
         :transform="visibility ? '' : 'rotate(180)'"
         class="duration-200"

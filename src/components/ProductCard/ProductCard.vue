@@ -40,7 +40,10 @@ const titleActive = ref(true)
     class="card"
   >
     <div class="flex">
-      <button type="button" class="cross">
+      <button
+        type="button"
+        class="cross"
+      >
         <CrossSvg
           v-if="props.onDelete"
           transform="rotate(45)"
@@ -51,9 +54,15 @@ const titleActive = ref(true)
       </button>
     </div>
     <div class="justify-self-center self-center">
-      <img :src="item.img[0]" alt="" />
+      <img
+        :src="item.img[0]"
+        alt=""
+      />
     </div>
-    <div class="title" :class="{ title__active: titleActive }">
+    <div
+      class="title"
+      :class="{ title__active: titleActive }"
+    >
       {{ item.title }}
     </div>
     <RatingStars :model-value="item.rating" />
@@ -74,13 +83,19 @@ const titleActive = ref(true)
         {{ item.discount ? formatPrice(item.priceWithoutDiscount) : '' }}
       </div>
       <div class="flex justify-between">
-        <div class="self-center price" :class="{ coloured: item.discount }">
+        <div
+          class="self-center price"
+          :class="{ coloured: item.discount }"
+        >
           {{
             formatPrice(item.discount ? item.price : item.priceWithoutDiscount)
           }}
         </div>
         <div>
-          <ButtonCart :product-id="item.id" :quantity="item.quantity" />
+          <ButtonCart
+            :product-id="item.id"
+            :quantity="item.quantity"
+          />
         </div>
       </div>
     </div>

@@ -28,7 +28,10 @@ const isSmall = useMediaQuery('(width < 520px)')
   >
     <div class="card__wrapper">
       <div class="img__wrapper">
-        <img :src="item.img[0]" alt="" />
+        <img
+          :src="item.img[0]"
+          alt=""
+        />
       </div>
       <div>
         <div class="card__link">
@@ -74,7 +77,10 @@ const isSmall = useMediaQuery('(width < 520px)')
           >
             {{ formatPrice(item.priceWithoutDiscount) }}
           </div>
-          <div v-if="item.discount" class="text-end lg:mb-2 price coloured">
+          <div
+            v-if="item.discount"
+            class="text-end lg:mb-2 price coloured"
+          >
             {{ formatPrice(item.price) }}
           </div>
         </div>

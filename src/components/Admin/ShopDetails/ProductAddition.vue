@@ -170,9 +170,15 @@ const setQuantityProductsInShops = async () => {
         @clear=";(searchValue = ''), loadProducts()"
         @input="highlightSearchTerm"
       />
-      <VPopup float="start" :is-close-on-click="false">
+      <VPopup
+        float="start"
+        :is-close-on-click="false"
+      >
         <template #active>
-          <button type="button" class="dots">
+          <button
+            type="button"
+            class="dots"
+          >
             <div class="dot" />
             <div class="dot" />
             <div class="dot" />
@@ -218,7 +224,10 @@ const setQuantityProductsInShops = async () => {
     <div @click="setProductsInStore">
       <VButton>Выбрать</VButton>
     </div>
-    <div v-if="productsInShop.length" class="flex flex-col gap-2">
+    <div
+      v-if="productsInShop.length"
+      class="flex flex-col gap-2"
+    >
       <div
         v-for="product in productsInShop"
         :key="product.productId"

@@ -60,8 +60,15 @@ const { getStatus } = useOrders()
 
 <template>
   <div>
-    <div v-if="loading === 'success'" class="bg-white rounded p-3 mb-4">
-      <div v-for="(order, i) in orders" :key="order.id" class="order">
+    <div
+      v-if="loading === 'success'"
+      class="bg-white rounded p-3 mb-4"
+    >
+      <div
+        v-for="(order, i) in orders"
+        :key="order.id"
+        class="order"
+      >
         <div>
           <ArrowSvg
             :transform="showProducts[i] ? '' : 'rotate(180)'"
@@ -91,7 +98,10 @@ const { getStatus } = useOrders()
               Заказ получен
               {{ new Date(order.deliveryDate || '').toLocaleDateString() }}
             </div>
-            <div class="order__status" :class="[order.status]">
+            <div
+              class="order__status"
+              :class="[order.status]"
+            >
               {{ getStatus(order.status) }}
             </div>
           </div>
@@ -145,7 +155,10 @@ const { getStatus } = useOrders()
     <div v-else-if="loading === 'loading'">
       <VLoader />
     </div>
-    <div v-else-if="loading === 'empty'" class="text-3xl font-bold">
+    <div
+      v-else-if="loading === 'empty'"
+      class="text-3xl font-bold"
+    >
       Заказов пока нет
     </div>
     <VPagination

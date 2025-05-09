@@ -83,13 +83,20 @@ const copyProductCode = (id: number) => {
     <div class="w-full">
       <div class="product__title">
         <div class="text-3xl font-medium">
-          <div> {{ product.title }}</div>
-          <span class="product__code" @click="copyProductCode(product.id)">
+          <div>{{ product.title }}</div>
+          <span
+            class="product__code"
+            @click="copyProductCode(product.id)"
+          >
             Код товара: #{{ product.id }}
           </span>
         </div>
         <div class="ml-auto hidden sm:block">
-          <img class="max-h-14" :src="manufacturer?.img" alt="..." />
+          <img
+            class="max-h-14"
+            :src="manufacturer?.img"
+            alt="..."
+          />
         </div>
       </div>
 

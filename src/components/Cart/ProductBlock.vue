@@ -98,8 +98,14 @@ const isMobile = useMediaQuery('(width < 640px)')
       </AppLink>
     </div>
     <div class="price">{{ formatPrice(product.price) }}</div>
-    <ItemActions :product-count="product.count" :product="product" />
-    <div v-if="product.warranty <= 48" class="warranty">
+    <ItemActions
+      :product-count="product.count"
+      :product="product"
+    />
+    <div
+      v-if="product.warranty <= 48"
+      class="warranty"
+    >
       Дополнительная гарантия
       <VSelect
         v-if="isMobile"

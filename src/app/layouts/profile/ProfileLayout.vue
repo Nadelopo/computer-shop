@@ -40,12 +40,13 @@ onBeforeMount(async () => {
         <AppLink :to="{ name: 'ProfileReviews' }"> Отзывы</AppLink>
         <AppLink :to="{ name: 'ProfileDelivery' }"> Доставка </AppLink>
         <AppLink :to="{ name: 'ProfileMain' }"> Гарантийный отдел </AppLink>
-        <AppLink :to="{ name: 'ProfileSettings' }">
-          Настройки профиля
-        </AppLink>
+        <AppLink :to="{ name: 'ProfileSettings' }"> Настройки профиля </AppLink>
       </div>
       <div>
-        <router-view :reviews :loading />
+        <router-view
+          :reviews
+          :loading
+        />
       </div>
     </div>
   </div>

@@ -101,19 +101,47 @@ const createReview = async () => {
       @submit.prevent="createReview"
     >
       <div class="mb-4">
-        <label for="dignities" class="title"> Достоинства </label>
-        <textarea id="dignities" v-model.trim="form.dignities" />
+        <label
+          for="dignities"
+          class="title"
+        >
+          Достоинства
+        </label>
+        <textarea
+          id="dignities"
+          v-model.trim="form.dignities"
+        />
       </div>
       <div class="mb-4">
-        <label for="disadvantages" class="title"> Недостатки </label>
-        <textarea id="disadvantages" v-model.trim="form.disadvantages" />
+        <label
+          for="disadvantages"
+          class="title"
+        >
+          Недостатки
+        </label>
+        <textarea
+          id="disadvantages"
+          v-model.trim="form.disadvantages"
+        />
       </div>
       <div class="mb-4">
-        <label for="comment" class="title"> Комментарий </label>
-        <textarea id="comment" v-model.trim="form.comment" />
+        <label
+          for="comment"
+          class="title"
+        >
+          Комментарий
+        </label>
+        <textarea
+          id="comment"
+          v-model.trim="form.comment"
+        />
       </div>
       <div>
-        <RatingStars v-model="form.rating" :static="false" class="mb-4 mt-8" />
+        <RatingStars
+          v-model="form.rating"
+          :static="false"
+          class="mb-4 mt-8"
+        />
         <VButton type="submit">ставить отзыв</VButton>
       </div>
     </form>

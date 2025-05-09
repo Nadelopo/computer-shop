@@ -52,8 +52,15 @@ const submit = handleSubmit(() => {
 </script>
 
 <template>
-  <form class="list__form" @submit.prevent="submit">
-    <FormField v-slot="{ setValue, id }" name="img" label="Изображение">
+  <form
+    class="list__form"
+    @submit.prevent="submit"
+  >
+    <FormField
+      v-slot="{ setValue, id }"
+      name="img"
+      label="Изображение"
+    >
       <VInputFile
         :id="id"
         ref="inputFileRef"
@@ -64,10 +71,19 @@ const submit = handleSubmit(() => {
         @delete="setValue(props.formData?.img ?? '')"
       />
     </FormField>
-    <FormField name="enTitle" label="Наименование на английском" />
-    <FormField name="title" label="Наименование на русском" />
+    <FormField
+      name="enTitle"
+      label="Наименование на английском"
+    />
+    <FormField
+      name="title"
+      label="Наименование на русском"
+    />
     <div>
-      <VButton type="submit" :loading="loading">
+      <VButton
+        type="submit"
+        :loading="loading"
+      >
         {{ type === 'create' ? 'создать категорию' : 'сохранить' }}
       </VButton>
     </div>

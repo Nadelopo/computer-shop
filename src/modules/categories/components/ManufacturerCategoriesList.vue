@@ -37,7 +37,7 @@ const categoriesFormat = computed(() => {
           :src="category.img"
           alt=""
         />
-        <div> {{ category.title }} {{ category.repetitionCount }} </div>
+        <div>{{ category.title }} {{ category.repetitionCount }}</div>
       </AppLink>
     </template>
     <template v-else-if="loading === 'loading'">

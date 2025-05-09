@@ -178,7 +178,10 @@ const deleteItem = async (item: ComparisonProduct) => {
     <div v-else-if="loading === 'loading'">
       <VLoader />
     </div>
-    <div v-else class="font-bold text-2xl text-center">
+    <div
+      v-else
+      class="font-bold text-2xl text-center"
+    >
       Нет товаров для сравнения
     </div>
   </div>

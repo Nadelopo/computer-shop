@@ -19,27 +19,56 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="sidebar" :class="{ collapsed: isCollapsed }">
-    <div class="fixed p-4" style="width: inherit">
+  <div
+    class="sidebar"
+    :class="{ collapsed: isCollapsed }"
+  >
+    <div
+      class="fixed p-4"
+      style="width: inherit"
+    >
       <div class="mb-6 flex justify-between items-center h-[56px]">
         <!-- <h1> -->
-        <AppLink :to="{ name: 'AdminMain' }" class="main">
-          <HomeSvg width="40" fill="#fff" />
+        <AppLink
+          :to="{ name: 'AdminMain' }"
+          class="main"
+        >
+          <HomeSvg
+            width="40"
+            fill="#fff"
+          />
         </AppLink>
         <!-- </h1> -->
         <AppLink :to="{ name: 'Home' }">
-          <img class="logo" src="/img/logoChangeWhiteSizeFnew.png" alt="" />
+          <img
+            class="logo"
+            src="/img/logoChangeWhiteSizeFnew.png"
+            alt=""
+          />
         </AppLink>
       </div>
       <div class="list">
-        <div class="head" @click="isVisible = !isVisible">
-          <div class="icon" title="Продукты категорий">
-            <img src="/icons/list.svg" alt="" class="invert" />
+        <div
+          class="head"
+          @click="isVisible = !isVisible"
+        >
+          <div
+            class="icon"
+            title="Продукты категорий"
+          >
+            <img
+              src="/icons/list.svg"
+              alt=""
+              class="invert"
+            />
           </div>
           <span> Продукты категорий </span>
         </div>
 
-        <VAccordion :visibility="isVisible" :transition="0.3">
+        <VAccordion
+          :visibility="isVisible"
+          :transition="0.3"
+        >
           <div
             v-for="category in categories"
             :key="category.title"
@@ -52,8 +81,14 @@ watchEffect(() => {
                 params: { category: category.enTitle, id: category.id }
               }"
             >
-              <div class="icon" :title="category.title">
-                <img :src="`/icons/${category.enTitle}.svg`" alt="" />
+              <div
+                class="icon"
+                :title="category.title"
+              >
+                <img
+                  :src="`/icons/${category.enTitle}.svg`"
+                  alt=""
+                />
               </div>
               <span>
                 {{ category.title }}
@@ -61,7 +96,10 @@ watchEffect(() => {
             </AppLink>
           </div>
         </VAccordion>
-        <div class="head" title="Категории">
+        <div
+          class="head"
+          title="Категории"
+        >
           <AppLink
             :to="{
               name: 'AdminCategories'
@@ -78,19 +116,29 @@ watchEffect(() => {
             <span> Категории </span>
           </AppLink>
         </div>
-        <div class="head" title="Характеристики категорий">
+        <div
+          class="head"
+          title="Характеристики категорий"
+        >
           <AppLink
             :to="{
               name: 'AdminSpecifications'
             }"
           >
             <div class="icon">
-              <img src="/icons/list.svg" alt="" class="invert" />
+              <img
+                src="/icons/list.svg"
+                alt=""
+                class="invert"
+              />
             </div>
             <span> Характеристики категорий </span>
           </AppLink>
         </div>
-        <div class="head" title="Производители">
+        <div
+          class="head"
+          title="Производители"
+        >
           <AppLink
             :to="{
               name: 'AdminManufacturers'
@@ -107,7 +155,10 @@ watchEffect(() => {
             <span> Производители </span>
           </AppLink>
         </div>
-        <div class="head" title="Магазины">
+        <div
+          class="head"
+          title="Магазины"
+        >
           <AppLink
             :to="{
               name: 'AdminShops'
@@ -124,7 +175,10 @@ watchEffect(() => {
             <span> Магазины </span>
           </AppLink>
         </div>
-        <div class="head" title="Заказы">
+        <div
+          class="head"
+          title="Заказы"
+        >
           <AppLink
             :to="{
               name: 'AdminOrders'
@@ -142,7 +196,11 @@ watchEffect(() => {
           </AppLink>
         </div>
       </div>
-      <button class="toggle" type="button" @click="isCollapsed = !isCollapsed">
+      <button
+        class="toggle"
+        type="button"
+        @click="isCollapsed = !isCollapsed"
+      >
         <ArrowSvg fill="#fff" />
       </button>
     </div>

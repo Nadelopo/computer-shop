@@ -401,18 +401,24 @@ const onSubmit = handleSubmit(async () => {
     class="container"
     @submit.prevent="onSubmit"
   >
-    <div class="font-medium text-3xl mb-4"> Оформление заказа </div>
+    <div class="font-medium text-3xl mb-4">Оформление заказа</div>
     <div class="block">
       <div class="label">
         <div>1.</div>
-        <div> Данные покупателя </div>
+        <div>Данные покупателя</div>
       </div>
       <div class="content grid grid-cols-1 gap-6 xs:grid-cols-2">
         <div>
-          <FormField label="Имя*" name="name" />
+          <FormField
+            label="Имя*"
+            name="name"
+          />
         </div>
         <div>
-          <FormField label="Почта*" name="email" />
+          <FormField
+            label="Почта*"
+            name="email"
+          />
         </div>
         <div>
           <FormField
@@ -457,18 +463,27 @@ const onSubmit = handleSubmit(async () => {
       </div>
     </div>
     <div>
-      <div class="content" style="border-left: unset">
-        <div> {{ countCartItems }} {{ getWordByQuantity(countCartItems) }}</div>
+      <div
+        class="content"
+        style="border-left: unset"
+      >
+        <div>{{ countCartItems }} {{ getWordByQuantity(countCartItems) }}</div>
         <div class="text-3xl font-medium mb-2">
           Итого: <span class="font-bold">{{ formatPrice(price) }}</span>
         </div>
-        <VButton type="submit" :loading="loadingCreateOrder === 'loading'">
+        <VButton
+          type="submit"
+          :loading="loadingCreateOrder === 'loading'"
+        >
           Оформить заказ
         </VButton>
       </div>
     </div>
   </form>
-  <div v-else class="flex justify-center items-center h-[50vh]">
+  <div
+    v-else
+    class="flex justify-center items-center h-[50vh]"
+  >
     <VLoader />
   </div>
 </template>

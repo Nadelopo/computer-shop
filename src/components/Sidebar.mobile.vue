@@ -33,23 +33,43 @@ onUnmounted(() => {
 
 <template>
   <!-- eslint-disable-next-line -->
-  <div class="wrapper" @click="closeSidebar">
-    <div ref="sidebarRef" class="sidebar" @click.stop>
+  <div
+    class="wrapper"
+    @click="closeSidebar"
+  >
+    <div
+      ref="sidebarRef"
+      class="sidebar"
+      @click.stop
+    >
       <div class="grid grid-cols-2 items-center">
         <div>
-          <AppLink :to="{ name: 'Home' }" @click="closeSidebar">
-            <img src="/img/logoChangeWhiteSizeFnew.png" width="95" alt="" />
+          <AppLink
+            :to="{ name: 'Home' }"
+            @click="closeSidebar"
+          >
+            <img
+              src="/img/logoChangeWhiteSizeFnew.png"
+              width="95"
+              alt=""
+            />
           </AppLink>
         </div>
         <div class="text-end">
-          <button type="button" @click="closeSidebar">
+          <button
+            type="button"
+            @click="closeSidebar"
+          >
             <div class="dot dot-f"></div>
             <div class="dot dot-l"></div>
           </button>
         </div>
       </div>
       <div class="list">
-        <AppLink :to="{ name: user ? 'Home' : 'Auth' }" @click="signOut">
+        <AppLink
+          :to="{ name: user ? 'Home' : 'Auth' }"
+          @click="signOut"
+        >
           {{ user ? 'Выйти' : 'Войти' }}
         </AppLink>
         <AppLink

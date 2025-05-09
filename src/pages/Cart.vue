@@ -64,8 +64,8 @@ onUnmounted(() => {
       "
       class="text-center font-medium text-xl mt-16"
     >
-      <div> В корзине нет товаров </div>
-      <div> Посмотрите предложения на главной странице </div>
+      <div>В корзине нет товаров</div>
+      <div>Посмотрите предложения на главной странице</div>
       <div class="flex justify-center mt-2 text-base font-normal">
         <VButton>
           <AppLink :to="{ name: 'Home' }"> Вернуться к покупкам </AppLink>
@@ -86,7 +86,7 @@ onUnmounted(() => {
       </div>
       <div>
         <div class="bg-white rounded p-3">
-          <div class=""> Итого: </div>
+          <div class="">Итого:</div>
           <div class="flex justify-between font-medium text-lg mb-2">
             <div>
               {{ countCartItems }}
@@ -117,7 +117,7 @@ onUnmounted(() => {
     >
       <VLoader />
     </div>
-    <div v-else-if="loading === 'error'"> ошибка </div>
+    <div v-else-if="loading === 'error'">ошибка</div>
   </div>
 </template>
 

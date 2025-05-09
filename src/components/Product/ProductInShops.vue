@@ -15,7 +15,7 @@ const isOpenModal = ref(false)
 
 <template>
   <div>
-    <div> В наличии в </div>
+    <div>В наличии в</div>
     <div
       class="product__inShops"
       @click="isOpenModal = true"

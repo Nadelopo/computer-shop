@@ -5,8 +5,8 @@ type GetRouteName<T extends AppRouteRecord> = T extends {
 }
   ? GetRoutesNames<T['children']>
   : T extends { name: string }
-  ? T['name']
-  : never
+    ? T['name']
+    : never
 export type GetRoutesNames<T extends readonly AppRouteRecord[]> = GetRouteName<
   T[number]
 >
@@ -17,8 +17,8 @@ type GetRoutePath<T extends AppRouteRecord, N extends RouteName> = T extends {
 }
   ? T['path'] | GetRoutesPaths<T['children'], N>
   : N extends T['name']
-  ? T['path']
-  : never
+    ? T['path']
+    : never
 export type GetRoutesPaths<
   T extends readonly AppRouteRecord[],
   N extends RouteName
@@ -30,8 +30,8 @@ type ExtractParamsKeys<T extends string> =
   T extends `${string}:${infer Key}/${infer Rest}`
     ? Key | ExtractParamsKeys<Rest>
     : T extends `${string}:${infer Key}`
-    ? Key
-    : never
+      ? Key
+      : never
 
 export type RouteParamsKeys<T extends RouteName> = ExtractParamsKeys<
   RouteNameToPath<T>

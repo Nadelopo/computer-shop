@@ -119,8 +119,8 @@ const setPage = (page: number) => {
               type="button"
               class="page-switch"
             >
-              ...</button
-            >
+              ...
+            </button>
           </template>
           <template #content>
             <button

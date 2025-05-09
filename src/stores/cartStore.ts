@@ -287,9 +287,8 @@ export const useCartStore = defineStore('cart', () => {
 
     if (promises.length) {
       await Promise.all(promises)
-      const { data: updatedItems, error: errorCartItems } = await getCartItems(
-        user
-      )
+      const { data: updatedItems, error: errorCartItems } =
+        await getCartItems(user)
       if (errorCartItems) {
         return { data: null, error: errorCartItems }
       }

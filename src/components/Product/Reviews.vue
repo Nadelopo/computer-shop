@@ -174,9 +174,15 @@ const isPageSmall = useMediaQuery('(width < 400px)')
         @update-product-rating="emit('updateProductRating', $event)"
         @create-review="reviews.unshift($event)"
       />
-      <div v-if="reviews.length" class="reviews">
+      <div
+        v-if="reviews.length"
+        class="reviews"
+      >
         <template v-if="loading === 'success'">
-          <template v-for="review in reviews" :key="review.id">
+          <template
+            v-for="review in reviews"
+            :key="review.id"
+          >
             <ReviewBlock
               :id="`comment_${review.id}`"
               :review="review"

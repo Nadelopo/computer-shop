@@ -101,25 +101,59 @@ const submit = handleSubmit(async (values) => {
 <template>
   <div v-if="loading === 'success'">
     <h1 class="text-4xl font-bold mb-10">Настройки профиля</h1>
-    <form class="max-w-lg list__form" @submit.prevent="submit">
-      <FormField name="name" label="Имя*" />
+    <form
+      class="max-w-lg list__form"
+      @submit.prevent="submit"
+    >
+      <FormField
+        name="name"
+        label="Имя*"
+      />
       <!-- <form-field
         name="email"
         label="Почта*"
       /> -->
-      <FormField name="phone" label="Телефон*" type="tel" />
-      <FormField name="address" label="Адрес" />
-      <FormField name="apartment" label="Квартира" type="number" min="0" />
-      <FormField name="floor" label="Этаж" type="number" min="0" />
-      <FormField name="entrance" label="Подъезд" type="number" min="0" />
+      <FormField
+        name="phone"
+        label="Телефон*"
+        type="tel"
+      />
+      <FormField
+        name="address"
+        label="Адрес"
+      />
+      <FormField
+        name="apartment"
+        label="Квартира"
+        type="number"
+        min="0"
+      />
+      <FormField
+        name="floor"
+        label="Этаж"
+        type="number"
+        min="0"
+      />
+      <FormField
+        name="entrance"
+        label="Подъезд"
+        type="number"
+        min="0"
+      />
       <div>
-        <VButton type="submit" :loading="loadingSubmit === 'loading'">
+        <VButton
+          type="submit"
+          :loading="loadingSubmit === 'loading'"
+        >
           сохранить
         </VButton>
       </div>
     </form>
   </div>
-  <div v-else class="h-[50vh] flex place-items-center">
+  <div
+    v-else
+    class="h-[50vh] flex place-items-center"
+  >
     <VLoader />
   </div>
 </template>

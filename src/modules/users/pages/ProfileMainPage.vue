@@ -18,7 +18,10 @@ const { user } = storeToRefs(useUserStore())
 
 <template>
   <div>
-    <div v-if="user" class="user__info">
+    <div
+      v-if="user"
+      class="user__info"
+    >
       <div class="row">
         <div>Имя</div>
         <div>{{ user.name }}</div>
@@ -35,11 +38,17 @@ const { user } = storeToRefs(useUserStore())
     <div class="reviews__grid">
       <div>
         <div class="text-3xl font-bold">Отзывы</div>
-        <AppLink :to="{ name: 'ProfileReviews' }" class="text-xl color-text">
+        <AppLink
+          :to="{ name: 'ProfileReviews' }"
+          class="text-xl color-text"
+        >
           Посмотреть все
         </AppLink>
       </div>
-      <div v-if="loading === 'success'" class="last__reviews">
+      <div
+        v-if="loading === 'success'"
+        class="last__reviews"
+      >
         <AppLink
           v-for="review in reviews.slice(0, 4)"
           :key="review.id"
@@ -55,7 +64,10 @@ const { user } = storeToRefs(useUserStore())
             }
           }"
         >
-          <ReviewBlock :review="review" color="#fff" />
+          <ReviewBlock
+            :review="review"
+            color="#fff"
+          />
         </AppLink>
       </div>
       <VLoader v-else-if="loading === 'loading'" />

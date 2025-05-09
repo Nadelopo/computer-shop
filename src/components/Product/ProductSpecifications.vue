@@ -46,7 +46,7 @@ const defaultSpecifications = [
           colored: i % 2 === product.specifications.length % 2
         }"
       >
-        <div class="specification__title">{{ specification.title }} </div>
+        <div class="specification__title">{{ specification.title }}</div>
         <div class="flex items-end">
           {{ specification.value }} {{ specification.units }}
         </div>

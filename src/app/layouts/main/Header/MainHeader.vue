@@ -105,7 +105,11 @@ const setSearch = (title: string) => {
       <div class="root">
         <div class="logo">
           <AppLink :to="{ name: 'Home' }">
-            <img src="/img/logoChangeWhiteSizeFnew.png" width="95" alt="" />
+            <img
+              src="/img/logoChangeWhiteSizeFnew.png"
+              width="95"
+              alt=""
+            />
           </AppLink>
         </div>
         <HeaderSearch
@@ -123,7 +127,10 @@ const setSearch = (title: string) => {
         <div class="nav__rigth">
           <VPopup>
             <template #active>
-              <ActionIcon :svg="AvatarSvg" variant="default" />
+              <ActionIcon
+                :svg="AvatarSvg"
+                variant="default"
+              />
             </template>
             <template #content>
               <AppLink
@@ -141,10 +148,17 @@ const setSearch = (title: string) => {
               >
                 выйти
               </button>
-              <AppLink v-else :to="{ name: 'Auth' }" class="popup__el">
+              <AppLink
+                v-else
+                :to="{ name: 'Auth' }"
+                class="popup__el"
+              >
                 войти
               </AppLink>
-              <AppLink :to="{ name: 'ProfileMain' }" class="popup__el">
+              <AppLink
+                :to="{ name: 'ProfileMain' }"
+                class="popup__el"
+              >
                 профиль
               </AppLink>
             </template>
@@ -155,7 +169,10 @@ const setSearch = (title: string) => {
             tag="a"
             :to="{ name: 'Favourites' }"
           >
-            <span v-if="favorites.length" class="count">
+            <span
+              v-if="favorites.length"
+              class="count"
+            >
               {{ favorites.length }}
             </span>
           </ActionIcon>
@@ -165,7 +182,10 @@ const setSearch = (title: string) => {
             :svg="ComparisonSvg"
             variant="default"
           >
-            <span v-if="comparison.length" class="count">
+            <span
+              v-if="comparison.length"
+              class="count"
+            >
               {{ comparison.length }}
             </span>
           </ActionIcon>
@@ -175,7 +195,10 @@ const setSearch = (title: string) => {
             :svg="CartSvg"
             variant="default"
           >
-            <span v-if="countCartItems" class="count">
+            <span
+              v-if="countCartItems"
+              class="count"
+            >
               {{ countCartItems }}
             </span>
           </ActionIcon>
@@ -187,7 +210,11 @@ const setSearch = (title: string) => {
             @click="openModal = true"
           />
         </div>
-        <VModal v-model="openModal" full-screen class="py-2 xs:px-8 px-2">
+        <VModal
+          v-model="openModal"
+          full-screen
+          class="py-2 xs:px-8 px-2"
+        >
           <div class="flex gap-2 items-center">
             <HeaderSearch
               v-model="search"

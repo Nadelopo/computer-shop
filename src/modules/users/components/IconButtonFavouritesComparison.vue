@@ -38,5 +38,10 @@ const onIcon = async () => {
 </script>
 
 <template>
-  <ActionIcon :svg="ListIcon" :is-active :loading @click.prevent="onIcon" />
+  <ActionIcon
+    :svg="ListIcon"
+    :is-active
+    :loading
+    @click.prevent="onIcon"
+  />
 </template>
