@@ -1,4 +1,4 @@
-import type { SpecificationReadWithDetails } from './specifications.types'
+import type { SpecificationReadWithDetails } from '../../modules/specifications/model/specifications.types'
 
 export type ProductReadWithDetails = {
   categories: {

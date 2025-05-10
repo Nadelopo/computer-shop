@@ -2,13 +2,13 @@
 import { ref } from 'vue'
 import { useCategoriesStore } from '@/modules/categories/model/categoriesStore'
 import { supabase } from '@/db/supabase'
-import AdminSpecificationsForm from '@/components/Admin/Specifications/SpecificationsForm.vue'
-import SpecificationsList from '@/components/Admin/Specifications/SpecificationsList.vue'
+import SpecificationsForm from '../components/SpecificationsForm.vue'
+import SpecificationsList from '../components/SpecificationsList.vue'
+import type { SpecificationCreate } from '../model/specifications.types'
 import type {
   CategorySpecificationCreate,
   CategorySpecificationRead
 } from '@/types/tables/categorySpecifications.types'
-import type { SpecificationCreate } from '@/types/tables/specifications.types'
 import type { Loading } from '@/types'
 import type { CategorySpecificationForm } from '@/components/Admin/Specifications/types'
 
@@ -65,7 +65,7 @@ const create = async (
 </script>
 
 <template>
-  <AdminSpecificationsForm
+  <SpecificationsForm
     type="create"
     :loading="loading === 'loading'"
     use-set-initial-value

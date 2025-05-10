@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { supabase } from '@/db/supabase'
 import { removeFromStorage, type StorageError } from '@/db/queries/storage'
-import { getSpecificationValue } from '@/shared/utils/getSpecificationValue'
+import { getSpecificationValue } from '@/modules/specifications'
 import { formatPrice } from '@/shared/utils/formatPrice'
 import { VLoader, VConfirm, VTable, VInputText } from '@/components/UI'
 import ActionIcon from '@/components/ActionIcon.vue'
@@ -134,8 +134,7 @@ const remove = async (id: number, img: string[]) => {
                 :svg="TrashSvg"
                 variant="danger"
                 :loading="
-                  loadingRemove === 'loading' &&
-                  currentRemoveProductId === product.id
+                  loadingRemove === 'loading' && currentRemoveProductId === product.id
                 "
                 @click="openModal"
               />

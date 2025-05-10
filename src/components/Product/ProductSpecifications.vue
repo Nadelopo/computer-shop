@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getSpecificationValue } from '@/shared/utils/getSpecificationValue'
+import { getSpecificationValue } from '@/modules/specifications'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 
 const props = defineProps<{

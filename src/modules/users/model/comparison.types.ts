@@ -1,6 +1,6 @@
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
-import type { SpecificationRead } from '@/types/tables/specifications.types'
+import type { SpecificationRead } from '@/modules/specifications'
 
 export type CategorySpecifications = {
   title: string

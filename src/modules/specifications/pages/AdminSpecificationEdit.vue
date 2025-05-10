@@ -2,24 +2,21 @@
 import { onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/modules/categories'
+import SpecificationsForm from '../components/SpecificationsForm.vue'
+import { type SpecificationRead } from '../model/specifications.types'
 import { supabase } from '@/db/supabase'
-import {
-  useCustomRoute,
-  useCustomRouter
-} from '@/shared/composables/customRouter'
-import SpecificationsForm from '@/components/Admin/Specifications/SpecificationsForm.vue'
+import { useCustomRoute, useCustomRouter } from '@/shared/composables/customRouter'
 import { VButton, VLoader } from '@/components/UI'
 import type {
   CategorySpecificationCreate,
   CategorySpecificationRead
 } from '@/types/tables/categorySpecifications.types'
 import type { Loading } from '@/types'
-import type { SpecificationRead } from '@/types/tables/specifications.types'
 import type { CategorySpecificationForm } from '@/components/Admin/Specifications/types'
 
 const { categories } = storeToRefs(useCategoriesStore())
 const form = ref<CategorySpecificationCreate>()
-const route = useCustomRoute('EditSpecification')
+const route = useCustomRoute('SpecificationEdit')
 const router = useCustomRouter()
 const loading = ref<Loading>('loading')
 let formInitType: CategorySpecificationRead['type'] = 'string'

@@ -1,4 +1,4 @@
-import type { SpecificationReadWithDetails } from '@/types/tables/specifications.types'
+import type { SpecificationReadWithDetails } from '../model/specifications.types'
 
 export const getSpecificationValue = (
   specification: SpecificationReadWithDetails

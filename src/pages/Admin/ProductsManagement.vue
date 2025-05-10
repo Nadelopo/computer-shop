@@ -14,7 +14,7 @@ import type {
   ProductWithSpecifications
 } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
-import type { SpecificationCreate } from '@/types/tables/specifications.types'
+import type { SpecificationCreate } from '@/modules/specifications'
 import type { SpecificationCreateForm } from '@/components/Admin/Products/types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 
@@ -94,9 +94,7 @@ const loadingSpecifications = ref<Loading>('loading')
 const categorySpecifications = ref<CategorySpecificationRead[]>([])
 const setCategorySpecifications = async () => {
   loadingSpecifications.value = 'loading'
-  const { data, error } = await getCategorySpecifications(
-    Number(route.params.id)
-  )
+  const { data, error } = await getCategorySpecifications(Number(route.params.id))
   if (error) {
     loadingSpecifications.value = 'error'
     return
@@ -189,17 +187,15 @@ const create = async (fileActions: InputFileActions<string[]> | undefined) => {
     return
   }
 
-  const specifications: SpecificationCreate[] = productSpecifications.value.map(
-    (s) => {
-      const { categorySpecificationsId, valueNumber, valueString } = s
-      return {
-        categorySpecificationsId,
-        productId: data.id,
-        valueNumber,
-        valueString
-      }
+  const specifications: SpecificationCreate[] = productSpecifications.value.map((s) => {
+    const { categorySpecificationsId, valueNumber, valueString } = s
+    return {
+      categorySpecificationsId,
+      productId: data.id,
+      valueNumber,
+      valueString
     }
-  )
+  })
 
   const { error: errorSpecifications } = await supabase
     .from('specifications')

@@ -1,18 +1,12 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/db/supabase'
-import {
-  useCustomRoute,
-  useCustomRouter
-} from '@/shared/composables/customRouter'
+import { useCustomRoute, useCustomRouter } from '@/shared/composables/customRouter'
 import ProductsForm from '@/components/Admin/Products/ProductsForm.vue'
 import { VButton, VLoader } from '@/components/UI'
 import type { Loading } from '@/types'
-import type { SpecificationCreate } from '@/types/tables/specifications.types'
-import type {
-  ProductCreate,
-  ProductUpdate
-} from '@/types/tables/products.types'
+import type { SpecificationCreate } from '@/modules/specifications'
+import type { ProductCreate, ProductUpdate } from '@/types/tables/products.types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 import type { SpecificationUpdateForm } from '@/components/Admin/Products/types'
 // import type { UpdateMany } from '@/db/queries/types'
@@ -87,9 +81,7 @@ const back = async () => {
   })
 }
 
-async function updateProductSpecifications(
-  updatedSpecifications: SpecificationCreate[]
-) {
+async function updateProductSpecifications(updatedSpecifications: SpecificationCreate[]) {
   const { data: newSpecifications } = await supabase
     .from('specifications')
     .upsert(updatedSpecifications, {

@@ -1,6 +1,7 @@
 import { categoriesRoutes } from '@/modules/categories'
 import type { AppRouteRecord } from './index'
 import { manufacturersAdminRoutes } from '@/modules/manufacturers'
+import { specificationsRoutes } from '@/modules/specifications'
 
 export const adminRoutes = [
   {
@@ -25,16 +26,7 @@ export const adminRoutes = [
         component: () => import('@/pages/Admin/EditProduct.vue')
       },
       ...manufacturersAdminRoutes,
-      {
-        path: 'specifications',
-        name: 'AdminSpecifications',
-        component: () => import('@/pages/Admin/SpecificationsManagement.vue')
-      },
-      {
-        path: 'specifications/edit/:categoryId/:id',
-        name: 'EditSpecification',
-        component: () => import('@/pages/Admin/EditSpecification.vue')
-      },
+      ...specificationsRoutes,
       {
         path: 'shops',
         name: 'AdminShops',

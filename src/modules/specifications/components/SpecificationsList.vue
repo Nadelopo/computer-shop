@@ -24,9 +24,7 @@ const currentCategoryId = ref<number | null>(
 )
 const categories = ref<Category[]>([])
 const categorySpecifications = computed(() => {
-  return specifications.value.filter(
-    (e) => e.categoryId === currentCategoryId.value
-  )
+  return specifications.value.filter((e) => e.categoryId === currentCategoryId.value)
 })
 
 const loadingGetCategories = ref<Loading>('loading')
@@ -51,10 +49,7 @@ const remove = async (id: number) => {
   currentRemoveSpecificationId.value = id
   loadingRemoveData.value = 'loading'
 
-  const { error } = await supabase
-    .from('category_specifications')
-    .delete()
-    .eq('id', id)
+  const { error } = await supabase.from('category_specifications').delete().eq('id', id)
   if (error) {
     loadingRemoveData.value = 'error'
     return
@@ -138,13 +133,9 @@ watch(
               <th>Отображение на карточке товара</th>
               <th>Единицы измерения</th>
               <th>Минимальное значение<span class="text-sm"> (число)</span></th>
-              <th>
-                Максимальное значение<span class="text-sm"> (число)</span>
-              </th>
+              <th>Максимальное значение<span class="text-sm"> (число)</span></th>
               <th>Шаг изменения<span class="text-sm"> (число)</span></th>
-              <th>
-                Условие лучшего значения<span class="text-sm"> (число) </span>
-              </th>
+              <th>Условие лучшего значения<span class="text-sm"> (число) </span></th>
               <th>Варианты значений<span class="text-sm"> (строка)</span></th>
               <th>действия</th>
             </tr>
@@ -187,7 +178,7 @@ watch(
                   <ActionIcon
                     tag="a"
                     :to="{
-                      name: 'EditSpecification',
+                      name: 'SpecificationEdit',
                       params: {
                         categoryId: specification.categoryId,
                         id: specification.id

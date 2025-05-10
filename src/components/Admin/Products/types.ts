@@ -1,5 +1,5 @@
 import type { DbEnum } from '@/db/database.types'
-import type { SpecificationCreate } from '@/types/tables/specifications.types'
+import type { SpecificationCreate } from '@/modules/specifications'
 
 export type SpecificationCreateForm = Omit<
   SpecificationCreate,
