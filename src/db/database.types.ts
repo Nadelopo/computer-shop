@@ -19,7 +19,7 @@ import type {
   ProductRead,
   ProductUpdate
 } from '@/types/tables/products.types'
-import type { ReviewCreate, ReviewRead, ReviewUpdate } from '@/types/tables/reviews.types'
+import type { ReviewCreate, ReviewRead, ReviewUpdate } from '@/modules/reviews'
 import type {
   SpecificationCreate,
   SpecificationRead,

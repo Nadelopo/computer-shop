@@ -2,10 +2,9 @@
 import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/modules/users/model/userStore'
-import ReviewBlock from '@/components/ReviewBlock.vue'
+import { ReviewBlock, type ReviewWithDetails } from '@/modules/reviews'
 import AppLink from '@/components/AppLink.vue'
 import { VLoader } from '@/components/UI'
-import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 import type { Loading } from '@/types'
 
 const { getSessionUser } = useUserStore()

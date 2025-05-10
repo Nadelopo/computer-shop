@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/modules/users/model/userStore'
+import { ReviewBlock, type ReviewWithDetails } from '@/modules/reviews'
 import { formatPhoneNumber } from '@/shared/utils/formatPhone'
-import ReviewBlock from '@/components/ReviewBlock.vue'
 import AppLink from '@/components/AppLink.vue'
 import { VLoader } from '@/components/UI'
-import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 import type { Loading } from '@/types'
 
 defineProps<{

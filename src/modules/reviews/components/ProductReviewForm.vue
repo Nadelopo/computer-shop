@@ -4,13 +4,10 @@ import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
 import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/modules/users'
-import { VButton } from '../UI'
-import RatingStars from '../RatingStars.vue'
+import { VButton } from '@/components/UI'
+import RatingStars from '@/components/RatingStars.vue'
 import type { UpdateProductRating } from '@/pages/Product.vue'
-import type {
-  ReviewRating,
-  ReviewReadWithDetails
-} from '@/types/tables/reviews.types'
+import type { ReviewRating, ReviewReadWithDetails } from '../model/reviews.types'
 
 type ReviewFormCreate = {
   dignities: string
@@ -63,6 +60,7 @@ const createReview = async () => {
         comment: form.value.comment || null,
         rating: form.value.rating
       })
+      .select('*, users(name)')
       .single()
     if (error) return
 

@@ -1,5 +1,6 @@
 export type ReviewRating = 1 | 2 | 3 | 4 | 5
 
+// TODO: улучшить работу с типами по полю evaluation
 export type UsersRated = {
   userId: string
   evaluation: boolean // true - like, false - dislike

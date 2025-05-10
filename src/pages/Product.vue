@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, watch } from 'vue'
 import { supabase } from '@/db/supabase'
-import { useCustomRoute } from '@/shared/composables/customRouter'
-import { useLocalStorage } from '@/shared/composables/localStorage'
-import { getProductQuantity } from '@/shared/utils/getProductQuantity'
+import { ProductReviews } from '@/modules/reviews'
 import Header from '@/components/Product/Header.vue'
 import ProductSpecifications from '@/components/Product/ProductSpecifications.vue'
 import SimilarProducts from '@/components/Product/SimilarProducts.vue'
-import Reviews from '@/components/Product/Reviews.vue'
 import { VLoader } from '@/components/UI'
+import { useCustomRoute } from '@/shared/composables/customRouter'
+import { useLocalStorage } from '@/shared/composables/localStorage'
+import { getProductQuantity } from '@/shared/utils/getProductQuantity'
 import type { ProductWithSpecifications } from '@/types/tables/products.types'
 import type { Loading } from '@/types'
 
@@ -41,8 +41,7 @@ const loadData = async () => {
 
   data.specifications = data.specifications.map((e) => {
     const { title } = e.category_specifications
-    e.category_specifications.title =
-      title.charAt(0).toUpperCase() + title.slice(1)
+    e.category_specifications.title = title.charAt(0).toUpperCase() + title.slice(1)
     return e
   })
 
@@ -103,7 +102,7 @@ onBeforeMount(() => {
         :product-price="product.price"
         :product-id="product.id"
       />
-      <Reviews
+      <ProductReviews
         :product-id="product.id"
         @update-product-rating="updateProductRating"
       />

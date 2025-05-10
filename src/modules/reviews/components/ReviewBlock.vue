@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import RatingStars from './RatingStars.vue'
-import ActionIcon from './ActionIcon.vue'
+import RatingStars from '@/components/RatingStars.vue'
+import ActionIcon from '@/components/ActionIcon.vue'
 import { AvatarSvg, ArrowSvg } from '@/assets/icons'
-import type { ReviewReadWithDetails } from '@/types/tables/reviews.types'
+import type { ReviewReadWithDetails } from '../model/reviews.types'
 
 type Evaluation = 'like' | 'dislike'
 
@@ -11,9 +11,7 @@ type Props = {
   review: ReviewReadWithDetails
   color?: string
   static?: boolean
-  getUserEvaluation?: (
-    review: ReviewReadWithDetails['usersRated']
-  ) => Evaluation | null
+  getUserEvaluation?: (review: ReviewReadWithDetails['usersRated']) => Evaluation | null
 }
 
 const props = withDefaults(defineProps<Props>(), {

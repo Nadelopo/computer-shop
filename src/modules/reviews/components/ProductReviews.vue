@@ -6,15 +6,15 @@ import { useToast } from 'vue-toastification'
 import { useMediaQuery } from '@vueuse/core'
 import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/modules/users'
-import { useCustomRouter } from '@/shared/composables/customRouter'
-import ReviewBlock from '@/components/ReviewBlock.vue'
-import FormCreateReview from './FormCreateReview.vue'
+import {
+  ReviewBlock,
+  type ReviewReadWithDetails,
+  type UsersRated
+} from '@/modules/reviews'
+import ProductReviewForm from './ProductReviewForm.vue'
 import { VLoader, VPagination } from '@/components/UI'
-import type {
-  ReviewReadWithDetails,
-  UsersRated
-} from '@/types/tables/reviews.types'
 import type { UpdateProductRating } from '@/pages/Product.vue'
+import { useCustomRouter } from '@/shared/composables/customRouter'
 import type { Loading } from '@/types'
 
 const props = defineProps<{
@@ -89,10 +89,7 @@ const evaluationReview = async (
     review.id === e.id ? { ...e, ...newValues } : e
   )
 
-  const { error } = await supabase
-    .from('reviews')
-    .update(newValues)
-    .eq('id', review.id)
+  const { error } = await supabase.from('reviews').update(newValues).eq('id', review.id)
   if (error) {
     toast.error('Не удалось обновить рейтинг')
     reviews.value = reviews.value.map((e) => (review.id === e.id ? review : e))
@@ -169,7 +166,7 @@ const isPageSmall = useMediaQuery('(width < 400px)')
   <div class="wrapper grid">
     <div>Отзывы</div>
     <div>
-      <FormCreateReview
+      <ProductReviewForm
         :product-id="productId"
         @update-product-rating="emit('updateProductRating', $event)"
         @create-review="reviews.unshift($event)"

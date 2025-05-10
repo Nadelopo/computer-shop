@@ -2,8 +2,8 @@
 import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/modules/users'
+import { type ReviewWithDetails } from '@/modules/reviews'
 import AppLink from '@/components/AppLink.vue'
-import type { ReviewWithDetails } from '@/types/tables/reviews.types'
 import type { Loading } from '@/types'
 
 const { getSessionUser } = useUserStore()
