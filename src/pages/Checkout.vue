@@ -14,10 +14,7 @@ import { useLocalStorage } from '@/shared/composables/localStorage'
 import { useGeoSuggest } from '@/shared/utils/useGeoSuggest'
 import MethodObtain from '@/components/Checkout/MethodObtain.vue'
 import FormField from '@/components/FormField.vue'
-import {
-  type OrderData,
-  useFeatureForm
-} from '@/components/Checkout/useFeatureForm'
+import { type OrderData, useFeatureForm } from '@/components/Checkout/useFeatureForm'
 import { useFeaturePrice } from '@/components/Checkout/useFeaturePrice'
 import { useFeatureInitialUserDataInstallation } from '@/components/Checkout/useFeatureInitialUserDataInstallation'
 import type { Loading } from '@/types'
@@ -26,10 +23,7 @@ import type { OrderedProductCreate } from '@/types/tables/orderedProducts.types'
 import type { ProductQuantityInStoreCreate } from '@/types/tables/ProductQuantityInStores'
 
 const { values, handleSubmit, setFieldValue, setValues } = useFeatureForm()
-const { loadingUserData } = useFeatureInitialUserDataInstallation(
-  setValues,
-  values
-)
+const { loadingUserData } = useFeatureInitialUserDataInstallation(setValues, values)
 const { price, loadingPrice, products } = useFeaturePrice()
 
 const { countCartItems, cartItems } = storeToRefs(useCartStore())
@@ -129,17 +123,17 @@ const setProducts = async (
       quantity: p.quantity,
       shopId: p.shopId
     }))
-    error = (
-      await supabase.from('product_quantity_in_stores').insert(insertedProducts)
-    ).error
+    error = (await supabase.from('product_quantity_in_stores').insert(insertedProducts))
+      .error
   }
 
   console.error(error)
 }
 
-// FIX переделать 2 запроса product_quantity_in_stores на один
 const updateProductQuantityForSelfCall = async () => {
   if (!shopId.value) return
+  let productsInStore: ProductQuantityInStoreCreate[] = []
+
   const { data, error } = await supabase
     .from('product_quantity_in_stores')
     .select()
@@ -149,10 +143,11 @@ const updateProductQuantityForSelfCall = async () => {
       cartItems.value.map((e) => e.productId)
     )
   if (error) return
+  productsInStore = data
 
-  if (data.length !== cartItems.value.length) {
+  if (productsInStore.length !== cartItems.value.length) {
     const productNotInShop = cartItems.value.filter(
-      (e) => !data.find((p) => p.productId === e.productId)
+      (e) => !productsInStore.find((p) => p.productId === e.productId)
     )
 
     const { data: productsInShop } = await supabase
@@ -192,21 +187,22 @@ const updateProductQuantityForSelfCall = async () => {
       return acc
     }, [])
 
-    const productForRemove = productNotInShop.reduce<
-      ProductQuantityInStoreCreate[]
-    >((acc, p) => {
-      const productInStores = productsInShop.find(
-        (e) => e.productId === p.productId && e.quantity >= p.count
-      )
+    const productForRemove = productNotInShop.reduce<ProductQuantityInStoreCreate[]>(
+      (acc, p) => {
+        const productInStores = productsInShop.find(
+          (e) => e.productId === p.productId && e.quantity >= p.count
+        )
 
-      if (productInStores) {
-        acc.push({
-          ...productInStores,
-          quantity: productInStores.quantity - p.count
-        })
-      }
-      return acc
-    }, [])
+        if (productInStores) {
+          acc.push({
+            ...productInStores,
+            quantity: productInStores.quantity - p.count
+          })
+        }
+        return acc
+      },
+      []
+    )
 
     const { error: productRemoveError } = await supabase
       .from('product_quantity_in_stores')
@@ -215,30 +211,32 @@ const updateProductQuantityForSelfCall = async () => {
     if (productRemoveError) return
 
     await setProducts(productsForSet)
+
+    const { data: productsInStoreData } = await supabase
+      .from('product_quantity_in_stores')
+      .select()
+      .eq('shopId', shopId.value)
+      .in(
+        'productId',
+        cartItems.value.map((e) => e.productId)
+      )
+    if (!productsInStoreData) return
+    productsInStore = productsInStoreData
   }
 
-  const { data: productsInStore } = await supabase
-    .from('product_quantity_in_stores')
-    .select()
-    .eq('shopId', shopId.value)
-    .in(
-      'productId',
-      cartItems.value.map((e) => e.productId)
-    )
-  if (!productsInStore) return
-
-  const productsForRemove = cartItems.value.reduce<
-    ProductQuantityInStoreCreate[]
-  >((acc, p) => {
-    const product = productsInStore.find((e) => e.productId === p.productId)
-    if (product) {
-      acc.push({
-        ...product,
-        quantity: product.quantity - p.count
-      })
-    }
-    return acc
-  }, [])
+  const productsForRemove = cartItems.value.reduce<ProductQuantityInStoreCreate[]>(
+    (acc, p) => {
+      const product = productsInStore.find((e) => e.productId === p.productId)
+      if (product) {
+        acc.push({
+          ...product,
+          quantity: product.quantity - p.count
+        })
+      }
+      return acc
+    },
+    []
+  )
 
   const { error: productRemoveError } = await supabase
     .from('product_quantity_in_stores')
@@ -303,13 +301,12 @@ const updateProductQuantity = async () => {
 }
 
 const addOrderedProducts = async (orderId: number) => {
-  const orderedProducts: Omit<OrderedProductCreate, 'orderId'>[] =
-    cartItems.value.map((e) => {
+  const orderedProducts: Omit<OrderedProductCreate, 'orderId'>[] = cartItems.value.map(
+    (e) => {
       const product = products.value.find((p) => p.id === e.productId)
 
       const additionalWarranty =
-        cartItems.value.find((p) => p.productId === e.productId)
-          ?.additionalWarranty ?? 0
+        cartItems.value.find((p) => p.productId === e.productId)?.additionalWarranty ?? 0
 
       return {
         productId: e.productId,
@@ -318,7 +315,8 @@ const addOrderedProducts = async (orderId: number) => {
         additionalWarranty,
         servicePrice: getMarkup(additionalWarranty, product?.price ?? 0)
       }
-    })
+    }
+  )
 
   const { error: errorOrderedProducts } = await supabase
     .from('ordered_products')
@@ -374,11 +372,7 @@ const onSubmit = handleSubmit(async () => {
     price: price.value
   }
 
-  const { data, error } = await supabase
-    .from('orders')
-    .insert(order)
-    .select()
-    .single()
+  const { data, error } = await supabase.from('orders').insert(order).select().single()
 
   if (error) {
     loadingCreateOrder.value = 'error'
