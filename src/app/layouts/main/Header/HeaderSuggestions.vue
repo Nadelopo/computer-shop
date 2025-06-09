@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onUnmounted, ref, watch } from 'vue'
-import { getRouteTo } from './getRouteTo'
-import type { Suggestion } from './MainHeader.vue'
+import { getRouteToProduct } from '../../../../modules/products/utils/getRouteToProduct'
+import type { ProductSuggestion } from '@/modules/products/model/products.types'
 
 const props = defineProps<{
   isSuggestionsOpen: boolean
-  suggestions: Suggestion[]
+  suggestions: ProductSuggestion[]
   mobile?: boolean
 }>()
 
@@ -67,7 +67,7 @@ onUnmounted(() => {
         <router-link
           v-for="(suggestion, i) in suggestions"
           :key="suggestion.title"
-          :to="getRouteTo(suggestion)"
+          :to="getRouteToProduct(suggestion)"
           :class="[
             mobile ? 'suggestion__mobile' : 'suggestion',
             suggestion.type === 'category' && 'font-bold',

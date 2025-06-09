@@ -2,12 +2,12 @@
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCustomRouter } from '@/shared/composables/customRouter'
-import { getRouteTo } from './getRouteTo'
+import { getRouteToProduct } from '../../../../modules/products/utils/getRouteToProduct'
 import { VInputText } from '@/components/UI'
-import type { Suggestion } from './MainHeader.vue'
+import type { ProductSuggestion } from '@/modules/products/model/products.types'
 
 const props = defineProps<{
-  suggestions: Suggestion[]
+  suggestions: ProductSuggestion[]
   mobile?: boolean
 }>()
 
@@ -38,8 +38,7 @@ const navigateToProduct = () => {
   if (search.value.replaceAll(' ', '') === '') return
   if (search.value[0] === '#') {
     const idNotFound =
-      suggestionsValue.find((s) => s.id === Number(search.value.slice(1))) ===
-      undefined
+      suggestionsValue.find((s) => s.id === Number(search.value.slice(1))) === undefined
 
     if (search.value.length === 1 || idNotFound) return
     if (!suggestionsValue[0]?.categories) return
@@ -52,17 +51,15 @@ const navigateToProduct = () => {
       }
     })
   } else {
-    const findedSuggestion = suggestionsValue.find(
-      (s) => s.title === search.value
-    )
+    const findedSuggestion = suggestionsValue.find((s) => s.title === search.value)
     if (findedSuggestion) {
-      router.push(getRouteTo(findedSuggestion))
+      router.push(getRouteToProduct(findedSuggestion))
     } else {
       if (!props.suggestions[0]) return
       const suggestion = props.suggestions[0]
       if (suggestion.type === 'product') {
         customROuter.push({
-          name: 'CategoryProducts',
+          name: 'ProductCatalog',
           params: {
             id: suggestion.categories!.id,
             category: suggestion.categories!.enTitle
@@ -71,7 +68,7 @@ const navigateToProduct = () => {
         })
       } else {
         customROuter.push({
-          name: 'CategoryProducts',
+          name: 'ProductCatalog',
           params: { id: suggestion.id, category: suggestion.enTitle! }
         })
       }

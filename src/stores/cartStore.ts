@@ -2,10 +2,10 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { PostgrestError, User } from '@supabase/supabase-js'
 import { supabase } from '@/db/supabase'
-import { getProductQuantity } from '@/shared/utils/getProductQuantity'
+import { getProductQuantity } from '@/modules/products/utils/getProductQuantity'
 import { useUserStore } from '../modules/users/model/userStore'
 import { useLocalStorage } from '@/shared/composables/localStorage'
-import type { ProductRead } from '@/types/tables/products.types'
+import type { ProductRead } from '@/modules/products/model/products.types'
 import type { DataError } from '@/types'
 
 type QueryProduct = Omit<
@@ -54,22 +54,18 @@ export const useCartStore = defineStore('cart', () => {
   async function addToCart(
     productId: number
   ): Promise<{ error: PostgrestError | null | 'OutOfStock' }> {
-    const [user, { data: product, error: errorGetProduct }] = await Promise.all(
-      [
-        getSessionUser(),
-        supabase
-          .from('products')
-          .select('*, product_quantity_in_stores(quantity)')
-          .eq('id', productId)
-          .single()
-      ]
-    )
+    const [user, { data: product, error: errorGetProduct }] = await Promise.all([
+      getSessionUser(),
+      supabase
+        .from('products')
+        .select('*, product_quantity_in_stores(quantity)')
+        .eq('id', productId)
+        .single()
+    ])
     if (!product) {
       return { error: errorGetProduct }
     }
-    const productQuantity = getProductQuantity(
-      product.product_quantity_in_stores
-    )
+    const productQuantity = getProductQuantity(product.product_quantity_in_stores)
     if (productQuantity < 1) {
       return { error: 'OutOfStock' }
     }
@@ -118,14 +114,10 @@ export const useCartStore = defineStore('cart', () => {
       }
     } else {
       const productsCart = cartItemsStorage.get() ?? []
-      const checkProductInCart = productsCart.find(
-        (e) => e.productId === productId
-      )
+      const checkProductInCart = productsCart.find((e) => e.productId === productId)
       if (checkProductInCart) {
         cartItems.value = productsCart.map((e) =>
-          e.productId === productId
-            ? { ...e, count: checkProductInCart.count + 1 }
-            : e
+          e.productId === productId ? { ...e, count: checkProductInCart.count + 1 } : e
         )
       } else {
         cartItems.value = [
@@ -138,15 +130,10 @@ export const useCartStore = defineStore('cart', () => {
     return { error }
   }
 
-  async function getCartItems(
-    user: User | null
-  ): Promise<DataError<ProductStorage[]>> {
+  async function getCartItems(user: User | null): Promise<DataError<ProductStorage[]>> {
     let dataValue: ProductStorage[] = []
     if (user) {
-      const { data, error } = await supabase
-        .from('cart')
-        .select()
-        .eq('userId', user.id)
+      const { data, error } = await supabase.from('cart').select().eq('userId', user.id)
       if (error) {
         return { data: null, error }
       }
@@ -201,9 +188,7 @@ export const useCartStore = defineStore('cart', () => {
 
     if (errorProduct) return { error: errorProduct }
 
-    const productQuantity = getProductQuantity(
-      product.product_quantity_in_stores
-    )
+    const productQuantity = getProductQuantity(product.product_quantity_in_stores)
 
     let count = itemCount
     if (productQuantity < count) {
@@ -213,10 +198,7 @@ export const useCartStore = defineStore('cart', () => {
     if (user) {
       if (cartItemId) {
         if (count === 0) {
-          const { error } = await supabase
-            .from('cart')
-            .delete()
-            .eq('id', cartItemId)
+          const { error } = await supabase.from('cart').delete().eq('id', cartItemId)
           if (error) return { error }
         } else {
           const { error } = await supabase
@@ -273,9 +255,7 @@ export const useCartStore = defineStore('cart', () => {
     for (const cartProduct of items) {
       const product = products.find((e) => e.id === cartProduct.productId)
       if (!product) continue
-      const productQuantity = getProductQuantity(
-        product.product_quantity_in_stores
-      )
+      const productQuantity = getProductQuantity(product.product_quantity_in_stores)
       if (productQuantity === 0) {
         promises.push(deleteItem(product.id))
         continue
@@ -287,8 +267,7 @@ export const useCartStore = defineStore('cart', () => {
 
     if (promises.length) {
       await Promise.all(promises)
-      const { data: updatedItems, error: errorCartItems } =
-        await getCartItems(user)
+      const { data: updatedItems, error: errorCartItems } = await getCartItems(user)
       if (errorCartItems) {
         return { data: null, error: errorCartItems }
       }

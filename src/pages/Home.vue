@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import HomeCategoriesList from '@/modules/categories/components/HomeCategoriesList.vue'
 import { HomeManufacturers } from '@/modules/manufacturers'
-import PopularProducts from '@/components/Home/PopularProducts.vue'
-import RecentlyProducts from '@/components/Home/RecentlyProducts.vue'
+import PopularProducts from '@/modules/products/components/PopularProducts.vue'
+import RecentlyProducts from '@/modules/products/components/RecentlyProducts.vue'
 </script>
 
 <template>

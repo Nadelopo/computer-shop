@@ -18,7 +18,7 @@ import type {
   ProductCreate,
   ProductRead,
   ProductUpdate
-} from '@/types/tables/products.types'
+} from '@/modules/products/model/products.types'
 import type { ReviewCreate, ReviewRead, ReviewUpdate } from '@/modules/reviews'
 import type {
   SpecificationCreate,

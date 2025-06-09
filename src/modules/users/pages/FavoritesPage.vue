@@ -4,17 +4,16 @@ import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
 import { useFavoritesStore } from '@/modules/users/model/favoritesStore'
 import { useLocalStorage } from '@/shared/composables/localStorage'
-import { getProductQuantity } from '@/shared/utils/getProductQuantity'
+import { getProductQuantity } from '@/modules/products/utils/getProductQuantity'
 import { VButton } from '@/components/UI'
-import ProductCard from '@/components/ProductCard'
-import ProductCardSkeleton from '@/components/ProductCard/ProductCardSkeleton.vue'
+import ProductCard from '@/modules/products/components/ProductCard.vue'
+import ProductCardSkeleton from '@/modules/products/components/ProductCardSkeleton.vue'
 import { TrashSvg } from '@/assets/icons'
-import type { ProductCardData } from '@/components/ProductCard/types'
+import type { ProductCardData } from '@/modules/products/model/products.types'
 import type { Loading } from '@/types'
 
 const { favorites } = storeToRefs(useFavoritesStore())
-const { setFavoritesValue, removeFavorite, clearFavorites } =
-  useFavoritesStore()
+const { setFavoritesValue, removeFavorite, clearFavorites } = useFavoritesStore()
 
 const favourites = ref<ProductCardData[]>([])
 const loading = ref<Loading>('success')
@@ -78,9 +77,7 @@ const deleteItem = async (id: number) => {
           <TrashSvg />
           очистить список
         </VButton>
-        <div v-else-if="loading === 'empty'">
-          В списке желаемых покупок нет товаров
-        </div>
+        <div v-else-if="loading === 'empty'">В списке желаемых покупок нет товаров</div>
       </div>
       <div class="cards">
         <template v-if="loading === 'success'">

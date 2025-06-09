@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { VCarousel, VCarouselSlide } from '@/components/UI'
-import ProductCard from '@/components/ProductCard'
-import ProductCardSkeleton from '@/components/ProductCard/ProductCardSkeleton.vue'
+import ProductCard from '@/modules/products/components/ProductCard.vue'
+import ProductCardSkeleton from '@/modules/products/components/ProductCardSkeleton.vue'
 import type { CarouselBreakpoints } from '@/components/UI/VCarousel/useFeatureBreakpoints'
 import type { Loading } from '@/types'
-import type { ProductCardData } from '@/components/ProductCard/types'
+import type { ProductCardData } from '@/modules/products/model/products.types'
 
 defineProps<{
   products: ProductCardData[]
@@ -19,9 +19,7 @@ const carouselBreakpoints: CarouselBreakpoints = {
 </script>
 
 <template>
-  <div
-    v-if="loading === 'loading' || (loading === 'success' && products.length)"
-  >
+  <div v-if="loading === 'loading' || (loading === 'success' && products.length)">
     <div
       v-if="loading === 'success'"
       class="text-3xl font-medium mb-6 text-center sm:text-start"

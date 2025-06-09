@@ -16,7 +16,7 @@ const { categories } = storeToRefs(useCategoriesStore())
         <AppLink
           class="link__wrap"
           :to="{
-            name: 'CategoryProducts',
+            name: 'ProductCatalog',
             params: { category: category.enTitle, id: category.id }
           }"
         >

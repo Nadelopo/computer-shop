@@ -2,6 +2,7 @@ import { userRoutes } from '@/modules/users'
 import { manufacturersRoutes } from '@/modules/manufacturers'
 import Home from '@/pages/Home.vue'
 import type { AppRouteRecord } from './index'
+import { productRoutes } from '@/modules/products/router'
 
 export const mainRoutes = [
   {
@@ -9,11 +10,7 @@ export const mainRoutes = [
     name: 'Home',
     component: Home
   },
-  {
-    path: '/products/:category/:id',
-    name: 'CategoryProducts',
-    component: () => import('@/pages/CategoryProducts.vue')
-  },
+
   {
     path: '/cart',
     name: 'Cart',
@@ -24,11 +21,7 @@ export const mainRoutes = [
     name: 'Checkout',
     component: () => import('@/pages/Checkout.vue')
   },
-  {
-    path: '/products/:category/:categoryId/:productId',
-    name: 'Product',
-    component: () => import('@/pages/Product.vue')
-  },
+  ...productRoutes,
   ...manufacturersRoutes,
   ...userRoutes
 ] as const satisfies readonly AppRouteRecord[]

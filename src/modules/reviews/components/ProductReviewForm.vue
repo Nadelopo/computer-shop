@@ -6,7 +6,7 @@ import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/modules/users'
 import { VButton } from '@/components/UI'
 import RatingStars from '@/components/RatingStars.vue'
-import type { UpdateProductRating } from '@/pages/Product.vue'
+import type { UpdateProductRating } from '@/modules/products/pages/Product.vue'
 import type { ReviewRating, ReviewReadWithDetails } from '../model/reviews.types'
 
 type ReviewFormCreate = {

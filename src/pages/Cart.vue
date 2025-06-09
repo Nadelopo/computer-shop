@@ -7,7 +7,7 @@ import { useLocalStorage } from '@/shared/composables/localStorage'
 import { VLoader, VButton, VModal } from '@/components/UI'
 import { getWordByQuantity } from '@/components/Cart/useChooseWord'
 import ProductsWithChangedPrice from '@/components/Cart/ProductsWithChangedPrice.vue'
-import ProductBlock from '@/components/Cart/ProductBlock.vue'
+import CartItemCard from '@/components/Cart/CartItemCard.vue'
 import AppLink from '@/components/AppLink.vue'
 import type { ProductCart } from '@/stores/cartStore'
 import type { Loading } from '@/types'
@@ -77,7 +77,7 @@ onUnmounted(() => {
       class="cart"
     >
       <div>
-        <ProductBlock
+        <CartItemCard
           v-for="product in cartItemsWithDetails"
           :key="product.id"
           v-model="product.additionalWarranty"

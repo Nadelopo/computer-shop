@@ -25,15 +25,7 @@ import {
   ComparisonSvg,
   SearchSvg
 } from '@/assets/icons'
-import type { CategoryRead } from '@/modules/categories/model/categories.types'
-
-export type Suggestion = {
-  id: number
-  title: string
-  type: 'category' | 'product'
-  enTitle?: string
-  categories?: Pick<CategoryRead, 'id' | 'enTitle'>
-}
+import type { ProductSuggestion } from '@/modules/products/model/products.types'
 
 const { user } = storeToRefs(useUserStore())
 const { countCartItems } = storeToRefs(useCartStore())
@@ -41,12 +33,10 @@ const { comparison } = storeToRefs(useComparisonStore())
 const { favorites } = storeToRefs(useFavoritesStore())
 
 const inputRef = ref<{ ref: { ref: HTMLInputElement } }>()
-const isSuggestionsOpen = onClickOutsideClose(
-  toRef(() => inputRef.value?.ref.ref)
-)
+const isSuggestionsOpen = onClickOutsideClose(toRef(() => inputRef.value?.ref.ref))
 
 const search = ref('')
-const suggestions = ref<Suggestion[]>([])
+const suggestions = ref<ProductSuggestion[]>([])
 const debouncedSearch = debounce(async () => {
   const searchValue = search.value
   if (!searchValue || searchValue === '#') return
@@ -54,11 +44,7 @@ const debouncedSearch = debounce(async () => {
   const or = getOrFilterForSearch(searchValue, 'title')
   const [{ data: categoriesData }, { data: productsData }] = await Promise.all([
     supabase.from('categories').select('id, title, enTitle').limit(2).or(or),
-    supabase
-      .from('products')
-      .select('id, title, categories(id, enTitle)')
-      .limit(6)
-      .or(or)
+    supabase.from('products').select('id, title, categories(id, enTitle)').limit(6).or(or)
   ])
 
   if (!categoriesData || !productsData) return
@@ -118,9 +104,7 @@ const setSearch = (title: string) => {
           :suggestions
           class="hidden lg:block"
           @click="isSuggestionsOpen = true"
-          @navigate-to-product="
-            ;(isSuggestionsOpen = false), (suggestions = [])
-          "
+          @navigate-to-product=";(isSuggestionsOpen = false), (suggestions = [])"
           @keydown="onKeyDown"
           @clear="suggestions = []"
         />

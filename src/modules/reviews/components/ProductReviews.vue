@@ -13,7 +13,7 @@ import {
 } from '@/modules/reviews'
 import ProductReviewForm from './ProductReviewForm.vue'
 import { VLoader, VPagination } from '@/components/UI'
-import type { UpdateProductRating } from '@/pages/Product.vue'
+import type { UpdateProductRating } from '@/modules/products/pages/Product.vue'
 import { useCustomRouter } from '@/shared/composables/customRouter'
 import type { Loading } from '@/types'
 

@@ -3,13 +3,13 @@ import { computed, onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
 import { useManufacturersStore, BestProductsList } from '@/modules/manufacturers'
-import { getProductQuantity } from '@/shared/utils/getProductQuantity'
+import { getProductQuantity } from '@/modules/products/utils/getProductQuantity'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import ManufacturerCategoriesList from '@/modules/categories/components/ManufacturerCategoriesList.vue'
 import { VLoader } from '@/components/UI'
 import type { View } from '@/db/database.types'
 import type { Loading } from '@/types'
-import type { ProductCardData } from '@/components/ProductCard/types'
+import type { ProductCardData } from '@/modules/products/model/products.types'
 
 const { manufacturers } = storeToRefs(useManufacturersStore())
 const route = useCustomRoute('Manufacturer')

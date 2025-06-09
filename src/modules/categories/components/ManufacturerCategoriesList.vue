@@ -27,7 +27,7 @@ const categoriesFormat = computed(() => {
         v-for="category in categoriesFormat"
         :key="category.id"
         :to="{
-          name: 'CategoryProducts',
+          name: 'ProductCatalog',
           params: { category: category.enTitle, id: category.id },
           query: { manufacturer: category.manufacturerId }
         }"

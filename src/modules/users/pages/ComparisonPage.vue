@@ -7,7 +7,7 @@ import { useComparisonStore } from '../model/comparisonStore'
 import ActionsWithComparison from '../components/ActionsWithComparison.vue'
 import ComparisonList from '../components/ComparisonList.vue'
 import { useLocalStorage } from '@/shared/composables/localStorage'
-import { getProductQuantity } from '@/shared/utils/getProductQuantity'
+import { getProductQuantity } from '@/modules/products/utils/getProductQuantity'
 import { VTabs, VLoader } from '@/components/UI'
 import type {
   Category,
@@ -89,14 +89,13 @@ const loadData = async () => {
     router.replace({ query: { category_id: currentCategoryId.value } })
   }
 
-  const { data: categoriesSpecifications, error: errorSpecifications } =
-    await supabase
-      .from('category_specifications')
-      .select('condition, title, units, id, categories(id, enTitle)')
-      .in(
-        'categoryId',
-        categories.value.map((c) => c.id)
-      )
+  const { data: categoriesSpecifications, error: errorSpecifications } = await supabase
+    .from('category_specifications')
+    .select('condition, title, units, id, categories(id, enTitle)')
+    .in(
+      'categoryId',
+      categories.value.map((c) => c.id)
+    )
   if (errorSpecifications) {
     loading.value = 'error'
     return

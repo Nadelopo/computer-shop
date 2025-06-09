@@ -2,6 +2,7 @@ import { categoriesRoutes } from '@/modules/categories'
 import type { AppRouteRecord } from './index'
 import { manufacturersAdminRoutes } from '@/modules/manufacturers'
 import { specificationsRoutes } from '@/modules/specifications'
+import { productAdminRoutes } from '@/modules/products/router'
 
 export const adminRoutes = [
   {
@@ -15,16 +16,7 @@ export const adminRoutes = [
         component: () => import('@/pages/Admin/Main.vue')
       },
       ...categoriesRoutes,
-      {
-        path: 'products/:category/:id',
-        name: 'AdminProducts',
-        component: () => import('@/pages/Admin/ProductsManagement.vue')
-      },
-      {
-        path: 'products/edit/:category/:categoryId/:id',
-        name: 'EditProducts',
-        component: () => import('@/pages/Admin/EditProduct.vue')
-      },
+      ...productAdminRoutes,
       ...manufacturersAdminRoutes,
       ...specificationsRoutes,
       {
