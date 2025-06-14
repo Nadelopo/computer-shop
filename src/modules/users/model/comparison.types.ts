@@ -1,5 +1,5 @@
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
-import type { ProductWithSpecifications } from '@/modules/products/model/products.types'
+import type { ProductWithSpecifications } from '@/modules/products'
 import type { SpecificationRead } from '@/modules/specifications'
 
 export type CategorySpecifications = {

@@ -5,13 +5,13 @@ import { useUserStore, Role } from '@/modules/users'
 import { adminRoutes } from './admin'
 import { mainRoutes } from './main'
 import MainLayout from '@/app/layouts/main/MainLayout.vue'
-import AuthPage from '@/modules/auth/pages/AuthPage.vue'
+import AuthPage from '@/pages/AuthPage.vue'
 
 export type AppRouteRecord = Omit<RouteRecordRaw, 'name' | 'children'> & {
   name?: string
   children?: readonly AppRouteRecord[]
 }
-
+// TODO сделать более правильный нейминг для роутов
 export const routes = [
   ...adminRoutes,
   {

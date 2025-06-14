@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onUnmounted, ref, watch } from 'vue'
-import { getRouteToProduct } from '../../../../modules/products/utils/getRouteToProduct'
-import type { ProductSuggestion } from '@/modules/products/model/products.types'
+import { getRouteToProduct, type ProductSuggestion } from '@/modules/products'
 
 const props = defineProps<{
   isSuggestionsOpen: boolean

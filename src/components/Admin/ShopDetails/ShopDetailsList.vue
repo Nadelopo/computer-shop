@@ -8,7 +8,7 @@ import { VButton, VConfirm, VInputText, VLoader, VTable } from '@/components/UI'
 import { EditSvg, TrashSvg } from '@/assets/icons'
 import ActionIcon from '@/components/ActionIcon.vue'
 import type { Loading } from '@/types'
-import type { ProductRead } from '@/modules/products/model/products.types'
+import type { ProductRead } from '@/modules/products'
 import type { ProductQuantityInStoreRead } from '@/types/tables/ProductQuantityInStores'
 
 export type ProductDetails = ProductQuantityInStoreRead & {

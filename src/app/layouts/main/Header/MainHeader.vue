@@ -25,7 +25,7 @@ import {
   ComparisonSvg,
   SearchSvg
 } from '@/assets/icons'
-import type { ProductSuggestion } from '@/modules/products/model/products.types'
+import type { ProductSuggestion } from '@/modules/products'
 
 const { user } = storeToRefs(useUserStore())
 const { countCartItems } = storeToRefs(useCartStore())

@@ -14,11 +14,7 @@ import type {
   ManufacturerRead,
   ManufacturerUpdate
 } from '@/modules/manufacturers'
-import type {
-  ProductCreate,
-  ProductRead,
-  ProductUpdate
-} from '@/modules/products/model/products.types'
+import type { ProductCreate, ProductRead, ProductUpdate } from '@/modules/products'
 import type { ReviewCreate, ReviewRead, ReviewUpdate } from '@/modules/reviews'
 import type {
   SpecificationCreate,

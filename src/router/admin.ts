@@ -1,8 +1,4 @@
-import { categoriesRoutes } from '@/modules/categories'
 import type { AppRouteRecord } from './index'
-import { manufacturersAdminRoutes } from '@/modules/manufacturers'
-import { specificationsRoutes } from '@/modules/specifications'
-import { productAdminRoutes } from '@/modules/products/router'
 
 export const adminRoutes = [
   {
@@ -15,10 +11,48 @@ export const adminRoutes = [
         name: 'AdminMain',
         component: () => import('@/pages/Admin/Main.vue')
       },
-      ...categoriesRoutes,
-      ...productAdminRoutes,
-      ...manufacturersAdminRoutes,
-      ...specificationsRoutes,
+      {
+        path: 'categories',
+        name: 'AdminCategories',
+        component: () => import('@/pages/Admin/CategoryManagement/CategoryManagement.vue')
+      },
+      {
+        path: 'categories/edit/:category/:id',
+        name: 'CategoryEdit',
+        component: () => import('@/pages/Admin/CategoryEdit.vue')
+      },
+      {
+        path: 'manufacturers',
+        name: 'AdminManufacturers',
+        component: () =>
+          import('@/pages/Admin/ManufacturersManagement/ManufacturersManagement.vue')
+      },
+      {
+        path: 'manufacturers/edit/:id',
+        name: 'EditManufacturer',
+        component: () => import('@/pages/Admin/ManufacturerEdit.vue')
+      },
+      {
+        path: 'products/:category/:id',
+        name: 'AdminProducts',
+        component: () => import('@/pages/Admin/ProductsManagement/ProductsManagement.vue')
+      },
+      {
+        path: 'products/edit/:category/:categoryId/:id',
+        name: 'EditProducts',
+        component: () => import('@/pages/Admin/ProductEdit.vue')
+      },
+      {
+        path: 'specifications',
+        name: 'AdminSpecifications',
+        component: () =>
+          import('@/pages/Admin/SpecificationsManagement/SpecificationsManagement.vue')
+      },
+      {
+        path: 'specifications/edit/:categoryId/:id',
+        name: 'SpecificationEdit',
+        component: () => import('@/pages/Admin/SpecificationEdit.vue')
+      },
       {
         path: 'shops',
         name: 'AdminShops',

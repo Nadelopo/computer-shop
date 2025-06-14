@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ProductCard from './ProductCard.vue'
-import type { ProductCardData } from '@/modules/products/model/products.types'
+import type { ProductCardData } from '@/modules/products'
 import { VCarousel, VCarouselSlide } from '@/components/UI'
 import ProductCardSkeleton from './ProductCardSkeleton.vue'
 import type { CarouselBreakpoints } from '@/components/UI/VCarousel/useFeatureBreakpoints'

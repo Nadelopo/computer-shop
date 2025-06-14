@@ -2,10 +2,9 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { PostgrestError, User } from '@supabase/supabase-js'
 import { supabase } from '@/db/supabase'
-import { getProductQuantity } from '@/modules/products/utils/getProductQuantity'
+import { getProductQuantity, type ProductRead } from '@/modules/products'
 import { useUserStore } from '../modules/users/model/userStore'
 import { useLocalStorage } from '@/shared/composables/localStorage'
-import type { ProductRead } from '@/modules/products/model/products.types'
 import type { DataError } from '@/types'
 
 type QueryProduct = Omit<

@@ -2,9 +2,8 @@
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCustomRouter } from '@/shared/composables/customRouter'
-import { getRouteToProduct } from '../../../../modules/products/utils/getRouteToProduct'
+import { getRouteToProduct, type ProductSuggestion } from '@/modules/products'
 import { VInputText } from '@/components/UI'
-import type { ProductSuggestion } from '@/modules/products/model/products.types'
 
 const props = defineProps<{
   suggestions: ProductSuggestion[]
