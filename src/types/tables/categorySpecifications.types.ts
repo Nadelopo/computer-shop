@@ -32,3 +32,10 @@ export type CategorySpecificationRead = Required<CategorySpecificationCreate>
 export type CategorySpecificationUpdate = Partial<{
   [K in keyof CategorySpecificationCreate]: CategorySpecificationCreate[K]
 }>
+
+export type CategorySpecificationForm = Omit<
+  CategorySpecificationCreate,
+  'categoryId'
+> & {
+  categoryId: number | null
+}

@@ -7,10 +7,10 @@ import SpecificationsList from './components/SpecificationsList.vue'
 import type { SpecificationCreate } from '@/modules/specifications/model/specifications.types'
 import type {
   CategorySpecificationCreate,
-  CategorySpecificationRead
+  CategorySpecificationRead,
+  CategorySpecificationForm
 } from '@/types/tables/categorySpecifications.types'
 import type { Loading } from '@/types'
-import type { CategorySpecificationForm } from '@/components/Admin/Specifications/types'
 
 const { createCategorySpecifications } = useCategoriesStore()
 

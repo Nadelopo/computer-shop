@@ -9,10 +9,10 @@ import { useCustomRoute, useCustomRouter } from '@/shared/composables/customRout
 import { VButton, VLoader } from '@/components/UI'
 import type {
   CategorySpecificationCreate,
-  CategorySpecificationRead
+  CategorySpecificationRead,
+  CategorySpecificationForm
 } from '@/types/tables/categorySpecifications.types'
 import type { Loading } from '@/types'
-import type { CategorySpecificationForm } from '@/components/Admin/Specifications/types'
 
 const { categories } = storeToRefs(useCategoriesStore())
 const form = ref<CategorySpecificationCreate>()

@@ -56,17 +56,17 @@ export const adminRoutes = [
       {
         path: 'shops',
         name: 'AdminShops',
-        component: () => import('@/pages/Admin/ShopManagement.vue')
+        component: () => import('@/pages/Admin/ShopManagement/ShopManagement.vue')
       },
       {
         path: 'shops/edit/:id',
         name: 'EditShop',
-        component: () => import('@/pages/Admin/EditShop.vue')
+        component: () => import('@/pages/Admin/ShopEdit.vue')
       },
       {
         path: 'shop/:id',
         name: 'AdminShopDetails',
-        component: () => import('@/pages/Admin/ShopDetails.vue')
+        component: () => import('@/pages/Admin/ShopDetails/ShopDetails.vue')
       },
       {
         path: 'orders',

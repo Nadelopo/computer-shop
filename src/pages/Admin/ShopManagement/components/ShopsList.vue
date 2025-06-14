@@ -8,7 +8,7 @@ import { formatTime } from '@/shared/utils/formatTime'
 import ActionIcon from '@/components/ActionIcon.vue'
 import { DetailsSvg, EditSvg, TrashSvg } from '@/assets/icons'
 import type { Loading } from '@/types'
-import type { ShopRead } from '@/types/tables/shops.types'
+import type { ShopRead } from '@/modules/shops/model/shops.types'
 
 const shops = defineModel<ShopRead[]>({ required: true })
 const loadingShops = ref<Loading>('loading')
@@ -101,8 +101,7 @@ const remove = async (id: number) => {
                   :svg="TrashSvg"
                   variant="danger"
                   :loading="
-                    loadingRemove === 'loading' &&
-                    currentRemoveShopId === shop.id
+                    loadingRemove === 'loading' && currentRemoveShopId === shop.id
                   "
                   @click="openModal"
                 />

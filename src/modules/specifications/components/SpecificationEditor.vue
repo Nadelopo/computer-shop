@@ -6,8 +6,10 @@ import { number, string } from 'yup'
 import { useCategoriesStore } from '@/modules/categories'
 import { VButtons, VInputText, VButton, VSelect, VTags } from '@/components/UI'
 import FormField from '@/components/FormField.vue'
-import type { CategorySpecificationForm } from '@/components/Admin/Specifications/types'
-import type { CategorySpecificationCreate } from '@/types/tables/categorySpecifications.types'
+import type {
+  CategorySpecificationCreate,
+  CategorySpecificationForm
+} from '@/types/tables/categorySpecifications.types'
 
 type FormData = Omit<CategorySpecificationForm, 'categoryId' | 'title' | 'enTitle'>
 

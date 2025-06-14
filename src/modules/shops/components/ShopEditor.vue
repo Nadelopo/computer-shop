@@ -4,14 +4,11 @@ import { useForm } from 'vee-validate'
 import { string } from 'yup'
 import { vMaska } from 'maska/vue'
 import { type MaskInputOptions, type MaskaDetail } from 'maska'
-import {
-  useGeoSuggest,
-  type LocationResult
-} from '@/shared/utils/useGeoSuggest'
+import { useGeoSuggest, type LocationResult } from '@/shared/utils/useGeoSuggest'
 import { VInputText, VButton } from '@/components/UI'
 import InputAddress from '@/components/InputAddress.vue'
 import FormField from '@/components/FormField.vue'
-import type { ShopForm } from './types'
+import type { ShopForm } from '@/modules/shops'
 
 type Props = {
   loadingSubmit?: boolean

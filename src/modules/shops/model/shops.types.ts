@@ -10,3 +10,8 @@ export type ShopCreate = {
 export type ShopRead = Required<ShopCreate>
 
 export type ShopUpdate = Partial<ShopCreate>
+
+export type ShopForm = Pick<ShopCreate, 'address'> & {
+  time: string
+  phone: string
+}

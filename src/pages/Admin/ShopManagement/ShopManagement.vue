@@ -2,11 +2,11 @@
 import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
 import { supabase } from '@/db/supabase'
-import ShopsForm from '@/components/Admin/Shops/ShopsForm.vue'
-import ShopsList from '@/components/Admin/Shops/ShopsList.vue'
-import type { ShopForm } from '@/components/Admin/Shops/types'
+import { ShopEditor } from '@/modules/shops'
+import ShopsList from './components/ShopsList.vue'
+import type { ShopForm } from '@/modules/shops'
 import type { Loading } from '@/types'
-import type { ShopRead } from '@/types/tables/shops.types'
+import type { ShopRead } from '@/modules/shops/model/shops.types'
 
 const loadingSubmit = ref<Loading>('success')
 const shops = ref<ShopRead[]>([])
@@ -41,7 +41,7 @@ const onSubmit = async (values: ShopForm, resetForm: () => void) => {
 </script>
 
 <template>
-  <ShopsForm
+  <ShopEditor
     :loading-submit="loadingSubmit === 'loading'"
     @submit="onSubmit"
   />

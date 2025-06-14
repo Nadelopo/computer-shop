@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/db/supabase'
-import {
-  useCustomRoute,
-  useCustomRouter
-} from '@/shared/composables/customRouter'
-import ShopsForm from '@/components/Admin/Shops/ShopsForm.vue'
+import { ShopEditor, type ShopForm } from '@/modules/shops'
 import { VLoader } from '@/components/UI'
-import type { ShopForm } from '@/components/Admin/Shops/types'
+import { useCustomRoute, useCustomRouter } from '@/shared/composables/customRouter'
 import type { Loading } from '@/types'
 
 const route = useCustomRoute('EditShop')
@@ -16,11 +12,7 @@ const form = ref<ShopForm>()
 const loadingGet = ref<Loading>('loading')
 
 onBeforeMount(async () => {
-  const { data, error } = await supabase
-    .from('shops')
-    .select()
-    .eq('id', shopId)
-    .single()
+  const { data, error } = await supabase.from('shops').select().eq('id', shopId).single()
   if (error) {
     loadingGet.value = 'error'
     return
@@ -58,7 +50,7 @@ const save = async (values: ShopForm) => {
 <template>
   <div class="pt-12">
     <div class="container">
-      <ShopsForm
+      <ShopEditor
         v-if="form"
         :form-data="form"
         type="update"

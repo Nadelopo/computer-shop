@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/modules/categories'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 import { VAccordion } from '@/components/UI'
-import AppLink from '../AppLink.vue'
+import AppLink from '@/components/AppLink.vue'
 import { ArrowSvg, HomeSvg } from '@/assets/icons'
 
 const isVisible = ref(false)
