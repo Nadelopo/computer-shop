@@ -4,16 +4,12 @@ import { storeToRefs } from 'pinia'
 import { useMediaQuery } from '@vueuse/core'
 import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/modules/users'
-import {
-  useCartStore,
-  type ProductStorage,
-  type ProductCart
-} from '@/stores/cartStore'
+import { useCartStore, type ProductStorage, type ProductCart } from '@/modules/cart'
 import { formatPrice } from '@/shared/utils/formatPrice'
 import { useLocalStorage } from '@/shared/composables/localStorage'
-import { VButtons, VSelect } from '../UI'
+import { VButtons, VSelect } from '@/components/UI'
 import ItemActions from './ItemActions.vue'
-import AppLink from '../AppLink.vue'
+import AppLink from '@/components/AppLink.vue'
 import type { Loading } from '@/types'
 
 defineProps<{

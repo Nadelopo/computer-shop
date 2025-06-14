@@ -2,7 +2,7 @@ import { ref, watch } from 'vue'
 import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/modules/users'
 import type { Loading } from '@/types'
-import type { OrderData } from './useFeatureForm'
+import type { OrderData } from './useCheckoutForm'
 
 export const useFeatureInitialUserDataInstallation = (
   setValues: (order: OrderData) => void,

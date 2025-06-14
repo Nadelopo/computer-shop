@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useCategoriesStore } from '@/modules/categories/model/categoriesStore'
-import CategoryEditor from '@/modules/categories/components/CategoryEditor.vue'
+import {
+  useCategoriesStore,
+  CategoryEditor,
+  type CategoryCreate
+} from '@/modules/categories'
 import CategoriesList from './components/CategoriesList.vue'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
-import type { CategoryCreate } from '@/modules/categories/model/categories.types'
 import type { Loading } from '@/types'
 
 const { createCategory } = useCategoriesStore()

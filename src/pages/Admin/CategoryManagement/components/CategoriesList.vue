@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
-import { useCategoriesStore } from '@/modules/categories/model/categoriesStore'
+import { useCategoriesStore } from '@/modules/categories'
 import { VTable, VConfirm } from '@/components/UI'
 import { removeFromStorage } from '@/db/queries/storage'
 import ActionIcon from '@/components/ActionIcon.vue'
@@ -82,8 +82,7 @@ const remove = async (id: number, img: string) => {
                 :svg="TrashSvg"
                 variant="danger"
                 :loading="
-                  loadingRemove === 'loading' &&
-                  currentRemoveCategoryId === category.id
+                  loadingRemove === 'loading' && currentRemoveCategoryId === category.id
                 "
                 @click="openModal"
               />

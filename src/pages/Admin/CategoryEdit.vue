@@ -2,14 +2,14 @@
 import { ref, onBeforeMount } from 'vue'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/db/supabase'
-import { useCategoriesStore } from '@/modules/categories/model/categoriesStore'
+import {
+  useCategoriesStore,
+  CategoryEditor,
+  type CategoryCreate,
+  type CategoryUpdate
+} from '@/modules/categories'
 import { useCustomRouter, useCustomRoute } from '@/shared/composables/customRouter'
 import { VButton, VLoader } from '@/components/UI'
-import CategoryEditor from '@/modules/categories/components/CategoryEditor.vue'
-import type {
-  CategoryCreate,
-  CategoryUpdate
-} from '@/modules/categories/model/categories.types'
 import type { Loading } from '@/types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 

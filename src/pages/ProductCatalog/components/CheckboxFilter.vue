@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VAccordion, VCheckbox } from '../../../components/UI'
+import { VAccordion, VCheckbox } from '@/components/UI'
 import { ArrowSvg } from '@/assets/icons'
 
 defineProps<{

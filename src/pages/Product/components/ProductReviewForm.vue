@@ -10,7 +10,7 @@ import type { UpdateProductRating } from '@/pages/Product/Product.vue'
 import type {
   ReviewRating,
   ReviewReadWithDetails
-} from '../../../modules/reviews/model/reviews.types'
+} from '@/modules/reviews/model/reviews.types'
 
 type ReviewFormCreate = {
   dignities: string

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useCartStore, type ProductCart } from '@/stores/cartStore'
+import { useCartStore, type ProductCart } from '@/modules/cart'
 import { TrashSvg } from '@/assets/icons'
-import { VInputText } from '../UI'
+import { VInputText } from '@/components/UI'
 
 type Action = 'increase' | 'reduce' | 'delete'
 
@@ -32,11 +32,7 @@ const action = async (actionType: Action) => {
 const onChange = async (e: Event) => {
   loading.value = true
   const target = e.target as HTMLInputElement
-  await setItemCount(
-    props.product.id,
-    target.valueAsNumber,
-    props.product.cartItemId
-  )
+  await setItemCount(props.product.id, target.valueAsNumber, props.product.cartItemId)
   loading.value = false
 }
 </script>

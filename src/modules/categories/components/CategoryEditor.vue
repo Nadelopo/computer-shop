@@ -5,7 +5,7 @@ import { string } from 'yup'
 import { VInputFile, VButton } from '@/components/UI'
 import FormField from '@/components/FormField.vue'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
-import type { CategoryCreate } from '@/modules/categories/model/categories.types'
+import type { CategoryCreate } from '@/modules/categories'
 
 const props = defineProps<{
   type: 'create' | 'update'

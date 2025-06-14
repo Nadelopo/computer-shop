@@ -5,14 +5,8 @@ import { supabase } from '@/db/supabase'
 import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import { useLocalStorage } from '@/shared/composables/localStorage'
-import { useCategoriesStore } from '@/modules/categories/model/categoriesStore'
-import {
-  VButton,
-  VButtons,
-  VCheckbox,
-  VInputText,
-  VPopup
-} from '@/components/UI'
+import { useCategoriesStore } from '@/modules/categories'
+import { VButton, VButtons, VCheckbox, VInputText, VPopup } from '@/components/UI'
 import type { Loading } from '@/types'
 import type { ProductQuantityInStoreCreate } from '@/types/tables/ProductQuantityInStores'
 
@@ -90,9 +84,7 @@ const search = () => {
 }
 
 const route = useCustomRoute('AdminShopDetails')
-const productsInShop = ref<
-  (ProductQuantityInStoreCreate & { title?: string })[]
->([])
+const productsInShop = ref<(ProductQuantityInStoreCreate & { title?: string })[]>([])
 const setProductsInStore = () => {
   productsInShop.value = selectedProducts.value.map((id) => {
     return {
@@ -122,9 +114,7 @@ const setQuantityProductsInShops = async () => {
   const forCreate: ProductQuantityInStoreCreate[] = []
 
   for (const product of productsInShop.value) {
-    const foundProduct = productsData?.find(
-      (e) => e.productId === product.productId
-    )
+    const foundProduct = productsData?.find((e) => e.productId === product.productId)
     if (foundProduct) {
       forUpdate.push(
         supabase.from('product_quantity_in_stores').update({

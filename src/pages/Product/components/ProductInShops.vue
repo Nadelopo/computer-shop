@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { VModal } from '@/components/UI'
 import { formatTime } from '@/shared/utils/formatTime'
-import ButtonCart from '@/components/ButtonCart.vue'
+import { CartButton } from '@/modules/cart'
 import type { ShopWithProduct } from './ProductHeader.vue'
 
 defineProps<{
@@ -39,7 +39,7 @@ const isOpenModal = ref(false)
           {{ formatTime(shop.shops.timeStart, shop.shops.timeEnd, 'до') }}
         </div>
         <div class="flex justify-between items-center">
-          <ButtonCart
+          <CartButton
             :product-id
             :quantity="shop.quantity"
           />

@@ -2,14 +2,8 @@
 import { computed, type FunctionalComponent, type SVGAttributes } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useFavoritesStore, useComparisonStore } from '@/modules/users'
-import { useCartStore } from '@/stores/cartStore'
-import {
-  HomeSvg,
-  FavouriteSvg,
-  CartSvg,
-  ComparisonSvg,
-  AvatarSvg
-} from '@/assets/icons'
+import { useCartStore } from '@/modules/cart'
+import { HomeSvg, FavouriteSvg, CartSvg, ComparisonSvg, AvatarSvg } from '@/assets/icons'
 import AppLink from '@/components/AppLink.vue'
 import type { RouteName } from '@/router/types'
 

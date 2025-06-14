@@ -3,5 +3,5 @@ export { default as ProductCardSkeleton } from './components/ProductCardSkeleton
 export { default as ProductEditor } from './components/ProductEditor.vue'
 export { default as ProductListCarousel } from './components/ProductListCarousel.vue'
 export * from './model/products.types'
-export { getProductQuantity } from './utils/getProductQuantity'
-export { getRouteToProduct } from './utils/getRouteToProduct'
+export { getProductQuantity } from './model/getProductQuantity'
+export { getRouteToProduct } from './model/getRouteToProduct'

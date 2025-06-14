@@ -2,7 +2,7 @@
 import { computed, ref, type ButtonHTMLAttributes } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCustomRouter } from '@/shared/composables/customRouter'
-import { useCartStore } from '@/stores/cartStore'
+import { useCartStore } from '@/modules/cart'
 import { VButton } from '@/components/UI'
 import { CartInButtonSvg, InCartSvg, AbsentForCartSvg } from '@/assets/icons'
 
@@ -27,9 +27,7 @@ const quantity = ref(props.quantity)
 
 const productStatus = computed((): 'in' | 'outside' | 'absent' => {
   if (quantity.value <= 0) return 'absent'
-  return cartItems.value.find((e) => e.productId === props.productId)
-    ? 'in'
-    : 'outside'
+  return cartItems.value.find((e) => e.productId === props.productId) ? 'in' : 'outside'
 })
 
 const add = async () => {
@@ -67,9 +65,7 @@ const router = useCustomRouter()
     :loading="loading"
     :size="size"
     :variant="productStatus === 'absent' ? 'noactive' : 'primary'"
-    @click.prevent="
-      productStatus === 'in' ? router.push({ name: 'Cart' }) : add()
-    "
+    @click.prevent="productStatus === 'in' ? router.push({ name: 'Cart' }) : add()"
   >
     <component
       :is="icon"

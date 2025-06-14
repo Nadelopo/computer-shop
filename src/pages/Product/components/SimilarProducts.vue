@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { supabase } from '@/db/supabase'
-import type { ProductRead } from '../../../modules/products/model/products.types'
+import type { ProductRead } from '@/modules/products/model/products.types'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import { VCarousel, VCarouselSlide } from '@/components/UI'
 import AppLink from '@/components/AppLink.vue'

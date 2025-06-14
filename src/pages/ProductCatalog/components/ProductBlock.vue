@@ -2,7 +2,7 @@
 import { useMediaQuery } from '@vueuse/core'
 import { formatPrice } from '@/shared/utils/formatPrice'
 import { getSpecificationValue } from '@/modules/specifications'
-import ButtonCart from '@/components/ButtonCart.vue'
+import { CartButton } from '@/modules/cart'
 import RatingStars from '@/components/RatingStars.vue'
 import { IconButtonFavouritesComparison } from '@/modules/users'
 import AppLink from '@/components/AppLink.vue'
@@ -85,7 +85,7 @@ const isSmall = useMediaQuery('(width < 520px)')
           </div>
         </div>
         <div>
-          <ButtonCart
+          <CartButton
             :size="isSmall ? 'small' : 'normal'"
             :product-id="item.id"
             :quantity="item.quantity"

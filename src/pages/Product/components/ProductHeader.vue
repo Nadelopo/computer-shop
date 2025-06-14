@@ -5,7 +5,7 @@ import { useToast } from 'vue-toastification'
 import { useMediaQuery } from '@vueuse/core'
 import { supabase } from '@/db/supabase'
 import ProductInShops from './ProductInShops.vue'
-import ButtonCart from '@/components/ButtonCart.vue'
+import { CartButton } from '@/modules/cart'
 import RatingStars from '@/components/RatingStars.vue'
 import { useManufacturersStore, type ManufacturerRead } from '@/modules/manufacturers'
 import type { ProductWithSpecifications } from '@/modules/products'
@@ -120,7 +120,7 @@ const copyProductCode = (id: number) => {
         />
       </div>
       <div>
-        <ButtonCart
+        <CartButton
           :width="buttonCartWidth"
           :quantity="product.quantity"
           :product-id="product.id"

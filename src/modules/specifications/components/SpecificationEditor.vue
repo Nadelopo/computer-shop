@@ -3,10 +3,10 @@ import { ref, unref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useForm } from 'vee-validate'
 import { number, string } from 'yup'
-import { useCategoriesStore } from '@/modules/categories/model/categoriesStore'
+import { useCategoriesStore } from '@/modules/categories'
 import { VButtons, VInputText, VButton, VSelect, VTags } from '@/components/UI'
 import FormField from '@/components/FormField.vue'
-import type { CategorySpecificationForm } from '../../../components/Admin/Specifications/types'
+import type { CategorySpecificationForm } from '@/components/Admin/Specifications/types'
 import type { CategorySpecificationCreate } from '@/types/tables/categorySpecifications.types'
 
 type FormData = Omit<CategorySpecificationForm, 'categoryId' | 'title' | 'enTitle'>

@@ -5,10 +5,7 @@ import { useComparisonStore } from '@/modules/users'
 import { useCustomRouter } from '@/shared/composables/customRouter'
 import { VButton, VCheckbox } from '@/components/UI'
 import { TrashSvg, ShareSvg } from '@/assets/icons'
-import type {
-  Category,
-  ComparisonProduct
-} from '../../../modules/users/model/comparison.types'
+import type { Category, ComparisonProduct } from '@/modules/users/model/comparison.types'
 import type { Loading } from '@/types'
 
 const { updateComparison } = useComparisonStore()

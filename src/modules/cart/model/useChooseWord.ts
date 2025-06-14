@@ -1,3 +1,4 @@
+// TODO переделать с испольованием PluralRules и сделать нормальный нейминг
 export const getWordByQuantity = (count: number) => {
   if (count < 20) {
     if (count === 1) return 'товар'

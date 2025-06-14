@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { supabase } from './db/supabase'
 import { useUserStore, useComparisonStore, useFavoritesStore } from './modules/users'
-import { useCartStore } from './stores/cartStore'
+import { useCartStore } from './modules/cart'
 import { useCustomRouter } from './shared/composables/customRouter'
 
 const { setUserData } = useUserStore()

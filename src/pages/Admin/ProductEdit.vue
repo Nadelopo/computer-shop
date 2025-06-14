@@ -7,7 +7,7 @@ import { VButton, VLoader } from '@/components/UI'
 import type { Loading } from '@/types'
 import type { SpecificationCreate } from '@/modules/specifications'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
-import type { SpecificationUpdateForm } from '../../modules/products/model/products.types'
+import type { SpecificationUpdateForm } from '@/modules/products/model/products.types'
 // import type { UpdateMany } from '@/db/queries/types'
 
 type SpecificationUpdateMany = SpecificationCreate &

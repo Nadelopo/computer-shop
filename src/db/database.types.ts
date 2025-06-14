@@ -1,9 +1,5 @@
-import type { CartCreate, CartRead, CartUpdate } from '@/types/tables/cart.types'
-import type {
-  CategoryCreate,
-  CategoryRead,
-  CategoryUpdate
-} from '@/modules/categories/model/categories.types'
+import type { CartCreate, CartRead, CartUpdate } from '@/modules/cart'
+import type { CategoryCreate, CategoryRead, CategoryUpdate } from '@/modules/categories'
 import type {
   CategorySpecificationCreate,
   CategorySpecificationRead,

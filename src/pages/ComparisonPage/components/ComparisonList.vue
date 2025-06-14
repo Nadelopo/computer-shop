@@ -4,7 +4,7 @@ import { useElementSize, useMediaQuery, useResizeObserver } from '@vueuse/core'
 import { formatPrice } from '@/shared/utils/formatPrice'
 import { useFeatureFilteredProducts } from '../composables/useFeatureFilteredComparisonProducts'
 import { IconButtonFavouritesComparison } from '@/modules/users'
-import ButtonCart from '@/components/ButtonCart.vue'
+import { CartButton } from '@/modules/cart'
 import ActionIcon from '@/components/ActionIcon.vue'
 import AppLink from '@/components/AppLink.vue'
 import type {
@@ -175,7 +175,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
               </span>
             </div>
             <div class="flex gap-x-2 mt-4">
-              <ButtonCart
+              <CartButton
                 :product-id="product.id"
                 :quantity="product.quantity"
                 :width="isSmall ? 'auto' : undefined"

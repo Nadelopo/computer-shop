@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { supabase } from '@/db/supabase'
 import { formatPrice } from '@/shared/utils/formatPrice'
-import { VButton } from '../UI'
-import type { ProductCart } from '@/stores/cartStore'
+import { VButton } from '@/components/UI'
+import type { ProductCart } from '@/modules/cart'
 
 const props = defineProps<{
   products: ProductCart[]
@@ -32,9 +32,7 @@ const markNotice = () => {
     data-v0-t="card"
   >
     <div class="px-2">
-      <div class="text-3xl font-bold mb-10">
-        Цены следующих товаров была изменена:
-      </div>
+      <div class="text-3xl font-bold mb-10">Цены следующих товаров была изменена:</div>
       <div class="grid gap-8">
         <div
           v-for="product in products"

@@ -11,12 +11,12 @@ export const mainRoutes = [
   {
     path: '/cart',
     name: 'Cart',
-    component: () => import('@/pages/Cart.vue')
+    component: () => import('@/pages/Cart/Cart.vue')
   },
   {
     path: '/checkout',
     name: 'Checkout',
-    component: () => import('@/pages/Checkout.vue')
+    component: () => import('@/pages/Checkout/Checkout.vue')
   },
   {
     path: '/manufacturer/:title/:id',

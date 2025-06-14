@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import type { ProductCardData } from '../model/products.types'
 import { IconButtonFavouritesComparison } from '@/modules/users'
 import RatingStars from '@/components/RatingStars.vue'
-import ButtonCart from '@/components/ButtonCart.vue'
+import { CartButton } from '@/modules/cart'
 import AppLink from '@/components/AppLink.vue'
 import { CrossSvg } from '@/assets/icons'
 import { formatPrice } from '@/shared/utils/formatPrice'
@@ -90,7 +90,7 @@ const titleActive = ref(true)
           {{ formatPrice(item.discount ? item.price : item.priceWithoutDiscount) }}
         </div>
         <div>
-          <ButtonCart
+          <CartButton
             :product-id="item.id"
             :quantity="item.quantity"
           />

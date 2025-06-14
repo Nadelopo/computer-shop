@@ -5,24 +5,27 @@ import { storeToRefs } from 'pinia'
 import type { PostgrestError } from '@supabase/supabase-js'
 import { supabase } from '@/db/supabase'
 import { useUserStore, type UserUpdate } from '@/modules/users'
-import { useCartStore } from '@/stores/cartStore'
-import { getWordByQuantity } from '@/components/Cart/useChooseWord'
+import { useCartStore, getWordByQuantity } from '@/modules/cart'
 import { useCustomRouter } from '@/shared/composables/customRouter'
 import { formatPrice } from '@/shared/utils/formatPrice'
 import { VButton, VButtons, VLoader } from '@/components/UI'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 import { useGeoSuggest } from '@/shared/utils/useGeoSuggest'
-import MethodObtain from '@/components/Checkout/MethodObtain.vue'
+import MethodObtain from './components/MethodObtain.vue'
 import FormField from '@/components/FormField.vue'
-import { type OrderData, useFeatureForm } from '@/components/Checkout/useFeatureForm'
-import { useFeaturePrice } from '@/components/Checkout/useFeaturePrice'
-import { useFeatureInitialUserDataInstallation } from '@/components/Checkout/useFeatureInitialUserDataInstallation'
+import {
+  type OrderData,
+  useCheckoutForm
+} from '@/pages/Checkout/composables/useCheckoutForm'
+import { useFeaturePrice } from '@/pages/Checkout/composables/useFeaturePrice'
+import { useFeatureInitialUserDataInstallation } from '@/pages/Checkout/composables/useFeatureInitialUserDataInstallation'
 import type { Loading } from '@/types'
 import type { OrderCreate } from '@/types/tables/orders.types'
 import type { OrderedProductCreate } from '@/types/tables/orderedProducts.types'
 import type { ProductQuantityInStoreCreate } from '@/types/tables/ProductQuantityInStores'
 
-const { values, handleSubmit, setFieldValue, setValues } = useFeatureForm()
+const { values, handleSubmit, setFieldValue, setValues } = useCheckoutForm()
+// TODO удалить этот бред сумасшедшего(useFeatureInitialUserDataInstallation)
 const { loadingUserData } = useFeatureInitialUserDataInstallation(setValues, values)
 const { price, loadingPrice, products } = useFeaturePrice()
 

@@ -1,5 +1,5 @@
 import { supabase } from '@/db/supabase'
-import { getImgName } from '../../shared/utils/getImgName'
+import { getImgName } from '@/shared/utils/getImgName'
 
 export type Folder = 'categories' | 'manufacturers' | 'products'
 
@@ -12,9 +12,7 @@ export type StorageError = {
 export const insertInStorage = async (
   folder: Folder,
   imageData: File
-): Promise<
-  { url: string; error: null } | { url: null; error: StorageError }
-> => {
+): Promise<{ url: string; error: null } | { url: null; error: StorageError }> => {
   const { error } = await supabase.storage
     .from('storage')
     .upload(`${folder}/${imageData.name}`, imageData, {
@@ -31,9 +29,7 @@ export const insertInStorage = async (
 
   const {
     data: { publicUrl }
-  } = supabase.storage
-    .from('storage')
-    .getPublicUrl(`${folder}/${imageData.name}`)
+  } = supabase.storage.from('storage').getPublicUrl(`${folder}/${imageData.name}`)
 
   return { url: publicUrl, error: null }
 }
@@ -43,8 +39,7 @@ export const removeFromStorage = async (
   imgUrl: string
 ): Promise<
   // eslint-disable-next-line
-  | { data: NonNullable<typeof data>; error: null }
-  | { data: null; error: StorageError }
+  { data: NonNullable<typeof data>; error: null } | { data: null; error: StorageError }
 > => {
   const { data, error } = await supabase.storage
     .from('storage')

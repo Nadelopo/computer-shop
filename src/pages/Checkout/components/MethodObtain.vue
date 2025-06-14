@@ -2,18 +2,15 @@
 import { ref, watch } from 'vue'
 import { useField } from 'vee-validate'
 import { supabase } from '@/db/supabase'
-import { VButton, VModal, VLoader, VButtons } from '../UI'
-import {
-  useGeoSuggest,
-  type LocationResult
-} from '@/shared/utils/useGeoSuggest'
+import { VButton, VModal, VLoader, VButtons } from '@/components/UI'
+import { useGeoSuggest, type LocationResult } from '@/shared/utils/useGeoSuggest'
 import { formatTime } from '@/shared/utils/formatTime'
 import InputAddress from '@/components/InputAddress.vue'
-import FormField from '../FormField.vue'
+import FormField from '@/components/FormField.vue'
 import { CrossSvg, HomeSvg } from '@/assets/icons'
 import type { ShopRead } from '@/types/tables/shops.types'
 import type { Loading } from '@/types'
-import type { ReceiptDetails } from './useFeatureForm'
+import type { ReceiptDetails } from '../composables/useCheckoutForm'
 
 const props = defineProps<{
   obtainType: 'selfcall' | 'delivery'

@@ -4,7 +4,7 @@ import { supabase } from '@/db/supabase'
 import { useUserStore } from '@/modules/users/model/userStore'
 import { formatPrice } from '@/shared/utils/formatPrice'
 import { useOrders } from '@/shared/utils/useOrders'
-import { getWordByQuantity } from '@/components/Cart/useChooseWord'
+import { getWordByQuantity } from '@/modules/cart'
 import { VLoader, VAccordion, VPagination } from '@/components/UI'
 import AppLink from '@/components/AppLink.vue'
 import { ArrowSvg } from '@/assets/icons'
@@ -27,9 +27,7 @@ const loadingOrders = async () => {
 
   const { data, error, count } = await supabase
     .from('orders')
-    .select(
-      '*, ordered_products(*, products(id, title, img, categories(id, enTitle)))'
-    )
+    .select('*, ordered_products(*, products(id, title, img, categories(id, enTitle)))')
     .eq('userId', user.id)
     .range(currentPage.value * limit, currentPage.value * limit + limit - 1)
     .order('created_at', { ascending: false })
@@ -83,9 +81,7 @@ const { getStatus } = useOrders()
               @click="showProducts[i] = !showProducts[i]"
             >
               <div class="font-medium text-2xl">Заказ {{ order.id }}</div>
-              <div>
-                от {{ new Date(order.created_at).toLocaleDateString() }}
-              </div>
+              <div>от {{ new Date(order.created_at).toLocaleDateString() }}</div>
             </div>
             <div>
               {{ getCountPorductsInOrder(i) }}

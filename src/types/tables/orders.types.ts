@@ -1,7 +1,7 @@
 import type { DbEnum } from '@/db/database.types'
-import type { CategoryRead } from '../../modules/categories/model/categories.types'
+import type { CategoryRead } from '@/modules/categories'
 import type { OrderedProductRead } from './orderedProducts.types'
-import type { ProductRead } from '../../modules/products/model/products.types'
+import type { ProductRead } from '@/modules/products'
 
 type OrderDetails<
   U extends string | null,

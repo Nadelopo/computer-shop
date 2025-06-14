@@ -1,5 +1,5 @@
 import type { RouteName } from '@/router/types'
-import type { CategoryRead } from '@/modules/categories/model/categories.types'
+import type { CategoryRead } from '@/modules/categories'
 
 export type RouteToProduct = {
   id: number

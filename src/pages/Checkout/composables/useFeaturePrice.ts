@@ -1,10 +1,11 @@
 import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/db/supabase'
-import { useCartStore } from '@/stores/cartStore'
+import { useCartStore } from '@/modules/cart'
 import { getProductQuantity, type ProductRead } from '@/modules/products'
 import { useCustomRouter } from '@/shared/composables/customRouter'
 import type { Loading } from '@/types'
 
+// TODO сделать нормальный нейминг
 export const useFeaturePrice = () => {
   const store = useCartStore()
   const price = ref(0)

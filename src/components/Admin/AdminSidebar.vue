@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useCategoriesStore } from '@/modules/categories/model/categoriesStore'
+import { useCategoriesStore } from '@/modules/categories'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 import { VAccordion } from '@/components/UI'
 import AppLink from '../AppLink.vue'
