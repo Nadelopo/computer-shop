@@ -90,7 +90,7 @@ const checkAddressValid = async (
   return true
 }
 
-let shopId = ref<number | null>(null)
+const shopId = ref<number | null>(null)
 
 const setProducts = async (
   _products: (ProductQuantityInStoreCreate & {

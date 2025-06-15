@@ -8,6 +8,7 @@ import { CrossSvg, SearchSvg } from '@/shared/assets/icons'
 export interface VInputTextProps<T = string>
   extends /* @vue-ignore */ InputHTMLAttributes {
   modelValue: T | null
+  // eslint-disable-next-line
   modelModifiers?: {}
   type?: 'text' | 'number' | 'tel'
   autofocus?: boolean
@@ -18,8 +19,8 @@ export interface VInputTextProps<T = string>
   showSpinButtons?: boolean
   debounce?: number
   error?: boolean
-  onSearch?: any
-  onClear?: any
+  onSearch?: unknown
+  onClear?: unknown
   textPlacement?: 'start' | 'center' | 'end'
 }
 

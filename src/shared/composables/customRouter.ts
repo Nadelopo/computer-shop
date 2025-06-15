@@ -39,9 +39,6 @@ export type CustomRoute<T extends RouteName> = Omit<
   params: RouteModified<T>
 }
 
-export const useCustomRoute = <T extends RouteName>(
-  // eslint-disable-next-line
-  _: T
-): CustomRoute<T> => {
+export const useCustomRoute = <T extends RouteName>(_: T): CustomRoute<T> => {
   return useRoute() as CustomRoute<T>
 }

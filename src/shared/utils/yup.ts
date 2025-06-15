@@ -23,7 +23,6 @@ setLocale({
   }
 })
 
-// eslint-disable-next-line
 addMethod(string, 'phone', function () {
   return this.test('phone', 'Поле должно содержать 11 цифр', (value) => {
     if (value?.length !== 17) return false
@@ -31,7 +30,6 @@ addMethod(string, 'phone', function () {
   })
 })
 
-// eslint-disable-next-line
 addMethod(string, 'onlyLetters', function () {
   return this.matches(/^[a-zA-Zа-яА-Я]+$/, 'Разрешены только буквы')
 })

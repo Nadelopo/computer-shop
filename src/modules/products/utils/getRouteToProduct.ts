@@ -11,7 +11,7 @@ export type RouteToProduct = {
 export const getRouteToProduct = (suggestion: RouteToProduct) => {
   let to: {
     name: RouteName
-    params: Record<string, any>
+    params: Record<string, string | number | undefined>
   }
   if (suggestion.type === 'category') {
     to = {
