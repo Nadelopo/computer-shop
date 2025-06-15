@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T extends 'text' | 'number' | 'tel' = 'text'">
 import { computed, useSlots } from 'vue'
 import { useField } from 'vee-validate'
-import { VInputText } from '@/components/UI'
+import { VInputText } from '@/shared/components/UI'
 import type { VInputTextProps } from './UI/VInputText.vue'
 
 type Props = Omit<

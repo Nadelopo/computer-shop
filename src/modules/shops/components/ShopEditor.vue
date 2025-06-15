@@ -5,9 +5,9 @@ import { string } from 'yup'
 import { vMaska } from 'maska/vue'
 import { type MaskInputOptions, type MaskaDetail } from 'maska'
 import { useGeoSuggest, type LocationResult } from '@/shared/utils/useGeoSuggest'
-import { VInputText, VButton } from '@/components/UI'
-import InputAddress from '@/components/InputAddress.vue'
-import FormField from '@/components/FormField.vue'
+import { VInputText, VButton } from '@/shared/components/UI'
+import FormField from '@/shared/components/FormField.vue'
+import InputAddress from '@/shared/components/InputAddress.vue'
 import type { ShopForm } from '@/modules/shops'
 
 type Props = {

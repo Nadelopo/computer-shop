@@ -8,8 +8,8 @@ import {
   useFeatureStringStaticFilter
 } from '@/pages/ProductCatalog/components/useFeatureStaticFilter'
 import type { ProductWithSpecifications } from '@/modules/products'
-import type { Loading } from '@/types'
-import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
+import type { Loading } from '@/shared/types'
+import type { CategorySpecificationRead } from '@/modules/categorySpecifications'
 import type { CustomRouter } from '@/shared/composables/customRouter'
 
 type SpecificationsValues = Pick<

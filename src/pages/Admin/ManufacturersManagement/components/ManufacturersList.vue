@@ -4,10 +4,9 @@ import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
 import { supabase, removeFromStorage } from '@/shared/api'
 import { useManufacturersStore } from '@/modules/manufacturers'
-import { VConfirm, VTable } from '@/components/UI'
-import ActionIcon from '@/components/ActionIcon.vue'
-import { EditSvg, TrashSvg } from '@/assets/icons'
-import type { Loading } from '@/types'
+import { VConfirm, VTable, VActionIcon } from '@/shared/components/UI'
+import { EditSvg, TrashSvg } from '@/shared/assets/icons'
+import type { Loading } from '@/shared/types'
 
 const { manufacturers } = storeToRefs(useManufacturersStore())
 
@@ -69,7 +68,7 @@ const remove = async (id: number, img: string) => {
         </td>
         <td>
           <div class="flex">
-            <ActionIcon
+            <VActionIcon
               tag="a"
               :to="{
                 name: 'EditManufacturer',
@@ -85,7 +84,7 @@ const remove = async (id: number, img: string) => {
               :message="`Вы точно хотите удалить производителя - ${manufacturer.title}`"
               @ok="remove(manufacturer.id, manufacturer.img)"
             >
-              <ActionIcon
+              <VActionIcon
                 :svg="TrashSvg"
                 variant="danger"
                 :loading="

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { VAccordion, VCheckbox } from '@/components/UI'
-import { ArrowSvg } from '@/assets/icons'
+import { VAccordion, VCheckbox } from '@/shared/components/UI'
+import { ArrowSvg } from '@/shared/assets/icons'
 
 defineProps<{
   variantsValues: string[] | { id: number; title: string }[]

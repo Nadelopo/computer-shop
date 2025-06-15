@@ -2,9 +2,9 @@
 import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/shared/api'
 import { ShopEditor, type ShopForm } from '@/modules/shops'
-import { VLoader } from '@/components/UI'
+import { VLoader } from '@/shared/components/UI'
 import { useCustomRoute, useCustomRouter } from '@/shared/composables/customRouter'
-import type { Loading } from '@/types'
+import type { Loading } from '@/shared/types'
 
 const route = useCustomRoute('EditShop')
 const shopId = Number(route.params.id)

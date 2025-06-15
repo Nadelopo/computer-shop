@@ -2,8 +2,8 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/modules/users'
-import AppLink from './AppLink.vue'
-import type { RouteName } from '@/router/types'
+import AppLink from '@/shared/components/AppLink.vue'
+import type { RouteName } from '@/app/router/types'
 import { signOut } from '@/modules/auth'
 
 defineProps<{

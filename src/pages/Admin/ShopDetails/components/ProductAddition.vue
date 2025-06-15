@@ -6,9 +6,9 @@ import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 import { useCategoriesStore } from '@/modules/categories'
-import { VButton, VButtons, VCheckbox, VInputText, VPopup } from '@/components/UI'
-import type { Loading } from '@/types'
-import type { ProductQuantityInStoreCreate } from '@/types/tables/ProductQuantityInStores'
+import { VButton, VButtons, VCheckbox, VInputText, VPopup } from '@/shared/components/UI'
+import type { Loading } from '@/shared/types'
+import type { ProductQuantityInStoreCreate } from '@/modules/shops'
 
 type Product = {
   title: string

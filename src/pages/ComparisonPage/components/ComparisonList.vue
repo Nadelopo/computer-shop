@@ -5,10 +5,10 @@ import { formatPrice } from '@/shared/utils/formatPrice'
 import { useFeatureFilteredProducts } from '../composables/useFeatureFilteredComparisonProducts'
 import { IconButtonFavouritesComparison } from '@/modules/users'
 import { CartButton } from '@/modules/cart'
-import ActionIcon from '@/components/ActionIcon.vue'
-import AppLink from '@/components/AppLink.vue'
+import { VActionIcon } from '@/shared/components/UI'
+import AppLink from '@/shared/components/AppLink.vue'
 import type { ComparisonProduct, CategorySpecifications } from '@/modules/users'
-import { ArrowSvg, CrossSvg } from '@/assets/icons'
+import { ArrowSvg, CrossSvg } from '@/shared/assets/icons'
 
 const props = defineProps<{
   currentCategoryId: number | null
@@ -157,7 +157,7 @@ const isSmall = useMediaQuery('(max-width: 420px)')
                 />
               </AppLink>
               <span class="ml-auto pr-4">
-                <ActionIcon
+                <VActionIcon
                   :svg="CrossSvg"
                   :svg-attrs="{ transform: 'rotate(45)' }"
                   variant="danger"

@@ -9,8 +9,8 @@ import type {
 import type {
   CategorySpecificationCreate,
   CategorySpecificationRead
-} from '@/types/tables/categorySpecifications.types'
-import type { DataError } from '@/types'
+} from '@/modules/categorySpecifications'
+import type { DataError } from '@/shared/types'
 
 export const useCategoriesStore = defineStore('categories', () => {
   const categories = ref<CategoryRead[]>([])

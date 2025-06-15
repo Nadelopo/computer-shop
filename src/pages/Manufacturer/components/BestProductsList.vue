@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { VCarousel, VCarouselSlide } from '@/components/UI'
+import { VCarousel, VCarouselSlide } from '@/shared/components/UI'
 import {
   ProductCard,
   ProductCardSkeleton,
   type ProductCardData
 } from '@/modules/products'
-import type { CarouselBreakpoints } from '@/components/UI/VCarousel/useFeatureBreakpoints'
-import type { Loading } from '@/types'
+import type { CarouselBreakpoints } from '@/shared/components/UI/VCarousel/useFeatureBreakpoints'
+import type { Loading } from '@/shared/types'
 
 defineProps<{
   products: ProductCardData[]

@@ -2,8 +2,8 @@
 import { computed, onBeforeMount, ref } from 'vue'
 import { supabase } from '@/shared/api'
 import { getCurrentTime } from '@/shared/utils/getCurrentTime'
-import { ArrowSvg } from '@/assets/icons'
-import type { Loading } from '@/types'
+import { ArrowSvg } from '@/shared/assets/icons'
+import type { Loading } from '@/shared/types'
 
 const formatDate = (date: Date): string => {
   return String(date.toLocaleDateString()).split('.').reverse().join('-')

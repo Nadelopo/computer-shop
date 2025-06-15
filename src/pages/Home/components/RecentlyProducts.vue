@@ -7,7 +7,7 @@ import {
   type ProductCardData
 } from '@/modules/products'
 import { useLocalStorage } from '@/shared/composables/localStorage'
-import type { Loading } from '@/types'
+import type { Loading } from '@/shared/types'
 
 const products = ref<ProductCardData[]>([])
 const loading = ref<Loading>('loading')

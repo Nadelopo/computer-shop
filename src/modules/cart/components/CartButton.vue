@@ -3,8 +3,8 @@ import { computed, ref, type ButtonHTMLAttributes } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCustomRouter } from '@/shared/composables/customRouter'
 import { useCartStore } from '@/modules/cart'
-import { VButton } from '@/components/UI'
-import { CartInButtonSvg, InCartSvg, AbsentForCartSvg } from '@/assets/icons'
+import { VButton } from '@/shared/components/UI'
+import { CartInButtonSvg, InCartSvg, AbsentForCartSvg } from '@/shared/assets/icons'
 
 interface Props extends /* @vue-ignore */ ButtonHTMLAttributes {
   productId: number

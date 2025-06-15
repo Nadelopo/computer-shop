@@ -3,10 +3,10 @@ import { nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { useComparisonStore } from '@/modules/users'
 import { useCustomRouter } from '@/shared/composables/customRouter'
-import { VButton, VCheckbox } from '@/components/UI'
-import { TrashSvg, ShareSvg } from '@/assets/icons'
+import { VButton, VCheckbox } from '@/shared/components/UI'
+import { TrashSvg, ShareSvg } from '@/shared/assets/icons'
 import type { Category, ComparisonProduct } from '@/modules/users'
-import type { Loading } from '@/types'
+import type { Loading } from '@/shared/types'
 
 const { updateComparison } = useComparisonStore()
 

@@ -8,10 +8,10 @@ import {
   type ProductUpdate,
   type SpecificationUpdateForm
 } from '@/modules/products'
-import { VButton, VLoader } from '@/components/UI'
-import type { Loading } from '@/types'
+import { VButton, VLoader } from '@/shared/components/UI'
+import type { Loading } from '@/shared/types'
 import type { SpecificationCreate } from '@/modules/specifications'
-import type { InputFileActions } from '@/components/UI/VInputFile/types'
+import type { InputFileActions } from '@/shared/components/UI/VInputFile/types'
 // import type { UpdateMany } from '@/db/queries/types'
 
 type SpecificationUpdateMany = SpecificationCreate &

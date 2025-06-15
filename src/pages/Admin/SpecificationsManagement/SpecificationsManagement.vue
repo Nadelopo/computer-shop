@@ -9,8 +9,8 @@ import type {
   CategorySpecificationCreate,
   CategorySpecificationRead,
   CategorySpecificationForm
-} from '@/types/tables/categorySpecifications.types'
-import type { Loading } from '@/types'
+} from '@/modules/categorySpecifications'
+import type { Loading } from '@/shared/types'
 
 const { createCategorySpecifications } = useCategoriesStore()
 

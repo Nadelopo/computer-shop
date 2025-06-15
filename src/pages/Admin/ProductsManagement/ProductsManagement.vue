@@ -12,11 +12,11 @@ import {
 } from '@/modules/products'
 import { useCategoriesStore } from '@/modules/categories'
 import ProductsList from '@/pages/Admin/ProductsManagement/components/ProductsList.vue'
-import { VPagination } from '@/components/UI'
-import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
-import type { Loading } from '@/types'
+import { VPagination } from '@/shared/components/UI'
+import type { CategorySpecificationRead } from '@/modules/categorySpecifications'
+import type { Loading } from '@/shared/types'
 import type { SpecificationCreate } from '@/modules/specifications'
-import type { InputFileActions } from '@/components/UI/VInputFile/types'
+import type { InputFileActions } from '@/shared/components/UI/VInputFile/types'
 
 const route = useCustomRoute('AdminProducts')
 const page = ref(Number(route.query.page) - 1 || 0)

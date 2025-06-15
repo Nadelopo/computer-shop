@@ -2,12 +2,11 @@
 import { onBeforeMount, ref } from 'vue'
 import { useToast } from 'vue-toastification'
 import { supabase } from '@/shared/api'
-import { VConfirm, VLoader, VTable } from '@/components/UI'
+import { VConfirm, VLoader, VTable, VActionIcon } from '@/shared/components/UI'
 import { formatPhoneNumber } from '@/shared/utils/formatPhone'
 import { formatTime } from '@/shared/utils/formatTime'
-import ActionIcon from '@/components/ActionIcon.vue'
-import { DetailsSvg, EditSvg, TrashSvg } from '@/assets/icons'
-import type { Loading } from '@/types'
+import { DetailsSvg, EditSvg, TrashSvg } from '@/shared/assets/icons'
+import type { Loading } from '@/shared/types'
 import type { ShopRead } from '@/modules/shops'
 
 const shops = defineModel<ShopRead[]>({ required: true })
@@ -74,7 +73,7 @@ const remove = async (id: number) => {
           <td>{{ formatTime(shop.timeStart, shop.timeEnd) }}</td>
           <td>
             <div class="flex">
-              <ActionIcon
+              <VActionIcon
                 tag="a"
                 :to="{
                   name: 'EditShop',
@@ -85,7 +84,7 @@ const remove = async (id: number) => {
                 :svg="EditSvg"
                 paint-type="stroke"
               />
-              <ActionIcon
+              <VActionIcon
                 tag="a"
                 :to="{ name: 'AdminShopDetails', params: { id: shop.id } }"
                 :svg="DetailsSvg"
@@ -97,7 +96,7 @@ const remove = async (id: number) => {
                 :message="'Вы точно хотите удалить?'"
                 @ok="remove(shop.id)"
               >
-                <ActionIcon
+                <VActionIcon
                   :svg="TrashSvg"
                   variant="danger"
                   :loading="

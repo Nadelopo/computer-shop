@@ -11,10 +11,10 @@ import {
   VSelect,
   VButton,
   VLoader
-} from '@/components/UI'
-import type { Loading } from '@/types'
+} from '@/shared/components/UI'
+import type { Loading } from '@/shared/types'
 import type { SpecificationCreateForm, ProductCreate } from '../types/products.types'
-import type { InputFileActions } from '@/components/UI/VInputFile/types'
+import type { InputFileActions } from '@/shared/components/UI/VInputFile/types'
 
 defineProps<{
   loadingData: Loading

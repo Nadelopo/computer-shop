@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { VButton } from '@/components/UI'
-import AppLink from '@/components/AppLink.vue'
+import { VButton } from '@/shared/components/UI'
+import AppLink from '@/shared/components/AppLink.vue'
 </script>
 
 <template>

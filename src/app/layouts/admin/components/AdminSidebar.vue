@@ -3,9 +3,9 @@ import { ref, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/modules/categories'
 import { useLocalStorage } from '@/shared/composables/localStorage'
-import { VAccordion } from '@/components/UI'
-import AppLink from '@/components/AppLink.vue'
-import { ArrowSvg, HomeSvg } from '@/assets/icons'
+import { VAccordion } from '@/shared/components/UI'
+import AppLink from '@/shared/components/AppLink.vue'
+import { ArrowSvg, HomeSvg } from '@/shared/assets/icons'
 
 const isVisible = ref(false)
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { arrayRange } from '@/shared/utils/arrayRange'
-import { ArrowSvg } from '@/assets/icons'
+import { ArrowSvg } from '@/shared/assets/icons'
 import VPopup from './VPopup.vue'
 
 // prettier-ignore
@@ -59,10 +59,7 @@ const otherPrefPages = computed(() => {
 
 const otherNextPages = computed(() => {
   const nextIndex = items.value.findIndex((i) => i === 0)
-  return arrayRange(
-    items.value[nextIndex - 1] + 1,
-    items.value[items.value.length - 1]
-  )
+  return arrayRange(items.value[nextIndex - 1] + 1, items.value[items.value.length - 1])
 })
 
 const setPrev = () => {

@@ -8,21 +8,21 @@ import { useUserStore, type UserUpdate } from '@/modules/users'
 import { useCartStore, getWordByQuantity } from '@/modules/cart'
 import { useCustomRouter } from '@/shared/composables/customRouter'
 import { formatPrice } from '@/shared/utils/formatPrice'
-import { VButton, VButtons, VLoader } from '@/components/UI'
+import { VButton, VButtons, VLoader } from '@/shared/components/UI'
+import FormField from '@/shared/components/FormField.vue'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 import { useGeoSuggest } from '@/shared/utils/useGeoSuggest'
 import MethodObtain from './components/MethodObtain.vue'
-import FormField from '@/components/FormField.vue'
 import {
   type OrderData,
   useCheckoutForm
 } from '@/pages/Checkout/composables/useCheckoutForm'
 import { useFeaturePrice } from '@/pages/Checkout/composables/useFeaturePrice'
 import { useFeatureInitialUserDataInstallation } from '@/pages/Checkout/composables/useFeatureInitialUserDataInstallation'
-import type { Loading } from '@/types'
-import type { OrderCreate } from '@/types/tables/orders.types'
-import type { OrderedProductCreate } from '@/types/tables/orderedProducts.types'
-import type { ProductQuantityInStoreCreate } from '@/types/tables/ProductQuantityInStores'
+import type { Loading } from '@/shared/types'
+import type { OrderCreate } from '@/modules/orders/types/orders.types'
+import type { OrderedProductCreate } from '@/modules/orders/types/orderedProducts.types'
+import type { ProductQuantityInStoreCreate } from '@/modules/shops'
 
 const { values, handleSubmit, setFieldValue, setValues } = useCheckoutForm()
 // TODO удалить этот бред сумасшедшего(useFeatureInitialUserDataInstallation)

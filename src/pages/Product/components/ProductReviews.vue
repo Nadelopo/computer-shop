@@ -12,10 +12,10 @@ import {
   type UsersRated
 } from '@/modules/reviews'
 import ProductReviewForm from '@/pages/Product/components/ProductReviewForm.vue'
-import { VLoader, VPagination } from '@/components/UI'
+import { VLoader, VPagination } from '@/shared/components/UI'
 import type { UpdateProductRating } from '@/pages/Product/Product.vue'
 import { useCustomRouter } from '@/shared/composables/customRouter'
-import type { Loading } from '@/types'
+import type { Loading } from '@/shared/types'
 
 const props = defineProps<{
   productId: number

@@ -2,11 +2,10 @@
 import { computed, onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { supabase } from '@/shared/api'
-import { VTabs, VTable, VLoader, VConfirm } from '@/components/UI'
-import ActionIcon from '@/components/ActionIcon.vue'
-import { EditSvg, TrashSvg } from '@/assets/icons'
-import type { Loading } from '@/types'
-import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
+import { VTabs, VTable, VLoader, VConfirm, VActionIcon } from '@/shared/components/UI'
+import { EditSvg, TrashSvg } from '@/shared/assets/icons'
+import type { Loading } from '@/shared/types'
+import type { CategorySpecificationRead } from '@/modules/categorySpecifications'
 
 type Category = {
   enTitle: string
@@ -175,7 +174,7 @@ watch(
               </td>
               <td>
                 <div class="flex">
-                  <ActionIcon
+                  <VActionIcon
                     tag="a"
                     :to="{
                       name: 'SpecificationEdit',
@@ -194,7 +193,7 @@ watch(
                     }`"
                     @ok="remove(specification.id)"
                   >
-                    <ActionIcon
+                    <VActionIcon
                       :svg="TrashSvg"
                       variant="danger"
                       :loading="

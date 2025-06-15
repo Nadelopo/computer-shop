@@ -6,7 +6,7 @@ import { supabase } from '@/shared/api'
 import { useCategoriesStore } from '@/modules/categories'
 import { useFilterStore } from '@/pages/ProductCatalog/stores/filterStore'
 import { useCustomRouter, useCustomRoute } from '@/shared/composables/customRouter'
-import { VPagination, VButton } from '@/components/UI'
+import { VPagination, VButton } from '@/shared/components/UI'
 import ProductBlock from '@/pages/ProductCatalog/components/ProductBlock.vue'
 import Search from '@/pages/ProductCatalog/components/Search.vue'
 import Sort from '@/pages/ProductCatalog/components/Sort.vue'
@@ -14,7 +14,7 @@ import Filters from '@/pages/ProductCatalog/components/Filters.vue'
 import ProductBlockSkeleton from '@/pages/ProductCatalog/components/ProductBlockSkeleton.vue'
 import FiltersMobile from '@/pages/ProductCatalog/components/Filters.mobile.vue'
 import { getValuesFromQuery } from '@/pages/ProductCatalog/components/useFeatureStaticFilter'
-import type { Loading } from '@/types'
+import type { Loading } from '@/shared/types'
 
 type SortType = keyof typeof sortAscents
 function isSortType(key: string): key is SortType {

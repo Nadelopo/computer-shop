@@ -3,9 +3,15 @@ import { computed, type FunctionalComponent, type SVGAttributes } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useFavoritesStore, useComparisonStore } from '@/modules/users'
 import { useCartStore } from '@/modules/cart'
-import { HomeSvg, FavouriteSvg, CartSvg, ComparisonSvg, AvatarSvg } from '@/assets/icons'
-import AppLink from '@/components/AppLink.vue'
-import type { RouteName } from '@/router/types'
+import {
+  HomeSvg,
+  FavouriteSvg,
+  CartSvg,
+  ComparisonSvg,
+  AvatarSvg
+} from '@/shared/assets/icons'
+import AppLink from '@/shared/components/AppLink.vue'
+import type { RouteName } from '@/app/router/types'
 
 const { countCartItems } = storeToRefs(useCartStore())
 const { favorites } = storeToRefs(useFavoritesStore())

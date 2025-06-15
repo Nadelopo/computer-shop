@@ -3,10 +3,9 @@ import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { supabase, removeFromStorage } from '@/shared/api'
 import { useCategoriesStore } from '@/modules/categories'
-import { VTable, VConfirm } from '@/components/UI'
-import ActionIcon from '@/components/ActionIcon.vue'
-import { EditSvg, TrashSvg } from '@/assets/icons'
-import type { Loading } from '@/types'
+import { VTable, VConfirm, VActionIcon } from '@/shared/components/UI'
+import { EditSvg, TrashSvg } from '@/shared/assets/icons'
+import type { Loading } from '@/shared/types'
 
 const { categories } = storeToRefs(useCategoriesStore())
 
@@ -60,7 +59,7 @@ const remove = async (id: number, img: string) => {
         </td>
         <td>
           <div class="flex">
-            <ActionIcon
+            <VActionIcon
               tag="a"
               :to="{
                 name: 'CategoryEdit',
@@ -77,7 +76,7 @@ const remove = async (id: number, img: string) => {
               :message="`Вы точно хотите удалить категорю - ${category.title}`"
               @ok="remove(category.id, category.img)"
             >
-              <ActionIcon
+              <VActionIcon
                 :svg="TrashSvg"
                 variant="danger"
                 :loading="

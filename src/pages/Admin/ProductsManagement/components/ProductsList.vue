@@ -4,12 +4,17 @@ import { supabase } from '@/shared/api'
 import { removeFromStorage, type StorageError } from '@/shared/api'
 import { getSpecificationValue } from '@/modules/specifications'
 import { formatPrice } from '@/shared/utils/formatPrice'
-import { VLoader, VConfirm, VTable, VInputText } from '@/components/UI'
-import ActionIcon from '@/components/ActionIcon.vue'
-import { EditSvg, TrashSvg } from '@/assets/icons'
-import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
+import {
+  VLoader,
+  VConfirm,
+  VTable,
+  VInputText,
+  VActionIcon
+} from '@/shared/components/UI'
+import { EditSvg, TrashSvg } from '@/shared/assets/icons'
+import type { CategorySpecificationRead } from '@/modules/categorySpecifications'
 import type { ProductWithSpecifications } from '@/modules/products'
-import type { Loading } from '@/types'
+import type { Loading } from '@/shared/types'
 
 const props = defineProps<{
   specifications: CategorySpecificationRead[]
@@ -112,7 +117,7 @@ const remove = async (id: number, img: string[]) => {
         </td>
         <td>
           <div class="flex">
-            <ActionIcon
+            <VActionIcon
               tag="a"
               :to="{
                 name: 'EditProducts',
@@ -130,7 +135,7 @@ const remove = async (id: number, img: string[]) => {
               :message="`Вы точно хотите удалить продукт - ${product.title}`"
               @ok="remove(product.id, product.img)"
             >
-              <ActionIcon
+              <VActionIcon
                 :svg="TrashSvg"
                 variant="danger"
                 :loading="

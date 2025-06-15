@@ -8,9 +8,9 @@ import ActionsWithComparison from './components/ActionsWithComparison.vue'
 import ComparisonList from './components/ComparisonList.vue'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 import { getProductQuantity } from '@/modules/products'
-import { VTabs, VLoader } from '@/components/UI'
+import { VTabs, VLoader } from '@/shared/components/UI'
 import type { Category, CategorySpecifications, ComparisonProduct } from '@/modules/users'
-import type { Loading } from '@/types'
+import type { Loading } from '@/shared/types'
 
 const { comparison } = storeToRefs(useComparisonStore())
 const { setComparisonValue, removeComparison } = useComparisonStore()

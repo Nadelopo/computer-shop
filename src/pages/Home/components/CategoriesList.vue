@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/modules/categories'
-import AppLink from '@/components/AppLink.vue'
+import AppLink from '@/shared/components/AppLink.vue'
 
 const { categories } = storeToRefs(useCategoriesStore())
 </script>

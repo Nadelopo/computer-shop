@@ -6,14 +6,13 @@ import { useMediaQuery } from '@vueuse/core'
 import { supabase } from '@/shared/api'
 import ProductInShops from './ProductInShops.vue'
 import { CartButton } from '@/modules/cart'
-import RatingStars from '@/components/RatingStars.vue'
+import { VRatingStars } from '@/shared/components/UI'
 import { useManufacturersStore, type ManufacturerRead } from '@/modules/manufacturers'
 import type { ProductWithSpecifications } from '@/modules/products'
 import ButtonFavouritesComparison from '@/modules/users/components/ButtonFavouritesComparison.vue'
-import type { Loading } from '@/types'
-import type { ProductQuantityInStoreRead } from '@/types/tables/ProductQuantityInStores'
+import type { Loading } from '@/shared/types'
+import type { ProductQuantityInStoreRead, ShopRead } from '@/modules/shops'
 import { formatPrice } from '@/shared/utils/formatPrice'
-import type { ShopRead } from '@/modules/shops'
 
 export type ShopWithProduct = Pick<ProductQuantityInStoreRead, 'quantity' | 'id'> & {
   shops: Pick<ShopRead, 'address' | 'timeEnd' | 'timeStart'>
@@ -112,7 +111,7 @@ const copyProductCode = (id: number) => {
       </div>
 
       <div class="flex max-w-[400px] justify-between mb-4 h-12">
-        <RatingStars :model-value="product.rating" />
+        <VRatingStars :model-value="product.rating" />
         <ProductInShops
           v-if="loading === 'success' && shops.length"
           :shops

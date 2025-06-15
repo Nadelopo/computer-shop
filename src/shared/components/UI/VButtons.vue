@@ -1,10 +1,6 @@
-<script
-  setup
-  lang="ts"
-  generic="T, U extends { value: Option<T>; title: string }"
->
+<script setup lang="ts" generic="T, U extends { value: Option<T>; title: string }">
 import { ref, watchEffect } from 'vue'
-import { VButton } from '@/components/UI'
+import { VButton } from '@/shared/components/UI'
 
 export type Option<T> = T extends Array<infer V> ? V : T
 

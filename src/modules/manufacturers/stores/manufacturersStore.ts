@@ -6,7 +6,7 @@ import type {
   ManufacturerUpdate
 } from '@/modules/manufacturers'
 import { supabase } from '@/shared/api'
-import type { DataError } from '@/types'
+import type { DataError } from '@/shared/types'
 
 export const useManufacturersStore = defineStore('manufacturers', () => {
   const manufacturers = ref<ManufacturerRead[]>([])

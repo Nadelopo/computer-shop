@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick, ref } from 'vue'
 import { VButton } from '.'
-import { CrossSvg } from '@/assets/icons'
+import { CrossSvg } from '@/shared/assets/icons'
 
 type Props = {
   onCreate?: (tag: string) => string

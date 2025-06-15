@@ -4,8 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
 import { supabase } from '@/shared/api'
 import { useUserStore } from '@/modules/users'
-import { VButton } from '@/components/UI'
-import RatingStars from '@/components/RatingStars.vue'
+import { VRatingStars, VButton } from '@/shared/components/UI'
 import type { UpdateProductRating } from '@/pages/Product/Product.vue'
 import type { ReviewRating, ReviewReadWithDetails } from '@/modules/reviews'
 
@@ -135,7 +134,7 @@ const createReview = async () => {
         />
       </div>
       <div>
-        <RatingStars
+        <VRatingStars
           v-model="form.rating"
           :static="false"
           class="mb-4 mt-8"

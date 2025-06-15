@@ -4,7 +4,7 @@ import { useField, useForm } from 'vee-validate'
 import { string } from 'yup'
 import { signIn, signUp } from '../modules/auth/services/authService'
 import { useCustomRouter } from '@/shared/composables/customRouter'
-import { VButton } from '@/components/UI'
+import { VButton } from '@/shared/components/UI'
 
 const isSignIn = ref(true)
 

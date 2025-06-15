@@ -13,18 +13,17 @@ import { debounce } from '@/shared/utils/debounce'
 import { onClickOutsideClose } from '@/shared/composables/onClickOutsideClose'
 import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
 import { useCartStore } from '@/modules/cart'
-import AppLink from '@/components/AppLink.vue'
-import ActionIcon from '@/components/ActionIcon.vue'
+import AppLink from '@/shared/components/AppLink.vue'
 import HeaderSuggestions from './HeaderSuggestions.vue'
 import HeaderSearch from './HeaderSearch.vue'
-import { VPopup, VModal, VButton } from '@/components/UI'
+import { VPopup, VModal, VButton, VActionIcon } from '@/shared/components/UI'
 import {
   AvatarSvg,
   FavouriteSvg,
   CartSvg,
   ComparisonSvg,
   SearchSvg
-} from '@/assets/icons'
+} from '@/shared/assets/icons'
 import type { ProductSuggestion } from '@/modules/products'
 
 const { user } = storeToRefs(useUserStore())
@@ -111,7 +110,7 @@ const setSearch = (title: string) => {
         <div class="nav__rigth">
           <VPopup>
             <template #active>
-              <ActionIcon
+              <VActionIcon
                 :svg="AvatarSvg"
                 variant="default"
               />
@@ -147,7 +146,7 @@ const setSearch = (title: string) => {
               </AppLink>
             </template>
           </VPopup>
-          <ActionIcon
+          <VActionIcon
             :svg="FavouriteSvg"
             variant="default"
             tag="a"
@@ -159,8 +158,8 @@ const setSearch = (title: string) => {
             >
               {{ favorites.length }}
             </span>
-          </ActionIcon>
-          <ActionIcon
+          </VActionIcon>
+          <VActionIcon
             tag="a"
             :to="{ name: 'Comparison' }"
             :svg="ComparisonSvg"
@@ -172,8 +171,8 @@ const setSearch = (title: string) => {
             >
               {{ comparison.length }}
             </span>
-          </ActionIcon>
-          <ActionIcon
+          </VActionIcon>
+          <VActionIcon
             tag="a"
             :to="{ name: 'Cart' }"
             :svg="CartSvg"
@@ -185,10 +184,10 @@ const setSearch = (title: string) => {
             >
               {{ countCartItems }}
             </span>
-          </ActionIcon>
+          </VActionIcon>
         </div>
         <div class="flex justify-end lg:hidden">
-          <ActionIcon
+          <VActionIcon
             :svg="SearchSvg"
             variant="default"
             @click="openModal = true"

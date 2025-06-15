@@ -7,6 +7,7 @@ type Props = {
   size?: 'normal' | 'small'
 }
 
+// TODO переделать компонент
 const props = withDefaults(defineProps<Props>(), {
   static: true,
   size: 'normal'

@@ -6,8 +6,8 @@ import {
   type ManufacturerCreate
 } from '@/modules/manufacturers'
 import ManufacturersList from './components/ManufacturersList.vue'
-import type { InputFileActions } from '@/components/UI/VInputFile/types'
-import type { Loading } from '@/types'
+import type { InputFileActions } from '@/shared/components/UI/VInputFile/types'
+import type { Loading } from '@/shared/types'
 
 const { createManufacturer } = useManufacturersStore()
 

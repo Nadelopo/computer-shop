@@ -5,11 +5,11 @@ import { supabase } from '@/shared/api'
 import { useUserStore } from '@/modules/users'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import { useOrders } from '@/shared/utils/useOrders'
-import { VSelect, VButton, VTable, VLoader } from '@/components/UI'
-import AppLink from '@/components/AppLink.vue'
+import { VSelect, VButton, VTable, VLoader } from '@/shared/components/UI'
+import AppLink from '@/shared/components/AppLink.vue'
 import { formatPrice } from '@/shared/utils/formatPrice'
-import type { Loading } from '@/types'
-import type { OrderReadWithDetails } from '@/types/tables/orders.types'
+import type { Loading } from '@/shared/types'
+import type { OrderReadWithDetails } from '@/modules/orders/types/orders.types'
 
 const route = useCustomRoute('AdminOrderDetails')
 const orderId = Number(route.params.id)

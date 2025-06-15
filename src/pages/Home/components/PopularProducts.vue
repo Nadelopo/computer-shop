@@ -6,7 +6,7 @@ import {
   ProductListCarousel,
   type ProductCardData
 } from '@/modules/products'
-import type { Loading } from '@/types'
+import type { Loading } from '@/shared/types'
 
 const products = ref<ProductCardData[]>([])
 const loading = ref<Loading>('loading')

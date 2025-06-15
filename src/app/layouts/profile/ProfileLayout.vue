@@ -3,8 +3,8 @@ import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/shared/api'
 import { useUserStore } from '@/modules/users'
 import { type ReviewWithDetails } from '@/modules/reviews'
-import AppLink from '@/components/AppLink.vue'
-import type { Loading } from '@/types'
+import AppLink from '@/shared/components/AppLink.vue'
+import type { Loading } from '@/shared/types'
 
 const { getSessionUser } = useUserStore()
 const reviews = ref<ReviewWithDetails[]>([])

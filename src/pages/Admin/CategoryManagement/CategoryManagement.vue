@@ -6,8 +6,8 @@ import {
   type CategoryCreate
 } from '@/modules/categories'
 import CategoriesList from './components/CategoriesList.vue'
-import type { InputFileActions } from '@/components/UI/VInputFile/types'
-import type { Loading } from '@/types'
+import type { InputFileActions } from '@/shared/components/UI/VInputFile/types'
+import type { Loading } from '@/shared/types'
 
 const { createCategory } = useCategoriesStore()
 

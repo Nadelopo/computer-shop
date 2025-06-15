@@ -6,9 +6,9 @@ import { useToast } from 'vue-toastification'
 import type { User } from '@supabase/supabase-js'
 import { supabase } from '@/shared/api'
 import { useUserStore } from '@/modules/users'
-import { VLoader, VButton } from '@/components/UI'
-import FormField from '@/components/FormField.vue'
-import type { Loading } from '@/types'
+import { VLoader, VButton } from '@/shared/components/UI'
+import FormField from '@/shared/components/FormField.vue'
+import type { Loading } from '@/shared/types'
 
 const { getSessionUser } = useUserStore()
 

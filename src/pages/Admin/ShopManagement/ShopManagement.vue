@@ -5,7 +5,7 @@ import { supabase } from '@/shared/api'
 import { ShopEditor } from '@/modules/shops'
 import ShopsList from './components/ShopsList.vue'
 import type { ShopForm, ShopRead } from '@/modules/shops'
-import type { Loading } from '@/types'
+import type { Loading } from '@/shared/types'
 
 const loadingSubmit = ref<Loading>('success')
 const shops = ref<ShopRead[]>([])

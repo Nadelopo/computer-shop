@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useCartStore, type ProductCart } from '@/modules/cart'
-import { TrashSvg } from '@/assets/icons'
-import { VInputText } from '@/components/UI'
+import { TrashSvg } from '@/shared/assets/icons'
+import { VInputText } from '@/shared/components/UI'
 
 type Action = 'increase' | 'reduce' | 'delete'
 

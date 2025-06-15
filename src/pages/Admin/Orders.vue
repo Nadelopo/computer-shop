@@ -5,11 +5,17 @@ import { supabase } from '@/shared/api'
 import { useUserStore } from '@/modules/users'
 import { useOrders } from '@/shared/utils/useOrders'
 import { formatPrice } from '@/shared/utils/formatPrice'
-import { VTable, VPagination, VLoader, VConfirm, VInputText } from '@/components/UI'
-import ActionIcon from '@/components/ActionIcon.vue'
-import { EditSvg, TrashSvg } from '@/assets/icons'
-import type { OrderRead } from '@/types/tables/orders.types'
-import type { Loading } from '@/types'
+import {
+  VTable,
+  VPagination,
+  VLoader,
+  VConfirm,
+  VInputText,
+  VActionIcon
+} from '@/shared/components/UI'
+import { EditSvg, TrashSvg } from '@/shared/assets/icons'
+import type { OrderRead } from '@/modules/orders/types/orders.types'
+import type { Loading } from '@/shared/types'
 
 type Order = Pick<
   OrderRead,
@@ -145,7 +151,7 @@ const clear = () => {
           </td>
           <td>
             <div class="flex">
-              <ActionIcon
+              <VActionIcon
                 tag="a"
                 :to="{ name: 'AdminOrderDetails', params: { id: order.id } }"
                 :svg="EditSvg"
@@ -157,7 +163,7 @@ const clear = () => {
                 :message="`Вы точно хотите удалить заказ - ${order.id}`"
                 @ok="removeOrder(order.id)"
               >
-                <ActionIcon
+                <VActionIcon
                   :svg="TrashSvg"
                   variant="danger"
                   :loading="

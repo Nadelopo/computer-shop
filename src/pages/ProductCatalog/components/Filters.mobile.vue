@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue'
 import Filters from './Filters.vue'
-import type { Loading } from '@/types'
+import type { Loading } from '@/shared/types'
 
 defineProps<{
   loadingProperties: Loading

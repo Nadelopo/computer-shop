@@ -2,9 +2,9 @@
 import { ref } from 'vue'
 import { useForm } from 'vee-validate'
 import { string } from 'yup'
-import { VInputFile, VButton } from '@/components/UI'
-import FormField from '@/components/FormField.vue'
-import type { InputFileActions } from '@/components/UI/VInputFile/types'
+import { VInputFile, VButton } from '@/shared/components/UI'
+import FormField from '@/shared/components/FormField.vue'
+import type { InputFileActions } from '@/shared/components/UI/VInputFile/types'
 import type { CategoryCreate } from '@/modules/categories'
 
 const props = defineProps<{

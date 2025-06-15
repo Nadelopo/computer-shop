@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { supabase } from '@/shared/api'
 import { formatPrice } from '@/shared/utils/formatPrice'
-import { VButton } from '@/components/UI'
+import { VButton } from '@/shared/components/UI'
 import type { ProductCart } from '@/modules/cart'
 
 const props = defineProps<{

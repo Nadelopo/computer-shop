@@ -4,11 +4,11 @@ import { storeToRefs } from 'pinia'
 import { useCartStore, getWordByQuantity, type ProductCart } from '@/modules/cart'
 import { formatPrice } from '@/shared/utils/formatPrice'
 import { useLocalStorage } from '@/shared/composables/localStorage'
-import { VLoader, VButton, VModal } from '@/components/UI'
+import { VLoader, VButton, VModal } from '@/shared/components/UI'
 import ProductsWithChangedPrice from '@/pages/Cart/components/ProductsWithChangedPrice.vue'
 import CartItemCard from '@/pages/Cart/components/CartItemCard.vue'
-import AppLink from '@/components/AppLink.vue'
-import type { Loading } from '@/types'
+import AppLink from '@/shared/components/AppLink.vue'
+import type { Loading } from '@/shared/types'
 
 const { setCartItemsWithDetails, setCartItems, getMarkup } = useCartStore()
 const { cartItemsWithDetails, countCartItems } = storeToRefs(useCartStore())

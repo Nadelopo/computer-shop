@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick, ref, watch, type ComponentPublicInstance } from 'vue'
 import { useRoute } from 'vue-router'
-import AppLink from '../AppLink.vue'
+import AppLink from '@/shared/components/AppLink.vue'
 
 type Option = {
   title: string

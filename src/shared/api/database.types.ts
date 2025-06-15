@@ -4,7 +4,7 @@ import type {
   CategorySpecificationCreate,
   CategorySpecificationRead,
   CategorySpecificationUpdate
-} from '@/types/tables/categorySpecifications.types'
+} from '@/modules/categorySpecifications'
 import type {
   ManufacturerCreate,
   ManufacturerRead,
@@ -18,18 +18,24 @@ import type {
   SpecificationUpdate
 } from '@/modules/specifications'
 import type { UserCreate, UserReadWithDetails, UserUpdate } from '@/modules/users'
-import type { ShopCreate, ShopRead, ShopUpdate } from '@/modules/shops'
-import type { OrderCreate, OrderRead, OrderUpdate } from '@/types/tables/orders.types'
+import type {
+  ShopCreate,
+  ShopRead,
+  ShopUpdate,
+  ProductQuantityInStoreCreate,
+  ProductQuantityInStoreRead,
+  ProductQuantityInStoreUpdate
+} from '@/modules/shops'
+import type {
+  OrderCreate,
+  OrderRead,
+  OrderUpdate
+} from '@/modules/orders/types/orders.types'
 import type {
   OrderedProductCreate,
   OrderedProductRead,
   OrderedProductUpdate
-} from '@/types/tables/orderedProducts.types'
-import type {
-  ProductQuantityInStoreRead,
-  ProductQuantityInStoreCreate,
-  ProductQuantityInStoreUpdate
-} from '@/types/tables/ProductQuantityInStores'
+} from '@/modules/orders/types/orderedProducts.types'
 
 export type Json =
   | string

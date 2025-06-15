@@ -1,7 +1,7 @@
 import { ref, watch } from 'vue'
 import { supabase } from '@/shared/api'
 import { useUserStore } from '@/modules/users'
-import type { Loading } from '@/types'
+import type { Loading } from '@/shared/types'
 import type { OrderData } from './useCheckoutForm'
 
 export const useFeatureInitialUserDataInstallation = (

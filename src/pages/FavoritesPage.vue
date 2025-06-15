@@ -10,9 +10,9 @@ import {
   ProductCardSkeleton,
   type ProductCardData
 } from '@/modules/products'
-import { VButton } from '@/components/UI'
-import { TrashSvg } from '@/assets/icons'
-import type { Loading } from '@/types'
+import { VButton } from '@/shared/components/UI'
+import { TrashSvg } from '@/shared/assets/icons'
+import type { Loading } from '@/shared/types'
 
 const { favorites } = storeToRefs(useFavoritesStore())
 const { setFavoritesValue, removeFavorite, clearFavorites } = useFavoritesStore()

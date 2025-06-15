@@ -3,8 +3,8 @@ import { ref, watch } from 'vue'
 import { supabase } from '@/shared/api'
 import type { ProductRead } from '@/modules/products'
 import { useCustomRoute } from '@/shared/composables/customRouter'
-import { VCarousel, VCarouselSlide } from '@/components/UI'
-import AppLink from '@/components/AppLink.vue'
+import { VCarousel, VCarouselSlide } from '@/shared/components/UI'
+import AppLink from '@/shared/components/AppLink.vue'
 
 const route = useCustomRoute('Product')
 const categoryId = Number(route.params.categoryId)

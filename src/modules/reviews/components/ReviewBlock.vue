@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import RatingStars from '@/components/RatingStars.vue'
-import ActionIcon from '@/components/ActionIcon.vue'
-import { AvatarSvg, ArrowSvg } from '@/assets/icons'
+import { VRatingStars, VActionIcon } from '@/shared/components/UI'
+import { AvatarSvg, ArrowSvg } from '@/shared/assets/icons'
 import type { ReviewReadWithDetails } from '../types/reviews.types'
 
 type Evaluation = 'like' | 'dislike'
@@ -54,7 +53,7 @@ const evalatuationClasses = computed(() => {
         fill="#cdcdcd"
       />
       <div>{{ review.users.name }}</div>
-      <RatingStars
+      <VRatingStars
         class="rating"
         :model-value="review.rating"
       />
@@ -85,7 +84,7 @@ const evalatuationClasses = computed(() => {
     </div>
     <div class="flex mt-4">
       <div class="flex">
-        <ActionIcon
+        <VActionIcon
           v-if="!static"
           :svg="ArrowSvg"
           :svg-attrs="{ width: 16 }"
@@ -99,7 +98,7 @@ const evalatuationClasses = computed(() => {
         >
           {{ review.evaluation }}
         </span>
-        <ActionIcon
+        <VActionIcon
           v-if="!static"
           :svg="ArrowSvg"
           :svg-attrs="{ transform: 'rotate(180)', width: 16 }"

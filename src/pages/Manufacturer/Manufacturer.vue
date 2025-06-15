@@ -7,9 +7,9 @@ import { getProductQuantity, type ProductCardData } from '@/modules/products'
 import BestProductsList from './components/BestProductsList.vue'
 import CategoriesList from './components/CategoriesList.vue'
 import { useCustomRoute } from '@/shared/composables/customRouter'
-import { VLoader } from '@/components/UI'
+import { VLoader } from '@/shared/components/UI'
 import type { View } from '@/shared/api/database.types'
-import type { Loading } from '@/types'
+import type { Loading } from '@/shared/types'
 
 const { manufacturers } = storeToRefs(useManufacturersStore())
 const route = useCustomRoute('Manufacturer')

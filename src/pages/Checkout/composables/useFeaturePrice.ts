@@ -3,7 +3,7 @@ import { supabase } from '@/shared/api'
 import { useCartStore } from '@/modules/cart'
 import { getProductQuantity, type ProductRead } from '@/modules/products'
 import { useCustomRouter } from '@/shared/composables/customRouter'
-import type { Loading } from '@/types'
+import type { Loading } from '@/shared/types'
 
 // TODO сделать нормальный нейминг
 export const useFeaturePrice = () => {

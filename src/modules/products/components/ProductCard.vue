@@ -2,10 +2,10 @@
 import { ref } from 'vue'
 import type { ProductCardData } from '../types/products.types'
 import { IconButtonFavouritesComparison } from '@/modules/users'
-import RatingStars from '@/components/RatingStars.vue'
+import { VRatingStars } from '@/shared/components/UI'
 import { CartButton } from '@/modules/cart'
-import AppLink from '@/components/AppLink.vue'
-import { CrossSvg } from '@/assets/icons'
+import AppLink from '@/shared/components/AppLink.vue'
+import { CrossSvg } from '@/shared/assets/icons'
 import { formatPrice } from '@/shared/utils/formatPrice'
 
 type Props = {
@@ -65,7 +65,7 @@ const titleActive = ref(true)
     >
       {{ item.title }}
     </div>
-    <RatingStars :model-value="item.rating" />
+    <VRatingStars :model-value="item.rating" />
     <div class="flex gap-x-2">
       <IconButtonFavouritesComparison
         v-if="props.favourites"

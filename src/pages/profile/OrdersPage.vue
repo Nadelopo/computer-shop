@@ -5,11 +5,11 @@ import { useUserStore } from '@/modules/users'
 import { formatPrice } from '@/shared/utils/formatPrice'
 import { useOrders } from '@/shared/utils/useOrders'
 import { getWordByQuantity } from '@/modules/cart'
-import { VLoader, VAccordion, VPagination } from '@/components/UI'
-import AppLink from '@/components/AppLink.vue'
-import { ArrowSvg } from '@/assets/icons'
-import type { OrderReadWithDetails } from '@/types/tables/orders.types'
-import type { Loading } from '@/types'
+import { VLoader, VAccordion, VPagination } from '@/shared/components/UI'
+import AppLink from '@/shared/components/AppLink.vue'
+import { ArrowSvg } from '@/shared/assets/icons'
+import type { OrderReadWithDetails } from '@/modules/orders/types/orders.types'
+import type { Loading } from '@/shared/types'
 
 const { getSessionUser } = useUserStore()
 

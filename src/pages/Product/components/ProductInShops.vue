@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { VModal } from '@/components/UI'
+import { VModal } from '@/shared/components/UI'
 import { formatTime } from '@/shared/utils/formatTime'
 import { CartButton } from '@/modules/cart'
 import type { ShopWithProduct } from './ProductHeader.vue'

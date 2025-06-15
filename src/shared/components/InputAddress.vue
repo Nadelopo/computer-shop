@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onUnmounted, ref, watchEffect } from 'vue'
 import { onClickOutsideClose } from '@/shared/composables/onClickOutsideClose'
-import { VInputText } from '@/components/UI'
+import { VInputText } from '@/shared/components/UI'
 import type { LocationResult } from '@/shared/utils/useGeoSuggest'
 
 const props = defineProps<{

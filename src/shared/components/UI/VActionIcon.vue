@@ -4,9 +4,9 @@
   generic="To extends RouteName, Tag extends 'button' | 'a' = 'button'"
 >
 import { computed, type FunctionalComponent, type SVGAttributes } from 'vue'
-import AppLink from './AppLink.vue'
-import { VLoader } from './UI'
-import type { RouteName } from '@/router/types'
+import AppLink from '@/shared/components/AppLink.vue'
+import { VLoader } from '.'
+import type { RouteName } from '@/app/router/types'
 import type { RouterTo } from '@/shared/composables/customRouter'
 
 type Props = {

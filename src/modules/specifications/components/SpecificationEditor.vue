@@ -4,12 +4,12 @@ import { storeToRefs } from 'pinia'
 import { useForm } from 'vee-validate'
 import { number, string } from 'yup'
 import { useCategoriesStore } from '@/modules/categories'
-import { VButtons, VInputText, VButton, VSelect, VTags } from '@/components/UI'
-import FormField from '@/components/FormField.vue'
+import { VButtons, VInputText, VButton, VSelect, VTags } from '@/shared/components/UI'
+import FormField from '@/shared/components/FormField.vue'
 import type {
   CategorySpecificationCreate,
   CategorySpecificationForm
-} from '@/types/tables/categorySpecifications.types'
+} from '@/modules/categorySpecifications'
 
 type FormData = Omit<CategorySpecificationForm, 'categoryId' | 'title' | 'enTitle'>
 

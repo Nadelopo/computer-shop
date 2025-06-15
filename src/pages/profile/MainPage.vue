@@ -3,9 +3,9 @@ import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/modules/users'
 import { ReviewBlock, type ReviewWithDetails } from '@/modules/reviews'
 import { formatPhoneNumber } from '@/shared/utils/formatPhone'
-import AppLink from '@/components/AppLink.vue'
-import { VLoader } from '@/components/UI'
-import type { Loading } from '@/types'
+import AppLink from '@/shared/components/AppLink.vue'
+import { VLoader } from '@/shared/components/UI'
+import type { Loading } from '@/shared/types'
 
 defineProps<{
   reviews: ReviewWithDetails[]

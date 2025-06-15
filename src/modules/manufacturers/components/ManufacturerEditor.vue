@@ -2,9 +2,9 @@
 import { ref } from 'vue'
 import { useForm } from 'vee-validate'
 import { string } from 'yup'
-import { VButton, VInputFile, VTextarea } from '@/components/UI'
-import FormField from '@/components/FormField.vue'
-import type { InputFileActions } from '@/components/UI/VInputFile/types'
+import { VButton, VInputFile, VTextarea } from '@/shared/components/UI'
+import FormField from '@/shared/components/FormField.vue'
+import type { InputFileActions } from '@/shared/components/UI/VInputFile/types'
 import type { ManufacturerCreate } from '@/modules/manufacturers'
 
 const props = defineProps<{

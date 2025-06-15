@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useManufacturersStore } from '@/modules/manufacturers'
-import { VCarousel, VCarouselSlide } from '@/components/UI'
-import AppLink from '@/components/AppLink.vue'
-import type { CarouselBreakpoints } from '@/components/UI/VCarousel/useFeatureBreakpoints'
+import { VCarousel, VCarouselSlide } from '@/shared/components/UI'
+import AppLink from '@/shared/components/AppLink.vue'
+import type { CarouselBreakpoints } from '@/shared/components/UI/VCarousel/useFeatureBreakpoints'
 
 const { manufacturers } = storeToRefs(useManufacturersStore())
 

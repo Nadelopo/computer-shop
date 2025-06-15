@@ -4,12 +4,18 @@ import { useToast } from 'vue-toastification'
 import { supabase } from '@/shared/api'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
-import { VButton, VConfirm, VInputText, VLoader, VTable } from '@/components/UI'
-import { EditSvg, TrashSvg } from '@/assets/icons'
-import ActionIcon from '@/components/ActionIcon.vue'
-import type { Loading } from '@/types'
+import {
+  VButton,
+  VConfirm,
+  VInputText,
+  VLoader,
+  VTable,
+  VActionIcon
+} from '@/shared/components/UI'
+import { EditSvg, TrashSvg } from '@/shared/assets/icons'
+import type { Loading } from '@/shared/types'
 import type { ProductRead } from '@/modules/products'
-import type { ProductQuantityInStoreRead } from '@/types/tables/ProductQuantityInStores'
+import type { ProductQuantityInStoreRead } from '@/modules/shops'
 
 export type ProductDetails = ProductQuantityInStoreRead & {
   products: Pick<ProductRead, 'title'>
@@ -138,7 +144,7 @@ const save = async () => {
           </td>
           <td>
             <div class="flex">
-              <ActionIcon
+              <VActionIcon
                 :svg="EditSvg"
                 paint-type="stroke"
                 @click="edit(productInShop.id)"
@@ -148,7 +154,7 @@ const save = async () => {
                 :message="'Вы точно хотите удалить?'"
                 @ok="remove(productInShop.id)"
               >
-                <ActionIcon
+                <VActionIcon
                   :svg="TrashSvg"
                   variant="danger"
                   :loading="

@@ -2,8 +2,8 @@
 import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useFavoritesStore, useComparisonStore } from '@/modules/users'
-import ActionIcon from '@/components/ActionIcon.vue'
-import { FavouriteSvg, ComparisonSvg } from '@/assets/icons'
+import { VActionIcon } from '@/shared/components/UI'
+import { FavouriteSvg, ComparisonSvg } from '@/shared/assets/icons'
 
 const props = defineProps<{
   productId: number
@@ -38,7 +38,7 @@ const onIcon = async () => {
 </script>
 
 <template>
-  <ActionIcon
+  <VActionIcon
     :svg="ListIcon"
     :is-active
     :loading

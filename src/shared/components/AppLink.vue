@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T extends RouteName">
-import type { RouterLink, RouterLinkProps } from 'vue-router'
-import type { RouteName } from '@/router/types'
+import type { RouterLinkProps } from 'vue-router'
+import type { RouteName } from '@/app/router/types'
 import type { RouterTo } from '@/shared/composables/customRouter'
 
 type RouterProps = Omit<RouterLinkProps, 'to'> & {

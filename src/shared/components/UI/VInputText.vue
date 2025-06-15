@@ -1,15 +1,9 @@
 <script setup lang="ts" generic="T extends string | number">
-import {
-  computed,
-  onMounted,
-  ref,
-  useAttrs,
-  type InputHTMLAttributes
-} from 'vue'
+import { computed, onMounted, ref, useAttrs, type InputHTMLAttributes } from 'vue'
 import { vMaska } from 'maska/vue'
 import { type MaskaDetail } from 'maska'
 import { debounce as Debounce } from '@/shared/utils/debounce'
-import { CrossSvg, SearchSvg } from '@/assets/icons'
+import { CrossSvg, SearchSvg } from '@/shared/assets/icons'
 
 export interface VInputTextProps<T = string>
   extends /* @vue-ignore */ InputHTMLAttributes {
@@ -56,8 +50,7 @@ const maskaDetails = ref<MaskaDetail>({
 
 const onInput = (e: Event) => {
   const el = e.target as HTMLInputElement
-  let value: number | string =
-    props.type === 'number' ? Number(el.value) : el.value
+  let value: number | string = props.type === 'number' ? Number(el.value) : el.value
   if (props.type === 'number') {
     if (el.value[0] === '0') {
       el.value = el.value.replace(/^0+/, '')

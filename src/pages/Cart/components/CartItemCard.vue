@@ -7,10 +7,10 @@ import { useUserStore } from '@/modules/users'
 import { useCartStore, type ProductStorage, type ProductCart } from '@/modules/cart'
 import { formatPrice } from '@/shared/utils/formatPrice'
 import { useLocalStorage } from '@/shared/composables/localStorage'
-import { VButtons, VSelect } from '@/components/UI'
+import { VButtons, VSelect } from '@/shared/components/UI'
 import ItemActions from './ItemActions.vue'
-import AppLink from '@/components/AppLink.vue'
-import type { Loading } from '@/types'
+import AppLink from '@/shared/components/AppLink.vue'
+import type { Loading } from '@/shared/types'
 
 defineProps<{
   product: ProductCart

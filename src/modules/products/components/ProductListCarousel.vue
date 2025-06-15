@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import ProductCard from './ProductCard.vue'
 import type { ProductCardData } from '@/modules/products'
-import { VCarousel, VCarouselSlide } from '@/components/UI'
+import { VCarousel, VCarouselSlide } from '@/shared/components/UI'
 import ProductCardSkeleton from './ProductCardSkeleton.vue'
-import type { CarouselBreakpoints } from '@/components/UI/VCarousel/useFeatureBreakpoints'
-import type { Loading } from '@/types'
+import type { CarouselBreakpoints } from '@/shared/components/UI/VCarousel/useFeatureBreakpoints'
+import type { Loading } from '@/shared/types'
 
 defineProps<{
   title: string

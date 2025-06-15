@@ -5,8 +5,8 @@ import { storeToRefs } from 'pinia'
 import { useMediaQuery } from '@vueuse/core'
 import { useCustomRouter } from '@/shared/composables/customRouter'
 import { useFilterStore } from '@/pages/ProductCatalog/stores/filterStore'
-import { VButton, VSelect } from '@/components/UI'
-import { ArrowSvg } from '@/assets/icons'
+import { VButton, VSelect } from '@/shared/components/UI'
+import { ArrowSvg } from '@/shared/assets/icons'
 
 const route = useRoute()
 const router = useCustomRouter()

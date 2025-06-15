@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { nextTick } from 'vue'
-import { ArrowSvg } from '@/assets/icons'
+import { ArrowSvg } from '@/shared/assets/icons'
 
 const props = defineProps<{
   translate: number

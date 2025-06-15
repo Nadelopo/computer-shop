@@ -5,11 +5,11 @@ import ProductReviews from './components/ProductReviews.vue'
 import ProductHeader from './components/ProductHeader.vue'
 import ProductSpecifications from './components/ProductSpecifications.vue'
 import SimilarProducts from './components/SimilarProducts.vue'
-import { VLoader } from '@/components/UI'
+import { VLoader } from '@/shared/components/UI'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 import { getProductQuantity, type ProductWithSpecifications } from '@/modules/products'
-import type { Loading } from '@/types'
+import type { Loading } from '@/shared/types'
 
 export type UpdateProductRating = {
   rating: number

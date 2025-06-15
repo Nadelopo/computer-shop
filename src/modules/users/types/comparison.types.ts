@@ -1,4 +1,4 @@
-import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
+import type { CategorySpecificationRead } from '@/modules/categorySpecifications'
 import type { ProductWithSpecifications } from '@/modules/products'
 import type { SpecificationRead } from '@/modules/specifications'
 

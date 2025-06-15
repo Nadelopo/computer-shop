@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import CategoryItemSkeleton from './CategoryItemSkeleton.vue'
-import AppLink from '@/components/AppLink.vue'
+import AppLink from '@/shared/components/AppLink.vue'
 import type { View } from '@/shared/api/database.types'
-import type { Loading } from '@/types'
+import type { Loading } from '@/shared/types'
 
 const props = defineProps<{
   loading: Loading

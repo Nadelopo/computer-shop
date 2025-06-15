@@ -4,11 +4,11 @@ import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useCustomRouter } from '@/shared/composables/customRouter'
 import { useFilterStore } from '@/pages/ProductCatalog/stores/filterStore'
-import { VButton } from '@/components/UI'
+import { VButton } from '@/shared/components/UI'
 import InputFilter from './InputFilter.vue'
 import CheckboxFilter from './CheckboxFilter.vue'
 import FilterListSkeleton from './FiltersSkeleton.vue'
-import type { Loading } from '@/types'
+import type { Loading } from '@/shared/types'
 
 type Props = {
   loadingProperties: Loading

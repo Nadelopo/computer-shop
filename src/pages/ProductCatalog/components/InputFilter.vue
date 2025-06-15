@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { VAccordion } from '@/components/UI'
-import { ArrowSvg } from '@/assets/icons'
+import { VAccordion } from '@/shared/components/UI'
+import { ArrowSvg } from '@/shared/assets/icons'
 
 type Props = {
   min?: number

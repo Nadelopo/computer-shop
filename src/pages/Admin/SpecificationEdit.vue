@@ -6,13 +6,13 @@ import SpecificationEditor from '@/modules/specifications/components/Specificati
 import { type SpecificationRead } from '@/modules/specifications'
 import { supabase } from '@/shared/api'
 import { useCustomRoute, useCustomRouter } from '@/shared/composables/customRouter'
-import { VButton, VLoader } from '@/components/UI'
+import { VButton, VLoader } from '@/shared/components/UI'
 import type {
   CategorySpecificationCreate,
   CategorySpecificationRead,
   CategorySpecificationForm
-} from '@/types/tables/categorySpecifications.types'
-import type { Loading } from '@/types'
+} from '@/modules/categorySpecifications'
+import type { Loading } from '@/shared/types'
 
 const { categories } = storeToRefs(useCategoriesStore())
 const form = ref<CategorySpecificationCreate>()

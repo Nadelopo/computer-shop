@@ -6,12 +6,9 @@ import {
   type NavigationFailure,
   type RouteLocationRaw
 } from 'vue-router'
-import type { RouteName, RouteParams } from '@/router/types'
+import type { RouteName, RouteParams } from '@/app/router/types'
 
-export type RouterTo<T extends RouteName> = Exclude<
-  RouteLocationRaw,
-  string
-> & {
+export type RouterTo<T extends RouteName> = Exclude<RouteLocationRaw, string> & {
   name?: T
   params?: RouteParams<T>
 }

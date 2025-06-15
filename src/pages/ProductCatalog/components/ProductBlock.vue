@@ -3,9 +3,9 @@ import { useMediaQuery } from '@vueuse/core'
 import { formatPrice } from '@/shared/utils/formatPrice'
 import { getSpecificationValue } from '@/modules/specifications'
 import { CartButton } from '@/modules/cart'
-import RatingStars from '@/components/RatingStars.vue'
+import { VRatingStars } from '@/shared/components/UI'
 import { IconButtonFavouritesComparison } from '@/modules/users'
-import AppLink from '@/components/AppLink.vue'
+import AppLink from '@/shared/components/AppLink.vue'
 import type { ProductWithSpecifications } from '@/modules/products'
 
 defineProps<{
@@ -38,7 +38,7 @@ const isSmall = useMediaQuery('(width < 520px)')
           <div class="card__head">
             <div class="card__head__title">{{ item.title }}</div>
             <div>
-              <RatingStars
+              <VRatingStars
                 :model-value="item.rating"
                 :size="isSmall ? 'small' : 'normal'"
               />

@@ -5,7 +5,7 @@ import { getProductQuantity } from '@/modules/products'
 import { useUserStore } from '@/modules/users/stores/userStore'
 import { supabase } from '@/shared/api'
 import { useLocalStorage } from '@/shared/composables/localStorage'
-import type { DataError } from '@/types'
+import type { DataError } from '@/shared/types'
 import type { ProductCart, ProductStorage } from '../types/cart.types'
 
 export const useCartStore = defineStore('cart', () => {
