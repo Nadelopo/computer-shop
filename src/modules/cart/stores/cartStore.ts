@@ -2,11 +2,11 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { PostgrestError, User } from '@supabase/supabase-js'
 import { getProductQuantity } from '@/modules/products'
-import { useUserStore } from '@/modules/users/model/userStore'
+import { useUserStore } from '@/modules/users/stores/userStore'
 import { supabase } from '@/shared/api'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 import type { DataError } from '@/types'
-import type { ProductCart, ProductStorage } from './cart.types'
+import type { ProductCart, ProductStorage } from '../types/cart.types'
 
 export const useCartStore = defineStore('cart', () => {
   const { getSessionUser } = useUserStore()

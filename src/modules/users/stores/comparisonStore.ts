@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { PostgrestError } from '@supabase/supabase-js'
-import { useUserStore } from './userStore'
+import { useUserStore } from '../stores/userStore'
 import { getUserList, updateUserList } from '../services/userService'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 
@@ -32,9 +32,7 @@ export const useComparisonStore = defineStore('comparison', () => {
     return null
   }
 
-  const toggleComparison = async (
-    productId: number
-  ): Promise<PostgrestError | null> => {
+  const toggleComparison = async (productId: number): Promise<PostgrestError | null> => {
     const sessionUser = await getSessionUser()
 
     const updatedValue = comparison.value.includes(productId)
@@ -42,11 +40,7 @@ export const useComparisonStore = defineStore('comparison', () => {
       : [...comparison.value, productId]
 
     if (sessionUser) {
-      const { error } = await updateUserList(
-        'comparison',
-        sessionUser.id,
-        updatedValue
-      )
+      const { error } = await updateUserList('comparison', sessionUser.id, updatedValue)
       if (error) return error
     }
 
@@ -63,11 +57,7 @@ export const useComparisonStore = defineStore('comparison', () => {
     const updatedItems = comparison.value.filter((id) => id !== productId)
 
     if (sessionUser) {
-      const { error } = await updateUserList(
-        'comparison',
-        sessionUser.id,
-        updatedItems
-      )
+      const { error } = await updateUserList('comparison', sessionUser.id, updatedItems)
       if (error) return { error }
     }
 

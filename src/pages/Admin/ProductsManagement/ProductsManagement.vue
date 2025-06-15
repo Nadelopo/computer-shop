@@ -7,7 +7,8 @@ import {
   getProductQuantity,
   ProductEditor,
   type ProductCreate,
-  type ProductWithSpecifications
+  type ProductWithSpecifications,
+  type SpecificationCreateForm
 } from '@/modules/products'
 import { useCategoriesStore } from '@/modules/categories'
 import ProductsList from '@/pages/Admin/ProductsManagement/components/ProductsList.vue'
@@ -15,7 +16,6 @@ import { VPagination } from '@/components/UI'
 import type { CategorySpecificationRead } from '@/types/tables/categorySpecifications.types'
 import type { Loading } from '@/types'
 import type { SpecificationCreate } from '@/modules/specifications'
-import type { SpecificationCreateForm } from '@/modules/products/model/products.types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 
 const route = useCustomRoute('AdminProducts')

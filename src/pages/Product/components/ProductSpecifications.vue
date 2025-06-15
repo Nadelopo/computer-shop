@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getSpecificationValue } from '@/modules/specifications'
-import type { ProductWithSpecifications } from '@/modules/products/model/products.types'
+import type { ProductWithSpecifications } from '@/modules/products'
 
 const props = defineProps<{
   product: ProductWithSpecifications

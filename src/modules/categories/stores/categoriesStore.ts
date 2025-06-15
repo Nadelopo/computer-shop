@@ -1,7 +1,11 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { supabase } from '@/shared/api'
-import type { CategoryCreate, CategoryRead, CategoryUpdate } from './categories.types'
+import type {
+  CategoryCreate,
+  CategoryRead,
+  CategoryUpdate
+} from '../types/categories.types'
 import type {
   CategorySpecificationCreate,
   CategorySpecificationRead

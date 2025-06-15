@@ -2,12 +2,16 @@
 import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/shared/api'
 import { useCustomRoute, useCustomRouter } from '@/shared/composables/customRouter'
-import { ProductEditor, type ProductCreate, type ProductUpdate } from '@/modules/products'
+import {
+  ProductEditor,
+  type ProductCreate,
+  type ProductUpdate,
+  type SpecificationUpdateForm
+} from '@/modules/products'
 import { VButton, VLoader } from '@/components/UI'
 import type { Loading } from '@/types'
 import type { SpecificationCreate } from '@/modules/specifications'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
-import type { SpecificationUpdateForm } from '@/modules/products/model/products.types'
 // import type { UpdateMany } from '@/db/queries/types'
 
 type SpecificationUpdateMany = SpecificationCreate &

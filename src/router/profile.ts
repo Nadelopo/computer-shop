@@ -9,27 +9,27 @@ export const profileRoutes = [
       {
         path: '',
         name: 'ProfileMain',
-        component: () => import('@/pages/profile/MainPage.vue')
+        component: () => import('@/pages/Profile/MainPage.vue')
       },
       {
         path: 'reviews',
         name: 'ProfileReviews',
-        component: () => import('@/pages/profile/ReviewsPage.vue')
+        component: () => import('@/pages/Profile/ReviewsPage.vue')
       },
       {
         path: 'orders',
         name: 'ProfileOrders',
-        component: () => import('@/pages/profile/OrdersPage.vue')
+        component: () => import('@/pages/Profile/OrdersPage.vue')
       },
       {
         path: 'delivery',
         name: 'ProfileDelivery',
-        component: () => import('@/pages/profile/DeliveryPage.vue')
+        component: () => import('@/pages/Profile/DeliveryPage.vue')
       },
       {
         path: 'settings',
         name: 'ProfileSettings',
-        component: () => import('@/pages/profile/SettingsPage.vue')
+        component: () => import('@/pages/Profile/SettingsPage.vue')
       }
     ]
   }

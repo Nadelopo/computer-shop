@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import RatingStars from '@/components/RatingStars.vue'
 import ActionIcon from '@/components/ActionIcon.vue'
 import { AvatarSvg, ArrowSvg } from '@/assets/icons'
-import type { ReviewReadWithDetails } from '../model/reviews.types'
+import type { ReviewReadWithDetails } from '../types/reviews.types'
 
 type Evaluation = 'like' | 'dislike'
 

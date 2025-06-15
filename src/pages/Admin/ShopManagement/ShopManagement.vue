@@ -4,9 +4,8 @@ import { useToast } from 'vue-toastification'
 import { supabase } from '@/shared/api'
 import { ShopEditor } from '@/modules/shops'
 import ShopsList from './components/ShopsList.vue'
-import type { ShopForm } from '@/modules/shops'
+import type { ShopForm, ShopRead } from '@/modules/shops'
 import type { Loading } from '@/types'
-import type { ShopRead } from '@/modules/shops/model/shops.types'
 
 const loadingSubmit = ref<Loading>('success')
 const shops = ref<ShopRead[]>([])

@@ -13,7 +13,7 @@ import {
   VLoader
 } from '@/components/UI'
 import type { Loading } from '@/types'
-import type { SpecificationCreateForm, ProductCreate } from '../model/products.types'
+import type { SpecificationCreateForm, ProductCreate } from '../types/products.types'
 import type { InputFileActions } from '@/components/UI/VInputFile/types'
 
 defineProps<{

@@ -1,2 +1,2 @@
-export * from './model/specifications.types'
-export { getSpecificationValue } from './model/getSpecificationValue'
+export * from './types/specifications.types'
+export { getSpecificationValue } from './utils/getSpecificationValue'

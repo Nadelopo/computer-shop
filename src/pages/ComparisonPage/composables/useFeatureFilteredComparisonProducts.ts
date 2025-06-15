@@ -1,8 +1,5 @@
 import { computed, type ComputedRef, type Ref } from 'vue'
-import type {
-  CategorySpecifications,
-  ComparisonProduct
-} from '@/modules/users/model/comparison.types'
+import type { CategorySpecifications, ComparisonProduct } from '@/modules/users'
 import { formatPrice } from '@/shared/utils/formatPrice'
 
 type FieldsData = {

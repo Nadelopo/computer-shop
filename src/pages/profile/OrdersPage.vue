@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { supabase } from '@/shared/api'
-import { useUserStore } from '@/modules/users/model/userStore'
+import { useUserStore } from '@/modules/users'
 import { formatPrice } from '@/shared/utils/formatPrice'
 import { useOrders } from '@/shared/utils/useOrders'
 import { getWordByQuantity } from '@/modules/cart'

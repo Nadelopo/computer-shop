@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { ProductCardData } from '../model/products.types'
+import type { ProductCardData } from '../types/products.types'
 import { IconButtonFavouritesComparison } from '@/modules/users'
 import RatingStars from '@/components/RatingStars.vue'
 import { CartButton } from '@/modules/cart'

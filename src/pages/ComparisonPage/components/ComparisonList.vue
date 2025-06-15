@@ -7,10 +7,7 @@ import { IconButtonFavouritesComparison } from '@/modules/users'
 import { CartButton } from '@/modules/cart'
 import ActionIcon from '@/components/ActionIcon.vue'
 import AppLink from '@/components/AppLink.vue'
-import type {
-  ComparisonProduct,
-  CategorySpecifications
-} from '@/modules/users/model/comparison.types'
+import type { ComparisonProduct, CategorySpecifications } from '@/modules/users'
 import { ArrowSvg, CrossSvg } from '@/assets/icons'
 
 const props = defineProps<{

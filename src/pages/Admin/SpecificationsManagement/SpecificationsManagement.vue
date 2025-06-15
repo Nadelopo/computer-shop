@@ -4,7 +4,7 @@ import { useCategoriesStore } from '@/modules/categories'
 import { supabase } from '@/shared/api'
 import SpecificationEditor from '@/modules/specifications/components/SpecificationEditor.vue'
 import SpecificationsList from './components/SpecificationsList.vue'
-import type { SpecificationCreate } from '@/modules/specifications/model/specifications.types'
+import type { SpecificationCreate } from '@/modules/specifications'
 import type {
   CategorySpecificationCreate,
   CategorySpecificationRead,

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { useUserStore } from '@/modules/users/model/userStore'
+import { useUserStore } from '@/modules/users'
 import { ReviewBlock, type ReviewWithDetails } from '@/modules/reviews'
 import { formatPhoneNumber } from '@/shared/utils/formatPhone'
 import AppLink from '@/components/AppLink.vue'

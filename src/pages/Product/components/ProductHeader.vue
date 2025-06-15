@@ -13,7 +13,7 @@ import ButtonFavouritesComparison from '@/modules/users/components/ButtonFavouri
 import type { Loading } from '@/types'
 import type { ProductQuantityInStoreRead } from '@/types/tables/ProductQuantityInStores'
 import { formatPrice } from '@/shared/utils/formatPrice'
-import type { ShopRead } from '@/modules/shops/model/shops.types'
+import type { ShopRead } from '@/modules/shops'
 
 export type ShopWithProduct = Pick<ProductQuantityInStoreRead, 'quantity' | 'id'> & {
   shops: Pick<ShopRead, 'address' | 'timeEnd' | 'timeStart'>

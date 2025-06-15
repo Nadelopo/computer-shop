@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { supabase } from '@/shared/api'
-import { useUserStore } from '@/modules/users/model/userStore'
+import { useUserStore } from '@/modules/users'
 import { ReviewBlock, type ReviewWithDetails } from '@/modules/reviews'
 import AppLink from '@/components/AppLink.vue'
 import { VLoader } from '@/components/UI'

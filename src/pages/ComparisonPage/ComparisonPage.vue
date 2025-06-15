@@ -3,17 +3,13 @@ import { ref, watch, computed, onBeforeMount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { supabase } from '@/shared/api'
-import { useComparisonStore } from '@/modules/users/model/comparisonStore'
+import { useComparisonStore } from '@/modules/users'
 import ActionsWithComparison from './components/ActionsWithComparison.vue'
 import ComparisonList from './components/ComparisonList.vue'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 import { getProductQuantity } from '@/modules/products'
 import { VTabs, VLoader } from '@/components/UI'
-import type {
-  Category,
-  CategorySpecifications,
-  ComparisonProduct
-} from '@/modules/users/model/comparison.types'
+import type { Category, CategorySpecifications, ComparisonProduct } from '@/modules/users'
 import type { Loading } from '@/types'
 
 const { comparison } = storeToRefs(useComparisonStore())

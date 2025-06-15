@@ -7,10 +7,7 @@ import { useUserStore } from '@/modules/users'
 import { VButton } from '@/components/UI'
 import RatingStars from '@/components/RatingStars.vue'
 import type { UpdateProductRating } from '@/pages/Product/Product.vue'
-import type {
-  ReviewRating,
-  ReviewReadWithDetails
-} from '@/modules/reviews/model/reviews.types'
+import type { ReviewRating, ReviewReadWithDetails } from '@/modules/reviews'
 
 type ReviewFormCreate = {
   dignities: string

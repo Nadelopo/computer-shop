@@ -1,7 +1,7 @@
-import type { SpecificationReadWithDetails } from '@/modules/specifications/model/specifications.types'
+import type { SpecificationReadWithDetails } from '@/modules/specifications/types/specifications.types'
 import type { DbEnum } from '@/shared/api/database.types'
 import type { SpecificationCreate } from '@/modules/specifications'
-import type { RouteToProduct } from './getRouteToProduct'
+import type { RouteToProduct } from '../utils/getRouteToProduct'
 
 export type ProductReadWithDetails = {
   categories: {

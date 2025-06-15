@@ -8,7 +8,7 @@ import { formatTime } from '@/shared/utils/formatTime'
 import InputAddress from '@/components/InputAddress.vue'
 import FormField from '@/components/FormField.vue'
 import { CrossSvg, HomeSvg } from '@/assets/icons'
-import type { ShopRead } from '@/modules/shops/model/shops.types'
+import type { ShopRead } from '@/modules/shops'
 import type { Loading } from '@/types'
 import type { ReceiptDetails } from '../composables/useCheckoutForm'
 
