@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { VButton } from '@/components/UI'
-import AppLink from '@/components/AppLink.vue'
+import { VButton } from '@/shared/components/UI'
+import AppLink from '@/shared/components/AppLink.vue'
 </script>
 
 <template>
@@ -8,12 +8,12 @@ import AppLink from '@/components/AppLink.vue'
     <div class="">
       <h1>404</h1>
       <h2>СТРАНИЦА НЕ НАЙДЕНА</h2>
-      <app-link
+      <AppLink
         :to="{ name: 'Home' }"
         class="flex justify-center mt-4"
       >
-        <v-button>ГЛАВНАЯ</v-button>
-      </app-link>
+        <VButton>ГЛАВНАЯ</VButton>
+      </AppLink>
     </div>
   </div>
 </template>

@@ -1,0 +1,264 @@
+<script setup lang="ts">
+import { computed, nextTick, ref, watch, watchEffect } from 'vue'
+import { storeToRefs } from 'pinia'
+import { supabase } from '@/shared/api'
+import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
+import { useCustomRoute } from '@/shared/composables/customRouter'
+import { useLocalStorage } from '@/shared/composables/localStorage'
+import { useCategoriesStore } from '@/modules/categories'
+import { VButton, VButtons, VCheckbox, VInputText, VPopup } from '@/shared/components/UI'
+import type { Loading } from '@/shared/types'
+import type { ProductQuantityInStoreCreate } from '@/modules/shops'
+
+type Product = {
+  title: string
+  value: number
+  endIndex?: number
+  startIndex?: number
+}
+
+const emit = defineEmits<{
+  loadProducts: []
+}>()
+
+const { categories } = storeToRefs(useCategoriesStore())
+
+const open = ref(true)
+const add = async () => {
+  open.value = !open.value
+}
+
+const selectedCategories = ref<number[]>([])
+const categoriesOptions = computed(() =>
+  categories.value.map(({ id, title }) => ({ value: id, title }))
+)
+
+const searchValue = ref('')
+const products = ref<Product[]>([])
+const loadignProducts = ref<Loading>('success')
+
+const loadProducts = async () => {
+  loadignProducts.value = 'loading'
+
+  const query = supabase
+    .from('products')
+    .select('id, title')
+    .in('categoryId', selectedCategories.value)
+    .order('categoryId')
+
+  if (isOnlyMatchingValues.value) {
+    query.or(getOrFilterForSearch(searchValue.value, 'title'))
+  }
+
+  const { data, error } = await query
+  if (error) return
+
+  products.value = data.map((e) => ({ title: e.title, value: e.id }))
+  loadignProducts.value = data.length ? 'success' : 'empty'
+}
+watch(() => selectedCategories.value, loadProducts)
+
+const highlightSearchTerm = async () => {
+  await nextTick()
+  if (!isOnlyMatchingValues.value) return
+  products.value = products.value.map(({ value, title }) => {
+    const startIndex = title
+      .toLocaleLowerCase()
+      .indexOf(searchValue.value.toLocaleLowerCase())
+    const endIndex = startIndex + searchValue.value.length
+    return { title, value, endIndex, startIndex }
+  })
+}
+
+const selectedProducts = ref<number[]>([])
+const storage = useLocalStorage<boolean>('admin.shop.matchingValues', {})
+const isOnlyMatchingValues = ref(storage.get() ?? false)
+
+watchEffect(() => {
+  storage.set(isOnlyMatchingValues.value)
+})
+
+const search = () => {
+  if (isOnlyMatchingValues.value) return
+  loadProducts()
+}
+
+const route = useCustomRoute('AdminShopDetails')
+const productsInShop = ref<(ProductQuantityInStoreCreate & { title?: string })[]>([])
+const setProductsInStore = () => {
+  productsInShop.value = selectedProducts.value.map((id) => {
+    return {
+      productId: id,
+      quantity: 0,
+      shopId: Number(route.params.id),
+      title: products.value.find((product) => product.value === id)?.title
+    }
+  })
+}
+
+const loadingCrete = ref<Loading>('success')
+const setQuantityProductsInShops = async () => {
+  if (!productsInShop.value.length) return
+
+  loadingCrete.value = 'loading'
+
+  const { data: productsData } = await supabase
+    .from('product_quantity_in_stores')
+    .select()
+    .in(
+      'shopId',
+      productsInShop.value.map((e) => e.shopId)
+    )
+
+  const forUpdate: PromiseLike<any>[] = []
+  const forCreate: ProductQuantityInStoreCreate[] = []
+
+  for (const product of productsInShop.value) {
+    const foundProduct = productsData?.find((e) => e.productId === product.productId)
+    if (foundProduct) {
+      forUpdate.push(
+        supabase.from('product_quantity_in_stores').update({
+          id: foundProduct.id,
+          quantity: foundProduct.quantity + product.quantity
+        })
+      )
+    } else {
+      // eslint-disable-next-line
+      const { title, ...v } = product
+      forCreate.push(v)
+    }
+  }
+
+  await Promise.all([
+    forUpdate,
+    supabase.from('product_quantity_in_stores').insert(forCreate)
+  ])
+
+  productsInShop.value = []
+  loadingCrete.value = 'success'
+  emit('loadProducts')
+}
+</script>
+
+<template>
+  <div>
+    <VButton @click="add">{{ open ? 'Закрыть' : 'Добавить товар' }}</VButton>
+  </div>
+  <template v-if="open">
+    <VButtons
+      v-model="selectedCategories"
+      :options="categoriesOptions"
+      :loading="loadignProducts === 'loading'"
+      width="170px"
+    />
+    <div class="flex gap-4">
+      <VInputText
+        v-model="searchValue"
+        class="mb-4 w-full"
+        @keyup.enter="search"
+        @search="search"
+        @clear=";(searchValue = ''), loadProducts()"
+        @input="highlightSearchTerm"
+      />
+      <VPopup
+        float="start"
+        :is-close-on-click="false"
+      >
+        <template #active>
+          <button
+            type="button"
+            class="dots"
+          >
+            <div class="dot" />
+            <div class="dot" />
+            <div class="dot" />
+          </button>
+        </template>
+        <template #content>
+          <VCheckbox
+            v-model="isOnlyMatchingValues"
+            title="Только посдветка совподающих значений"
+          />
+        </template>
+      </VPopup>
+    </div>
+    <VButtons
+      v-if="products.length"
+      v-model="selectedProducts"
+      :options="products"
+    >
+      <template #default="{ title, startIndex, endIndex }">
+        <div>
+          <template
+            v-if="
+              isOnlyMatchingValues &&
+              searchValue &&
+              startIndex !== undefined &&
+              startIndex !== -1
+            "
+          >
+            <span>
+              {{ title.slice(0, startIndex) }}
+            </span>
+            <span class="coloured">
+              {{ title.slice(startIndex, endIndex) }}
+            </span>
+            <span>{{ title.slice(endIndex) }}</span>
+          </template>
+          <template v-else>
+            {{ title }}
+          </template>
+        </div>
+      </template>
+    </VButtons>
+    <div @click="setProductsInStore">
+      <VButton>Выбрать</VButton>
+    </div>
+    <div
+      v-if="productsInShop.length"
+      class="flex flex-col gap-2"
+    >
+      <div
+        v-for="product in productsInShop"
+        :key="product.productId"
+        class="flex gap-2 items-end"
+      >
+        <VInputText
+          v-model="product.quantity"
+          min="0"
+          type="number"
+          class="w-14"
+        />
+        <div>{{ product.title }}</div>
+      </div>
+    </div>
+    <div>
+      <VButton
+        :loading="loadingCrete === 'loading'"
+        @click="setQuantityProductsInShops"
+      >
+        Создать
+      </VButton>
+    </div>
+  </template>
+</template>
+
+<style scoped lang="sass">
+
+.dots
+  display: flex
+  flex-direction: column
+  gap: 4px
+  transition: .2s
+  padding: 6px
+  border-radius: 4px
+  &:hover
+    background: var(--gray)
+  .dot
+    border: 2px solid var(--back-sec)
+    border-radius: 100%
+
+
+.coloured
+  color: var(--danger)
+</style>

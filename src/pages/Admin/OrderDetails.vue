@@ -1,31 +1,29 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue'
 import { useToast } from 'vue-toastification'
-import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/stores/userStore'
-import { useCustomRoute } from '@/utils/customRouter'
-import { useOrders } from '@/utils/useOrders'
-import { VSelect, VButton, VTable, VLoader } from '@/components/UI'
-import AppLink from '@/components/AppLink.vue'
-import { formatPrice } from '@/utils/formatPrice'
-import type { Loading } from '@/types'
-import type { OrderReadWithDetails } from '@/types/tables/orders.types'
+import { supabase } from '@/shared/api'
+import { useUserStore } from '@/modules/users'
+import { useCustomRoute } from '@/shared/composables/customRouter'
+import { useOrders } from '@/shared/utils/useOrders'
+import { VSelect, VButton, VTable, VLoader } from '@/shared/components/UI'
+import AppLink from '@/shared/components/AppLink.vue'
+import { formatPrice } from '@/shared/utils/formatPrice'
+import type { Loading } from '@/shared/types'
+import type { OrderReadWithDetails } from '@/modules/orders/types/orders.types'
 
 const route = useCustomRoute('AdminOrderDetails')
 const orderId = Number(route.params.id)
 
-const { isUserAuthenticated } = useUserStore()
+const { getSessionUser } = useUserStore()
 const loading = ref<Loading>('loading')
 const order = ref<OrderReadWithDetails>()
 onBeforeMount(async () => {
-  const user = await isUserAuthenticated()
+  const user = await getSessionUser()
   if (!user) return
 
   const { data, error } = await supabase
     .from('orders')
-    .select(
-      '*, ordered_products(*, products(id, title, img, categories(id, enTitle)))'
-    )
+    .select('*, ordered_products(*, products(id, title, img, categories(id, enTitle)))')
     .eq('id', orderId)
     .single()
   if (error) {
@@ -74,12 +72,12 @@ const updateOrder = async () => {
 <template>
   <div v-if="loading === 'success' && order">
     <div class="flex gap-4">
-      <v-table
+      <VTable
         line
         :striped="false"
       >
         <template #header>
-          <div> {{ `Номер заказа ${order.id}` }}</div>
+          <div>{{ `Номер заказа ${order.id}` }}</div>
           <div class="text-base flex flex-col gap-4">
             <div>
               Дата заказа:
@@ -87,14 +85,14 @@ const updateOrder = async () => {
             </div>
             <div class="flex items-center">
               <span class="w-[114px]">Статус заказа:</span>
-              <v-select
+              <VSelect
                 v-model="order.status"
                 :options="statusOptions"
               />
             </div>
             <div class="flex items-center">
               <span class="w-[114px] inline-block">Статус оплаты:</span>
-              <v-select
+              <VSelect
                 v-model="order.paymentStatus"
                 :options="paymentStatusOptions"
               />
@@ -103,7 +101,7 @@ const updateOrder = async () => {
         </template>
         <thead>
           <tr>
-            <th>Продукт </th>
+            <th>Продукт</th>
             <th>Количество</th>
             <th>Стоимость</th>
           </tr>
@@ -120,14 +118,14 @@ const updateOrder = async () => {
                   class="rounded h-20"
                   alt=""
                 />
-                <div>{{ product.products.title }} </div>
+                <div>{{ product.products.title }}</div>
               </div>
             </td>
-            <td>{{ product.count }} </td>
-            <td>{{ order.price }} </td>
+            <td>{{ product.count }}</td>
+            <td>{{ order.price }}</td>
           </tr>
         </tbody>
-      </v-table>
+      </VTable>
       <div>
         <div class="rounded bg-white min-w-[500px] p-4">
           <div class="mb-2">Итог заказа</div>
@@ -139,16 +137,16 @@ const updateOrder = async () => {
       </div>
     </div>
     <div class="flex gap-4 mt-4">
-      <v-button @click="updateOrder">сохранить</v-button>
-      <app-link :to="{ name: 'AdminOrders' }">
-        <v-button>назад</v-button>
-      </app-link>
+      <VButton @click="updateOrder">сохранить</VButton>
+      <AppLink :to="{ name: 'AdminOrders' }">
+        <VButton>назад</VButton>
+      </AppLink>
     </div>
   </div>
   <div
     v-else-if="loading === 'loading'"
     class="flex justify-center items-center h-[50vh]"
   >
-    <v-loader />
+    <VLoader />
   </div>
 </template>

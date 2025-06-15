@@ -1,0 +1,195 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useToast } from 'vue-toastification'
+import { supabase } from '@/shared/api'
+import { useCustomRoute } from '@/shared/composables/customRouter'
+import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
+import {
+  VButton,
+  VConfirm,
+  VInputText,
+  VLoader,
+  VTable,
+  VActionIcon
+} from '@/shared/components/UI'
+import { EditSvg, TrashSvg } from '@/shared/assets/icons'
+import type { Loading } from '@/shared/types'
+import type { ProductRead } from '@/modules/products'
+import type { ProductQuantityInStoreRead } from '@/modules/shops'
+
+export type ProductDetails = ProductQuantityInStoreRead & {
+  products: Pick<ProductRead, 'title'>
+  oldQuantity: number
+}
+
+const route = useCustomRoute('AdminShopDetails')
+const shopId = Number(route.params.id)
+
+const productsInShops = ref<ProductDetails[]>([])
+const search = ref('')
+const loading = ref<Loading>('loading')
+const loadProductsInShops = async () => {
+  loading.value = 'loading'
+
+  const { data, error } = await supabase
+    .from('product_quantity_in_stores')
+    .select('*, products!inner(title)')
+    .eq('shopId', shopId)
+    .or(getOrFilterForSearch(search.value, 'title'), {
+      referencedTable: 'products'
+    })
+  if (error) {
+    loading.value = 'error'
+    return
+  }
+
+  if (data.length === 0) {
+    useToast().warning('Товары не найдены')
+    loading.value = 'empty'
+    return
+  }
+
+  productsInShops.value = data.map((e) => {
+    return {
+      ...e,
+      oldQuantity: e.quantity
+    }
+  })
+  loading.value = 'success'
+}
+loadProductsInShops()
+
+defineExpose({ loadProductsInShops })
+
+const currentRemoveShopId = ref(0)
+const loadingRemove = ref<Loading>('loading')
+const remove = async (id: number) => {
+  const { error } = await supabase
+    .from('product_quantity_in_stores')
+    .delete()
+    .eq('id', id)
+  if (error) return
+
+  productsInShops.value = productsInShops.value.filter((e) => e.id !== id)
+}
+
+const currentEditIds = ref<number[]>([])
+const edit = (currentId: number) => {
+  if (currentEditIds.value.includes(currentId)) {
+    currentEditIds.value = currentEditIds.value.filter((id) => id !== currentId)
+    return
+  }
+  currentEditIds.value.push(currentId)
+}
+
+const save = async () => {
+  const changedValues: ProductQuantityInStoreRead[] = productsInShops.value
+    .filter((e) => currentEditIds.value.includes(e.id))
+    .map((e) => ({
+      id: e.id,
+      created_at: e.created_at,
+      productId: e.productId,
+      quantity: e.quantity,
+      shopId: e.shopId
+    }))
+
+  await supabase.from('product_quantity_in_stores').upsert(changedValues, {
+    onConflict: 'id'
+  })
+
+  currentEditIds.value = []
+  productsInShops.value = productsInShops.value.map((e) => {
+    return { ...e, oldQuantity: e.quantity }
+  })
+  useToast().success('Изменения сохранены')
+}
+</script>
+
+<template>
+  <VInputText
+    v-model="search"
+    placeholder="#id или название товара"
+    @keyup.enter="loadProductsInShops"
+    @search="loadProductsInShops"
+    @clear=";(search = ''), loadProductsInShops()"
+  />
+  <VTable>
+    <template #header> Товары в магазине </template>
+    <template v-if="loading === 'success'">
+      <thead>
+        <tr>
+          <th>Название</th>
+          <th>Количество</th>
+          <th width="1%">Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="productInShop in productsInShops"
+          :key="productInShop.id"
+        >
+          <td>{{ productInShop.products.title }}</td>
+          <td width="30%">
+            <div v-if="currentEditIds.includes(productInShop.id)">
+              <VInputText
+                v-model="productInShop.quantity"
+                type="number"
+                min="0"
+                autofocus
+              />
+            </div>
+            <div v-else>
+              {{ productInShop.oldQuantity }}
+            </div>
+          </td>
+          <td>
+            <div class="flex">
+              <VActionIcon
+                :svg="EditSvg"
+                paint-type="stroke"
+                @click="edit(productInShop.id)"
+              />
+              <VConfirm
+                v-slot="{ openModal }"
+                :message="'Вы точно хотите удалить?'"
+                @ok="remove(productInShop.id)"
+              >
+                <VActionIcon
+                  :svg="TrashSvg"
+                  variant="danger"
+                  :loading="
+                    loadingRemove === 'loading' &&
+                    currentRemoveShopId === productInShop.id
+                  "
+                  @click="openModal"
+                />
+              </VConfirm>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </template>
+    <div
+      v-else-if="loading === 'loading'"
+      class="p-4"
+    >
+      <VLoader />
+    </div>
+    <div
+      v-else-if="loading === 'empty'"
+      class="p-4"
+    >
+      Товары отсутствуют
+    </div>
+  </VTable>
+  <div>
+    <VButton
+      v-if="currentEditIds.length"
+      @click="save"
+    >
+      Сохранить
+    </VButton>
+  </div>
+</template>
+
+<style scoped lang="sass"></style>

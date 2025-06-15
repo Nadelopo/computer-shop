@@ -1,0 +1,114 @@
+<script setup lang="ts">
+import { onBeforeMount, ref } from 'vue'
+import { useToast } from 'vue-toastification'
+import { supabase } from '@/shared/api'
+import { VConfirm, VLoader, VTable, VActionIcon } from '@/shared/components/UI'
+import { formatPhoneNumber } from '@/shared/utils/formatPhone'
+import { formatTime } from '@/shared/utils/formatTime'
+import { DetailsSvg, EditSvg, TrashSvg } from '@/shared/assets/icons'
+import type { Loading } from '@/shared/types'
+import type { ShopRead } from '@/modules/shops'
+
+const shops = defineModel<ShopRead[]>({ required: true })
+const loadingShops = ref<Loading>('loading')
+
+onBeforeMount(async () => {
+  const { data, error } = await supabase.from('shops').select()
+  if (error) {
+    loadingShops.value = 'error'
+    return
+  }
+
+  shops.value = data
+  loadingShops.value = 'success'
+})
+
+const toast = useToast()
+const loadingRemove = ref<Loading>('loading')
+const currentRemoveShopId = ref(0)
+const remove = async (id: number) => {
+  currentRemoveShopId.value = id
+  loadingRemove.value = 'loading'
+
+  const { error } = await supabase.from('shops').delete().eq('id', id)
+  if (error) {
+    loadingRemove.value = 'error'
+    toast.error('ошибка при удалении')
+    return
+  }
+
+  shops.value = shops.value.filter((e) => e.id !== id)
+  loadingRemove.value = 'success'
+}
+</script>
+
+<template>
+  <VTable
+    class="mt-6"
+    line
+  >
+    <template #header> Магазины </template>
+    <div
+      v-if="loadingShops === 'loading'"
+      class="p-4"
+    >
+      <VLoader />
+    </div>
+    <template v-else>
+      <thead>
+        <tr>
+          <th>Адрес</th>
+          <th>Телефон</th>
+          <th>Время</th>
+          <th width="1%">Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="shop in shops"
+          :key="shop.id"
+        >
+          <td>{{ shop.address }}</td>
+          <td>{{ formatPhoneNumber(shop.phone) }}</td>
+          <td>{{ formatTime(shop.timeStart, shop.timeEnd) }}</td>
+          <td>
+            <div class="flex">
+              <VActionIcon
+                tag="a"
+                :to="{
+                  name: 'EditShop',
+                  params: {
+                    id: shop.id
+                  }
+                }"
+                :svg="EditSvg"
+                paint-type="stroke"
+              />
+              <VActionIcon
+                tag="a"
+                :to="{ name: 'AdminShopDetails', params: { id: shop.id } }"
+                :svg="DetailsSvg"
+                paint-type="stroke"
+                tooltip="Детали"
+              />
+              <VConfirm
+                v-slot="{ openModal }"
+                :message="'Вы точно хотите удалить?'"
+                @ok="remove(shop.id)"
+              >
+                <VActionIcon
+                  :svg="TrashSvg"
+                  variant="danger"
+                  :loading="
+                    loadingRemove === 'loading' && currentRemoveShopId === shop.id
+                  "
+                  @click="openModal"
+                />
+              </VConfirm>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </template>
+  </VTable>
+</template>

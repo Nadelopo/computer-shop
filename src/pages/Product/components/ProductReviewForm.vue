@@ -1,0 +1,184 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useToast } from 'vue-toastification'
+import { supabase } from '@/shared/api'
+import { useUserStore } from '@/modules/users'
+import { VRatingStars, VButton } from '@/shared/components/UI'
+import type { UpdateProductRating } from '@/pages/Product/Product.vue'
+import type { ReviewRating, ReviewReadWithDetails } from '@/modules/reviews'
+
+type ReviewFormCreate = {
+  dignities: string
+  disadvantages: string
+  comment: string
+  rating: ReviewRating | 0
+}
+
+const props = defineProps<{ productId: number }>()
+
+const emit = defineEmits<{
+  createReview: [review: ReviewReadWithDetails]
+  updateProductRating: [newRating: UpdateProductRating]
+}>()
+
+const purifiedForm: ReviewFormCreate = {
+  dignities: '',
+  disadvantages: '',
+  comment: '',
+  rating: 0
+}
+
+const { user } = storeToRefs(useUserStore())
+const toast = useToast()
+const showReviewForm = ref(false)
+
+const toggleForm = () => {
+  if (!user.value) {
+    toast.warning('Требуется авторизация')
+    return
+  }
+  showReviewForm.value = !showReviewForm.value
+}
+
+const form = ref<ReviewFormCreate>({
+  ...purifiedForm
+})
+const createReview = async () => {
+  if (!user.value) return
+  if (form.value.rating === 0) {
+    toast.warning('Укажите оценку')
+  } else {
+    const { data: createdReview, error } = await supabase
+      .from('reviews')
+      .insert({
+        userId: user.value.id,
+        productId: props.productId,
+        dignities: form.value.dignities || null,
+        disadvantages: form.value.disadvantages || null,
+        comment: form.value.comment || null,
+        rating: form.value.rating
+      })
+      .select('*, users(name)')
+      .single()
+    if (error) return
+
+    emit('createReview', createdReview)
+    form.value = { ...purifiedForm }
+    showReviewForm.value = false
+
+    const { data: reviewsRating } = await supabase
+      .from('reviews')
+      .select('rating')
+      .eq('productId', props.productId)
+    if (!reviewsRating) return
+
+    const newProductRating =
+      reviewsRating.reduce((a, b) => a + b.rating, 0) / reviewsRating.length
+
+    const { error: errorProduct } = await supabase
+      .from('products')
+      .update({ rating: newProductRating, countReviews: reviewsRating.length })
+      .eq('id', props.productId)
+      .single()
+    if (errorProduct) return
+    emit('updateProductRating', { rating: newProductRating })
+  }
+}
+</script>
+
+<template>
+  <VButton @click="toggleForm">
+    {{ showReviewForm ? 'закрыть' : 'написать отзыв' }}
+  </VButton>
+  <Transition name="review__form">
+    <form
+      v-if="showReviewForm"
+      class="review__form"
+      @submit.prevent="createReview"
+    >
+      <div class="mb-4">
+        <label
+          for="dignities"
+          class="title"
+        >
+          Достоинства
+        </label>
+        <textarea
+          id="dignities"
+          v-model.trim="form.dignities"
+        />
+      </div>
+      <div class="mb-4">
+        <label
+          for="disadvantages"
+          class="title"
+        >
+          Недостатки
+        </label>
+        <textarea
+          id="disadvantages"
+          v-model.trim="form.disadvantages"
+        />
+      </div>
+      <div class="mb-4">
+        <label
+          for="comment"
+          class="title"
+        >
+          Комментарий
+        </label>
+        <textarea
+          id="comment"
+          v-model.trim="form.comment"
+        />
+      </div>
+      <div>
+        <VRatingStars
+          v-model="form.rating"
+          :static="false"
+          class="mb-4 mt-8"
+        />
+        <VButton type="submit">ставить отзыв</VButton>
+      </div>
+    </form>
+  </Transition>
+</template>
+
+<style scoped lang="sass">
+.review__form
+  overflow: hidden
+  padding-left: 8px
+  margin-top: 30px
+  height: 720px
+  .title
+    display: block
+    margin-bottom: 10px
+  textarea
+    padding: 10px
+    background: #f2f2f2
+    width: 90%
+    outline: none
+    border-radius: 6px
+    min-height: 40px
+    overflow: auto
+    height: 150px
+    max-height: 150px
+    min-height: 150px
+    border: none
+    box-shadow: 0 0 5px 0 var(--main-semi-light)
+    transition: box-shadow .6s
+    font-weight: 300
+
+.review__form-move,
+.review__form-enter-active,
+.review__form-leave-active
+  transition: all 0.5s ease
+
+.review__form-enter-from,
+.review__form-leave-to
+  opacity: 0
+  transition: all 0.5s ease
+  height: 0px
+  margin-top: 0
+</style>

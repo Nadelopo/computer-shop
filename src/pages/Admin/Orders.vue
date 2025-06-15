@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useToast } from 'vue-toastification'
-import { supabase } from '@/db/supabase'
-import { useUserStore } from '@/stores/userStore'
-import { useOrders } from '@/utils/useOrders'
-import { formatPrice } from '@/utils/formatPrice'
+import { supabase } from '@/shared/api'
+import { useUserStore } from '@/modules/users'
+import { useOrders } from '@/shared/utils/useOrders'
+import { formatPrice } from '@/shared/utils/formatPrice'
 import {
   VTable,
   VPagination,
   VLoader,
   VConfirm,
-  VInputText
-} from '@/components/UI'
-import ActionIcon from '@/components/ActionIcon.vue'
-import { EditSvg, TrashSvg } from '@/assets/icons'
-import type { OrderRead } from '@/types/tables/orders.types'
-import type { Loading } from '@/types'
+  VInputText,
+  VActionIcon
+} from '@/shared/components/UI'
+import { EditSvg, TrashSvg } from '@/shared/assets/icons'
+import type { OrderRead } from '@/modules/orders/types/orders.types'
+import type { Loading } from '@/shared/types'
 
 type Order = Pick<
   OrderRead,
@@ -26,7 +26,7 @@ const orders = ref<Order[]>([])
 
 const { getStatus, getPaymentStatus } = useOrders()
 
-const { isUserAuthenticated } = useUserStore()
+const { getSessionUser } = useUserStore()
 const limit = 6
 const currentPage = ref(0)
 const totalOrders = ref(0)
@@ -34,7 +34,7 @@ const loading = ref<Loading>('loading')
 const loadOrders = async () => {
   loading.value = 'loading'
 
-  const user = await isUserAuthenticated()
+  const user = await getSessionUser()
   if (!user) return
 
   const { data, error, count } = await supabase
@@ -101,7 +101,7 @@ const clear = () => {
 
 <template>
   <div>
-    <v-input-text
+    <VInputText
       v-model="searchOrderId"
       placeholder="номер заказа"
       class="mb-2"
@@ -109,7 +109,7 @@ const clear = () => {
       @search="searchOrder"
       @clear="clear"
     />
-    <v-table v-if="loading === 'success'">
+    <VTable v-if="loading === 'success'">
       <template #header> Заказы</template>
       <thead>
         <tr>
@@ -129,7 +129,9 @@ const clear = () => {
         >
           <td>{{ order.id }}</td>
           <td>{{ order.name }}</td>
-          {{ new Date(order.created_at || '').toLocaleDateString() }}
+          {{
+            new Date(order.created_at || '').toLocaleDateString()
+          }}
           <td>
             <span
               class="order__payment-status"
@@ -149,37 +151,36 @@ const clear = () => {
           </td>
           <td>
             <div class="flex">
-              <action-icon
+              <VActionIcon
                 tag="a"
                 :to="{ name: 'AdminOrderDetails', params: { id: order.id } }"
                 :svg="EditSvg"
                 paint-type="stroke"
                 tooltip="Детали заказа"
               />
-              <v-confirm
+              <VConfirm
                 v-slot="{ openModal }"
                 :message="`Вы точно хотите удалить заказ - ${order.id}`"
                 @ok="removeOrder(order.id)"
               >
-                <action-icon
+                <VActionIcon
                   :svg="TrashSvg"
                   variant="danger"
                   :loading="
-                    loadingRemove === 'loading' &&
-                    currentRemoveOrderId === order.id
+                    loadingRemove === 'loading' && currentRemoveOrderId === order.id
                   "
                   @click="openModal"
                 />
-              </v-confirm>
+              </VConfirm>
             </div>
           </td>
         </tr>
       </tbody>
-    </v-table>
+    </VTable>
     <div v-else-if="loading === 'loading'">
-      <v-loader />
+      <VLoader />
     </div>
-    <v-pagination
+    <VPagination
       v-model="currentPage"
       :item-count="totalOrders"
       :page-size="limit"

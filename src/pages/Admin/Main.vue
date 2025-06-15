@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue'
-import { supabase } from '@/db/supabase'
-import { getCurrentTime } from '@/utils/getCurrentTime'
-import { ArrowSvg } from '@/assets/icons'
-import type { Loading } from '@/types'
+import { supabase } from '@/shared/api'
+import { getCurrentTime } from '@/shared/utils/getCurrentTime'
+import { ArrowSvg } from '@/shared/assets/icons'
+import type { Loading } from '@/shared/types'
 
 const formatDate = (date: Date): string => {
   return String(date.toLocaleDateString()).split('.').reverse().join('-')
@@ -60,14 +60,14 @@ const text = computed(() => {
           v-if="loading === 'success'"
           class="orders"
         >
-          <div> Заказы за месяц </div>
+          <div>Заказы за месяц</div>
           <div>{{ currentMothCount }}</div>
           <div
             class="comparison"
             :class="[differentPreviousCount < 0 && 'negative']"
           >
-            <arrow-svg />
-            <div>{{ text }} </div>
+            <ArrowSvg />
+            <div>{{ text }}</div>
           </div>
         </div>
       </div>

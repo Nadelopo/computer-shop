@@ -1,0 +1,506 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useToast } from 'vue-toastification'
+import { storeToRefs } from 'pinia'
+import type { PostgrestError } from '@supabase/supabase-js'
+import { supabase } from '@/shared/api'
+import { useUserStore, type UserUpdate } from '@/modules/users'
+import { useCartStore, getWordByQuantity } from '@/modules/cart'
+import { useCustomRouter } from '@/shared/composables/customRouter'
+import { formatPrice } from '@/shared/utils/formatPrice'
+import { VButton, VButtons, VLoader } from '@/shared/components/UI'
+import FormField from '@/shared/components/FormField.vue'
+import { useLocalStorage } from '@/shared/composables/localStorage'
+import { useGeoSuggest } from '@/shared/utils/useGeoSuggest'
+import MethodObtain from './components/MethodObtain.vue'
+import {
+  type OrderData,
+  useCheckoutForm
+} from '@/pages/Checkout/composables/useCheckoutForm'
+import { useFeaturePrice } from '@/pages/Checkout/composables/useFeaturePrice'
+import { useFeatureInitialUserDataInstallation } from '@/pages/Checkout/composables/useFeatureInitialUserDataInstallation'
+import type { Loading } from '@/shared/types'
+import type { OrderCreate } from '@/modules/orders/types/orders.types'
+import type { OrderedProductCreate } from '@/modules/orders/types/orderedProducts.types'
+import type { ProductQuantityInStoreCreate } from '@/modules/shops'
+
+const { values, handleSubmit, setFieldValue, setValues } = useCheckoutForm()
+// TODO удалить этот бред сумасшедшего(useFeatureInitialUserDataInstallation)
+const { loadingUserData } = useFeatureInitialUserDataInstallation(setValues, values)
+const { price, loadingPrice, products } = useFeaturePrice()
+
+const { countCartItems, cartItems } = storeToRefs(useCartStore())
+
+const { user } = storeToRefs(useUserStore())
+
+const updateUserData = async (phone: number) => {
+  if (!user.value) return
+
+  const { data, error: getUserError } = await supabase
+    .from('users')
+    .select('address')
+    .eq('id', user.value.id)
+    .single()
+
+  if (getUserError) return
+
+  const {
+    obtainType,
+    receiptDetails: { address, city, apartment, floor, entrance }
+  } = values
+
+  let updateData: UserUpdate = {}
+  if (!data.address && obtainType === 'delivery') {
+    updateData = {
+      address,
+      city,
+      apartment: apartment || null,
+      floor: floor || null,
+      entrance: entrance || null
+    }
+  }
+
+  if (!user.value.phone) {
+    updateData.phone = phone
+  }
+
+  if (Object.keys(updateData).length === 0) return
+
+  await supabase.from('users').update(updateData).eq('id', user.value.id)
+}
+
+const loadingCreateOrder = ref<Loading>('success')
+const toast = useToast()
+const checkAddressValid = async (
+  address: string | null,
+  city: string | null,
+  obtainType: OrderData['obtainType']
+): Promise<boolean> => {
+  if (obtainType === 'selfcall') return true
+  const { data } = await useGeoSuggest({
+    text: address ? `${city} ${address}` : '',
+    type: 'house'
+  })
+  const findedAddress = data?.find((e) => e.title.text === address)
+  if (!findedAddress) {
+    toast.warning('Адрес не найден')
+    loadingCreateOrder.value = 'success'
+    return false
+  }
+  return true
+}
+
+let shopId = ref<number | null>(null)
+
+const setProducts = async (
+  _products: (ProductQuantityInStoreCreate & {
+    count: number
+    type: 'insert' | 'update'
+  })[]
+) => {
+  const groupedProducts = {
+    insert: _products.filter((p) => p.type === 'insert'),
+    update: _products.filter((p) => p.type === 'update')
+  }
+  let error: PostgrestError | null = null
+
+  if (groupedProducts.update.length) {
+    const updatedProducts = groupedProducts.update.map((p) => ({
+      productId: p.productId,
+      quantity: p.quantity + p.count,
+      shopId: p.shopId,
+      created_at: p.created_at,
+      id: p.id
+    }))
+    error = (
+      await supabase
+        .from('product_quantity_in_stores')
+        .upsert(updatedProducts, { onConflict: 'id' })
+        .select()
+    ).error
+  }
+
+  if (groupedProducts.insert.length) {
+    const insertedProducts = groupedProducts.insert.map((p) => ({
+      productId: p.productId,
+      quantity: p.quantity,
+      shopId: p.shopId
+    }))
+    error = (await supabase.from('product_quantity_in_stores').insert(insertedProducts))
+      .error
+  }
+
+  console.error(error)
+}
+
+const updateProductQuantityForSelfCall = async () => {
+  if (!shopId.value) return
+  let productsInStore: ProductQuantityInStoreCreate[] = []
+
+  const { data, error } = await supabase
+    .from('product_quantity_in_stores')
+    .select()
+    .eq('shopId', shopId.value)
+    .in(
+      'productId',
+      cartItems.value.map((e) => e.productId)
+    )
+  if (error) return
+  productsInStore = data
+
+  if (productsInStore.length !== cartItems.value.length) {
+    const productNotInShop = cartItems.value.filter(
+      (e) => !productsInStore.find((p) => p.productId === e.productId)
+    )
+
+    const { data: productsInShop } = await supabase
+      .from('product_quantity_in_stores')
+      .select()
+      .in(
+        'productId',
+        productNotInShop.map((e) => e.productId)
+      )
+    if (!productsInShop) return
+
+    const productsForSet = productNotInShop.reduce<
+      (ProductQuantityInStoreCreate & {
+        count: number
+        type: 'insert' | 'update'
+      })[]
+    >((acc, p) => {
+      const productInStores = productsInShop.find(
+        (e) => e.productId === p.productId && e.quantity >= p.count
+      )
+
+      if (productNotInShop) {
+        acc.push({
+          productId: p.productId,
+          shopId: shopId.value!,
+          quantity: p.count,
+          count: p.count,
+          type: 'insert'
+        })
+      } else if (productInStores) {
+        acc.push({
+          ...productInStores,
+          count: p.count,
+          type: 'update'
+        })
+      }
+      return acc
+    }, [])
+
+    const productForRemove = productNotInShop.reduce<ProductQuantityInStoreCreate[]>(
+      (acc, p) => {
+        const productInStores = productsInShop.find(
+          (e) => e.productId === p.productId && e.quantity >= p.count
+        )
+
+        if (productInStores) {
+          acc.push({
+            ...productInStores,
+            quantity: productInStores.quantity - p.count
+          })
+        }
+        return acc
+      },
+      []
+    )
+
+    const { error: productRemoveError } = await supabase
+      .from('product_quantity_in_stores')
+      .upsert(productForRemove, { onConflict: 'id' })
+
+    if (productRemoveError) return
+
+    await setProducts(productsForSet)
+
+    const { data: productsInStoreData } = await supabase
+      .from('product_quantity_in_stores')
+      .select()
+      .eq('shopId', shopId.value)
+      .in(
+        'productId',
+        cartItems.value.map((e) => e.productId)
+      )
+    if (!productsInStoreData) return
+    productsInStore = productsInStoreData
+  }
+
+  const productsForRemove = cartItems.value.reduce<ProductQuantityInStoreCreate[]>(
+    (acc, p) => {
+      const product = productsInStore.find((e) => e.productId === p.productId)
+      if (product) {
+        acc.push({
+          ...product,
+          quantity: product.quantity - p.count
+        })
+      }
+      return acc
+    },
+    []
+  )
+
+  const { error: productRemoveError } = await supabase
+    .from('product_quantity_in_stores')
+    .upsert(productsForRemove, { onConflict: 'id' })
+
+  if (productRemoveError) {
+    console.error(productRemoveError)
+  }
+}
+
+const updateProductQuantityForDelivery = async () => {
+  const { data, error } = await supabase
+    .from('product_quantity_in_stores')
+    .select()
+    .in(
+      'productId',
+      cartItems.value.map((e) => e.productId)
+    )
+
+  if (error) return
+
+  data.sort((a, b) => b.quantity - a.quantity)
+
+  const updates: ProductQuantityInStoreCreate[] = []
+
+  cartItems.value.forEach((item) => {
+    let remainingQuantity = item.count
+
+    for (const store of data.filter((s) => s.productId === item.productId)) {
+      if (remainingQuantity <= 0) break
+
+      const quantityToDeduct = Math.min(store.quantity, remainingQuantity)
+      updates.push({
+        ...store,
+        quantity: store.quantity - quantityToDeduct
+      })
+      remainingQuantity -= quantityToDeduct
+    }
+
+    if (remainingQuantity > 0) {
+      console.error(
+        `Недостаточно товара с productId=${item.productId} для выполнения заказа. Осталось: ${remainingQuantity}`
+      )
+    }
+  })
+
+  const { error: updateError } = await supabase
+    .from('product_quantity_in_stores')
+    .upsert(updates)
+
+  if (updateError) {
+    console.error('Ошибка при обновлении количества товаров:', updateError)
+  }
+}
+
+const updateProductQuantity = async () => {
+  if (values.obtainType === 'selfcall') {
+    await updateProductQuantityForSelfCall()
+  } else {
+    await updateProductQuantityForDelivery()
+  }
+}
+
+const addOrderedProducts = async (orderId: number) => {
+  const orderedProducts: Omit<OrderedProductCreate, 'orderId'>[] = cartItems.value.map(
+    (e) => {
+      const product = products.value.find((p) => p.id === e.productId)
+
+      const additionalWarranty =
+        cartItems.value.find((p) => p.productId === e.productId)?.additionalWarranty ?? 0
+
+      return {
+        productId: e.productId,
+        count: e.count,
+        price: product?.price ?? 0,
+        additionalWarranty,
+        servicePrice: getMarkup(additionalWarranty, product?.price ?? 0)
+      }
+    }
+  )
+
+  const { error: errorOrderedProducts } = await supabase
+    .from('ordered_products')
+    .insert(orderedProducts.map((e) => ({ ...e, orderId })))
+
+  if (errorOrderedProducts) {
+    loadingCreateOrder.value = 'error'
+    toast.error('Произошла ошибка')
+    return
+  }
+
+  if (user.value) {
+    await supabase.from('cart').delete().match({ userId: user.value.id })
+  } else {
+    useLocalStorage('cart').set([])
+  }
+
+  await updateProductQuantity()
+}
+
+const router = useCustomRouter()
+const { getMarkup, setCartItems } = useCartStore()
+const onSubmit = handleSubmit(async () => {
+  const {
+    name,
+    email,
+    obtainType,
+    // prettier-ignore
+    receiptDetails: { address, apartment, floor, entrance, city, deliveryDate, shopAddress }
+  } = values
+  const phone = Number(values.phone.replace(/[()\- ]/g, ''))
+  loadingCreateOrder.value = 'loading'
+  const isAddressValid = await checkAddressValid(address, city, obtainType)
+  if (!isAddressValid) return
+  updateUserData(phone)
+  // prettier-ignore
+  const formatDate = `${deliveryDate.getFullYear()}-${ deliveryDate.getMonth() + 1}-${deliveryDate.getDate()}`
+  const order: OrderCreate = {
+    userId: user.value?.id ?? null,
+    phone,
+    email,
+    name,
+    type: obtainType,
+    address: obtainType === 'delivery' ? address : null,
+    city: obtainType === 'delivery' ? city : null,
+    apartment: obtainType === 'delivery' ? apartment || null : null,
+    floor: obtainType === 'delivery' ? floor || null : null,
+    entrance: obtainType === 'delivery' ? entrance || null : null,
+    deliveryDate: obtainType === 'delivery' ? formatDate : null,
+    shopAddress: obtainType === 'selfcall' ? shopAddress : null,
+    status: 'processing',
+    paymentStatus: 'pending',
+    price: price.value
+  }
+
+  const { data, error } = await supabase.from('orders').insert(order).select().single()
+
+  if (error) {
+    loadingCreateOrder.value = 'error'
+    toast.error('Произошла ошибка')
+    return
+  }
+
+  await addOrderedProducts(data.id)
+
+  setCartItems()
+
+  toast.success(`Заказ под номером ${data.id} оформлен`)
+  router.push({ name: 'Home' })
+})
+</script>
+
+<template>
+  <form
+    v-if="loadingPrice === 'success' && loadingUserData === 'success'"
+    class="container"
+    @submit.prevent="onSubmit"
+  >
+    <div class="font-medium text-3xl mb-4">Оформление заказа</div>
+    <div class="block">
+      <div class="label">
+        <div>1.</div>
+        <div>Данные покупателя</div>
+      </div>
+      <div class="content grid grid-cols-1 gap-6 xs:grid-cols-2">
+        <div>
+          <FormField
+            label="Имя*"
+            name="name"
+          />
+        </div>
+        <div>
+          <FormField
+            label="Почта*"
+            name="email"
+          />
+        </div>
+        <div>
+          <FormField
+            label="Телефон*"
+            type="tel"
+            :show-spin-buttons="false"
+            name="phone"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="label">
+        <div>2.</div>
+        <div>Способ получения</div>
+      </div>
+      <div class="content">
+        <div>
+          <VButtons
+            :options="[
+              { title: 'Самовызов', value: 'selfcall' },
+              { title: 'Доставка', value: 'delivery' }
+            ]"
+            :model-value="values.obtainType"
+            @update:model-value="setFieldValue('obtainType', $event)"
+          />
+        </div>
+        <MethodObtain
+          :obtain-type="values.obtainType"
+          :receipt-details="values.receiptDetails"
+          @choose="shopId = $event"
+        />
+      </div>
+    </div>
+    <div class="block">
+      <div class="label">
+        <div>3.</div>
+        <div>Выберите способ оплаты</div>
+      </div>
+      <div class="content">
+        <VButton type="button">при получении</VButton>
+      </div>
+    </div>
+    <div>
+      <div
+        class="content"
+        style="border-left: unset"
+      >
+        <div>{{ countCartItems }} {{ getWordByQuantity(countCartItems) }}</div>
+        <div class="text-3xl font-medium mb-2">
+          Итого: <span class="font-bold">{{ formatPrice(price) }}</span>
+        </div>
+        <VButton
+          type="submit"
+          :loading="loadingCreateOrder === 'loading'"
+        >
+          Оформить заказ
+        </VButton>
+      </div>
+    </div>
+  </form>
+  <div
+    v-else
+    class="flex justify-center items-center h-[50vh]"
+  >
+    <VLoader />
+  </div>
+</template>
+
+<style scoped lang="sass">
+.block
+  max-width: 900px
+  margin-bottom: 30px
+
+.label
+  display: flex
+  gap: 8px
+  margin-bottom: 12px
+  font-size: 24px
+  div:first-child
+    width: 20px
+
+.content
+  padding-left: 23px
+  padding-right: 23px
+  border-left: 1px solid #d9d9d9
+  margin-left: 5px
+</style>

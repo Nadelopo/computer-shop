@@ -1,0 +1,20 @@
+<script setup lang="ts">
+import AdminSidebar from './components/AdminSidebar.vue'
+</script>
+
+<template>
+  <div class="roottt">
+    <AdminSidebar />
+    <div class="p-4">
+      <router-view />
+    </div>
+  </div>
+</template>
+
+<style scoped lang="sass">
+
+.roottt
+  display: grid
+  grid-template-columns: auto 1fr
+  // background: #fff
+</style>

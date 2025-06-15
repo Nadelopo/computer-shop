@@ -1,0 +1,360 @@
+<script setup lang="ts">
+import { ref, toRef, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { supabase } from '@/shared/api'
+import {
+  useUserStore,
+  useComparisonStore,
+  useFavoritesStore,
+  Role
+} from '@/modules/users'
+import { signOut } from '@/modules/auth'
+import { debounce } from '@/shared/utils/debounce'
+import { onClickOutsideClose } from '@/shared/composables/onClickOutsideClose'
+import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
+import { useCartStore } from '@/modules/cart'
+import AppLink from '@/shared/components/AppLink.vue'
+import HeaderSuggestions from './HeaderSuggestions.vue'
+import HeaderSearch from './HeaderSearch.vue'
+import { VPopup, VModal, VButton, VActionIcon } from '@/shared/components/UI'
+import {
+  AvatarSvg,
+  FavouriteSvg,
+  CartSvg,
+  ComparisonSvg,
+  SearchSvg
+} from '@/shared/assets/icons'
+import type { ProductSuggestion } from '@/modules/products'
+
+const { user } = storeToRefs(useUserStore())
+const { countCartItems } = storeToRefs(useCartStore())
+const { comparison } = storeToRefs(useComparisonStore())
+const { favorites } = storeToRefs(useFavoritesStore())
+
+const inputRef = ref<{ ref: { ref: HTMLInputElement } }>()
+const isSuggestionsOpen = onClickOutsideClose(toRef(() => inputRef.value?.ref.ref))
+
+const search = ref('')
+const suggestions = ref<ProductSuggestion[]>([])
+const debouncedSearch = debounce(async () => {
+  const searchValue = search.value
+  if (!searchValue || searchValue === '#') return
+
+  const or = getOrFilterForSearch(searchValue, 'title')
+  const [{ data: categoriesData }, { data: productsData }] = await Promise.all([
+    supabase.from('categories').select('id, title, enTitle').limit(2).or(or),
+    supabase.from('products').select('id, title, categories(id, enTitle)').limit(6).or(or)
+  ])
+
+  if (!categoriesData || !productsData) return
+  suggestions.value = [
+    ...categoriesData.map((c) => ({ ...c, type: 'category' as const })),
+    ...productsData.map((p) => ({ ...p, type: 'product' as const }))
+  ]
+  isSuggestionsOpen.value = true
+})
+
+const stopRequests = ref(false)
+watch(search, () => {
+  if (stopRequests.value) return
+  debouncedSearch()
+})
+
+const openModal = ref(false)
+const clear = () => {
+  search.value = ''
+  suggestions.value = []
+  if (openModal.value) {
+    openModal.value = false
+  }
+}
+
+const onKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    stopRequests.value = true
+  } else stopRequests.value = false
+}
+
+const setSearch = (title: string) => {
+  search.value = title
+  setTimeout(() => {
+    if (!inputRef.value) return
+    inputRef.value.ref.ref.selectionStart = title.length
+  })
+}
+</script>
+
+<template>
+  <header class="mb-10 py-1">
+    <div class="container">
+      <div class="root">
+        <div class="logo">
+          <AppLink :to="{ name: 'Home' }">
+            <img
+              src="/img/logoChangeWhiteSizeFnew.png"
+              width="95"
+              alt=""
+            />
+          </AppLink>
+        </div>
+        <HeaderSearch
+          ref="inputRef"
+          v-model="search"
+          :suggestions
+          class="hidden lg:block"
+          @click="isSuggestionsOpen = true"
+          @navigate-to-product=";(isSuggestionsOpen = false), (suggestions = [])"
+          @keydown="onKeyDown"
+          @clear="suggestions = []"
+        />
+        <div class="nav__rigth">
+          <VPopup>
+            <template #active>
+              <VActionIcon
+                :svg="AvatarSvg"
+                variant="default"
+              />
+            </template>
+            <template #content>
+              <AppLink
+                v-if="user?.role === Role.ADMIN"
+                :to="{ name: 'AdminMain' }"
+                class="popup__el"
+              >
+                admin
+              </AppLink>
+              <button
+                v-if="user"
+                type="button"
+                class="popup__el"
+                @click="signOut"
+              >
+                выйти
+              </button>
+              <AppLink
+                v-else
+                :to="{ name: 'Auth' }"
+                class="popup__el"
+              >
+                войти
+              </AppLink>
+              <AppLink
+                :to="{ name: 'ProfileMain' }"
+                class="popup__el"
+              >
+                профиль
+              </AppLink>
+            </template>
+          </VPopup>
+          <VActionIcon
+            :svg="FavouriteSvg"
+            variant="default"
+            tag="a"
+            :to="{ name: 'Favourites' }"
+          >
+            <span
+              v-if="favorites.length"
+              class="count"
+            >
+              {{ favorites.length }}
+            </span>
+          </VActionIcon>
+          <VActionIcon
+            tag="a"
+            :to="{ name: 'Comparison' }"
+            :svg="ComparisonSvg"
+            variant="default"
+          >
+            <span
+              v-if="comparison.length"
+              class="count"
+            >
+              {{ comparison.length }}
+            </span>
+          </VActionIcon>
+          <VActionIcon
+            tag="a"
+            :to="{ name: 'Cart' }"
+            :svg="CartSvg"
+            variant="default"
+          >
+            <span
+              v-if="countCartItems"
+              class="count"
+            >
+              {{ countCartItems }}
+            </span>
+          </VActionIcon>
+        </div>
+        <div class="flex justify-end lg:hidden">
+          <VActionIcon
+            :svg="SearchSvg"
+            variant="default"
+            @click="openModal = true"
+          />
+        </div>
+        <VModal
+          v-model="openModal"
+          full-screen
+          class="py-2 xs:px-8 px-2"
+        >
+          <div class="flex gap-2 items-center">
+            <HeaderSearch
+              v-model="search"
+              :suggestions
+              class="w-full"
+              @navigate-to-product=";(suggestions = []), (openModal = false)"
+              @clear="suggestions = []"
+            />
+            <VButton @click="openModal = false">отмена</VButton>
+          </div>
+          <HeaderSuggestions
+            :is-suggestions-open
+            :suggestions
+            mobile
+            @click-on-suggestion="clear"
+          />
+        </VModal>
+      </div>
+    </div>
+    <HeaderSuggestions
+      v-if="!openModal"
+      :is-suggestions-open
+      :suggestions
+      @click-on-suggestion="clear"
+      @set-search="setSearch"
+    />
+  </header>
+</template>
+
+<style scoped lang="sass">
+.sidebar-enter-active,
+.sidebar-leave-active
+  transition: .4s ease
+  overflow: hidden
+  position: fixed
+
+.sidebar-enter-from,
+.sidebar-leave-to
+  translate: -320px
+  width: 3000px
+  transition: .4s ease
+  opacity: 0
+
+header
+  background: var(--back-main)
+  user-select: none
+
+.root
+  color: #fff
+  display: grid
+  // grid-template-columns:  240px 1fr 240px
+  grid-template-columns:  240px 1fr auto
+  align-items: center
+  height: 60px
+  // @media (width <= 1023px)
+  //   display: none
+
+.nav
+  display: grid
+  grid-template-columns: repeat(5, auto)
+  margin: 0 auto
+  position: relative
+  li
+    font-size: 14px
+    text-align: center
+    a
+      display: flex
+      align-items: center
+      padding: 8px
+      color: rgba(255,255,255, .8)
+      transition: .2s
+      text-transform: uppercase
+      height: 100%
+      &:hover
+        color: rgba(255,255,255, 1)
+
+  &::after
+    top: 0
+    content: ""
+    width: 100%
+    background-color: rgba(255,255,255, .8)
+    position: absolute
+    height: 1px
+  &::before
+    content: ""
+    bottom: 0
+    width: 100%
+    background-color: rgba(255,255,255, .8)
+    position: absolute
+    height: 1px
+
+
+.li__line
+  &::after
+    content: ""
+    width: 1px
+    height: 32px
+    background-color: #d7d7d7
+    display: inline-block
+    transform: rotate(25deg) translateY(13px)
+    margin: -10px 0 10px 30px
+
+.nav__rigth
+  display: grid
+  grid-template-columns: repeat(4, 60px)
+  align-items: center
+  justify-items: end
+  gap: 10px
+  @media (width < 1024px)
+    display: none
+  a
+    position: relative
+    .count
+      position: absolute
+      top: -2px
+      left: 20px
+      background: #26a69a
+      align-items: center
+      justify-content: center
+      width: 20px
+      display: flex
+      height: 20px
+      border-radius: 50px
+      font-size: 12px
+
+.cart__icon
+  cursor: pointer
+  height: 25px
+
+.root__small
+  color: #fff
+  display: grid
+  grid-template-columns: repeat(2, 1fr)
+  align-items: center
+  height: 58px
+  @media (width >= 1024px)
+    display: none
+  .dots
+    width: 40px
+    display: flex
+    flex-direction: column
+    gap: 6px
+    .dot
+      transition: .25s
+      width: 100%
+      background: #fff
+      height: 3px
+      border-radius: 4px
+      &__active
+        &-f
+          transform-origin: 18%
+          transform: rotate(45deg)
+        &-l
+          transform-origin: 18%
+          transform: rotate(-45deg)
+    .dot__middle
+      opacity: 1
+      &__active
+        opacity: 0
+</style>
