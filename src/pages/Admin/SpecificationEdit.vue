@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useCategoriesStore } from '@/modules/categories'
 import SpecificationEditor from '@/modules/specifications/components/SpecificationEditor.vue'
 import { type SpecificationRead } from '@/modules/specifications/model/specifications.types'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { useCustomRoute, useCustomRouter } from '@/shared/composables/customRouter'
 import { VButton, VLoader } from '@/components/UI'
 import type {

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import {
   type StorageError,
   insertInStorage,
   removeFromStorage,
   type Folder
-} from '@/db/queries/storage'
+} from '@/shared/api'
 
 type Props = {
   folder: Folder

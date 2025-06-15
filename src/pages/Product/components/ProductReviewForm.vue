@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { useUserStore } from '@/modules/users'
 import { VButton } from '@/components/UI'
 import RatingStars from '@/components/RatingStars.vue'

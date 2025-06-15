@@ -2,7 +2,7 @@
 import { ref, watch, computed, onBeforeMount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { useComparisonStore } from '@/modules/users/model/comparisonStore'
 import ActionsWithComparison from './components/ActionsWithComparison.vue'
 import ComparisonList from './components/ComparisonList.vue'

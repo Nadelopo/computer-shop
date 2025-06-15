@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
 import { useMediaQuery } from '@vueuse/core'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { useUserStore } from '@/modules/users'
 import {
   ReviewBlock,

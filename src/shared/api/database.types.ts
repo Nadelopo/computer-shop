@@ -18,13 +18,17 @@ import type {
   SpecificationUpdate
 } from '@/modules/specifications'
 import type { UserCreate, UserReadWithDetails, UserUpdate } from '@/modules/users'
-import type { ShopCreate, ShopRead, ShopUpdate } from '../modules/shops/model/shops.types'
-import type { OrderCreate, OrderRead, OrderUpdate } from '../types/tables/orders.types'
+import type {
+  ShopCreate,
+  ShopRead,
+  ShopUpdate
+} from '../../modules/shops/model/shops.types'
+import type { OrderCreate, OrderRead, OrderUpdate } from '../../types/tables/orders.types'
 import type {
   OrderedProductCreate,
   OrderedProductRead,
   OrderedProductUpdate
-} from '../types/tables/orderedProducts.types'
+} from '../../types/tables/orderedProducts.types'
 import type {
   ProductQuantityInStoreRead,
   ProductQuantityInStoreCreate,

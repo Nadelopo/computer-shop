@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, watchEffect } from 'vue'
 import type { PostgrestError } from '@supabase/supabase-js'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import {
   getProductQuantity,

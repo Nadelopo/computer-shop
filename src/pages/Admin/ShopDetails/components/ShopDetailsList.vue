@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
 import { VButton, VConfirm, VInputText, VLoader, VTable } from '@/components/UI'

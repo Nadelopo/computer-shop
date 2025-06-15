@@ -2,7 +2,7 @@
 import { nextTick, onUnmounted, ref, watch } from 'vue'
 import { useMediaQuery } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { useCategoriesStore } from '@/modules/categories'
 import { useFilterStore } from '@/pages/ProductCatalog/stores/filterStore'
 import { useCustomRouter, useCustomRoute } from '@/shared/composables/customRouter'

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { supabase } from '@/db/supabase'
-import { removeFromStorage, type StorageError } from '@/db/queries/storage'
+import { supabase } from '@/shared/api'
+import { removeFromStorage, type StorageError } from '@/shared/api'
 import { getSpecificationValue } from '@/modules/specifications'
 import { formatPrice } from '@/shared/utils/formatPrice'
 import { VLoader, VConfirm, VTable, VInputText } from '@/components/UI'

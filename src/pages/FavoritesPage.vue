@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { useFavoritesStore } from '@/modules/users/model/favoritesStore'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 import {

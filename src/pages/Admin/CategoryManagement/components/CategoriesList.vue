@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { supabase } from '@/db/supabase'
+import { supabase, removeFromStorage } from '@/shared/api'
 import { useCategoriesStore } from '@/modules/categories'
 import { VTable, VConfirm } from '@/components/UI'
-import { removeFromStorage } from '@/db/queries/storage'
 import ActionIcon from '@/components/ActionIcon.vue'
 import { EditSvg, TrashSvg } from '@/assets/icons'
 import type { Loading } from '@/types'

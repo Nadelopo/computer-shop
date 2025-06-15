@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import CategoryItemSkeleton from './CategoryItemSkeleton.vue'
 import AppLink from '@/components/AppLink.vue'
-import type { View } from '@/db/database.types'
+import type { View } from '@/shared/api/database.types'
 import type { Loading } from '@/types'
 
 const props = defineProps<{

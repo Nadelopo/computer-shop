@@ -1,6 +1,6 @@
 import type { Router } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 
 const toast = useToast()
 
@@ -9,11 +9,7 @@ export const signOut = async () => {
   if (error) console.error(error)
 }
 
-export const signIn = async (
-  email: string,
-  password: string,
-  router: Router
-) => {
+export const signIn = async (email: string, password: string, router: Router) => {
   const {
     data: { user },
     error

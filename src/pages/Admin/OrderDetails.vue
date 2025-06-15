@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue'
 import { useToast } from 'vue-toastification'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { useUserStore } from '@/modules/users'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import { useOrders } from '@/shared/utils/useOrders'
@@ -23,9 +23,7 @@ onBeforeMount(async () => {
 
   const { data, error } = await supabase
     .from('orders')
-    .select(
-      '*, ordered_products(*, products(id, title, img, categories(id, enTitle)))'
-    )
+    .select('*, ordered_products(*, products(id, title, img, categories(id, enTitle)))')
     .eq('id', orderId)
     .single()
   if (error) {

@@ -1,7 +1,7 @@
 import { reactive, ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
 import {
   useFeatureNumberStaticFilter,

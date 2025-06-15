@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import {
   getProductQuantity,
   ProductListCarousel,

@@ -1,11 +1,11 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { supabase } from '@/db/supabase'
 import type {
   ManufacturerCreate,
   ManufacturerRead,
   ManufacturerUpdate
 } from '@/modules/manufacturers'
+import { supabase } from '@/shared/api'
 import type { DataError } from '@/types'
 
 export const useManufacturersStore = defineStore('manufacturers', () => {

@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useToast } from 'vue-toastification'
 import type { PostgrestError } from '@supabase/supabase-js'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { useUserStore } from './userStore'
 import { updateUserList } from '../services/userService'
 import { useLocalStorage } from '@/shared/composables/localStorage'
@@ -40,9 +40,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
     return null
   }
 
-  const toggleFavorite = async (
-    productId: number
-  ): Promise<PostgrestError | null> => {
+  const toggleFavorite = async (productId: number): Promise<PostgrestError | null> => {
     const sessionUser = await getSessionUser()
 
     if (!sessionUser) {
@@ -55,11 +53,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
       : [...favorites.value, productId]
 
     if (sessionUser) {
-      const { error } = await updateUserList(
-        'favourites',
-        sessionUser.id,
-        updatedValue
-      )
+      const { error } = await updateUserList('favourites', sessionUser.id, updatedValue)
       if (error) return error
     }
 
@@ -76,11 +70,7 @@ export const useFavoritesStore = defineStore('favorites', () => {
     const updatedItems = favorites.value.filter((id) => id !== productId)
 
     if (sessionUser) {
-      const { error } = await updateUserList(
-        'favourites',
-        sessionUser.id,
-        updatedItems
-      )
+      const { error } = await updateUserList('favourites', sessionUser.id, updatedItems)
       if (error) return { error }
     }
 

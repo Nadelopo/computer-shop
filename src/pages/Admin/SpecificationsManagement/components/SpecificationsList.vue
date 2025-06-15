@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { VTabs, VTable, VLoader, VConfirm } from '@/components/UI'
 import ActionIcon from '@/components/ActionIcon.vue'
 import { EditSvg, TrashSvg } from '@/assets/icons'

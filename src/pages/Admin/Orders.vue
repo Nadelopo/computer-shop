@@ -1,17 +1,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useToast } from 'vue-toastification'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { useUserStore } from '@/modules/users'
 import { useOrders } from '@/shared/utils/useOrders'
 import { formatPrice } from '@/shared/utils/formatPrice'
-import {
-  VTable,
-  VPagination,
-  VLoader,
-  VConfirm,
-  VInputText
-} from '@/components/UI'
+import { VTable, VPagination, VLoader, VConfirm, VInputText } from '@/components/UI'
 import ActionIcon from '@/components/ActionIcon.vue'
 import { EditSvg, TrashSvg } from '@/assets/icons'
 import type { OrderRead } from '@/types/tables/orders.types'
@@ -167,8 +161,7 @@ const clear = () => {
                   :svg="TrashSvg"
                   variant="danger"
                   :loading="
-                    loadingRemove === 'loading' &&
-                    currentRemoveOrderId === order.id
+                    loadingRemove === 'loading' && currentRemoveOrderId === order.id
                   "
                   @click="openModal"
                 />

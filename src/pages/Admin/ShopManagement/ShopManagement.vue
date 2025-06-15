@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { ShopEditor } from '@/modules/shops'
 import ShopsList from './components/ShopsList.vue'
 import type { ShopForm } from '@/modules/shops'

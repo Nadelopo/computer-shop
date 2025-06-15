@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, toRef, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import {
   useUserStore,
   useComparisonStore,

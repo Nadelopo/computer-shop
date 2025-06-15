@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useField } from 'vee-validate'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { VButton, VModal, VLoader, VButtons } from '@/components/UI'
 import { useGeoSuggest, type LocationResult } from '@/shared/utils/useGeoSuggest'
 import { formatTime } from '@/shared/utils/formatTime'

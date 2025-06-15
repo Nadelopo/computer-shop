@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch, watchEffect } from 'vue'
 import { storeToRefs } from 'pinia'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import { useLocalStorage } from '@/shared/composables/localStorage'

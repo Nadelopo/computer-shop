@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { useManufacturersStore } from '@/modules/manufacturers'
 import { getProductQuantity, type ProductCardData } from '@/modules/products'
 import BestProductsList from './components/BestProductsList.vue'
 import CategoriesList from './components/CategoriesList.vue'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import { VLoader } from '@/components/UI'
-import type { View } from '@/db/database.types'
+import type { View } from '@/shared/api/database.types'
 import type { Loading } from '@/types'
 
 const { manufacturers } = storeToRefs(useManufacturersStore())

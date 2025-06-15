@@ -1,4 +1,4 @@
-import type { DbEnum } from '@/db/database.types'
+import type { DbEnum } from '@/shared/api/database.types'
 
 export type CategorySpecificationCreate = {
   categoryId: number

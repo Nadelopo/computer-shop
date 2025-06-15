@@ -1,4 +1,4 @@
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { getImgName } from '@/shared/utils/getImgName'
 
 export type Folder = 'categories' | 'manufacturers' | 'products'
@@ -38,7 +38,6 @@ export const removeFromStorage = async (
   folder: Folder,
   imgUrl: string
 ): Promise<
-  // eslint-disable-next-line
   { data: NonNullable<typeof data>; error: null } | { data: null; error: StorageError }
 > => {
   const { data, error } = await supabase.storage

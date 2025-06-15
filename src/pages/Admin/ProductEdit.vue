@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { useCustomRoute, useCustomRouter } from '@/shared/composables/customRouter'
 import { ProductEditor, type ProductCreate, type ProductUpdate } from '@/modules/products'
 import { VButton, VLoader } from '@/components/UI'

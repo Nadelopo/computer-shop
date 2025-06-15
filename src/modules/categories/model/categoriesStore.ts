@@ -1,11 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { supabase } from '@/db/supabase'
-import type {
-  CategoryCreate,
-  CategoryRead,
-  CategoryUpdate
-} from './categories.types'
+import { supabase } from '@/shared/api'
+import type { CategoryCreate, CategoryRead, CategoryUpdate } from './categories.types'
 import type {
   CategorySpecificationCreate,
   CategorySpecificationRead
@@ -25,11 +21,7 @@ export const useCategoriesStore = defineStore('categories', () => {
   async function createCategory(
     params: CategoryCreate
   ): Promise<DataError<CategoryRead>> {
-    const response = await supabase
-      .from('categories')
-      .insert(params)
-      .select()
-      .single()
+    const response = await supabase.from('categories').insert(params).select().single()
 
     if (response.data) {
       categories.value.push(response.data)

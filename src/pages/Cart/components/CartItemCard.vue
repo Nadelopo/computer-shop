@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useMediaQuery } from '@vueuse/core'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { useUserStore } from '@/modules/users'
 import { useCartStore, type ProductStorage, type ProductCart } from '@/modules/cart'
 import { formatPrice } from '@/shared/utils/formatPrice'

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, watch } from 'vue'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import ProductReviews from './components/ProductReviews.vue'
 import ProductHeader from './components/ProductHeader.vue'
 import ProductSpecifications from './components/ProductSpecifications.vue'

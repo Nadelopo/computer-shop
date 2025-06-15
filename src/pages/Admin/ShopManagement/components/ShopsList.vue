@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { useToast } from 'vue-toastification'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { VConfirm, VLoader, VTable } from '@/components/UI'
 import { formatPhoneNumber } from '@/shared/utils/formatPhone'
 import { formatTime } from '@/shared/utils/formatTime'

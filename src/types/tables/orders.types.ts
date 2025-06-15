@@ -1,4 +1,4 @@
-import type { DbEnum } from '@/db/database.types'
+import type { DbEnum } from '@/shared/api/database.types'
 import type { CategoryRead } from '@/modules/categories'
 import type { OrderedProductRead } from './orderedProducts.types'
 import type { ProductRead } from '@/modules/products'

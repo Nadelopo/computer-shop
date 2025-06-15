@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useCategoriesStore } from '@/modules/categories'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import SpecificationEditor from '@/modules/specifications/components/SpecificationEditor.vue'
 import SpecificationsList from './components/SpecificationsList.vue'
 import type { SpecificationCreate } from '@/modules/specifications/model/specifications.types'

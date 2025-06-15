@@ -1,5 +1,5 @@
 import { onBeforeMount, ref } from 'vue'
-import { supabase } from '@/db/supabase'
+import { supabase } from '@/shared/api'
 import { useCartStore } from '@/modules/cart'
 import { getProductQuantity, type ProductRead } from '@/modules/products'
 import { useCustomRouter } from '@/shared/composables/customRouter'
