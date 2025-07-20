@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onUnmounted, ref, watchEffect } from 'vue'
 import { onClickOutsideClose } from '@/shared/composables/onClickOutsideClose'
-import { VInputText } from '@/shared/components/UI'
+import { VInput } from '@/shared/components/UI'
 import type { LocationResult } from '@/shared/utils/useGeoSuggest'
 
 const props = defineProps<{
@@ -101,7 +101,7 @@ const id = props.id ?? `${props.name}-input`
       @keyup.arrow-down="onInputKey('down')"
       @keyup.arrow-up="onInputKey('up')"
     >
-      <VInputText
+      <VInput
         :id="id"
         v-model="model"
         :debounce="500"

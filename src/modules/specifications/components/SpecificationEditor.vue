@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useForm } from 'vee-validate'
 import { number, string } from 'yup'
 import { useCategoriesStore } from '@/modules/categories'
-import { VButtons, VInputText, VButton, VSelect, VTags } from '@/shared/components/UI'
+import { VButtons, VInput, VButton, VSelect, VTags } from '@/shared/components/UI'
 import FormField from '@/shared/components/FormField.vue'
 import type {
   CategorySpecificationCreate,
@@ -133,7 +133,7 @@ const submit = handleSubmit(() => {
     />
     <div>
       <label for="units">Единицы измерения</label>
-      <VInputText
+      <VInput
         id="units"
         v-model.trim="form.units"
         :required="false"
@@ -154,7 +154,7 @@ const submit = handleSubmit(() => {
     <template v-if="form.type === 'number'">
       <div class="my-3">
         <label for="step">шаг изменения числа для поля ввода</label>
-        <VInputText
+        <VInput
           id="step"
           v-model="form.step"
           type="number"
@@ -164,7 +164,7 @@ const submit = handleSubmit(() => {
       </div>
       <div class="my-3">
         <label for="min">Минимальное значение для поля ввода</label>
-        <VInputText
+        <VInput
           v-model="form.min"
           type="number"
           :min="0"
@@ -172,7 +172,7 @@ const submit = handleSubmit(() => {
       </div>
       <div class="my-3">
         <label for="max">Максимальное значение для поля ввода</label>
-        <VInputText
+        <VInput
           v-model="form.max"
           type="number"
           :min="0"

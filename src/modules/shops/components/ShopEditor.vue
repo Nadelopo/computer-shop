@@ -5,7 +5,7 @@ import { string } from 'yup'
 import { vMaska } from 'maska/vue'
 import { type MaskInputOptions, type MaskaDetail } from 'maska'
 import { useGeoSuggest, type LocationResult } from '@/shared/utils/useGeoSuggest'
-import { VInputText, VButton } from '@/shared/components/UI'
+import { VInput, VButton } from '@/shared/components/UI'
 import FormField from '@/shared/components/FormField.vue'
 import InputAddress from '@/shared/components/InputAddress.vue'
 import type { ShopForm } from '@/modules/shops'
@@ -108,7 +108,7 @@ watchEffect(async () => {
       name="time"
       label="Часы работы"
     >
-      <VInputText
+      <VInput
         :id="id"
         v-maska="maskaOptions"
         name="time"
@@ -125,7 +125,7 @@ watchEffect(async () => {
       name="phone"
       label="Телефон"
     >
-      <VInputText
+      <VInput
         :id="id"
         :name="fieldName"
         :model-value="value"

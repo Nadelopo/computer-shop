@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCustomRouter } from '@/shared/composables/customRouter'
 import { getRouteToProduct, type ProductSuggestion } from '@/modules/products'
-import { VInputText } from '@/shared/components/UI'
+import { VInput } from '@/shared/components/UI'
 
 const props = defineProps<{
   suggestions: ProductSuggestion[]
@@ -84,7 +84,7 @@ defineExpose({ ref: inputRef })
 </script>
 
 <template>
-  <VInputText
+  <VInput
     ref="inputRef"
     v-model="search"
     placeholder="Поиск по товарам"

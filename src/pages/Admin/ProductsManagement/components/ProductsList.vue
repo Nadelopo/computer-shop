@@ -4,13 +4,7 @@ import { supabase } from '@/shared/api'
 import { removeFromStorage, type StorageError } from '@/shared/api'
 import { getSpecificationValue } from '@/modules/specifications'
 import { formatPrice } from '@/shared/utils/formatPrice'
-import {
-  VLoader,
-  VConfirm,
-  VTable,
-  VInputText,
-  VActionIcon
-} from '@/shared/components/UI'
+import { VLoader, VConfirm, VTable, VInput, VActionIcon } from '@/shared/components/UI'
 import { EditSvg, TrashSvg } from '@/shared/assets/icons'
 import type { CategorySpecificationRead } from '@/modules/categorySpecifications'
 import type { ProductWithSpecifications } from '@/modules/products'
@@ -59,7 +53,7 @@ const remove = async (id: number, img: string[]) => {
     v-if="loading !== 'loading'"
     class="py-4"
   >
-    <VInputText
+    <VInput
       v-model="search"
       :debounce="1000"
       placeholder="введите название товара или id"

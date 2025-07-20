@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useCartStore, type ProductCart } from '@/modules/cart'
 import { TrashSvg } from '@/shared/assets/icons'
-import { VInputText } from '@/shared/components/UI'
+import { VInput } from '@/shared/components/UI'
 
 type Action = 'increase' | 'reduce' | 'delete'
 
@@ -50,7 +50,7 @@ const onChange = async (e: Event) => {
         </div>
       </button>
       <div class="w-7">
-        <VInputText
+        <VInput
           class="text-center"
           text-placement="center"
           type="number"
