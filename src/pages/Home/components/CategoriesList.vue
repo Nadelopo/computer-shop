@@ -24,7 +24,7 @@ const { categories } = storeToRefs(useCategoriesStore())
             <img
               :src="category.img"
               alt=""
-              class="mx-auto mb-auto"
+              class="mx-auto mb-auto max-h-full"
             />
 
             <div class="text-center text">{{ category.title }}</div>
