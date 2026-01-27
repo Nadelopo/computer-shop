@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { onBeforeMount, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { storeToRefs } from 'pinia'
 import { useMediaQuery } from '@vueuse/core'
+import { useProductCatalogContext } from '../composables/useProductCatalogContext'
 import { useCustomRouter } from '@/shared/composables/customRouter'
-import { useFilterStore } from '@/pages/ProductCatalog/stores/filterStore'
 import { VButton, VSelect } from '@/shared/components/UI'
 import { ArrowSvg } from '@/shared/assets/icons'
 
@@ -13,8 +12,7 @@ const router = useCustomRouter()
 
 type SortType = keyof typeof sortAscents
 
-const { sortAscents } = useFilterStore()
-const { sortColumn, loading } = storeToRefs(useFilterStore())
+const { sortAscents, sortColumn, loading } = useProductCatalogContext()
 
 const setQueryParams = () => {
   router.push({

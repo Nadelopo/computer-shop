@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { nextTick, onUnmounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useMediaQuery } from '@vueuse/core'
-import { storeToRefs } from 'pinia'
 import { supabase } from '@/shared/api'
 import { useCategoriesStore } from '@/modules/categories'
-import { useFilterStore } from '@/pages/ProductCatalog/stores/filterStore'
 import { useCustomRouter, useCustomRoute } from '@/shared/composables/customRouter'
 import { VPagination, VButton } from '@/shared/components/UI'
 import ProductBlock from '@/pages/ProductCatalog/components/ProductBlock.vue'
@@ -15,9 +13,12 @@ import ProductBlockSkeleton from '@/pages/ProductCatalog/components/ProductBlock
 import FiltersMobile from '@/pages/ProductCatalog/components/Filters.mobile.vue'
 import { getValuesFromQuery } from '@/pages/ProductCatalog/components/useFeatureStaticFilter'
 import type { Loading } from '@/shared/types'
+import {
+  createProductCatalogContext,
+  type SortType
+} from './composables/useProductCatalogContext'
 
-type SortType = keyof typeof sortAscents
-function isSortType(key: string): key is SortType {
+const isSortType = (key: string): key is SortType => {
   if (key in sortAscents) {
     return true
   }
@@ -32,39 +33,20 @@ const {
   limit,
   specificationsValues,
   search,
-  sortColumn
-} = storeToRefs(useFilterStore())
-const { warranty, productsPrice, manufacturer, setFilteredProducts, sortAscents } =
-  useFilterStore()
+  sortColumn,
+  productsPrice,
+  manufacturer,
+  warranty,
+  sortAscents,
+  setFilteredProducts,
+  manufacturersVariants
+} = createProductCatalogContext()
 
 const router = useCustomRouter()
 
-const styles = ref('card__disable')
-
-onUnmounted(() => {
-  warranty.clear()
-  productsPrice.clear()
-  manufacturer.clear()
-  productCount.value = 0
-  specificationsValues.value = []
-  loading.value = 'loading'
-})
-
-watch(
-  () => products.value.length,
-  async (cur) => {
-    await nextTick()
-    if (cur) {
-      styles.value = 'card__active'
-    } else {
-      styles.value = 'card__disable'
-    }
-  }
-)
-
 const loadingProperties = ref<Loading>('loading')
 const { getCategorySpecifications } = useCategoriesStore()
-const manufacturers = ref<{ manufacturerId: number; manufacturerTitle: string }[]>([])
+
 const setSpecificationsValues = async (categoryId: number) => {
   const [{ data }, { data: manufacturersData }] = await Promise.all([
     getCategorySpecifications(categoryId),
@@ -78,7 +60,12 @@ const setSpecificationsValues = async (categoryId: number) => {
     loadingProperties.value = 'error'
     return
   }
-  manufacturers.value = manufacturersData
+
+  manufacturersVariants.value = manufacturersData.map((e) => ({
+    id: e.manufacturerId,
+    title: e.manufacturerTitle
+  }))
+
   specificationsValues.value = data.map((e) => {
     const { id, enTitle, visible } = e
     if (e.type === 'number') {
@@ -134,16 +121,13 @@ const setFilterProperties = async () => {
   }
   productsPrice.setValues(query.price)
   warranty.setValues(query.warranty)
-  manufacturer.setValues(
-    route.query.manufacturer,
-    manufacturers.value.map((e) => ({
-      id: e.manufacturerId,
-      title: e.manufacturerTitle
-    }))
-  )
+  manufacturer.setValues(route.query.manufacturer)
   for (const value of specificationsValues.value) {
     const field = query[value.enTitle]
-    const queryValues = getValuesFromQuery(field, value.type === 'number')
+    const queryValues = getValuesFromQuery(
+      field,
+      value.type === 'number' ? 'number' : 'string'
+    )
     if (!queryValues) {
       if (value.type === 'number') {
         value.minValue = value.min
@@ -219,7 +203,6 @@ const isSmallScreen = useMediaQuery('(max-width: 1024px)')
               v-for="product in products"
               :key="product.id"
               :item="product"
-              :class="styles"
             />
           </div>
         </template>
@@ -268,14 +251,4 @@ const isSmallScreen = useMediaQuery('(max-width: 1024px)')
   gap: 30px
   position: relative
   margin-bottom: 40px
-
-.card__active
-  transform: scale(1)
-  opacity: 1
-  transition: .3s
-
-.card__disable
-  transform: scale(0.6)
-  opacity: 0
-  transition: .3s
 </style>

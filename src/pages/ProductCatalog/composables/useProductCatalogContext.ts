@@ -1,16 +1,37 @@
-import { reactive, ref } from 'vue'
-import { defineStore } from 'pinia'
-import type { RouteLocationNormalizedLoaded } from 'vue-router'
-import { supabase } from '@/shared/api'
-import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
-import {
-  useFeatureNumberStaticFilter,
-  useFeatureStringStaticFilter
-} from '@/pages/ProductCatalog/components/useFeatureStaticFilter'
-import type { ProductWithSpecifications } from '@/modules/products'
-import type { Loading } from '@/shared/types'
 import type { CategorySpecificationRead } from '@/modules/categorySpecifications'
+import type { ProductWithSpecifications } from '@/modules/products'
+import { supabase } from '@/shared/api'
 import type { CustomRouter } from '@/shared/composables/customRouter'
+import type { Loading } from '@/shared/types'
+import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
+import { inject, provide, reactive, ref, type InjectionKey, type Ref } from 'vue'
+import { useRoute, useRouter, type RouteLocationNormalizedLoaded } from 'vue-router'
+import {
+  useFilterFieldNumber,
+  useFilterFieldString
+} from '../components/useFeatureStaticFilter'
+
+type ProductCatalogContext = {
+  products: Ref<ProductWithSpecifications[]>
+  loading: Ref<Loading>
+  setQueryParams: () => void
+  setFilteredProducts: (categoryId: number) => Promise<void>
+  search: Ref<string>
+  sortAscents: SortConfig
+  specificationsValues: Ref<SpecificationsValues[]>
+  sortColumn: Ref<SortType>
+  productsPrice: ReturnType<typeof useFilterFieldNumber>
+  productCount: Ref<number>
+  currentPage: Ref<number>
+  limit: Ref<number>
+  manufacturer: ReturnType<typeof useFilterFieldString>
+  warranty: ReturnType<typeof useFilterFieldNumber>
+  manufacturersVariants: Ref<{ id: number; title: string }[]>
+  clearFilters: () => void
+}
+
+const PRODUCT_CATALOG_CONTEXT_KEY: InjectionKey<ProductCatalogContext> =
+  Symbol('productCatalog')
 
 type SpecificationsValues = Pick<
   CategorySpecificationRead,
@@ -37,12 +58,20 @@ export type CheckboxData = {
   title: string
 }
 
-export const useFilterStore = defineStore('filter', () => {
-  type SortType = keyof typeof sortAscents
+type SortConfig = {
+  price: boolean
+  countReviews: boolean
+  discount: boolean
+  popularity: boolean
+  rating: boolean
+}
 
+export type SortType = keyof SortConfig
+
+export const createProductCatalogContext = () => {
   const specificationsValues = ref<SpecificationsValues[]>([])
 
-  const sortAscents = reactive({
+  const sortAscents: SortConfig = reactive({
     price: true,
     countReviews: true,
     discount: true,
@@ -52,14 +81,15 @@ export const useFilterStore = defineStore('filter', () => {
 
   const sortColumn = ref<SortType>('popularity')
   const search = ref('')
-  const productsPrice = useFeatureNumberStaticFilter({
+  const productsPrice = useFilterFieldNumber({
     max: 300_000
   })
-  const manufacturer = useFeatureStringStaticFilter()
-  const warranty = useFeatureNumberStaticFilter({
+  const manufacturer = useFilterFieldString()
+  const warranty = useFilterFieldNumber({
     max: 72,
     visibility: false
   })
+  const manufacturersVariants = ref<{ id: number; title: string }[]>([])
 
   const products = ref<ProductWithSpecifications[]>([])
   const productCount = ref(0)
@@ -67,7 +97,10 @@ export const useFilterStore = defineStore('filter', () => {
   const currentPage = ref(0)
   const loading = ref<Loading>('loading')
 
-  function setQueryParams(router: CustomRouter, route: RouteLocationNormalizedLoaded) {
+  const route = useRoute()
+  const router = useRouter()
+
+  function setQueryParams() {
     const query: {
       q: string | undefined
       page: number | undefined
@@ -92,6 +125,8 @@ export const useFilterStore = defineStore('filter', () => {
         warranty: warranty.getQueryRow()
       }
     })
+
+    currentPage.value = 0
   }
 
   async function setFilteredProducts(categoryId: number): Promise<void> {
@@ -122,6 +157,7 @@ export const useFilterStore = defineStore('filter', () => {
       }
     }
     or = or.slice(0, -1)
+
     const query = supabase
       .from('specifications')
       .select('categorySpecificationsId,products(id)')
@@ -129,6 +165,7 @@ export const useFilterStore = defineStore('filter', () => {
     if (or) {
       query.or(or)
     }
+
     const { data, error } = await query
     if (error) {
       loading.value = 'error'
@@ -136,13 +173,14 @@ export const useFilterStore = defineStore('filter', () => {
     }
 
     let idList = data.map((e) => e.products?.id).filter((e): e is number => Boolean(e))
-
     idList = idList.filter((e) => {
       const count = idList.filter((v) => v === e).length
       return count >= usedSpecifications.length
     })
+
     if (!idList.length) {
       loading.value = 'empty'
+      productCount.value = 0
       return
     }
 
@@ -186,6 +224,7 @@ export const useFilterStore = defineStore('filter', () => {
       error: productsError,
       count
     } = await queryProduct.returns<ProductWithSpecifications[]>()
+
     if (productsError) {
       loading.value = 'error'
       return
@@ -212,11 +251,29 @@ export const useFilterStore = defineStore('filter', () => {
         )
       return p
     })
+
     productCount.value = count ?? 0
     loading.value = 'success'
   }
 
-  return {
+  const clearFilters = () => {
+    specificationsValues.value.forEach((spec) => {
+      if (spec.type === 'number') {
+        spec.minValue = spec.min
+        spec.maxValue = spec.max
+      } else {
+        spec.values = []
+      }
+    })
+    productsPrice.clear()
+    warranty.clear()
+    manufacturer.clear()
+    search.value = ''
+    currentPage.value = 0
+    router.push({ query: {} })
+  }
+
+  const context = {
     products,
     loading,
     setQueryParams,
@@ -230,6 +287,24 @@ export const useFilterStore = defineStore('filter', () => {
     currentPage,
     limit,
     manufacturer,
-    warranty
+    warranty,
+    manufacturersVariants,
+    clearFilters
   }
-})
+
+  provide(PRODUCT_CATALOG_CONTEXT_KEY, context)
+
+  return context
+}
+
+export const useProductCatalogContext = () => {
+  const context = inject(PRODUCT_CATALOG_CONTEXT_KEY)
+
+  if (!context) {
+    throw new Error(
+      'useProductCatalogContext must be used within a ProductCatalogProvider'
+    )
+  }
+
+  return context
+}
