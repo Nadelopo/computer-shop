@@ -10,7 +10,7 @@ import {
   VPagination,
   VLoader,
   VConfirm,
-  VInputText,
+  VInput,
   VActionIcon
 } from '@/shared/components/UI'
 import { EditSvg, TrashSvg } from '@/shared/assets/icons'
@@ -101,7 +101,7 @@ const clear = () => {
 
 <template>
   <div>
-    <VInputText
+    <VInput
       v-model="searchOrderId"
       placeholder="номер заказа"
       class="mb-2"

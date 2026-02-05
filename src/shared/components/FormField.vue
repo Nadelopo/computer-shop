@@ -1,12 +1,12 @@
 <script setup lang="ts" generic="T extends 'text' | 'number' | 'tel' = 'text'">
 import { computed, useSlots } from 'vue'
 import { useField } from 'vee-validate'
-import { VInputText } from '@/shared/components/UI'
+import { VInput } from '@/shared/components/UI'
 import type { VInputTextProps } from './UI/VInputText.vue'
 
 type Props = Omit<
   VInputTextProps,
-  'modelValue' | 'id' | 'required' | 'error' | 'type'
+  'modelValue' | 'id' | 'required' | 'error' | 'type' | 'onSearch' | 'onClear'
 > & {
   name?: string
   label?: string
@@ -65,7 +65,7 @@ const slots = useSlots()
       :field-name="name"
     />
     <template v-else>
-      <VInputText
+      <VInput
         v-bind="props"
         :id="id"
         v-model="value"

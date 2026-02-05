@@ -52,6 +52,7 @@ const maskaDetails = ref<MaskaDetail>({
 const onInput = (e: Event) => {
   const el = e.target as HTMLInputElement
   let value: number | string = props.type === 'number' ? Number(el.value) : el.value
+
   if (props.type === 'number') {
     if (el.value[0] === '0') {
       el.value = el.value.replace(/^0+/, '')
@@ -65,10 +66,12 @@ const onInput = (e: Event) => {
       value = props.min
     }
   }
+
   if (props.type === 'tel') {
     emit('update:modelValue', value as T, maskaDetails.value)
     return
   }
+
   emit('update:modelValue', value as T)
 }
 

@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import { useManufacturersStore } from '@/modules/manufacturers'
 import {
-  VInputText,
+  VInput,
   VTextarea,
   VInputFile,
   VButtons,
@@ -51,7 +51,7 @@ const onSubmit = () => {
   >
     <div>
       <label for="title">Наименование</label>
-      <VInputText
+      <VInput
         id="title"
         v-model="product.title"
       />
@@ -78,7 +78,7 @@ const onSubmit = () => {
       :key="specification.id"
     >
       <label :for="specification.title">{{ specification.title }}</label>
-      <VInputText
+      <VInput
         v-if="specification.type === 'number'"
         :id="specification.title"
         v-model="specification.valueNumber"
@@ -119,7 +119,7 @@ const onSubmit = () => {
     </div>
     <div>
       <label for="warranty">гарантия</label>
-      <VInputText
+      <VInput
         id="warranty"
         v-model="product.warranty"
         type="number"
@@ -138,7 +138,7 @@ const onSubmit = () => {
     </div>
     <div>
       <label for="price">цена</label>
-      <VInputText
+      <VInput
         id="price"
         v-model="product.priceWithoutDiscount"
         type="number"
@@ -146,7 +146,7 @@ const onSubmit = () => {
     </div>
     <div v-if="product.discount !== undefined">
       <label for="discount">скидка %</label>
-      <VInputText
+      <VInput
         id="discount"
         v-model="product.discount"
         type="number"

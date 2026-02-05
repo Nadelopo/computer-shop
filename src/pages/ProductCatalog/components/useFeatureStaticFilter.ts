@@ -6,16 +6,16 @@ type Options = {
   visibility?: boolean
 }
 
-type ReturnValuesFromQuery<T> = T extends true
+type ReturnValuesFromQuery<T> = T extends 'number'
   ? { min: number; max: number }
   : { values: string[] }
 
-export const getValuesFromQuery = <T extends boolean>(
+export const getValuesFromQuery = <T extends 'number' | 'string'>(
   value: LocationQueryValue | LocationQueryValue[],
   type: T
 ): ReturnValuesFromQuery<T> | void => {
   if (!value) return
-  if (type) {
+  if (type === 'number') {
     const [minValue, maxValue] = String(value).split('_').map(Number)
     return { min: minValue, max: maxValue } as ReturnValuesFromQuery<T>
   }
@@ -24,16 +24,11 @@ export const getValuesFromQuery = <T extends boolean>(
   } as ReturnValuesFromQuery<T>
 }
 
-export const useFeatureStringStaticFilter = (options?: Options) => {
+export const useFilterFieldString = (options?: Options) => {
   const values = ref<number[]>([])
-  const variantsValues = ref<{ id: number; title: string }[]>([])
   const visibility = ref(options?.visibility ?? true)
-  const setValues = (
-    value: LocationQueryValue | LocationQueryValue[],
-    valuesData?: { id: number; title: string }[]
-  ) => {
-    if (valuesData) variantsValues.value = valuesData
-    const queryValues = getValuesFromQuery(value, false)
+  const setValues = (value: LocationQueryValue | LocationQueryValue[]) => {
+    const queryValues = getValuesFromQuery(value, 'string')
     if (queryValues) {
       values.value = queryValues.values.map(Number)
     } else {
@@ -45,14 +40,13 @@ export const useFeatureStringStaticFilter = (options?: Options) => {
   }
   return {
     values,
-    variantsValues,
     visibility,
     clear,
     setValues
   }
 }
 
-export const useFeatureNumberStaticFilter = (options?: Options) => {
+export const useFilterFieldNumber = (options?: Options) => {
   const maxStatic = options?.max ?? 1000000
   const min = ref(0)
   const max = ref(maxStatic)
@@ -66,7 +60,7 @@ export const useFeatureNumberStaticFilter = (options?: Options) => {
     max.value = maxStatic
   }
   const setValues = (value: LocationQueryValue | LocationQueryValue[]) => {
-    const queryValues = getValuesFromQuery(value, true)
+    const queryValues = getValuesFromQuery(value, 'number')
     if (!queryValues) return
     min.value = queryValues.min
     max.value = queryValues.max

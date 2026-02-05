@@ -7,7 +7,7 @@ import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
 import {
   VButton,
   VConfirm,
-  VInputText,
+  VInput,
   VLoader,
   VTable,
   VActionIcon
@@ -106,7 +106,7 @@ const save = async () => {
 </script>
 
 <template>
-  <VInputText
+  <VInput
     v-model="search"
     placeholder="#id или название товара"
     @keyup.enter="loadProductsInShops"
@@ -131,7 +131,7 @@ const save = async () => {
           <td>{{ productInShop.products.title }}</td>
           <td width="30%">
             <div v-if="currentEditIds.includes(productInShop.id)">
-              <VInputText
+              <VInput
                 v-model="productInShop.quantity"
                 type="number"
                 min="0"

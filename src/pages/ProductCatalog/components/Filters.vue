@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { storeToRefs } from 'pinia'
-import { useCustomRouter } from '@/shared/composables/customRouter'
-import { useFilterStore } from '@/pages/ProductCatalog/stores/filterStore'
+import { useProductCatalogContext } from '../composables/useProductCatalogContext'
 import { VButton } from '@/shared/components/UI'
 import InputFilter from './InputFilter.vue'
 import CheckboxFilter from './CheckboxFilter.vue'
@@ -23,32 +20,15 @@ const emit = defineEmits<{
   apply: []
 }>()
 
-const { setQueryParams, productsPrice, warranty, manufacturer } = useFilterStore()
-const { specificationsValues, search, currentPage } = storeToRefs(useFilterStore())
-
-const route = useRoute()
-const router = useCustomRouter()
-const apply = () => {
-  setQueryParams(router, route)
-  currentPage.value = 0
-}
-
-const cancel = () => {
-  specificationsValues.value.forEach((spec) => {
-    if (spec.type === 'number') {
-      spec.minValue = spec.min
-      spec.maxValue = spec.max
-    } else {
-      spec.values = []
-    }
-  })
-  productsPrice.clear()
-  warranty.clear()
-  manufacturer.clear()
-  search.value = ''
-  currentPage.value = 0
-  router.push({ query: {} })
-}
+const {
+  setQueryParams,
+  productsPrice,
+  warranty,
+  manufacturer,
+  specificationsValues,
+  manufacturersVariants,
+  clearFilters
+} = useProductCatalogContext()
 
 const visibilityFilters = ref<boolean[]>([])
 const watcher = watch(
@@ -57,7 +37,6 @@ const watcher = watch(
     if (!specificationsValues.value.length) return
     visibilityFilters.value = Array(specificationsValues.value.length)
       .fill(null)
-      // .map(() => true)
       .map((_, i) => specificationsValues.value[i].visible)
     await nextTick()
     watcher()
@@ -66,7 +45,6 @@ const watcher = watch(
 )
 
 const filtersRef = ref<HTMLFormElement>()
-// const isFiltersBottomVisible = ref(false)
 
 let isScrollingDown = false
 let prevSCrollY = window.scrollY
@@ -80,7 +58,7 @@ const setScrollPosition = () => {
   prevSCrollY = currentScrollY
 }
 
-// refactor
+// FIX refactor
 const classes = ref('')
 const onScroll = () => {
   if (props.type === 'mobile') return
@@ -156,12 +134,12 @@ onUnmounted(() => {
       ref="filtersRef"
       class="filters"
       :class="[classes, type]"
-      @submit.prevent="apply"
+      @submit.prevent="setQueryParams"
     >
       <InputFilter
-        v-model:min-value="productsPrice.min"
-        v-model:max-value="productsPrice.max"
-        v-model:visibility="productsPrice.visibility"
+        v-model:min-value="productsPrice.min.value"
+        v-model:max-value="productsPrice.max.value"
+        v-model:visibility="productsPrice.visibility.value"
         :max="productsPrice.maxStatic"
         :step="500"
         title="Цена"
@@ -190,15 +168,15 @@ onUnmounted(() => {
         />
       </template>
       <CheckboxFilter
-        v-model="manufacturer.visibility"
-        v-model:values="manufacturer.values"
-        :variants-values="manufacturer.variantsValues"
+        v-model="manufacturer.visibility.value"
+        v-model:values="manufacturer.values.value"
+        :variants-values="manufacturersVariants"
         title="Производитель"
       />
       <InputFilter
-        v-model:min-value="warranty.min"
-        v-model:max-value="warranty.max"
-        v-model:visibility="warranty.visibility"
+        v-model:min-value="warranty.min.value"
+        v-model:max-value="warranty.max.value"
+        v-model:visibility="warranty.visibility.value"
         :max="warranty.maxStatic"
         :step="1"
         title="Гарантия"
@@ -214,7 +192,7 @@ onUnmounted(() => {
         </VButton>
         <VButton
           width="100%"
-          @click="cancel"
+          @click="clearFilters"
         >
           сбросить
         </VButton>

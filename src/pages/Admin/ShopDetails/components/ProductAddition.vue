@@ -6,7 +6,7 @@ import { getOrFilterForSearch } from '@/shared/utils/getOrFilterForSearch'
 import { useCustomRoute } from '@/shared/composables/customRouter'
 import { useLocalStorage } from '@/shared/composables/localStorage'
 import { useCategoriesStore } from '@/modules/categories'
-import { VButton, VButtons, VCheckbox, VInputText, VPopup } from '@/shared/components/UI'
+import { VButton, VButtons, VCheckbox, VInput, VPopup } from '@/shared/components/UI'
 import type { Loading } from '@/shared/types'
 import type { ProductQuantityInStoreCreate } from '@/modules/shops'
 
@@ -152,7 +152,7 @@ const setQuantityProductsInShops = async () => {
       width="170px"
     />
     <div class="flex gap-4">
-      <VInputText
+      <VInput
         v-model="searchValue"
         class="mb-4 w-full"
         @keyup.enter="search"
@@ -223,7 +223,7 @@ const setQuantityProductsInShops = async () => {
         :key="product.productId"
         class="flex gap-2 items-end"
       >
-        <VInputText
+        <VInput
           v-model="product.quantity"
           min="0"
           type="number"
